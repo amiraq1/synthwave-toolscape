@@ -1,15 +1,25 @@
 import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
+import { preloadRoute } from "@/hooks/usePreloadRoute";
+
+type RouteKey = 'toolDetails' | 'auth' | 'settings' | 'admin' | 'install' | 'index';
 
 interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
   className?: string;
   activeClassName?: string;
   pendingClassName?: string;
+  preload?: RouteKey;
 }
 
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
-  ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
+  ({ className, activeClassName, pendingClassName, to, preload, onMouseEnter, onFocus, ...props }, ref) => {
+    const handlePreload = () => {
+      if (preload) {
+        preloadRoute(preload);
+      }
+    };
+
     return (
       <RouterNavLink
         ref={ref}
@@ -17,6 +27,14 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
         className={({ isActive, isPending }) =>
           cn(className, isActive && activeClassName, isPending && pendingClassName)
         }
+        onMouseEnter={(e) => {
+          handlePreload();
+          onMouseEnter?.(e);
+        }}
+        onFocus={(e) => {
+          handlePreload();
+          onFocus?.(e);
+        }}
         {...props}
       />
     );

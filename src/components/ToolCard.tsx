@@ -41,6 +41,11 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     navigate(`/tool/${tool.id}`);
   };
 
+  // Preload ToolDetails on hover
+  const handleMouseEnter = () => {
+    import('@/pages/ToolDetails');
+  };
+
   const handleVisitClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -50,6 +55,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   return (
     <article
       onClick={handleCardClick}
+      onMouseEnter={handleMouseEnter}
       className="glass rounded-2xl p-4 sm:p-6 card-glow animate-fade-in cursor-pointer transition-transform hover:scale-[1.02] touch-manipulation group"
       style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
       dir="rtl"
