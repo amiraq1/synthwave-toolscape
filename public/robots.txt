@@ -32,8 +32,8 @@ Allow: /
 User-agent: Pinterest
 Allow: /
 
-# Sitemap location
-Sitemap: https://nabd.lovable.app/sitemap.xml
+# Dynamic Sitemap (generated from database)
+Sitemap: https://ksdodojvchiybbqxfhcl.supabase.co/functions/v1/sitemap
 
 # Host
 Host: https://nabd.lovable.app
