@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 // Lazy load pages for better performance
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
+const Install = lazy(() => import("./pages/Install"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/tool/:id" element={<ToolDetails />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/install" element={<Install />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
