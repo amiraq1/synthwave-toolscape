@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
@@ -6,13 +7,43 @@ interface ToolsGridProps {
   tools: Tool[];
   isLoading?: boolean;
   error?: Error | null;
+  searchQuery?: string;
+  activeCategory?: string;
 }
 
-const ToolsGrid = ({ tools, isLoading, error }: ToolsGridProps) => {
+const ToolsGrid = ({ tools, isLoading, error, searchQuery = '', activeCategory = 'الكل' }: ToolsGridProps) => {
+  const [announcement, setAnnouncement] = useState('');
+
+  useEffect(() => {
+    if (isLoading) return;
+    
+    const count = tools.length;
+    let message = '';
+    
+    if (searchQuery && activeCategory !== 'الكل') {
+      message = count === 0 
+        ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}`
+        : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`;
+    } else if (searchQuery) {
+      message = count === 0 
+        ? `لا توجد نتائج للبحث "${searchQuery}"`
+        : `تم العثور على ${count} أداة للبحث "${searchQuery}"`;
+    } else if (activeCategory !== 'الكل') {
+      message = count === 0 
+        ? `لا توجد أدوات في فئة ${activeCategory}`
+        : `عرض ${count} أداة في فئة ${activeCategory}`;
+    } else {
+      message = `عرض ${count} أداة`;
+    }
+    
+    setAnnouncement(message);
+  }, [tools.length, searchQuery, activeCategory, isLoading]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20" dir="rtl">
         <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
+        <span className="sr-only">جاري تحميل الأدوات...</span>
       </div>
     );
   }
@@ -28,19 +59,39 @@ const ToolsGrid = ({ tools, isLoading, error }: ToolsGridProps) => {
 
   if (tools.length === 0) {
     return (
-      <div className="text-center py-20" dir="rtl">
-        <p className="text-2xl text-muted-foreground">لم يتم العثور على أدوات مطابقة</p>
-        <p className="text-muted-foreground mt-2">جرب البحث بكلمات مختلفة</p>
-      </div>
+      <>
+        <div 
+          role="status" 
+          aria-live="polite" 
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {announcement}
+        </div>
+        <div className="text-center py-20" dir="rtl">
+          <p className="text-2xl text-muted-foreground">لم يتم العثور على أدوات مطابقة</p>
+          <p className="text-muted-foreground mt-2">جرب البحث بكلمات مختلفة</p>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4 pb-20">
-      {tools.map((tool, index) => (
-        <ToolCard key={tool.id} tool={tool} index={index} />
-      ))}
-    </div>
+    <>
+      <div 
+        role="status" 
+        aria-live="polite" 
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4 pb-20">
+        {tools.map((tool, index) => (
+          <ToolCard key={tool.id} tool={tool} index={index} />
+        ))}
+      </div>
+    </>
   );
 };
 

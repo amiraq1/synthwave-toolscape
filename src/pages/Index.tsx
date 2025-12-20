@@ -42,7 +42,13 @@ const Index = () => {
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
         <section aria-label="شبكة الأدوات">
-          <ToolsGrid tools={tools} isLoading={isLoading} error={error} />
+          <ToolsGrid 
+            tools={tools} 
+            isLoading={isLoading} 
+            error={error} 
+            searchQuery={searchQuery}
+            activeCategory={activeCategory}
+          />
         </section>
       </main>
       <Footer />
