@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
 import { useSEO } from '@/hooks/useSEO';
+import { useStructuredData } from '@/hooks/useStructuredData';
 
 // Category gradient mapping
 const categoryGradients: Record<string, string> = {
@@ -30,6 +31,21 @@ const ToolDetails = () => {
     ogDescription: tool?.description,
     ogImage: tool?.image_url || undefined,
     ogType: 'article',
+  });
+
+  useStructuredData(tool ? {
+    type: 'software',
+    name: tool.title,
+    description: tool.description,
+    url: tool.url,
+    image: tool.image_url || undefined,
+    category: tool.category,
+    pricingType: tool.pricing_type,
+  } : {
+    type: 'website',
+    name: 'نبض',
+    description: 'دليل أدوات الذكاء الاصطناعي',
+    url: 'https://nabd.lovable.app',
   });
 
   if (isLoading) {
