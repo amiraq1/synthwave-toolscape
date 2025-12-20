@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { cn } from '@/lib/utils';
+import AverageRating from './AverageRating';
 
 interface ToolCardProps {
   tool: Tool;
@@ -49,7 +50,10 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         
         {/* Content */}
         <div className="flex-1 space-y-2">
-          <h3 className="text-xl font-bold text-foreground">{tool.title}</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-xl font-bold text-foreground">{tool.title}</h3>
+            <AverageRating toolId={tool.id} size="sm" />
+          </div>
           <p className="text-muted-foreground text-sm line-clamp-2">{tool.description}</p>
         </div>
       </div>

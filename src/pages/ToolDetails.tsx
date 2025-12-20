@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
+import ReviewSection from '@/components/ReviewSection';
+import AverageRating from '@/components/AverageRating';
 
 // Category gradient mapping
 const categoryGradients: Record<string, string> = {
@@ -62,7 +64,7 @@ const ToolDetails = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto max-w-5xl px-4 py-12">
+      <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">
         <div className="glass rounded-3xl p-8 md:p-12 space-y-8">
           {/* Tool Header */}
           <div className="flex flex-col md:flex-row items-start gap-8">
@@ -76,9 +78,12 @@ const ToolDetails = () => {
 
             {/* Info */}
             <div className="flex-1 space-y-4">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                {tool.title}
-              </h1>
+              <div className="flex items-center gap-4 flex-wrap">
+                <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+                  {tool.title}
+                </h1>
+                <AverageRating toolId={tool.id} size="md" />
+              </div>
               
               <div className="flex flex-wrap gap-3">
                 <Badge 
@@ -131,6 +136,11 @@ const ToolDetails = () => {
               </a>
             </Button>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="glass rounded-3xl p-8 md:p-12">
+          <ReviewSection toolId={tool.id} />
         </div>
       </main>
     </div>
