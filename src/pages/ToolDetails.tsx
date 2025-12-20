@@ -70,10 +70,16 @@ const ToolDetails = () => {
           <div className="flex flex-col md:flex-row items-start gap-8">
             {/* Icon/Image */}
             <div className={cn(
-              "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl bg-gradient-to-br shrink-0",
-              gradient
+              "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden",
+              !tool.image_url && `bg-gradient-to-br ${gradient}`
             )}>
-              {tool.image_url || '🤖'}
+              {tool.image_url ? (
+                <img 
+                  src={tool.image_url} 
+                  alt={tool.title}
+                  className="w-full h-full object-contain p-3 bg-white/90 dark:bg-white/95"
+                />
+              ) : '🤖'}
             </div>
 
             {/* Info */}
