@@ -20,7 +20,9 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
   return useQuery({
     queryKey: ['tools', searchQuery, activeCategory],
     queryFn: async () => {
-      let query = supabase.from('tools').select('*');
+      let query = supabase
+        .from('tools')
+        .select('id, title, description, category, url, image_url, pricing_type, is_featured');
 
       // Apply category filter
       if (activeCategory !== 'الكل') {
@@ -40,5 +42,7 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
 
       return data as Tool[];
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
   });
 };
