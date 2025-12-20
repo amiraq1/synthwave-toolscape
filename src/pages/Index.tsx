@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
@@ -10,6 +10,7 @@ import { useTools, type Category } from '@/hooks/useTools';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useSEO } from '@/hooks/useSEO';
+import { useStructuredData } from '@/hooks/useStructuredData';
 
 const Index = () => {
   useSEO({
@@ -18,6 +19,7 @@ const Index = () => {
     keywords: 'ذكاء اصطناعي، أدوات AI، ChatGPT، Midjourney، أدوات نصوص، أدوات صور',
     ogType: 'website',
   });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<Category>('الكل');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -26,6 +28,19 @@ const Index = () => {
   const { toast } = useToast();
 
   const { data: tools = [], isLoading, error } = useTools(searchQuery, activeCategory);
+
+  // Structured data for tool list
+  const structuredDataItems = useMemo(() => 
+    tools.map(tool => ({ id: tool.id, name: tool.title, url: tool.url })),
+    [tools]
+  );
+
+  useStructuredData({
+    type: 'itemList',
+    name: 'أدوات الذكاء الاصطناعي',
+    description: 'قائمة بأفضل أدوات الذكاء الاصطناعي',
+    items: structuredDataItems,
+  });
 
   const handleAddClick = () => {
     if (!user) {
