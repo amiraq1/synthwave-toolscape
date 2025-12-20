@@ -54,6 +54,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
     navigate('/admin');
   };
 
+  // Preload functions for hover
+  const preloadAuth = () => import('@/pages/Auth');
+  const preloadSettings = () => import('@/pages/Settings');
+  const preloadAdmin = () => import('@/pages/Admin');
+
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
       <div className="container mx-auto max-w-7xl px-4 py-3 sm:py-4">
@@ -96,6 +101,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                     <>
                       <DropdownMenuItem 
                         onClick={handleAdminClick}
+                        onMouseEnter={preloadAdmin}
                         className="gap-2 cursor-pointer text-neon-purple"
                       >
                         <Shield className="h-4 w-4" />
@@ -106,6 +112,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   )}
                   <DropdownMenuItem 
                     onClick={handleSettingsClick}
+                    onMouseEnter={preloadSettings}
                     className="gap-2 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
@@ -124,6 +131,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ) : (
               <Button
                 onClick={() => navigate('/auth')}
+                onMouseEnter={preloadAuth}
                 variant="outline"
                 className="gap-2 border-border/50"
               >
@@ -176,6 +184,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 {isAdmin && (
                   <Button
                     onClick={handleAdminClick}
+                    onMouseEnter={preloadAdmin}
                     variant="outline"
                     className="w-full gap-2 border-neon-purple/50 text-neon-purple py-6 text-base"
                   >
@@ -185,6 +194,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 )}
                 <Button
                   onClick={handleSettingsClick}
+                  onMouseEnter={preloadSettings}
                   variant="outline"
                   className="w-full gap-2 border-border/50 py-6 text-base"
                 >
@@ -203,6 +213,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ) : (
               <Button
                 onClick={handleAuthClick}
+                onMouseEnter={preloadAuth}
                 variant="outline"
                 className="w-full gap-2 border-border/50 py-6 text-base"
               >
