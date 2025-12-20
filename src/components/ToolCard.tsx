@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { cn } from '@/lib/utils';
 import AverageRating from './AverageRating';
+import LazyImage from './LazyImage';
 
 interface ToolCardProps {
   tool: Tool;
@@ -31,6 +33,7 @@ const categoryGlowColors: Record<string, string> = {
 
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
   const gradient = categoryGradients[tool.category] || 'from-neon-purple to-neon-blue';
   const glowColor = categoryGlowColors[tool.category] || '0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(139, 92, 246, 0.3)';
 
@@ -41,6 +44,8 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const handleVisitClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+
+  const showFallback = !tool.image_url || imageError;
 
   return (
     <article
@@ -59,24 +64,19 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             "shadow-lg shadow-black/10",
             "overflow-hidden",
             "transition-all duration-300 ease-out group-hover:scale-110",
-            !tool.image_url && `bg-gradient-to-br ${gradient}`
+            showFallback && `bg-gradient-to-br ${gradient}`
           )}
           style={{
             '--glow-color': glowColor,
           } as React.CSSProperties}
         >
-          {tool.image_url ? (
-            <img 
-              src={tool.image_url} 
+          {!showFallback ? (
+            <LazyImage
+              src={tool.image_url!}
               alt={tool.title}
-              loading="lazy"
-              className="w-full h-full object-contain p-2 bg-white rounded-lg"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.parentElement!.classList.add(`bg-gradient-to-br`, gradient.split(' ')[0], gradient.split(' ')[1]);
-                target.parentElement!.innerHTML = '🤖';
-              }}
+              className="w-full h-full p-2 bg-white rounded-lg"
+              placeholderClassName="bg-muted/50"
+              onError={() => setImageError(true)}
             />
           ) : '🤖'}
         </div>
