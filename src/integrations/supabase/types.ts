@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tools: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: number
+          image_url: string | null
+          is_featured: boolean
+          pricing_type: string
+          title: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: number
+          image_url?: string | null
+          is_featured?: boolean
+          pricing_type?: string
+          title: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: number
+          image_url?: string | null
+          is_featured?: boolean
+          pricing_type?: string
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,4 +1,4 @@
-import { categories, type Category } from '@/data/tools';
+import { categories, type Category } from '@/hooks/useTools';
 import { cn } from '@/lib/utils';
 
 interface CategoryFiltersProps {
