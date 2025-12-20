@@ -6,8 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import AdminToolsTable from '@/components/admin/AdminToolsTable';
 import AdminUsersTable from '@/components/admin/AdminUsersTable';
+import { useSEO } from '@/hooks/useSEO';
 
 const Admin = () => {
+  useSEO({
+    title: 'لوحة التحكم',
+    description: 'لوحة تحكم المشرفين لإدارة أدوات الذكاء الاصطناعي والمستخدمين',
+    noIndex: true,
+  });
   const navigate = useNavigate();
   const { isAdmin, loading } = useAdminCheck();
 

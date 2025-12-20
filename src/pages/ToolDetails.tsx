@@ -6,6 +6,7 @@ import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
+import { useSEO } from '@/hooks/useSEO';
 
 // Category gradient mapping
 const categoryGradients: Record<string, string> = {
@@ -20,6 +21,16 @@ const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: tool, isLoading, error } = useTool(id);
+
+  useSEO({
+    title: tool?.title,
+    description: tool?.description ? `${tool.description.slice(0, 150)}...` : undefined,
+    keywords: tool ? `${tool.title}، ${tool.category}، ذكاء اصطناعي، أدوات AI` : undefined,
+    ogTitle: tool?.title,
+    ogDescription: tool?.description,
+    ogImage: tool?.image_url || undefined,
+    ogType: 'article',
+  });
 
   if (isLoading) {
     return (
