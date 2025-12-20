@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface NavbarProps {
   onAddClick: () => void;
@@ -35,6 +42,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
     navigate('/auth');
   };
 
+  const handleSettingsClick = () => {
+    setMobileMenuOpen(false);
+    navigate('/settings');
+  };
+
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
       <div className="container mx-auto max-w-7xl px-4 py-3 sm:py-4">
@@ -53,13 +65,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-3">
-            {user && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span className="text-sm max-w-[150px] truncate">{user.email}</span>
-              </div>
-            )}
-            
             <Button
               onClick={onAddClick}
               className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2"
@@ -69,14 +74,34 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             </Button>
 
             {user ? (
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                className="gap-2 border-border/50"
-              >
-                <LogOut className="h-4 w-4" />
-                خروج
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-border/50"
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 glass">
+                  <DropdownMenuItem 
+                    onClick={handleSettingsClick}
+                    className="gap-2 cursor-pointer"
+                  >
+                    <Settings className="h-4 w-4" />
+                    الإعدادات
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut}
+                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    تسجيل الخروج
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 onClick={() => navigate('/auth')}
@@ -107,7 +132,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
         <div
           className={cn(
             "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-            mobileMenuOpen ? "max-h-80 opacity-100 mt-4" : "max-h-0 opacity-0"
+            mobileMenuOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"
           )}
         >
           <div className="flex flex-col gap-3 py-4 border-t border-border/50">
@@ -127,14 +152,24 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             </Button>
 
             {user ? (
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                className="w-full gap-2 border-border/50 py-6 text-base"
-              >
-                <LogOut className="h-5 w-5" />
-                تسجيل الخروج
-              </Button>
+              <>
+                <Button
+                  onClick={handleSettingsClick}
+                  variant="outline"
+                  className="w-full gap-2 border-border/50 py-6 text-base"
+                >
+                  <Settings className="h-5 w-5" />
+                  الإعدادات
+                </Button>
+                <Button
+                  onClick={handleSignOut}
+                  variant="outline"
+                  className="w-full gap-2 border-destructive/50 text-destructive py-6 text-base"
+                >
+                  <LogOut className="h-5 w-5" />
+                  تسجيل الخروج
+                </Button>
+              </>
             ) : (
               <Button
                 onClick={handleAuthClick}
