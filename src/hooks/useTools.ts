@@ -12,6 +12,7 @@ export interface Tool {
   image_url: string | null;
   pricing_type: string;
   is_featured: boolean;
+  features: string[] | null;
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];

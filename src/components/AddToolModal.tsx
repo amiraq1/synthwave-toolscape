@@ -41,6 +41,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     image_url: '',
     category: '',
     pricing_type: 'مجاني',
+    features: ['', '', ''] as string[],
   });
 
   const enhanceDescription = async () => {
@@ -94,7 +95,12 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const { error } = await supabase.from('tools').insert([data]);
+      // Filter out empty features
+      const filteredFeatures = data.features.filter(f => f.trim() !== '');
+      const { error } = await supabase.from('tools').insert([{
+        ...data,
+        features: filteredFeatures.length > 0 ? filteredFeatures : null,
+      }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -111,6 +117,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         image_url: '',
         category: '',
         pricing_type: 'مجاني',
+        features: ['', '', ''],
       });
     },
     onError: (error) => {
@@ -253,6 +260,27 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* Features */}
+          <div className="space-y-3">
+            <Label>أهم المميزات (اختياري - حتى 3 مميزات)</Label>
+            {formData.features.map((feature, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="text-emerald-500 text-lg">✓</span>
+                <Input
+                  value={feature}
+                  onChange={(e) => {
+                    const newFeatures = [...formData.features];
+                    newFeatures[index] = e.target.value;
+                    setFormData({ ...formData, features: newFeatures });
+                  }}
+                  placeholder={`الميزة ${index + 1}`}
+                  className="bg-secondary/50 border-border"
+                  maxLength={100}
+                />
+              </div>
+            ))}
           </div>
 
           <div className="flex gap-3 pt-4">
