@@ -62,6 +62,26 @@
   body {
     @apply bg-background text-foreground font-cairo antialiased;
   }
+
+  /* Focus indicators for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    @apply outline-none ring-2 ring-neon-purple ring-offset-2 ring-offset-background rounded-sm;
+  }
+
+  /* High contrast focus for better visibility */
+  .focus-high-contrast:focus-visible {
+    @apply ring-4 ring-neon-cyan;
+  }
 }
 
 @layer utilities {
