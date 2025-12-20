@@ -61,13 +61,13 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
           {/* Logo */}
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-[44px] min-h-[44px]"
           >
             <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-neon-purple animate-pulse" />
-            <h1 className="text-xl sm:text-2xl">
+            <span className="text-xl sm:text-2xl" aria-label="نبض AI - الصفحة الرئيسية">
               <span className="font-extrabold gradient-text">نبض</span>
               <span className="font-medium text-foreground/80 mr-1">AI</span>
-            </h1>
+            </span>
           </button>
           
           {/* Desktop Menu */}
@@ -136,8 +136,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 -ml-2 touch-manipulation"
-            aria-label="Toggle menu"
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation rounded-lg hover:bg-muted/50 transition-colors"
+            aria-label={mobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6 text-foreground" />

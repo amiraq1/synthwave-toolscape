@@ -94,16 +94,16 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       {/* Footer */}
       <div className="flex items-center justify-between mt-4 sm:mt-6 gap-2">
         <div className="flex gap-1.5 sm:gap-2 flex-wrap">
-          <Badge variant="secondary" className="bg-neon-purple/20 text-neon-purple border-neon-purple/30 text-xs sm:text-sm px-2 sm:px-3">
+          <Badge variant="secondary" className="bg-neon-purple/80 text-white font-bold border-neon-purple/50 text-xs sm:text-sm px-2 sm:px-3">
             {tool.category}
           </Badge>
           <Badge 
             variant="secondary" 
             className={cn(
-              "border text-xs sm:text-sm px-2 sm:px-3",
+              "border text-xs sm:text-sm px-2 sm:px-3 font-bold",
               tool.pricing_type === 'مجاني' 
-                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" 
-                : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                ? "bg-emerald-600/80 text-white border-emerald-500/50" 
+                : "bg-amber-600/80 text-white border-amber-500/50"
             )}
           >
             {tool.pricing_type}
@@ -113,13 +113,13 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         <Button
           asChild
           size="sm"
-          className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-1.5 sm:gap-2 text-xs sm:text-sm px-3 sm:px-4 py-2 touch-manipulation"
+          className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-1.5 sm:gap-2 text-xs sm:text-sm min-w-[44px] min-h-[44px] px-4 py-2.5 touch-manipulation"
           onClick={handleVisitClick}
         >
           <a href={tool.url} target="_blank" rel="noopener noreferrer">
             <span className="hidden xs:inline">زيارة الموقع</span>
             <span className="xs:hidden">زيارة</span>
-            <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <ExternalLink className="h-4 w-4" />
           </a>
         </Button>
       </div>

@@ -36,11 +36,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar onAddClick={handleAddClick} />
-      <div className="container mx-auto max-w-7xl flex-1">
+      <main role="main" className="container mx-auto max-w-7xl flex-1">
         <HeroSection searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-        <ToolsGrid tools={tools} isLoading={isLoading} error={error} />
-      </div>
+        <section aria-label="تصفية الأدوات حسب الفئة">
+          <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+        </section>
+        <section aria-label="شبكة الأدوات">
+          <ToolsGrid tools={tools} isLoading={isLoading} error={error} />
+        </section>
+      </main>
       <Footer />
       <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
     </div>
