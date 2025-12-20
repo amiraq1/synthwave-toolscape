@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavbarProps {
@@ -9,9 +9,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
       <div className="container mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🤖</span>
-          <h1 className="text-xl font-bold gradient-text">دليل أدوات الذكاء الاصطناعي</h1>
+        <div className="flex items-center gap-3">
+          <Activity className="h-8 w-8 text-neon-purple animate-pulse" />
+          <h1 className="text-2xl">
+            <span className="font-extrabold gradient-text">نبض</span>
+            <span className="font-medium text-foreground/80 mr-1">AI</span>
+          </h1>
         </div>
         
         <Button
