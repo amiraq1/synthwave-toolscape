@@ -42,15 +42,19 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       <div className="flex items-start gap-3 sm:gap-4">
         {/* Icon */}
         <div className={cn(
-          "w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-xl sm:text-2xl bg-gradient-to-br shrink-0",
-          gradient
+          "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0",
+          "bg-white/10 backdrop-blur-sm",
+          "border border-white/20",
+          "shadow-lg shadow-black/10",
+          "overflow-hidden",
+          !tool.image_url && `bg-gradient-to-br ${gradient}`
         )}>
           {tool.image_url ? (
             <img 
               src={tool.image_url} 
               alt={tool.title}
               loading="lazy"
-              className="w-full h-full object-cover rounded-xl"
+              className="w-full h-full object-contain p-1.5 bg-white/90 dark:bg-white/95"
             />
           ) : '🤖'}
         </div>
