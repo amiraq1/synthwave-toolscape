@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
@@ -32,6 +32,7 @@ const pricingTypes = ['مجاني', 'مدفوع'];
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -41,6 +42,55 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     category: '',
     pricing_type: 'مجاني',
   });
+
+  const enhanceDescription = async () => {
+    if (!formData.title.trim()) {
+      toast({
+        title: 'مطلوب',
+        description: 'يرجى إدخال اسم الأداة أولاً',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      toast({
+        title: 'مطلوب',
+        description: 'يرجى إدخال وصف مبدئي للأداة',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsEnhancing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('enhance-description', {
+        body: {
+          toolName: formData.title,
+          description: formData.description,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.enhancedDescription) {
+        setFormData({ ...formData, description: data.enhancedDescription });
+        toast({
+          title: 'تم التحسين!',
+          description: 'تم تحسين الوصف بنجاح',
+        });
+      }
+    } catch (error) {
+      console.error('Error enhancing description:', error);
+      toast({
+        title: 'خطأ',
+        description: 'فشل في تحسين الوصف. يرجى المحاولة مرة أخرى.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -108,7 +158,29 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">وصف قصير *</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="description">وصف قصير *</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={enhanceDescription}
+                disabled={isEnhancing}
+                className="text-xs gap-1 h-7 px-2 text-neon-purple hover:text-neon-blue hover:bg-neon-purple/10"
+              >
+                {isEnhancing ? (
+                  <>
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    جاري التحسين...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3 w-3" />
+                    ✨ تحسين الوصف تلقائياً
+                  </>
+                )}
+              </Button>
+            </div>
             <Textarea
               id="description"
               value={formData.description}
