@@ -15,11 +15,11 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
       
       <div className="max-w-4xl mx-auto space-y-8">
         <h1 className="text-5xl md:text-7xl font-extrabold leading-tight">
-          <span className="gradient-text">اكتشف أدوات المستقبل</span>
+          <span className="gradient-text">نبض.. دليلك الذكي لأدوات المستقبل</span>
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-          دليلك الشامل لأفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك
+          اكتشف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك
         </p>
         
         {/* Search Bar */}
