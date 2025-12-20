@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,11 +20,21 @@ const categoryGradients: Record<string, string> = {
 };
 
 const ToolCard = ({ tool, index }: ToolCardProps) => {
+  const navigate = useNavigate();
   const gradient = categoryGradients[tool.category] || 'from-neon-purple to-neon-blue';
+
+  const handleCardClick = () => {
+    navigate(`/tool/${tool.id}`);
+  };
+
+  const handleVisitClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
   return (
     <article
-      className="glass rounded-2xl p-6 card-glow animate-fade-in"
+      onClick={handleCardClick}
+      className="glass rounded-2xl p-6 card-glow animate-fade-in cursor-pointer transition-transform hover:scale-[1.02]"
       style={{ animationDelay: `${index * 100}ms` }}
       dir="rtl"
     >
@@ -66,6 +77,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           asChild
           size="sm"
           className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2"
+          onClick={handleVisitClick}
         >
           <a href={tool.url} target="_blank" rel="noopener noreferrer">
             زيارة الموقع
