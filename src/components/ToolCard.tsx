@@ -70,7 +70,13 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
               src={tool.image_url} 
               alt={tool.title}
               loading="lazy"
-              className="w-full h-full object-contain p-1.5 bg-white/90 dark:bg-white/95"
+              className="w-full h-full object-contain p-2 bg-white rounded-lg"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.parentElement!.classList.add(`bg-gradient-to-br`, gradient.split(' ')[0], gradient.split(' ')[1]);
+                target.parentElement!.innerHTML = '🤖';
+              }}
             />
           ) : '🤖'}
         </div>
