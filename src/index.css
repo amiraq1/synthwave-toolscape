@@ -92,4 +92,8 @@
                 0 0 60px hsl(var(--neon-blue) / 0.1);
     transform: translateY(-4px);
   }
+
+  .card-glow:hover .icon-container {
+    box-shadow: var(--glow-color);
+  }
 }

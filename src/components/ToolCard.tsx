@@ -20,9 +20,19 @@ const categoryGradients: Record<string, string> = {
   'إنتاجية': 'from-amber-500 to-yellow-600',
 };
 
+// Category glow colors mapping
+const categoryGlowColors: Record<string, string> = {
+  'نصوص': '0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3)',
+  'صور': '0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(168, 85, 247, 0.3)',
+  'فيديو': '0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3)',
+  'برمجة': '0 0 20px rgba(75, 85, 99, 0.6), 0 0 40px rgba(75, 85, 99, 0.3)',
+  'إنتاجية': '0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3)',
+};
+
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const gradient = categoryGradients[tool.category] || 'from-neon-purple to-neon-blue';
+  const glowColor = categoryGlowColors[tool.category] || '0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(139, 92, 246, 0.3)';
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
@@ -41,15 +51,20 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     >
       <div className="flex items-start gap-3 sm:gap-4">
         {/* Icon */}
-        <div className={cn(
-          "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0",
-          "bg-white/10 backdrop-blur-sm",
-          "border border-white/20",
-          "shadow-lg shadow-black/10",
-          "overflow-hidden",
-          "transition-transform duration-300 ease-out group-hover:scale-110",
-          !tool.image_url && `bg-gradient-to-br ${gradient}`
-        )}>
+        <div 
+          className={cn(
+            "icon-container w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0",
+            "bg-white/10 backdrop-blur-sm",
+            "border border-white/20",
+            "shadow-lg shadow-black/10",
+            "overflow-hidden",
+            "transition-all duration-300 ease-out group-hover:scale-110",
+            !tool.image_url && `bg-gradient-to-br ${gradient}`
+          )}
+          style={{
+            '--glow-color': glowColor,
+          } as React.CSSProperties}
+        >
           {tool.image_url ? (
             <img 
               src={tool.image_url} 
