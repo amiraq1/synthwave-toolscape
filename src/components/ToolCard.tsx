@@ -35,7 +35,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   return (
     <article
       onClick={handleCardClick}
-      className="glass rounded-2xl p-4 sm:p-6 card-glow animate-fade-in cursor-pointer transition-transform hover:scale-[1.02] touch-manipulation"
+      className="glass rounded-2xl p-4 sm:p-6 card-glow animate-fade-in cursor-pointer transition-transform hover:scale-[1.02] touch-manipulation group"
       style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
       dir="rtl"
     >
@@ -47,6 +47,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           "border border-white/20",
           "shadow-lg shadow-black/10",
           "overflow-hidden",
+          "transition-transform duration-300 ease-out group-hover:scale-110",
           !tool.image_url && `bg-gradient-to-br ${gradient}`
         )}>
           {tool.image_url ? (
