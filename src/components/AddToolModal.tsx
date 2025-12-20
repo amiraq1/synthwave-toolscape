@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,20 +21,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, LogIn } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];
+const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
 const pricingTypes = ['مجاني', 'مدفوع'];
 
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    if (open) {
+      checkAuth();
+    }
+  }, [open]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -142,6 +157,56 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     }
     mutation.mutate(formData);
   };
+
+  // Show login prompt if not authenticated
+  if (isAuthenticated === false) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md bg-background border-border" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold gradient-text text-right">
+              تسجيل الدخول مطلوب
+            </DialogTitle>
+            <DialogDescription className="text-right text-muted-foreground">
+              يجب عليك تسجيل الدخول لإضافة أداة جديدة
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 mt-6">
+            <Button
+              onClick={() => {
+                onOpenChange(false);
+                navigate('/auth');
+              }}
+              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
+            >
+              <LogIn className="h-4 w-4 ml-2" />
+              تسجيل الدخول
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="w-full"
+            >
+              إلغاء
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Show loading while checking auth
+  if (isAuthenticated === null) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md bg-background border-border" dir="rtl">
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-neon-purple" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
