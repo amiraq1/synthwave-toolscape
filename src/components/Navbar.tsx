@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import {
@@ -21,6 +22,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
@@ -45,6 +47,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const handleSettingsClick = () => {
     setMobileMenuOpen(false);
     navigate('/settings');
+  };
+
+  const handleAdminClick = () => {
+    setMobileMenuOpen(false);
+    navigate('/admin');
   };
 
   return (
@@ -85,6 +92,18 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-48 glass">
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem 
+                        onClick={handleAdminClick}
+                        className="gap-2 cursor-pointer text-neon-purple"
+                      >
+                        <Shield className="h-4 w-4" />
+                        لوحة التحكم
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem 
                     onClick={handleSettingsClick}
                     className="gap-2 cursor-pointer"
@@ -153,6 +172,16 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
             {user ? (
               <>
+                {isAdmin && (
+                  <Button
+                    onClick={handleAdminClick}
+                    variant="outline"
+                    className="w-full gap-2 border-neon-purple/50 text-neon-purple py-6 text-base"
+                  >
+                    <Shield className="h-5 w-5" />
+                    لوحة التحكم
+                  </Button>
+                )}
                 <Button
                   onClick={handleSettingsClick}
                   variant="outline"
