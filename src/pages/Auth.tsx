@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
+import { useSEO } from '@/hooks/useSEO';
 
 const authSchema = z.object({
   email: z.string().email('يرجى إدخال بريد إلكتروني صالح'),
@@ -21,6 +22,11 @@ const emailSchema = z.object({
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 
 const Auth = () => {
+  useSEO({
+    title: 'تسجيل الدخول',
+    description: 'سجل دخولك أو أنشئ حساباً جديداً في نبض - دليل أدوات الذكاء الاصطناعي',
+    noIndex: true,
+  });
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -9,8 +9,15 @@ import Footer from '@/components/Footer';
 import { useTools, type Category } from '@/hooks/useTools';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useSEO } from '@/hooks/useSEO';
 
 const Index = () => {
+  useSEO({
+    title: 'الرئيسية',
+    description: 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أدوات النصوص والصور والفيديو والبرمجة.',
+    keywords: 'ذكاء اصطناعي، أدوات AI، ChatGPT، Midjourney، أدوات نصوص، أدوات صور',
+    ogType: 'website',
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<Category>('الكل');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

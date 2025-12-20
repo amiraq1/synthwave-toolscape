@@ -20,8 +20,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useSEO } from '@/hooks/useSEO';
 
 const Settings = () => {
+  useSEO({
+    title: 'الإعدادات',
+    description: 'إدارة إعدادات حسابك وتفضيلاتك الشخصية في نبض',
+    noIndex: true,
+  });
   const navigate = useNavigate();
   const { user, signOut, loading: authLoading } = useAuth();
   const { toast } = useToast();
