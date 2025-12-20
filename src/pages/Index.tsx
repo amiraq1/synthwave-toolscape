@@ -1,11 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useMemo } from 'react';
+import HeroSection from '@/components/HeroSection';
+import CategoryFilters from '@/components/CategoryFilters';
+import ToolsGrid from '@/components/ToolsGrid';
+import { tools, type Category } from '@/data/tools';
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<Category>('الكل');
+
+  const filteredTools = useMemo(() => {
+    return tools.filter((tool) => {
+      const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           tool.description.includes(searchQuery);
+      const matchesCategory = activeCategory === 'الكل' || tool.category === activeCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, activeCategory]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto max-w-7xl">
+        <HeroSection searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+        <ToolsGrid tools={filteredTools} />
       </div>
     </div>
   );
