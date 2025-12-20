@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowRight, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowRight, ExternalLink, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTool } from '@/hooks/useTool';
@@ -122,6 +122,24 @@ const ToolDetails = () => {
               {tool.description}
             </p>
           </div>
+
+          {/* Features */}
+          {tool.features && tool.features.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground">أهم المميزات</h2>
+              <ul className="space-y-3">
+                {tool.features.map((feature, index) => (
+                  <li 
+                    key={index} 
+                    className="flex items-center gap-3 text-lg text-muted-foreground"
+                  >
+                    <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* CTA Button */}
           <div className="pt-4">

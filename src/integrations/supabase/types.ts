@@ -82,6 +82,7 @@ export type Database = {
           category: string
           created_at: string
           description: string
+          features: string[] | null
           id: number
           image_url: string | null
           is_featured: boolean
@@ -93,6 +94,7 @@ export type Database = {
           category: string
           created_at?: string
           description: string
+          features?: string[] | null
           id?: number
           image_url?: string | null
           is_featured?: boolean
@@ -104,6 +106,7 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
+          features?: string[] | null
           id?: number
           image_url?: string | null
           is_featured?: boolean
