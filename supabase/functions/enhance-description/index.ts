@@ -43,12 +43,40 @@ serve(async (req) => {
 
     const { toolName, description } = await req.json();
     
-    if (!toolName || !description) {
+    // Input validation - type checking
+    if (!toolName || typeof toolName !== 'string') {
       return new Response(
-        JSON.stringify({ error: 'اسم الأداة والوصف مطلوبان' }),
+        JSON.stringify({ error: 'اسم الأداة مطلوب' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    if (!description || typeof description !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'الوصف مطلوب' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Input validation - length limits
+    const trimmedToolName = toolName.trim();
+    const trimmedDescription = description.trim();
+
+    if (trimmedToolName.length < 2 || trimmedToolName.length > 100) {
+      return new Response(
+        JSON.stringify({ error: 'اسم الأداة يجب أن يكون بين 2-100 حرف' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (trimmedDescription.length < 10 || trimmedDescription.length > 2000) {
+      return new Response(
+        JSON.stringify({ error: 'الوصف يجب أن يكون بين 10-2000 حرف' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Input validation passed - toolName:', trimmedToolName.length, 'chars, description:', trimmedDescription.length, 'chars');
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -64,8 +92,8 @@ serve(async (req) => {
 - بدون مقدمات أو عبارات مثل "إليك الوصف المحسن"
 - أعد الوصف المحسن فقط بدون أي إضافات`;
 
-    const userPrompt = `اسم الأداة: ${toolName}
-الوصف الحالي: ${description}
+    const userPrompt = `اسم الأداة: ${trimmedToolName}
+الوصف الحالي: ${trimmedDescription}
 
 أعد صياغة هذا الوصف بأسلوب تسويقي احترافي.`;
 
