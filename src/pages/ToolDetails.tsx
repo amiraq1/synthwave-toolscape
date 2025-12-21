@@ -98,20 +98,20 @@ const ToolDetails = () => {
             {/* Icon/Image */}
             <div className={cn(
               "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden border border-white/20",
-              !tool.image_url && `bg-gradient-to-br ${gradient}`
+              `bg-gradient-to-br ${gradient}`
             )}>
-              {tool.image_url ? (
+              {tool.image_url && (
                 <img 
                   src={tool.image_url} 
-                  alt={tool.title}
+                  alt=""
                   className="w-full h-full object-contain p-4 bg-white rounded-xl"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
-                    target.parentElement!.innerHTML = '🤖';
                   }}
                 />
-              ) : '🤖'}
+              )}
+              {!tool.image_url && '🤖'}
             </div>
 
             {/* Info */}
