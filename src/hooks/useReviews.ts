@@ -23,17 +23,29 @@ export const useReviews = (toolId: number) => {
   return useQuery({
     queryKey: ['reviews', toolId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Fetch reviews without profile join for security
+      const { data: reviews, error } = await supabase
         .from('reviews')
-        .select(`
-          *,
-          profiles (display_name)
-        `)
+        .select('*')
         .eq('tool_id', toolId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as Review[];
+      
+      // Fetch display names securely using the security definer function
+      const reviewsWithProfiles = await Promise.all(
+        (reviews || []).map(async (review) => {
+          const { data: displayName } = await supabase
+            .rpc('get_display_name', { profile_id: review.user_id });
+          
+          return {
+            ...review,
+            profiles: { display_name: displayName }
+          } as Review;
+        })
+      );
+      
+      return reviewsWithProfiles;
     },
   });
 };
