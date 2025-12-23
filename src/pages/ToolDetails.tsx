@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowRight, ExternalLink, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,29 @@ import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
 import { useSEO } from '@/hooks/useSEO';
 import { useStructuredData } from '@/hooks/useStructuredData';
+
+// Component to handle tool icon with fallback
+const ToolIcon = ({ imageUrl, gradient }: { imageUrl: string | null; gradient: string }) => {
+  const [imageError, setImageError] = useState(false);
+  
+  return (
+    <div className={cn(
+      "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden border border-white/20",
+      `bg-gradient-to-br ${gradient}`
+    )}>
+      {imageUrl && !imageError ? (
+        <img 
+          src={imageUrl} 
+          alt=""
+          className="w-full h-full object-contain p-4 bg-white/10 rounded-xl"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <span>🤖</span>
+      )}
+    </div>
+  );
+};
 
 // Category gradient mapping
 const categoryGradients: Record<string, string> = {
@@ -96,23 +120,7 @@ const ToolDetails = () => {
           {/* Tool Header */}
           <div className="flex flex-col md:flex-row items-start gap-8">
             {/* Icon/Image */}
-            <div className={cn(
-              "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden border border-white/20",
-              `bg-gradient-to-br ${gradient}`
-            )}>
-              {tool.image_url && (
-                <img 
-                  src={tool.image_url} 
-                  alt=""
-                  className="w-full h-full object-contain p-4 bg-white rounded-xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-              )}
-              {!tool.image_url && '🤖'}
-            </div>
+            <ToolIcon imageUrl={tool.image_url} gradient={gradient} />
 
             {/* Info */}
             <div className="flex-1 space-y-4">
