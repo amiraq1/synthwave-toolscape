@@ -1,78 +1,115 @@
-import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+
+type AuthState = {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+};
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    session: null,
+    loading: true,
+  });
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+  // لمنع setState بعد unmount
+  const mountedRef = useRef(true);
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+  // لمنع إنهاء loading مرتين
+  const resolvedOnceRef = useRef(false);
+
+  const safelySetAuth = useCallback((session: Session | null) => {
+    if (!mountedRef.current) return;
+
+    setState({
+      session,
+      user: session?.user ?? null,
+      loading: false,
     });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
+  useEffect(() => {
+    mountedRef.current = true;
+
+    // 1) Listener أولاً
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      // أول حدث يحسم الحالة
+      resolvedOnceRef.current = true;
+      safelySetAuth(session);
+    });
+
+    // 2) بعدها نجيب session الحالي (لو ما وصل حدث قبلها)
+    (async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (!mountedRef.current) return;
+
+      // إذا ما صار أي event قبلها، اعتمد getSession
+      if (!resolvedOnceRef.current) {
+        if (error) {
+          // فشل الجلب: اعتبرها غير مسجل
+          safelySetAuth(null);
+          return;
+        }
+        safelySetAuth(data.session ?? null);
+        resolvedOnceRef.current = true;
+      }
+    })();
+
+    return () => {
+      mountedRef.current = false;
+      subscription.unsubscribe();
+    };
+  }, [safelySetAuth]);
+
+  const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName
-        }
-      }
+        data: { display_name: displayName },
+      },
     });
-    return { error };
-  };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
     return { error };
-  };
+  }, []);
 
-  const signInWithGoogle = async () => {
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  }, []);
+
+  const signInWithGoogle = useCallback(async () => {
+    // أفضل UX للموبايل: ارجع لنفس الصفحة الحالية بعد OAuth
+    const redirectTo = window.location.href;
+
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`,
-      }
+      provider: "google",
+      options: { redirectTo },
     });
-    return { error };
-  };
 
-  const signOut = async () => {
+    return { error };
+  }, []);
+
+  const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     return { error };
-  };
+  }, []);
 
   return {
-    user,
-    session,
-    loading,
+    user: state.user,
+    session: state.session,
+    loading: state.loading,
     signUp,
     signIn,
     signInWithGoogle,
-    signOut
+    signOut,
   };
 };
