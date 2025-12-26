@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { User, Session } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 type AuthState = {
@@ -8,6 +8,8 @@ type AuthState = {
   loading: boolean;
 };
 
+const RETURN_TO_KEY = "nabd_return_to";
+
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -15,51 +17,52 @@ export const useAuth = () => {
     loading: true,
   });
 
-  // لمنع setState بعد unmount
-  const mountedRef = useRef(true);
-
-  // لمنع إنهاء loading مرتين
+  const mountedRef = useRef(false);
   const resolvedOnceRef = useRef(false);
 
   const safelySetAuth = useCallback((session: Session | null | undefined) => {
     if (!mountedRef.current) return;
 
     const validSession = session ?? null;
-    const validUser = validSession?.user ?? null;
-
     setState({
       session: validSession,
-      user: validUser,
+      user: validSession?.user ?? null,
       loading: false,
     });
   }, []);
 
   useEffect(() => {
     mountedRef.current = true;
+    resolvedOnceRef.current = false;
 
-    // 1) Listener أولاً
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      // أول حدث يحسم الحالة
-      resolvedOnceRef.current = true;
-      safelySetAuth(session);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // بعض المشاريع يصلها INITIAL_SESSION مباشرة
+      // نخلي "أول نتيجة" تحسم
+      if (!resolvedOnceRef.current) {
+        resolvedOnceRef.current = true;
+        safelySetAuth(session);
+        return;
+      }
+
+      // بعد الحسم الأول: أي تغيير فعلي نحدّثه
+      if (event !== "INITIAL_SESSION") {
+        safelySetAuth(session);
+      }
     });
 
-    // 2) بعدها نجيب session الحالي (لو ما وصل حدث قبلها)
     (async () => {
       const { data, error } = await supabase.auth.getSession();
       if (!mountedRef.current) return;
 
-      // إذا ما صار أي event قبلها، اعتمد getSession
       if (!resolvedOnceRef.current) {
-        if (error) {
-          // فشل الجلب: اعتبرها غير مسجل
-          safelySetAuth(null);
-          return;
-        }
-        safelySetAuth(data.session ?? null);
         resolvedOnceRef.current = true;
+        if (error) {
+          safelySetAuth(null);
+        } else {
+          safelySetAuth(data.session ?? null);
+        }
       }
     })();
 
@@ -90,8 +93,16 @@ export const useAuth = () => {
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
-    // أفضل UX للموبايل: ارجع لنفس الصفحة الحالية بعد OAuth
-    const redirectTo = window.location.href;
+    // خزّن صفحة الرجوع (بدون hash) — أفضل للموبايل
+    try {
+      const url = new URL(window.location.href);
+      url.hash = "";
+      sessionStorage.setItem(RETURN_TO_KEY, url.toString());
+    } catch {
+      // ignore
+    }
+
+    const redirectTo = `${window.location.origin}/auth/callback`;
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -116,3 +127,5 @@ export const useAuth = () => {
     signOut,
   };
 };
+
+// ملاحظة: أنشئ Route بسيط /auth/callback يقرأ RETURN_TO_KEY ويعمل navigate له بعد ما يلتقط Supabase الجلسة.
