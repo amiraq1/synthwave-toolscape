@@ -21,12 +21,15 @@ export const useAuth = () => {
   // لمنع إنهاء loading مرتين
   const resolvedOnceRef = useRef(false);
 
-  const safelySetAuth = useCallback((session: Session | null) => {
+  const safelySetAuth = useCallback((session: Session | null | undefined) => {
     if (!mountedRef.current) return;
 
+    const validSession = session ?? null;
+    const validUser = validSession?.user ?? null;
+
     setState({
-      session,
-      user: session?.user ?? null,
+      session: validSession,
+      user: validUser,
       loading: false,
     });
   }, []);
