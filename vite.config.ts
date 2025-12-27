@@ -121,6 +121,18 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('@tanstack')) {
               return 'react-query';
             }
+            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'ui';
+            }
+            if (id.includes('react-hook-form') || id.includes('zod')) {
+              return 'forms';
+            }
+            if (id.includes('react-router-dom') || id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
             return 'vendor';
           }
         }

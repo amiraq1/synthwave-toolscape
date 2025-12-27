@@ -54,17 +54,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
     navigate('/admin');
   };
 
-  // Preload functions for hover
-  const preloadAuth = () => import('@/pages/Auth');
-  const preloadSettings = () => import('@/pages/Settings');
-  const preloadAdmin = () => import('@/pages/Admin');
-
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
       <div className="container mx-auto max-w-7xl px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-[44px] min-h-[44px]"
           >
@@ -74,7 +69,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               <span className="font-medium text-foreground/80 mr-1">AI</span>
             </span>
           </button>
-          
+
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-3">
             <Button
@@ -99,9 +94,8 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 <DropdownMenuContent align="start" className="w-48 glass">
                   {isAdmin && (
                     <>
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={handleAdminClick}
-                        onMouseEnter={preloadAdmin}
                         className="gap-2 cursor-pointer text-neon-purple"
                       >
                         <Shield className="h-4 w-4" />
@@ -110,16 +104,15 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={handleSettingsClick}
-                    onMouseEnter={preloadSettings}
                     className="gap-2 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
                     الإعدادات
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={handleSignOut}
                     className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                   >
@@ -131,7 +124,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ) : (
               <Button
                 onClick={() => navigate('/auth')}
-                onMouseEnter={preloadAuth}
                 variant="outline"
                 className="gap-2 border-border/50"
               >
@@ -170,7 +162,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 <span className="text-sm truncate">{user.email}</span>
               </div>
             )}
-            
+
             <Button
               onClick={handleAddClick}
               className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2 py-6 text-base"
@@ -184,7 +176,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 {isAdmin && (
                   <Button
                     onClick={handleAdminClick}
-                    onMouseEnter={preloadAdmin}
                     variant="outline"
                     className="w-full gap-2 border-neon-purple/50 text-neon-purple py-6 text-base"
                   >
@@ -194,7 +185,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 )}
                 <Button
                   onClick={handleSettingsClick}
-                  onMouseEnter={preloadSettings}
                   variant="outline"
                   className="w-full gap-2 border-border/50 py-6 text-base"
                 >
@@ -213,7 +203,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ) : (
               <Button
                 onClick={handleAuthClick}
-                onMouseEnter={preloadAuth}
                 variant="outline"
                 className="w-full gap-2 border-border/50 py-6 text-base"
               >
