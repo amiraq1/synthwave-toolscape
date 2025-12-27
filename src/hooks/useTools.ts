@@ -13,6 +13,8 @@ export interface Tool {
   pricing_type: string;
   is_featured: boolean;
   features: string[] | null;
+  average_rating?: number;
+  reviews_count?: number;
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];
@@ -21,11 +23,11 @@ const PAGE_SIZE = 12;
 
 export const useTools = (searchQuery: string, activeCategory: Category) => {
   return useInfiniteQuery({
-    queryKey: ['tools', searchQuery, activeCategory],
+    queryKey: ['tools_page_view', searchQuery, activeCategory],
     queryFn: async ({ pageParam = 0 }) => {
       let query = supabase
-        .from('tools')
-        .select('id, title, description, category, url, image_url, pricing_type, is_featured');
+        .from('tools_page_view')
+        .select('*');
 
       // Apply category filter
       if (activeCategory !== 'الكل') {

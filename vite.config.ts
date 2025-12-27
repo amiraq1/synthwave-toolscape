@@ -112,27 +112,35 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('lucide-react')) {
-              return 'icons';
+            // Consolidate core UI libraries to reduce requests
+            if (id.includes('@radix-ui') ||
+              id.includes('class-variance-authority') ||
+              id.includes('clsx') ||
+              id.includes('tailwind-merge') ||
+              id.includes('lucide-react') ||
+              id.includes('react-hook-form') ||
+              id.includes('zod')) {
+              return 'ui-core';
             }
-            if (id.includes('@supabase')) {
-              return 'supabase';
-            }
-            if (id.includes('@tanstack')) {
-              return 'react-query';
-            }
-            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'ui';
-            }
-            if (id.includes('react-hook-form') || id.includes('zod')) {
-              return 'forms';
-            }
-            if (id.includes('react-router-dom') || id.includes('react') || id.includes('react-dom')) {
+
+            // Consolidate React ecosystem
+            if (id.includes('react-router-dom') ||
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('@tanstack')) {
               return 'react-vendor';
             }
+
+            // Supabase client
+            if (id.includes('@supabase')) {
+              return 'supabase-client';
+            }
+
+            // Charts can remain separate if they are heavy
             if (id.includes('recharts')) {
               return 'charts';
             }
+
             return 'vendor';
           }
         }
