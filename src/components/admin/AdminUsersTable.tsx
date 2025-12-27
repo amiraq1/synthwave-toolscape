@@ -51,6 +51,11 @@ const AdminUsersTable = () => {
 
       if (profilesError) throw profilesError;
 
+      // Fetch private profiles (emails) - admin only via RLS
+      const { data: privateProfiles, error: privateError } = await supabase
+        .from('private_profiles')
+        .select('id, email');
+
       // Fetch roles
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
@@ -61,9 +66,10 @@ const AdminUsersTable = () => {
       // Combine data
       const usersWithRoles: UserWithRole[] = (profiles || []).map((profile) => {
         const userRole = roles?.find((r) => r.user_id === profile.id);
+        const privateProfile = privateProfiles?.find((p) => p.id === profile.id);
         return {
           id: profile.id,
-          email: profile.email,
+          email: privateProfile?.email || null,
           display_name: profile.display_name,
           created_at: profile.created_at,
           role: userRole?.role || null,
