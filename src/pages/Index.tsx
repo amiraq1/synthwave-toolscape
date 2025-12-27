@@ -27,10 +27,22 @@ const Index = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: tools = [], isLoading, error } = useTools(searchQuery, activeCategory);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useTools(searchQuery, activeCategory);
+
+  const tools = useMemo(() =>
+    data?.pages.flatMap(page => page) ?? [],
+    [data]
+  );
 
   // Structured data for tool list
-  const structuredDataItems = useMemo(() => 
+  const structuredDataItems = useMemo(() =>
     tools.map(tool => ({ id: tool.id, name: tool.title, url: tool.url })),
     [tools]
   );
@@ -64,12 +76,15 @@ const Index = () => {
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
         <section aria-label="شبكة الأدوات">
-          <ToolsGrid 
-            tools={tools} 
-            isLoading={isLoading} 
-            error={error} 
+          <ToolsGrid
+            tools={tools}
+            isLoading={isLoading}
+            error={error}
             searchQuery={searchQuery}
             activeCategory={activeCategory}
+            onFetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
           />
         </section>
       </main>
