@@ -117,3 +117,24 @@
     box-shadow: var(--glow-color);
   }
 }
+
+/* Lighthouse Accessibility Fix: Touch Target Size */
+@media (max-width: 768px) {
+  #lovable-badge,
+  #lovable-badge-close {
+    /* Minimum touch target size recommended by Google/Apple (48px) */
+    min-width: 48px !important;
+    min-height: 48px !important;
+    
+    /* Center content to maintain design aesthetics */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Ensure padding contributes to the touch area */
+    box-sizing: border-box !important;
+    
+    /* Add extra spacing from edges */
+    margin: 8px !important;
+  }
+}
