@@ -29,11 +29,30 @@ const Index = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: tools = [], isLoading, error } = useTools(searchQuery, activeCategory);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useTools(searchQuery, activeCategory);
+
+  const tools = useMemo(() =>
+    data?.pages.flatMap(page => page) ?? [],
+    [data]
+  );
+
+ security/harden-pii-and-reviews
+  // Structured data for tool list
+  const structuredDataItems = useMemo(() =>
+    tools.map(tool => ({ id: tool.id, name: tool.title, url: tool.url })),
+    [tools]
 
   const structuredDataItems = useMemo(
     () => tools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
     [tools],
+ main
   );
 
   useStructuredData({
@@ -99,6 +118,9 @@ const Index = () => {
         >
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
+ security/harden-pii-and-reviews
+        <section aria-label="شبكة الأدوات">
+
 
         {/* Grid */}
         <section
@@ -111,12 +133,16 @@ const Index = () => {
             py-3 sm:py-4
           "
         >
+ main
           <ToolsGrid
             tools={tools}
             isLoading={isLoading}
             error={error}
             searchQuery={searchQuery}
             activeCategory={activeCategory}
+            onFetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
           />
         </section>
 

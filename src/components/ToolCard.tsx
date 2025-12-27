@@ -41,11 +41,6 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     navigate(`/tool/${tool.id}`);
   };
 
-  // Preload ToolDetails on hover
-  const handleMouseEnter = () => {
-    import('@/pages/ToolDetails');
-  };
-
   const handleVisitClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -55,14 +50,13 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   return (
     <article
       onClick={handleCardClick}
-      onMouseEnter={handleMouseEnter}
       className="glass rounded-2xl p-4 sm:p-6 card-glow animate-fade-in cursor-pointer transition-transform hover:scale-[1.02] touch-manipulation group"
       style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
       dir="rtl"
     >
       <div className="flex items-start gap-3 sm:gap-4">
         {/* Icon */}
-        <div 
+        <div
           className={cn(
             "icon-container w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0",
             "bg-white/10 backdrop-blur-sm",
@@ -86,7 +80,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             />
           ) : '🤖'}
         </div>
-        
+
         {/* Content */}
         <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
@@ -96,26 +90,26 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2">{tool.description}</p>
         </div>
       </div>
-      
+
       {/* Footer */}
       <div className="flex items-center justify-between mt-4 sm:mt-6 gap-2">
         <div className="flex gap-1.5 sm:gap-2 flex-wrap">
           <Badge variant="secondary" className="bg-neon-purple/80 text-white font-bold border-neon-purple/50 text-xs sm:text-sm px-2 sm:px-3">
             {tool.category}
           </Badge>
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className={cn(
               "border text-xs sm:text-sm px-2 sm:px-3 font-bold",
-              tool.pricing_type === 'مجاني' 
-                ? "bg-emerald-600/80 text-white border-emerald-500/50" 
+              tool.pricing_type === 'مجاني'
+                ? "bg-emerald-600/80 text-white border-emerald-500/50"
                 : "bg-amber-600/80 text-white border-amber-500/50"
             )}
           >
             {tool.pricing_type}
           </Badge>
         </div>
-        
+
         <Button
           asChild
           size="sm"

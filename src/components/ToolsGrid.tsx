@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ToolsGridProps {
   tools: Tool[];
@@ -9,33 +10,45 @@ interface ToolsGridProps {
   error?: Error | null;
   searchQuery?: string;
   activeCategory?: string;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onFetchNextPage?: () => void;
 }
 
-const ToolsGrid = ({ tools, isLoading, error, searchQuery = '', activeCategory = 'الكل' }: ToolsGridProps) => {
+const ToolsGrid = ({
+  tools,
+  isLoading,
+  error,
+  searchQuery = '',
+  activeCategory = 'الكل',
+  hasNextPage,
+  isFetchingNextPage,
+  onFetchNextPage
+}: ToolsGridProps) => {
   const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
     if (isLoading) return;
-    
+
     const count = tools.length;
     let message = '';
-    
+
     if (searchQuery && activeCategory !== 'الكل') {
-      message = count === 0 
+      message = count === 0
         ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}`
         : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`;
     } else if (searchQuery) {
-      message = count === 0 
+      message = count === 0
         ? `لا توجد نتائج للبحث "${searchQuery}"`
         : `تم العثور على ${count} أداة للبحث "${searchQuery}"`;
     } else if (activeCategory !== 'الكل') {
-      message = count === 0 
+      message = count === 0
         ? `لا توجد أدوات في فئة ${activeCategory}`
         : `عرض ${count} أداة في فئة ${activeCategory}`;
     } else {
       message = `عرض ${count} أداة`;
     }
-    
+
     setAnnouncement(message);
   }, [tools.length, searchQuery, activeCategory, isLoading]);
 
@@ -60,9 +73,9 @@ const ToolsGrid = ({ tools, isLoading, error, searchQuery = '', activeCategory =
   if (tools.length === 0) {
     return (
       <>
-        <div 
-          role="status" 
-          aria-live="polite" 
+        <div
+          role="status"
+          aria-live="polite"
           aria-atomic="true"
           className="sr-only"
         >
@@ -78,19 +91,40 @@ const ToolsGrid = ({ tools, isLoading, error, searchQuery = '', activeCategory =
 
   return (
     <>
-      <div 
-        role="status" 
-        aria-live="polite" 
+      <div
+        role="status"
+        aria-live="polite"
         aria-atomic="true"
         className="sr-only"
       >
         {announcement}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4 pb-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4 pb-8">
         {tools.map((tool, index) => (
           <ToolCard key={tool.id} tool={tool} index={index} />
         ))}
       </div>
+
+      {hasNextPage && (
+        <div className="flex justify-center pb-20">
+          <Button
+            onClick={() => onFetchNextPage?.()}
+            disabled={isFetchingNextPage}
+            variant="outline"
+            size="lg"
+            className="bg-white/5 border-neon-purple/20 hover:bg-white/10 text-foreground min-w-[200px]"
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                جاري التحميل...
+              </>
+            ) : (
+              'تحميل المزيد'
+            )}
+          </Button>
+        </div>
+      )}
     </>
   );
 };
