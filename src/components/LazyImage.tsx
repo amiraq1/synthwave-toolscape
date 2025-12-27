@@ -56,11 +56,11 @@ const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyI
           isLoaded ? "opacity-0" : "opacity-100"
         )}
       />
-      
+
       {/* Actual image */}
       {isInView && (
         <img
-          src={src}
+          src={src && src.includes('wikimedia.org') ? '' : src}
           alt={alt}
           loading="lazy"
           onLoad={handleLoad}
