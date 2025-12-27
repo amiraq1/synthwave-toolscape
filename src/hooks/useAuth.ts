@@ -1,78 +1,131 @@
-import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+
+type AuthState = {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+};
+
+const RETURN_TO_KEY = "nabd_return_to";
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    session: null,
+    loading: true,
+  });
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+  const mountedRef = useRef(false);
+  const resolvedOnceRef = useRef(false);
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+  const safelySetAuth = useCallback((session: Session | null | undefined) => {
+    if (!mountedRef.current) return;
+
+    const validSession = session ?? null;
+    setState({
+      session: validSession,
+      user: validSession?.user ?? null,
+      loading: false,
     });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName?: string) => {
+  useEffect(() => {
+    mountedRef.current = true;
+    resolvedOnceRef.current = false;
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // بعض المشاريع يصلها INITIAL_SESSION مباشرة
+      // نخلي "أول نتيجة" تحسم
+      if (!resolvedOnceRef.current) {
+        resolvedOnceRef.current = true;
+        safelySetAuth(session);
+        return;
+      }
+
+      // بعد الحسم الأول: أي تغيير فعلي نحدّثه
+      if (event !== "INITIAL_SESSION") {
+        safelySetAuth(session);
+      }
+    });
+
+    (async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (!mountedRef.current) return;
+
+      if (!resolvedOnceRef.current) {
+        resolvedOnceRef.current = true;
+        if (error) {
+          safelySetAuth(null);
+        } else {
+          safelySetAuth(data.session ?? null);
+        }
+      }
+    })();
+
+    return () => {
+      mountedRef.current = false;
+      subscription.unsubscribe();
+    };
+  }, [safelySetAuth]);
+
+  const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName
-        }
-      }
+        data: { display_name: displayName },
+      },
     });
-    return { error };
-  };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
     return { error };
-  };
+  }, []);
 
-  const signInWithGoogle = async () => {
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  }, []);
+
+  const signInWithGoogle = useCallback(async () => {
+    // خزّن صفحة الرجوع (بدون hash) — أفضل للموبايل
+    try {
+      const url = new URL(window.location.href);
+      url.hash = "";
+      sessionStorage.setItem(RETURN_TO_KEY, url.toString());
+    } catch {
+      // ignore
+    }
+
+    const redirectTo = `${window.location.origin}/auth/callback`;
+
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`,
-      }
+      provider: "google",
+      options: { redirectTo },
     });
-    return { error };
-  };
 
-  const signOut = async () => {
+    return { error };
+  }, []);
+
+  const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     return { error };
-  };
+  }, []);
 
   return {
-    user,
-    session,
-    loading,
+    user: state.user,
+    session: state.session,
+    loading: state.loading,
     signUp,
     signIn,
     signInWithGoogle,
-    signOut
+    signOut,
   };
 };
+
+// ملاحظة: أنشئ Route بسيط /auth/callback يقرأ RETURN_TO_KEY ويعمل navigate له بعد ما يلتقط Supabase الجلسة.

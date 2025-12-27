@@ -14,23 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      private_profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string | null
-          email: string | null
           id: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
-          email?: string | null
           id: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
-          email?: string | null
           id?: string
         }
         Relationships: []
@@ -139,7 +154,41 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string | null
+          rating: number | null
+          reviewer_alias: string | null
+          tool_id: number | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          rating?: number | null
+          reviewer_alias?: never
+          tool_id?: number | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          rating?: number | null
+          reviewer_alias?: never
+          tool_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_display_name: { Args: { profile_id: string }; Returns: string }
@@ -154,6 +203,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

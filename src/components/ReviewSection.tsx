@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { useReviews, useAddReview, useUserReview } from '@/hooks/useReviews';
+import { useReviews, useAddReview, useUserReview, Review } from '@/hooks/useReviews';
 import StarRating from './StarRating';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -167,7 +167,7 @@ const ReviewSection = ({ toolId }: ReviewSectionProps) => {
         </div>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
+          {reviews.map((review: Review) => (
             <div key={review.id} className="glass rounded-xl p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -176,7 +176,7 @@ const ReviewSection = ({ toolId }: ReviewSectionProps) => {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground">
-                      {review.profiles?.display_name || 'مستخدم'}
+                      مستخدم #{review.reviewer_alias.slice(0, 8)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(review.created_at), {
