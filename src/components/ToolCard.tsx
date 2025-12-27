@@ -84,7 +84,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         {/* Content */}
         <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-base sm:text-xl font-bold text-foreground truncate">{tool.title}</h3>
+            <h2 className="text-base sm:text-xl font-bold text-foreground truncate">{tool.title}</h2>
             <AverageRating toolId={tool.id} size="sm" />
           </div>
           <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2">{tool.description}</p>
