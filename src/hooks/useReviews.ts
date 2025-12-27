@@ -4,13 +4,19 @@ import { supabase } from '@/integrations/supabase/client';
 export interface Review {
   id: string;
   tool_id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  reviewer_alias: string;
+}
+
+export interface UserReview {
+  id: string;
+  tool_id: number;
   user_id: string;
   rating: number;
   comment: string | null;
   created_at: string;
-  profiles: {
-    display_name: string | null;
-  } | null;
 }
 
 export interface ToolWithRating {
@@ -23,29 +29,15 @@ export const useReviews = (toolId: number) => {
   return useQuery({
     queryKey: ['reviews', toolId],
     queryFn: async () => {
-      // Fetch reviews without profile join for security
-      const { data: reviews, error } = await supabase
-        .from('reviews')
+      // Use public_reviews view to get reviews without exposing user_id
+      const { data, error } = await supabase
+        .from('public_reviews')
         .select('*')
         .eq('tool_id', toolId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      // Fetch display names securely using the security definer function
-      const reviewsWithProfiles = await Promise.all(
-        (reviews || []).map(async (review) => {
-          const { data: displayName } = await supabase
-            .rpc('get_display_name', { profile_id: review.user_id });
-          
-          return {
-            ...review,
-            profiles: { display_name: displayName }
-          } as Review;
-        })
-      );
-      
-      return reviewsWithProfiles;
+      return (data || []) as Review[];
     },
   });
 };
@@ -54,8 +46,9 @@ export const useToolRatings = () => {
   return useQuery({
     queryKey: ['tool-ratings'],
     queryFn: async () => {
+      // Use public_reviews view to get ratings without exposing user_id
       const { data, error } = await supabase
-        .from('reviews')
+        .from('public_reviews')
         .select('tool_id, rating');
 
       if (error) throw error;
@@ -63,7 +56,7 @@ export const useToolRatings = () => {
       // Calculate averages per tool
       const ratingsMap = new Map<number, { total: number; count: number }>();
       
-      data.forEach((review) => {
+      (data || []).forEach((review: { tool_id: number; rating: number }) => {
         const existing = ratingsMap.get(review.tool_id) || { total: 0, count: 0 };
         ratingsMap.set(review.tool_id, {
           total: existing.total + review.rating,
@@ -127,6 +120,7 @@ export const useUserReview = (toolId: number, userId: string | undefined) => {
     queryFn: async () => {
       if (!userId) return null;
       
+      // User can only read their own reviews from the reviews table
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
@@ -135,7 +129,7 @@ export const useUserReview = (toolId: number, userId: string | undefined) => {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as UserReview | null;
     },
     enabled: !!userId,
   });
