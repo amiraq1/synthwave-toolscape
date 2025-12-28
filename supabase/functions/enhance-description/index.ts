@@ -225,7 +225,16 @@ serve(async (req) => {
         );
       }
       const errorText = await response.text();
-      console.error('AI Gateway error for user:', user.id, 'identifier:', clientIdentifier, 'status:', response.status, 'body:', errorText);
+      console.error(
+        'AI Gateway error for user:',
+        user.id,
+        'identifier:',
+        clientIdentifier,
+        'status:',
+        response.status,
+        'error_length:',
+        errorText.length,
+      );
       throw new Error('AI gateway error');
     }
 
