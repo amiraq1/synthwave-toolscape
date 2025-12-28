@@ -90,64 +90,27 @@
   }
 
   .glass-card {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    @apply bg-card/40 backdrop-blur-md border border-white/5 shadow-lg;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   }
 
-  .gradient-text {
-    @apply bg-gradient-to-r from-neon-purple via-neon-blue to-neon-cyan bg-clip-text text-transparent;
-  }
-
-  .glow-purple {
-    box-shadow: 0 0 40px hsl(var(--neon-purple) / 0.3),
-                0 0 80px hsl(var(--neon-purple) / 0.1);
-  }
-
-  .glow-blue {
-    box-shadow: 0 0 40px hsl(var(--neon-blue) / 0.3),
-                0 0 80px hsl(var(--neon-blue) / 0.1);
-  }
-
+  /* Optimized Glow Effect - subtle and performant */
   .card-glow {
-    transition: all 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s ease;
   }
 
   .card-glow:hover {
-    box-shadow: 0 0 30px hsl(var(--neon-purple) / 0.3),
-                0 0 60px hsl(var(--neon-blue) / 0.2);
-    transform: translateY(-8px) scale(1.02);
-    border-color: hsl(var(--neon-purple) / 0.5);
+    box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.2);
+    transform: translateY(-4px); /* Reduced movement */
+    border-color: rgba(139, 92, 246, 0.3);
   }
 
-  .neon-border {
-    position: relative;
-    overflow: hidden;
+  .card-glow:active {
+    transform: scale(0.98);
   }
 
-  .neon-border::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-      transparent,
-      hsl(var(--neon-purple)),
-      transparent 30%
-    );
-    animation: rotate 4s linear infinite;
-    z-index: -1;
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .card-glow:hover .icon-container {
-    box-shadow: var(--glow-color);
-  }
 }
 
 /* Lighthouse Accessibility Fix: Touch Target Size */
