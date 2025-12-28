@@ -7,14 +7,67 @@ const corsHeaders = {
 
 const SITE_URL = 'https://nabd.lovable.app';
 
+// بسيط rate limiting بالذاكرة لكل IP
+// الغرض: تقليل إساءة استخدام /sitemap مع بقاءه عامًا
+const RATE_LIMIT_WINDOW_MS = 60_000; // دقيقة واحدة
+const RATE_LIMIT_MAX_REQUESTS = 30; // 30 طلبًا لكل IP لكل دقيقة
+
+type RateEntry = {
+  count: number;
+  windowStart: number;
+};
+
+const rateLimitStore = new Map<string, RateEntry>();
+
+function getClientIp(req: Request): string {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
+  return 'unknown';
+}
+
+function checkRateLimit(identifier: string): boolean {
+  const now = Date.now();
+  const existing = rateLimitStore.get(identifier);
+
+  if (!existing || now - existing.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitStore.set(identifier, { count: 1, windowStart: now });
+    return true;
+  }
+
+  if (existing.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  existing.count += 1;
+  rateLimitStore.set(identifier, existing);
+  return true;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const clientIp = getClientIp(req);
+  const clientIdentifier = `ip:${clientIp}`;
+
+  // التحقق من معدل الطلبات قبل أي معالجة ثقيلة
+  if (!checkRateLimit(clientIdentifier)) {
+    console.warn('Sitemap rate limit exceeded', { clientIp });
+    return new Response(
+      JSON.stringify({ error: 'Too many requests' }),
+      {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   try {
-    console.log('Generating dynamic sitemap...');
+    console.log('Generating dynamic sitemap...', { clientIp });
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -27,11 +80,11 @@ Deno.serve(async (req) => {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching tools:', error);
+      console.error('Error fetching tools for sitemap', { clientIp, error });
       throw error;
     }
 
-    console.log(`Found ${tools?.length || 0} tools`);
+    console.log(`Found ${tools?.length || 0} tools for sitemap`, { clientIp });
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -81,7 +134,7 @@ Deno.serve(async (req) => {
     sitemap += `
 </urlset>`;
 
-    console.log('Sitemap generated successfully');
+    console.log('Sitemap generated successfully', { clientIp });
 
     return new Response(sitemap, {
       headers: {
@@ -92,7 +145,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Error generating sitemap:', errorMessage);
+    console.error('Error generating sitemap', { clientIp, error: errorMessage });
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {
