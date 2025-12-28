@@ -43,16 +43,10 @@ const Index = () => {
     [data]
   );
 
- security/harden-pii-and-reviews
   // Structured data for tool list
-  const structuredDataItems = useMemo(() =>
-    tools.map(tool => ({ id: tool.id, name: tool.title, url: tool.url })),
-    [tools]
-
   const structuredDataItems = useMemo(
     () => tools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
-    [tools],
- main
+    [tools]
   );
 
   useStructuredData({
@@ -106,7 +100,7 @@ const Index = () => {
 
         {/* Filters */}
         <section
-          aria-label="تصفية الأدوات حسب الفئة"
+          aria-labelledby="filters-heading"
           className="
             mb-4 sm:mb-6
             rounded-2xl
@@ -116,15 +110,12 @@ const Index = () => {
             py-3 sm:py-4
           "
         >
+          <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
- security/harden-pii-and-reviews
-        <section aria-label="شبكة الأدوات">
-
-
         {/* Grid */}
         <section
-          aria-label="شبكة الأدوات"
+          aria-labelledby="tools-heading"
           className="
             rounded-2xl
             border
@@ -133,7 +124,8 @@ const Index = () => {
             py-3 sm:py-4
           "
         >
- main
+          <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
+
           <ToolsGrid
             tools={tools}
             isLoading={isLoading}

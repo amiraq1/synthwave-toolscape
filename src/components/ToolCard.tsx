@@ -33,7 +33,7 @@ const SimpleRating = ({ rating, count }: { rating: number; count: number }) => (
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-  
+
   // Choose styles based on category
   const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
 
@@ -79,17 +79,17 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
 
         {/* Title & Category */}
         <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2">
-                <h2 className="text-lg font-bold text-foreground truncate leading-tight group-hover:text-neon-purple transition-colors">
-                {tool.title}
-                </h2>
-                {tool.is_featured && (
-                    <span className="w-2 h-2 rounded-full bg-neon-cyan shadow-[0_0_8px] shadow-neon-cyan animate-pulse" title="مميز" />
-                )}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1 font-medium truncate">
-                {tool.category}
-            </p>
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-lg font-bold text-foreground truncate leading-tight group-hover:text-neon-purple transition-colors">
+              {tool.title}
+            </h3>
+            {tool.is_featured && (
+              <span className="w-2 h-2 rounded-full bg-neon-cyan shadow-[0_0_8px] shadow-neon-cyan animate-pulse" title="مميز" />
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 font-medium truncate">
+            {tool.category}
+          </p>
         </div>
       </div>
 
@@ -101,16 +101,16 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       {/* Footer: Rating, Pricing, Action */}
       <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
         <div className="flex items-center gap-2">
-           <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
-           <Badge 
-             variant="outline" 
-             className={cn(
-               "text-xs px-2 py-0.5 h-7 font-normal border-white/10 bg-transparent",
-               tool.pricing_type === 'مجاني' ? "text-emerald-400" : "text-amber-400"
-             )}
-           >
-             {tool.pricing_type}
-           </Badge>
+          <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
+          <Badge
+            variant="outline"
+            className={cn(
+              "text-xs px-2 py-0.5 h-7 font-normal border-white/10 bg-transparent",
+              tool.pricing_type === 'مجاني' ? "text-emerald-400" : "text-amber-400"
+            )}
+          >
+            {tool.pricing_type}
+          </Badge>
         </div>
 
         <Button
