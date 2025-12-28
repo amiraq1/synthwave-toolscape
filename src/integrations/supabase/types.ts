@@ -191,6 +191,16 @@ export type Database = {
       }
     }
     Functions: {
+      admin_get_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
       get_display_name: { Args: { profile_id: string }; Returns: string }
       get_my_role: {
         Args: never

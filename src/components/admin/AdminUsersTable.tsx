@@ -43,38 +43,17 @@ const AdminUsersTable = () => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      // Fetch profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: users, error } = await supabase.rpc('admin_get_users');
 
-      if (profilesError) throw profilesError;
+      if (error) throw error;
 
-      // Fetch private profiles (emails) - admin only via RLS
-      const { data: privateProfiles, error: privateError } = await supabase
-        .from('private_profiles')
-        .select('id, email');
-
-      // Fetch roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Combine data
-      const usersWithRoles: UserWithRole[] = (profiles || []).map((profile) => {
-        const userRole = roles?.find((r) => r.user_id === profile.id);
-        const privateProfile = privateProfiles?.find((p) => p.id === profile.id);
-        return {
-          id: profile.id,
-          email: privateProfile?.email || null,
-          display_name: profile.display_name,
-          created_at: profile.created_at,
-          role: userRole?.role || null,
-        };
-      });
+      const usersWithRoles: UserWithRole[] = (users || []).map((user: any) => ({
+        id: user.user_id,
+        email: user.email || null,
+        display_name: user.display_name,
+        created_at: user.created_at,
+        role: user.role || null,
+      }));
 
       setUsers(usersWithRoles);
     } catch (error: any) {
