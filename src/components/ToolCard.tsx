@@ -22,7 +22,7 @@ const categoryGradients: Record<string, string> = {
 };
 
 // Simplified Rating Component for cleaner look
-const SimpleRating = ({ rating, count }: { rating: number; count: number }) => (
+const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => (
   <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md border border-white/5">
     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
     <span className="text-sm font-semibold tabular-nums text-foreground">{rating?.toFixed(1) ?? "0.0"}</span>
