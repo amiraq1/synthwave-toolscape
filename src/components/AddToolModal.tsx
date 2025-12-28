@@ -97,7 +97,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         });
       }
     } catch (error) {
-      console.error('Error enhancing description:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error enhancing description:', error);
+      }
       toast({
         title: 'خطأ',
         description: 'فشل في تحسين الوصف. يرجى المحاولة مرة أخرى.',
@@ -141,7 +143,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         description: 'فشل في إضافة الأداة. يرجى المحاولة مرة أخرى.',
         variant: 'destructive',
       });
-      console.error('Error adding tool:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error adding tool:', error);
+      }
     },
   });
 

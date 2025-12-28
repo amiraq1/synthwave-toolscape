@@ -34,9 +34,18 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
         query = query.eq('category', activeCategory);
       }
 
-      // Apply search filter
+      // Apply search filter with sanitized input to avoid pattern injection
       if (searchQuery.trim()) {
-        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+        const sanitized = searchQuery
+          .trim()
+          .slice(0, 100)
+          .replace(/\\/g, "\\\\")
+          .replace(/%/g, "\\%")
+          .replace(/_/g, "\\_");
+
+        query = query.or(
+          `title.ilike.%${sanitized}%,description.ilike.%${sanitized}%`
+        );
       }
 
       const from = pageParam as number;

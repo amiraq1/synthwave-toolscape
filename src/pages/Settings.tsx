@@ -92,8 +92,10 @@ const Settings = () => {
         setDisplayName(name);
         initialDisplayNameRef.current = name;
       } catch (error) {
-        // لا نزعج المستخدم بتوست هنا—صفحة إعدادات، خليها silent
-        console.error("Error fetching profile:", error);
+        // لا نزعج المستخدم بتوست هنا—صفحة إعدادات، خليها silent في الإنتاج
+        if (import.meta.env.DEV) {
+          console.error('Error fetching profile:', error);
+        }
       } finally {
         setProfileLoading(false);
       }
