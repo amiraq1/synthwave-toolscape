@@ -28,9 +28,7 @@ const queryClient = new QueryClient({
 });
 
 const PageLoader = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
-  </div>
+  <div className="flex h-screen items-center justify-center">Loading...</div>
 );
 
 const App = () => (
