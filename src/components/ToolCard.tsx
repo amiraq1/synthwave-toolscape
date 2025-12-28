@@ -22,19 +22,9 @@ const categoryGradients: Record<string, string> = {
 };
 
 // Simplified Rating Component for cleaner look
-HEAD
-const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => (
-  <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md border border-white/5">
-    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-    <span className="text-sm font-semibold tabular-nums text-foreground">{rating?.toFixed(1) ?? "0.0"}</span>
-    <span className="text-xs text-muted-foreground/60 hidden sm:inline">({count || 0})</span>
-  </div>
-);
-
 const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => {
   const safeRating = typeof rating === 'number' && !Number.isNaN(rating) ? rating : 0;
   const safeCount = typeof count === 'number' && !Number.isNaN(count) ? count : 0;
-e1c3c245d550f0d3801ffb13f0fc5d51621863f9
 
   return (
     <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md border border-white/5">
