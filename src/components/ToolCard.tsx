@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ExternalLink, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -25,8 +25,8 @@ const categoryGradients: Record<string, string> = {
 const SimpleRating = ({ rating, count }: { rating: number; count: number }) => (
   <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md border border-white/5">
     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-    <span className="text-sm font-semibold tabular-nums text-foreground">{rating.toFixed(1)}</span>
-    <span className="text-xs text-muted-foreground/60 hidden sm:inline">({count})</span>
+    <span className="text-sm font-semibold tabular-nums text-foreground">{rating?.toFixed(1) ?? "0.0"}</span>
+    <span className="text-xs text-muted-foreground/60 hidden sm:inline">({count || 0})</span>
   </div>
 );
 
