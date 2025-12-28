@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-neon-purple" />
             <span className="font-bold gradient-text text-sm sm:text-base">نبض</span>
-            <span className="text-foreground/80 text-sm sm:text-base">AI</span>
+            <span className="text-foreground/80 text-sm sm:text-base" lang="en">AI</span>
           </div>
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
             جميع الحقوق محفوظة © 2024 نبض
