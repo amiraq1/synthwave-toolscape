@@ -23,12 +23,10 @@ const PAGE_SIZE = 12;
 
 export const useTools = (searchQuery: string, activeCategory: Category) => {
   return useInfiniteQuery<Tool[], Error>({
-    queryKey: ['tools_page_view', searchQuery, activeCategory],
+    queryKey: ['tools', searchQuery, activeCategory],
     queryFn: async ({ pageParam = 0 }) => {
-      // Use a loosely-typed query here because tools_page_view is a database view
-      // that is not present in the generated TypeScript types.
-      let query: any = supabase
-        .from('tools_page_view' as any)
+      let query = supabase
+        .from('tools')
         .select('*');
 
       // Apply category filter
