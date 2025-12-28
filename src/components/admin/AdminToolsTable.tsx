@@ -45,9 +45,11 @@ const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتا�
 const pricingTypes = ['مجاني', 'مدفوع', 'مجاني جزئياً'];
 
 const AdminToolsTable = () => {
-  const { data: tools, isLoading } = useTools('', 'الكل');
+  const { data, isLoading } = useTools('', 'الكل');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const toolsList = data?.pages.flat() ?? [];
   
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [deletingTool, setDeletingTool] = useState<Tool | null>(null);
@@ -153,7 +155,7 @@ const AdminToolsTable = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">إدارة الأدوات ({tools?.length || 0})</h2>
+        <h2 className="text-xl font-bold">إدارة الأدوات ({toolsList.length})</h2>
       </div>
 
       <div className="rounded-lg border border-border overflow-hidden">
@@ -167,7 +169,7 @@ const AdminToolsTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tools?.map((tool) => (
+            {toolsList.map((tool) => (
               <TableRow key={tool.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
