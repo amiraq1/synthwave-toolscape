@@ -32,8 +32,8 @@ Allow: /
 User-agent: Pinterest
 Allow: /
 
-# Dynamic Sitemap (generated from database)
-Sitemap: https://ksdodojvchiybbqxfhcl.supabase.co/functions/v1/sitemap
+# Static Sitemap
+Sitemap: https://amiraq.org/sitemap.xml
 
 # Host
-Host: https://nabd.lovable.app
+Host: https://amiraq.org

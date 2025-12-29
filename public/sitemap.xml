@@ -4,17 +4,17 @@
   
   <!-- الصفحة الرئيسية - Homepage -->
   <url>
-    <loc>https://nabd.lovable.app/</loc>
-    <lastmod>2024-12-20</lastmod>
+    <loc>https://amiraq.org/</loc>
+    <lastmod>2024-12-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://nabd.lovable.app/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://amiraq.org/"/>
   </url>
   
   <!-- صفحة التثبيت - Install Page -->
   <url>
-    <loc>https://nabd.lovable.app/install</loc>
-    <lastmod>2024-12-20</lastmod>
+    <loc>https://amiraq.org/install</loc>
+    <lastmod>2024-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
