@@ -50,12 +50,12 @@ const AdminToolsTable = () => {
   const queryClient = useQueryClient();
 
   const toolsList = data?.pages.flat() ?? [];
-  
+
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [deletingTool, setDeletingTool] = useState<Tool | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -79,7 +79,7 @@ const AdminToolsTable = () => {
 
   const handleSave = async () => {
     if (!editingTool) return;
-    
+
     setIsSaving(true);
     try {
       const { error } = await supabase
@@ -100,7 +100,7 @@ const AdminToolsTable = () => {
         title: 'تم التحديث',
         description: 'تم تحديث الأداة بنجاح',
       });
-      
+
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       setEditingTool(null);
     } catch (error: any) {
@@ -116,7 +116,7 @@ const AdminToolsTable = () => {
 
   const handleDelete = async () => {
     if (!deletingTool) return;
-    
+
     setIsDeleting(true);
     try {
       const { error } = await supabase
@@ -130,7 +130,7 @@ const AdminToolsTable = () => {
         title: 'تم الحذف',
         description: 'تم حذف الأداة بنجاح',
       });
-      
+
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       setDeletingTool(null);
     } catch (error: any) {
@@ -174,9 +174,13 @@ const AdminToolsTable = () => {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     {tool.image_url ? (
-                      <img 
-                        src={tool.image_url} 
+                      <img
+                        src={tool.image_url}
                         alt={tool.title}
+                        width={40}
+                        height={40}
+                        loading="lazy"
+                        decoding="async"
                         className="w-10 h-10 rounded-lg object-contain bg-white p-1"
                       />
                     ) : (
@@ -198,10 +202,10 @@ const AdminToolsTable = () => {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant="secondary"
-                    className={tool.pricing_type === 'مجاني' 
-                      ? "bg-emerald-500/20 text-emerald-400" 
+                    className={tool.pricing_type === 'مجاني'
+                      ? "bg-emerald-500/20 text-emerald-400"
                       : "bg-amber-500/20 text-amber-400"
                     }
                   >

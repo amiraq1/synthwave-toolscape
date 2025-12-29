@@ -13,16 +13,20 @@ import { useStructuredData } from '@/hooks/useStructuredData';
 // Component to handle tool icon with fallback
 const ToolIcon = ({ imageUrl, gradient }: { imageUrl: string | null; gradient: string }) => {
   const [imageError, setImageError] = useState(false);
-  
+
   return (
     <div className={cn(
       "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden border border-white/20",
       `bg-gradient-to-br ${gradient}`
     )}>
       {imageUrl && !imageError ? (
-        <img 
-          src={imageUrl} 
+        <img
+          src={imageUrl}
           alt=""
+          width={144}
+          height={144}
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-contain p-4 bg-white/10 rounded-xl"
           onError={() => setImageError(true)}
         />
@@ -130,28 +134,28 @@ const ToolDetails = () => {
                 </h1>
                 <AverageRating toolId={tool.id} size="md" />
               </div>
-              
+
               <div className="flex flex-wrap gap-3">
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className="bg-neon-purple/20 text-neon-purple border-neon-purple/30 text-base px-4 py-1"
                 >
                   {tool.category}
                 </Badge>
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={cn(
                     "border text-base px-4 py-1",
-                    tool.pricing_type === 'مجاني' 
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" 
+                    tool.pricing_type === 'مجاني'
+                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                       : "bg-amber-500/20 text-amber-400 border-amber-500/30"
                   )}
                 >
                   {tool.pricing_type}
                 </Badge>
                 {tool.is_featured && (
-                  <Badge 
-                    variant="secondary" 
+                  <Badge
+                    variant="secondary"
                     className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-base px-4 py-1"
                   >
                     ⭐ مميز
@@ -175,8 +179,8 @@ const ToolDetails = () => {
               <h2 className="text-2xl font-bold text-foreground">أهم المميزات</h2>
               <ul className="space-y-3">
                 {tool.features.map((feature, index) => (
-                  <li 
-                    key={index} 
+                  <li
+                    key={index}
                     className="flex items-center gap-3 text-lg text-muted-foreground"
                   >
                     <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />

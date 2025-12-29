@@ -72,6 +72,8 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             <LazyImage
               src={tool.image_url!}
               alt={tool.title}
+              width={56}
+              height={56}
               className="w-full h-full p-1.5 rounded-xl object-contain"
               placeholderClassName="bg-muted/50"
               onError={() => setImageError(true)}

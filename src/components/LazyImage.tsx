@@ -7,15 +7,38 @@ interface LazyImageProps {
   className?: string;
   placeholderClassName?: string;
   onError?: () => void;
+  /** Fixed dimensions to prevent CLS */
+  width?: number;
+  height?: number;
+  /** If true, load immediately (for above-the-fold images) */
+  priority?: boolean;
 }
 
-const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyImageProps) => {
+/**
+ * LazyImage - مكون صور محسّن مع:
+ * - Lazy loading باستخدام IntersectionObserver
+ * - loading="lazy" و decoding="async" للأداء
+ * - أبعاد ثابتة لمنع CLS
+ * - Placeholder skeleton أثناء التحميل
+ */
+const LazyImage = ({
+  src,
+  alt,
+  className,
+  placeholderClassName,
+  onError,
+  width,
+  height,
+  priority = false
+}: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
   const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (priority) return; // Skip observer for priority images
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -23,7 +46,7 @@ const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyI
           observer.disconnect();
         }
       },
-      { rootMargin: '100px' }
+      { rootMargin: '200px', threshold: 0.01 }
     );
 
     if (imgRef.current) {
@@ -31,7 +54,7 @@ const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyI
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [priority]);
 
   const handleLoad = () => {
     setIsLoaded(true);
@@ -46,8 +69,18 @@ const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyI
     return null;
   }
 
+  // Filter out problematic URLs
+  const safeSrc = src && !src.includes('wikimedia.org') ? src : '';
+
   return (
-    <div ref={imgRef} className={cn("relative", className)}>
+    <div
+      ref={imgRef}
+      className={cn("relative", className)}
+      style={{
+        width: width ? `${width}px` : undefined,
+        height: height ? `${height}px` : undefined,
+      }}
+    >
       {/* Placeholder skeleton */}
       <div
         className={cn(
@@ -55,14 +88,19 @@ const LazyImage = ({ src, alt, className, placeholderClassName, onError }: LazyI
           placeholderClassName,
           isLoaded ? "opacity-0" : "opacity-100"
         )}
+        aria-hidden="true"
       />
 
-      {/* Actual image */}
-      {isInView && (
+      {/* Actual image - only render when in view */}
+      {isInView && safeSrc && (
         <img
-          src={src && src.includes('wikimedia.org') ? '' : src}
+          src={safeSrc}
           alt={alt}
-          loading="lazy"
+          width={width}
+          height={height}
+          loading={priority ? "eager" : "lazy"}
+          decoding={priority ? "sync" : "async"}
+          fetchPriority={priority ? "high" : "auto"}
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
