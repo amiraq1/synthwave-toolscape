@@ -45,8 +45,12 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+        // Include all static assets in precache
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2,webp,avif}"],
+        // Increase max file size for precaching large bundles
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
+          // Cache Google Fonts (styles)
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
@@ -61,6 +65,7 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
+          // Cache Google Fonts (font files)
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
             handler: "CacheFirst",
@@ -75,19 +80,50 @@ export default defineConfig(({ mode }) => ({
               }
             }
           },
+          // Cache Supabase API (dynamic data)
           {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/.*/i,
             handler: "NetworkFirst",
             options: {
-              cacheName: "supabase-cache",
+              cacheName: "supabase-api-cache",
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 // 1 hour
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 5 // 5 minutes
               },
               cacheableResponse: {
                 statuses: [0, 200]
               },
-              networkTimeoutSeconds: 10
+              networkTimeoutSeconds: 5
+            }
+          },
+          // Cache Supabase Storage (images)
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "supabase-storage-cache",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Cache external images
+          {
+            urlPattern: /^https:\/\/.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "external-images-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             }
           }
         ]

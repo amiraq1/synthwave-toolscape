@@ -4,6 +4,7 @@ import { ExternalLink, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
+import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
 
@@ -36,6 +37,7 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 };
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
+  const prefetchTool = usePrefetchTool();
   const [imageError, setImageError] = useState(false);
 
   // Choose styles based on category
@@ -49,11 +51,17 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     e.stopPropagation();
   };
 
+  // Prefetch tool details on hover for faster navigation
+  const handleMouseEnter = () => {
+    prefetchTool(tool.id);
+  };
+
   const showFallback = !tool.image_url || imageError;
 
   return (
     <article
       onClick={handleCardClick}
+      onMouseEnter={handleMouseEnter}
       className="glass-card flex flex-col h-full rounded-xl p-5 card-glow cursor-pointer group relative overflow-hidden"
       style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
       dir="rtl"
