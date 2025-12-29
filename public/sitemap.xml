@@ -19,6 +19,14 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- صفحة الأسئلة الشائعة - FAQ Page -->
+  <url>
+    <loc>https://amiraq.org/faq</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- صفحة اتصل بنا - Contact Page -->
   <url>
     <loc>https://amiraq.org/contact</loc>

@@ -32,7 +32,7 @@ interface ToolListSchema {
 
 type SchemaType = WebsiteSchema | ToolSchema | ToolListSchema;
 
-const SITE_URL = 'https://nabd.lovable.app';
+const SITE_URL = 'https://amiraq.org';
 
 export const useStructuredData = (schema: SchemaType) => {
   useEffect(() => {

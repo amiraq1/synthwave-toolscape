@@ -8,6 +8,7 @@ const Footer = () => {
     main: [
       { label: 'الرئيسية', href: '/' },
       { label: 'حول نبض', href: '/about' },
+      { label: 'الأسئلة الشائعة', href: '/faq' },
       { label: 'اتصل بنا', href: '/contact' },
       { label: 'تثبيت التطبيق', href: '/install' },
     ],
