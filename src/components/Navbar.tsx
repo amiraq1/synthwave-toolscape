@@ -72,6 +72,20 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Navigation Links */}
+            <button
+              onClick={() => navigate('/about')}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+            >
+              حول
+            </button>
+            <button
+              onClick={() => navigate('/faq')}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+            >
+              الأسئلة الشائعة
+            </button>
+
             <Button
               onClick={onAddClick}
               className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2"
