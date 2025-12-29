@@ -27,13 +27,6 @@ const queryClient = new QueryClient({
   },
 });
 
-<<<<<<< HEAD
-=======
-import IndexSkeleton from "@/components/IndexSkeleton";
-
-const PageLoader = () => <IndexSkeleton />;
-
->>>>>>> 2233247b03c4fea260645623ccd27ab4d617c4fb
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
