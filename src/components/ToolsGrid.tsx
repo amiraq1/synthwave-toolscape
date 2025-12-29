@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ToolCard from './ToolCard';
+import ToolRow from './ToolRow';
 import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,15 @@ interface ToolsGridProps {
   onFetchNextPage?: () => void;
 }
 
+/**
+ * ToolsGrid - عرض قائمة الأدوات (List View)
+ * 
+ * التحسينات:
+ * - List بدلاً من Grid = عناصر DOM أقل
+ * - ToolRow خفيف (~10 عناصر) بدلاً من ToolCard (~25 عنصر)
+ * - أداء أفضل على الجوال
+ * - TBT أقل
+ */
 const ToolsGrid = ({
   tools,
   isLoading,
@@ -52,24 +61,27 @@ const ToolsGrid = ({
     setAnnouncement(message);
   }, [tools.length, searchQuery, activeCategory, isLoading]);
 
+  // Loading State
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20" dir="rtl">
-        <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
+        <Loader2 className="h-10 w-10 animate-spin text-neon-purple" />
         <span className="sr-only">جاري تحميل الأدوات...</span>
       </div>
     );
   }
 
+  // Error State
   if (error) {
     return (
-      <div className="text-center py-20" dir="rtl">
-        <p className="text-2xl text-destructive">حدث خطأ في تحميل البيانات</p>
+      <div className="text-center py-16" dir="rtl">
+        <p className="text-xl text-destructive">حدث خطأ في تحميل البيانات</p>
         <p className="text-muted-foreground mt-2">يرجى المحاولة مرة أخرى</p>
       </div>
     );
   }
 
+  // Empty State
   if (tools.length === 0) {
     return (
       <>
@@ -81,8 +93,8 @@ const ToolsGrid = ({
         >
           {announcement}
         </div>
-        <div className="text-center py-20" dir="rtl">
-          <p className="text-2xl text-muted-foreground">لم يتم العثور على أدوات مطابقة</p>
+        <div className="text-center py-16" dir="rtl">
+          <p className="text-xl text-muted-foreground">لم يتم العثور على أدوات مطابقة</p>
           <p className="text-muted-foreground mt-2">جرب البحث بكلمات مختلفة</p>
         </div>
       </>
@@ -91,6 +103,7 @@ const ToolsGrid = ({
 
   return (
     <>
+      {/* Accessibility Announcement */}
       <div
         role="status"
         aria-live="polite"
@@ -99,20 +112,23 @@ const ToolsGrid = ({
       >
         {announcement}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4 pb-8">
-        {tools.map((tool, index) => (
-          <ToolCard key={tool.id} tool={tool} index={index} />
+
+      {/* Tools List (Column Layout) */}
+      <div className="flex flex-col gap-3 px-2 sm:px-4 pb-6" role="list">
+        {tools.map((tool) => (
+          <ToolRow key={tool.id} tool={tool} />
         ))}
       </div>
 
+      {/* Load More Button */}
       {hasNextPage && (
-        <div className="flex justify-center pb-20">
+        <div className="flex justify-center pb-12">
           <Button
             onClick={() => onFetchNextPage?.()}
             disabled={isFetchingNextPage}
             variant="outline"
             size="lg"
-            className="bg-white/5 border-neon-purple/20 hover:bg-white/10 text-foreground min-w-[200px]"
+            className="bg-card/50 border-neon-purple/30 hover:bg-card text-foreground min-w-[180px]"
           >
             {isFetchingNextPage ? (
               <>
