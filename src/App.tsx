@@ -27,9 +27,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const PageLoader = () => (
-  <div className="flex h-screen items-center justify-center">Loading...</div>
-);
+import IndexSkeleton from "@/components/IndexSkeleton";
+
+const PageLoader = () => <IndexSkeleton />;
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
