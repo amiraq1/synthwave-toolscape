@@ -112,7 +112,18 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Consolidate core UI libraries to reduce requests
+            // React MUST be in its own chunk and load first
+            if (id.includes('/react/') || id.includes('/react-dom/')) {
+              return 'react-core';
+            }
+
+            // React ecosystem (depends on react-core)
+            if (id.includes('react-router-dom') ||
+              id.includes('@tanstack')) {
+              return 'react-vendor';
+            }
+
+            // UI libraries (depend on react-core)
             if (id.includes('@radix-ui') ||
               id.includes('class-variance-authority') ||
               id.includes('clsx') ||
@@ -121,14 +132,6 @@ export default defineConfig(({ mode }) => ({
               id.includes('react-hook-form') ||
               id.includes('zod')) {
               return 'ui-core';
-            }
-
-            // Consolidate React ecosystem
-            if (id.includes('react-router-dom') ||
-              id.includes('react') ||
-              id.includes('react-dom') ||
-              id.includes('@tanstack')) {
-              return 'react-vendor';
             }
 
             // Supabase client
