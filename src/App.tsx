@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import HomePageSkeleton from "@/components/skeletons/HomePageSkeleton";
 
 // Lazy load ALL pages for better performance and smaller initial bundle
 const Index = lazy(() => import("./pages/Index"));
@@ -27,17 +27,13 @@ const queryClient = new QueryClient({
   },
 });
 
-const PageLoader = () => (
-  <div className="flex h-screen items-center justify-center">Loading...</div>
-);
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={<HomePageSkeleton />}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/tool/:id" element={<ToolDetails />} />

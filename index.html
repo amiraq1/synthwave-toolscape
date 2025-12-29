@@ -50,7 +50,277 @@
   <body>
     <noscript> تحتاج لتفعيل JavaScript لتشغيل الموقع. </noscript>
 
-    <div id="root"></div>
+    <!-- 
+      Initial Shell Content (Critical for Lighthouse & SEO)
+      يتم استبداله تلقائياً عند تحميل React 
+    -->
+    <div id="root">
+      <!-- Critical Inline CSS للتحميل الفوري -->
+      <style>
+        /* Critical CSS - يُعرض قبل تحميل الـ bundle */
+        .initial-shell {
+          min-height: 100vh;
+          background: hsl(250 24% 9%);
+          color: hsl(210 40% 98%);
+          font-family: 'Cairo', system-ui, sans-serif;
+          display: flex;
+          flex-direction: column;
+        }
+        .initial-shell * { box-sizing: border-box; }
+        
+        /* Navbar Shell */
+        .shell-nav {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          background: hsla(250, 24%, 15%, 0.3);
+          backdrop-filter: blur(24px);
+          border-bottom: 1px solid hsla(250, 20%, 25%, 0.5);
+          padding: 12px 16px;
+        }
+        .shell-nav-content {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .shell-logo {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .shell-logo-icon {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, hsl(263 70% 58%) 0%, hsl(217 91% 60%) 100%);
+          border-radius: 50%;
+          animation: pulse 2s ease-in-out infinite;
+        }
+        .shell-logo-text {
+          font-size: 1.5rem;
+          font-weight: 800;
+          background: linear-gradient(90deg, hsl(263 70% 58%), hsl(217 91% 60%), hsl(186 100% 50%));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        /* Main Content Shell */
+        .shell-main {
+          flex: 1;
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 24px 16px;
+          width: 100%;
+        }
+        
+        /* Hero Shell */
+        .shell-hero {
+          text-align: center;
+          padding: 48px 16px;
+          position: relative;
+        }
+        .shell-hero-title {
+          font-size: clamp(1.875rem, 5vw, 4.5rem);
+          font-weight: 800;
+          line-height: 1.2;
+          margin-bottom: 16px;
+          background: linear-gradient(90deg, hsl(263 70% 58%), hsl(217 91% 60%), hsl(186 100% 50%));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .shell-hero-subtitle {
+          font-size: clamp(1rem, 2.5vw, 1.5rem);
+          color: hsl(215 20% 65%);
+          max-width: 42rem;
+          margin: 0 auto 32px;
+        }
+        .shell-search {
+          max-width: 42rem;
+          margin: 0 auto;
+          background: hsla(250, 24%, 12%, 0.4);
+          border: 1px solid hsla(255, 255, 255, 0.05);
+          border-radius: 16px;
+          padding: 8px;
+          box-shadow: 0 0 20px hsla(263, 70%, 58%, 0.1);
+        }
+        .shell-search-input {
+          width: 100%;
+          height: 48px;
+          background: transparent;
+          border-radius: 12px;
+          animation: skeleton-pulse 1.5s ease-in-out infinite;
+          background: linear-gradient(90deg, hsl(250 20% 18%) 25%, hsl(250 20% 22%) 50%, hsl(250 20% 18%) 75%);
+          background-size: 200% 100%;
+        }
+        
+        /* Cards Grid Shell */
+        .shell-grid-section {
+          background: hsla(250, 24%, 12%, 0.3);
+          border: 1px solid hsla(250, 20%, 20%, 0.5);
+          border-radius: 16px;
+          padding: 16px;
+          margin-top: 24px;
+        }
+        .shell-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 24px;
+        }
+        .shell-card {
+          background: hsla(250, 24%, 12%, 0.4);
+          border: 1px solid hsla(255, 255, 255, 0.05);
+          border-radius: 12px;
+          padding: 20px;
+        }
+        .shell-card-header {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+        .shell-card-icon {
+          width: 56px;
+          height: 56px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, hsla(263, 70%, 58%, 0.2) 0%, hsla(217, 91%, 60%, 0.2) 100%);
+          animation: skeleton-pulse 1.5s ease-in-out infinite;
+          background-size: 200% 100%;
+        }
+        .shell-card-title {
+          flex: 1;
+        }
+        .shell-card-title > div:first-child {
+          height: 20px;
+          width: 75%;
+          background: hsl(250 20% 18%);
+          border-radius: 4px;
+          margin-bottom: 8px;
+          animation: skeleton-pulse 1.5s ease-in-out infinite;
+          background-size: 200% 100%;
+        }
+        .shell-card-title > div:last-child {
+          height: 12px;
+          width: 40%;
+          background: hsl(250 20% 15%);
+          border-radius: 4px;
+          animation: skeleton-pulse 1.5s ease-in-out infinite;
+          background-size: 200% 100%;
+        }
+        .shell-card-desc > div {
+          height: 14px;
+          background: hsl(250 20% 15%);
+          border-radius: 4px;
+          margin-bottom: 8px;
+          animation: skeleton-pulse 1.5s ease-in-out infinite;
+          background-size: 200% 100%;
+        }
+        .shell-card-desc > div:last-child {
+          width: 60%;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        @keyframes skeleton-pulse {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        /* Screen Reader Only */
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+      </style>
+
+      <!-- Initial Shell Content -->
+      <div class="initial-shell" dir="rtl" role="main" aria-busy="true" aria-label="جاري تحميل نبض AI">
+        <!-- Navbar -->
+        <nav class="shell-nav" aria-label="شريط التنقل">
+          <div class="shell-nav-content">
+            <div class="shell-logo">
+              <div class="shell-logo-icon" aria-hidden="true"></div>
+              <span class="shell-logo-text">نبض AI</span>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="shell-main">
+          <!-- Hero Section -->
+          <section class="shell-hero" aria-label="مقدمة الموقع">
+            <h1 class="shell-hero-title">نبض.. دليلك الذكي لأدوات المستقبل</h1>
+            <p class="shell-hero-subtitle">
+              اكتشف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك
+            </p>
+            <div class="shell-search" role="search" aria-label="البحث عن الأدوات">
+              <div class="shell-search-input" aria-label="جاري تحميل حقل البحث"></div>
+              <span class="sr-only">جاري تحميل خاصية البحث عن أدوات الذكاء الاصطناعي</span>
+            </div>
+          </section>
+
+          <!-- Tools Grid Section -->
+          <section class="shell-grid-section" aria-label="أدوات الذكاء الاصطناعي">
+            <h2 class="sr-only">قائمة أدوات الذكاء الاصطناعي</h2>
+            <div class="shell-grid" role="list" aria-label="جاري تحميل الأدوات">
+              <!-- Card 1 -->
+              <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
+                <div class="shell-card-header">
+                  <div class="shell-card-icon" aria-hidden="true"></div>
+                  <div class="shell-card-title">
+                    <div aria-hidden="true"></div>
+                    <div aria-hidden="true"></div>
+                  </div>
+                </div>
+                <div class="shell-card-desc" aria-hidden="true">
+                  <div></div>
+                  <div></div>
+                </div>
+              </article>
+              <!-- Card 2 -->
+              <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
+                <div class="shell-card-header">
+                  <div class="shell-card-icon" aria-hidden="true"></div>
+                  <div class="shell-card-title">
+                    <div aria-hidden="true"></div>
+                    <div aria-hidden="true"></div>
+                  </div>
+                </div>
+                <div class="shell-card-desc" aria-hidden="true">
+                  <div></div>
+                  <div></div>
+                </div>
+              </article>
+              <!-- Card 3 -->
+              <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
+                <div class="shell-card-header">
+                  <div class="shell-card-icon" aria-hidden="true"></div>
+                  <div class="shell-card-title">
+                    <div aria-hidden="true"></div>
+                    <div aria-hidden="true"></div>
+                  </div>
+                </div>
+                <div class="shell-card-desc" aria-hidden="true">
+                  <div></div>
+                  <div></div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
