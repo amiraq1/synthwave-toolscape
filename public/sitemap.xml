@@ -11,6 +11,22 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://amiraq.org/"/>
   </url>
   
+  <!-- صفحة حول - About Page -->
+  <url>
+    <loc>https://amiraq.org/about</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- صفحة اتصل بنا - Contact Page -->
+  <url>
+    <loc>https://amiraq.org/contact</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
   <!-- صفحة التثبيت - Install Page -->
   <url>
     <loc>https://amiraq.org/install</loc>
@@ -23,10 +39,6 @@
     ملاحظة: صفحات الأدوات الفردية (/tool/:id) يتم توليدها ديناميكياً
     لتحسين SEO بشكل أكبر، يُفضل إنشاء sitemap ديناميكي من خلال edge function
     تقوم بجلب جميع الأدوات من قاعدة البيانات
-    
-    Note: Individual tool pages (/tool/:id) are generated dynamically.
-    For better SEO, consider creating a dynamic sitemap via edge function
-    that fetches all tools from the database.
   -->
 
 </urlset>
