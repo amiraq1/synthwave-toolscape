@@ -1,3 +1,4 @@
+
 import { Activity, Users, Target, Zap, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
