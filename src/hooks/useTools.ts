@@ -13,6 +13,7 @@ export interface Tool {
   pricing_type: string;
   is_featured: boolean;
   features: string[] | null;
+  screenshots?: string[] | null;
   average_rating?: number;
   reviews_count?: number;
 }

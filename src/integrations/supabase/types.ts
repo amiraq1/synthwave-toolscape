@@ -102,6 +102,7 @@ export type Database = {
           image_url: string | null
           is_featured: boolean
           pricing_type: string
+          screenshots: string[] | null
           title: string
           url: string
         }
@@ -114,6 +115,7 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           pricing_type?: string
+          screenshots?: string[] | null
           title: string
           url: string
         }
@@ -126,6 +128,7 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean
           pricing_type?: string
+          screenshots?: string[] | null
           title?: string
           url?: string
         }
