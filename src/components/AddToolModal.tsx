@@ -57,6 +57,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     category: '',
     pricing_type: 'مجاني',
     features: ['', '', ''] as string[],
+    screenshots: ['', '', ''] as string[],
   });
 
   const enhanceDescription = async () => {
@@ -112,11 +113,13 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      // Filter out empty features
+      // Filter out empty features & screenshots
       const filteredFeatures = data.features.filter(f => f.trim() !== '');
+      const filteredScreenshots = data.screenshots.filter(s => s.trim() !== '');
       const { error } = await supabase.from('tools').insert([{
         ...data,
         features: filteredFeatures.length > 0 ? filteredFeatures : null,
+        screenshots: filteredScreenshots.length > 0 ? filteredScreenshots : [],
       }]);
       if (error) throw error;
     },
@@ -135,6 +138,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         category: '',
         pricing_type: 'مجاني',
         features: ['', '', ''],
+        screenshots: ['', '', ''],
       });
     },
     onError: (error) => {
@@ -347,6 +351,26 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                   placeholder={`الميزة ${index + 1}`}
                   className="bg-secondary/50 border-border"
                   maxLength={100}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Screenshots */}
+          <div className="space-y-3">
+            <Label>روابط لقطات الشاشة (اختياري - حتى 3 صور)</Label>
+            {formData.screenshots.map((shot, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="text-neon-blue text-lg">🖼️</span>
+                <Input
+                  value={shot}
+                  onChange={(e) => {
+                    const newShots = [...formData.screenshots];
+                    newShots[index] = e.target.value;
+                    setFormData({ ...formData, screenshots: newShots });
+                  }}
+                  placeholder={`رابط الصورة ${index + 1} (اختياري)`}
+                  className="bg-secondary/50 border-border"
                 />
               </div>
             ))}

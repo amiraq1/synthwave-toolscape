@@ -173,6 +173,29 @@ const ToolDetails = () => {
             </p>
           </div>
 
+          {/* Screenshots Gallery */}
+          {tool.screenshots && tool.screenshots.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground">لقطات الشاشة</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {tool.screenshots.map((shot, index) => (
+                  <div
+                    key={index}
+                    className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/20 aspect-video"
+                  >
+                    <img
+                      src={shot}
+                      alt={`لقطة شاشة ${index + 1} لـ ${tool.title}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Features */}
           {tool.features && tool.features.length > 0 && (
             <div className="space-y-4">
