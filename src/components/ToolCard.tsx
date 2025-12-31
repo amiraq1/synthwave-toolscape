@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, Star, Type, Image as ImageIcon, Video, Code, Zap, Sparkles, LucideIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
@@ -22,6 +22,25 @@ const categoryGradients: Record<string, string> = {
   'إنتاجية': 'from-amber-500/20 to-yellow-600/20 text-amber-400',
 };
 
+// Category icons mapping
+const categoryIcons: Record<string, LucideIcon> = {
+  'نصوص': Type,
+  'صور': ImageIcon,
+  'فيديو': Video,
+  'برمجة': Code,
+  'إنتاجية': Zap,
+  'الكل': Sparkles,
+};
+
+// Helper to extract hostname from URL
+const getHostname = (url: string): string | null => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
+};
+
 // Simplified Rating Component for cleaner look
 const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => {
   const safeRating = typeof rating === 'number' && !Number.isNaN(rating) ? rating : 0;
@@ -35,13 +54,24 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
     </div>
   );
 };
+
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const prefetchTool = usePrefetchTool();
   const [imageError, setImageError] = useState(false);
+  const [faviconError, setFaviconError] = useState(false);
 
   // Choose styles based on category
   const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
+
+  // Get category icon
+  const CategoryIcon = categoryIcons[tool.category] || Sparkles;
+
+  // Memoize favicon URL
+  const faviconUrl = useMemo(() => {
+    const hostname = getHostname(tool.url);
+    return hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=128` : null;
+  }, [tool.url]);
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
@@ -56,7 +86,10 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     prefetchTool(tool.id);
   };
 
-  const showFallback = !tool.image_url || imageError;
+  // Determine which icon layer to show
+  const hasValidImage = tool.image_url && !imageError;
+  const hasValidFavicon = faviconUrl && !faviconError;
+  const showCategoryIcon = !hasValidImage && !hasValidFavicon;
 
   return (
     <article
@@ -68,26 +101,37 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     >
       {/* Top Section: Icon & Content */}
       <div className="flex items-start gap-4 mb-4">
-        {/* Icon Container */}
+        {/* Icon Container - Glassmorphism Style */}
         <div
           className={cn(
-            "w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 transition-transform duration-300 group-hover:scale-105",
-            "bg-muted/30 border border-white/5 shadow-inner",
-            showFallback && `bg-gradient-to-br ${categoryStyle.split(' ')[0]} ${categoryStyle.split(' ')[1]}`
+            "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-2xl shrink-0",
+            "bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10",
+            "transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-white/5",
+            showCategoryIcon && `bg-gradient-to-br ${categoryStyle.split(' ')[0]} ${categoryStyle.split(' ')[1]}`
           )}
         >
-          {!showFallback ? (
+          {hasValidImage ? (
             <LazyImage
               src={tool.image_url!}
               alt={tool.title}
               width={56}
               height={56}
-              className="w-full h-full p-1.5 rounded-xl object-contain"
+              className="w-full h-full p-1.5 rounded-2xl object-contain"
               placeholderClassName="bg-muted/50"
               onError={() => setImageError(true)}
             />
+          ) : hasValidFavicon ? (
+            <LazyImage
+              src={faviconUrl!}
+              alt={`${tool.title} favicon`}
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-lg object-contain"
+              placeholderClassName="bg-muted/50"
+              onError={() => setFaviconError(true)}
+            />
           ) : (
-            <span className="opacity-80">🤖</span>
+            <CategoryIcon className={cn("w-6 h-6 opacity-80", categoryStyle.split(' ')[2])} />
           )}
         </div>
 
