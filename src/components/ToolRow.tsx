@@ -29,11 +29,11 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         prefetchTool(tool.id);
     };
 
-    // Safe rating values
-    const rating = typeof tool.avg_rating === 'number' && !Number.isNaN(tool.avg_rating)
-        ? tool.avg_rating.toFixed(1)
+    // Safe rating values (متوافقة مع ToolCard)
+    const rating = typeof tool.average_rating === 'number' && !Number.isNaN(tool.average_rating)
+        ? tool.average_rating.toFixed(1)
         : '0.0';
-    const reviewCount = typeof tool.review_count === 'number' ? tool.review_count : 0;
+    const reviewCount = typeof tool.reviews_count === 'number' ? tool.reviews_count : 0;
 
     // Truncate description
     const shortDesc = tool.description
@@ -58,24 +58,27 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             aria-label={`عرض تفاصيل ${tool.title}`}
         >
             {/* Icon/Logo */}
-            {tool.image_url ? (
-                <img
-                    src={tool.image_url}
-                    alt=""
-                    width={48}
-                    height={48}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-12 h-12 rounded-lg object-contain bg-white/10 p-1 shrink-0"
-                    onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                />
-            ) : (
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-neon-purple/30 to-neon-blue/30 flex items-center justify-center shrink-0">
-                    <span className="text-xl">🤖</span>
-                </div>
-            )}
+            <div
+                className="w-12 h-12 rounded-xl bg-muted/30 border border-white/5 shadow-inner flex items-center justify-center shrink-0
+                           transition-transform duration-200 group-hover:scale-105"
+            >
+                {tool.image_url ? (
+                    <img
+                        src={tool.image_url}
+                        alt=""
+                        width={48}
+                        height={48}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full p-1.5 rounded-xl object-contain"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                    />
+                ) : (
+                    <span className="text-xl opacity-80">🤖</span>
+                )}
+            </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
