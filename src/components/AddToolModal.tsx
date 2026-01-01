@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles, LogIn } from 'lucide-react';
+import { Loader2, Sparkles, LogIn, Upload, X } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
@@ -59,6 +59,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     features: ['', '', ''] as string[],
     screenshots: ['', '', ''] as string[],
   });
+
+  const [screenshotFiles, setScreenshotFiles] = useState<(File | null)[]>([null, null, null]);
+  const [isUploadingScreenshots, setIsUploadingScreenshots] = useState(false);
 
   const enhanceDescription = async () => {
     if (!formData.title.trim()) {
@@ -111,17 +114,57 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     }
   };
 
+  const uploadScreenshots = async (): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    
+    for (let i = 0; i < screenshotFiles.length; i++) {
+      const file = screenshotFiles[i];
+      if (!file) continue;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('tool-screenshots')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('tool-screenshots')
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(publicUrl);
+    }
+
+    return uploadedUrls;
+  };
+
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      // Filter out empty features & screenshots
-      const filteredFeatures = data.features.filter(f => f.trim() !== '');
-      const filteredScreenshots = data.screenshots.filter(s => s.trim() !== '');
-      const { error } = await supabase.from('tools').insert([{
-        ...data,
-        features: filteredFeatures.length > 0 ? filteredFeatures : null,
-        screenshots: filteredScreenshots.length > 0 ? filteredScreenshots : [],
-      }]);
-      if (error) throw error;
+      setIsUploadingScreenshots(true);
+      
+      try {
+        // Upload screenshot files and get URLs
+        const uploadedScreenshots = await uploadScreenshots();
+        
+        // Combine uploaded URLs with manual URLs
+        const allScreenshots = [...uploadedScreenshots, ...data.screenshots.filter(s => s.trim() !== '')];
+        
+        // Filter out empty features
+        const filteredFeatures = data.features.filter(f => f.trim() !== '');
+        
+        const { error } = await supabase.from('tools').insert([{
+          ...data,
+          features: filteredFeatures.length > 0 ? filteredFeatures : null,
+          screenshots: allScreenshots.length > 0 ? allScreenshots : [],
+        }]);
+        
+        if (error) throw error;
+      } finally {
+        setIsUploadingScreenshots(false);
+      }
     },
     onSuccess: () => {
       toast({
@@ -140,6 +183,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         features: ['', '', ''],
         screenshots: ['', '', ''],
       });
+      setScreenshotFiles([null, null, null]);
     },
     onError: (error) => {
       toast({
@@ -356,22 +400,72 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
             ))}
           </div>
 
-          {/* Screenshots */}
+          {/* Screenshots - File Upload */}
           <div className="space-y-3">
-            <Label>روابط لقطات الشاشة (اختياري - حتى 3 صور)</Label>
-            {formData.screenshots.map((shot, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <span className="text-neon-blue text-lg">🖼️</span>
-                <Input
-                  value={shot}
-                  onChange={(e) => {
-                    const newShots = [...formData.screenshots];
-                    newShots[index] = e.target.value;
-                    setFormData({ ...formData, screenshots: newShots });
-                  }}
-                  placeholder={`رابط الصورة ${index + 1} (اختياري)`}
-                  className="bg-secondary/50 border-border"
-                />
+            <Label>لقطات الشاشة (اختياري - حتى 3 صور)</Label>
+            <p className="text-xs text-muted-foreground">ارفع صور لقطات الشاشة مباشرة أو أدخل الروابط يدوياً</p>
+            
+            {screenshotFiles.map((file, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-neon-blue text-lg">🖼️</span>
+                  
+                  {file ? (
+                    <div className="flex-1 flex items-center gap-2 p-2 rounded-lg bg-secondary/50 border border-border">
+                      <span className="text-sm truncate flex-1">{file.name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const newFiles = [...screenshotFiles];
+                          newFiles[index] = null;
+                          setScreenshotFiles(newFiles);
+                        }}
+                        className="h-6 w-6 p-0 hover:bg-destructive/10"
+                      >
+                        <X className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const selectedFile = e.target.files?.[0];
+                          if (selectedFile) {
+                            const newFiles = [...screenshotFiles];
+                            newFiles[index] = selectedFile;
+                            setScreenshotFiles(newFiles);
+                          }
+                        }}
+                        className="hidden"
+                        id={`screenshot-${index}`}
+                      />
+                      <Label
+                        htmlFor={`screenshot-${index}`}
+                        className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg bg-secondary/50 border border-dashed border-border hover:border-neon-purple cursor-pointer transition-colors"
+                      >
+                        <Upload className="h-4 w-4" />
+                        <span className="text-sm">رفع صورة {index + 1}</span>
+                      </Label>
+                      
+                      <span className="text-xs text-muted-foreground">أو</span>
+                      
+                      <Input
+                        value={formData.screenshots[index]}
+                        onChange={(e) => {
+                          const newShots = [...formData.screenshots];
+                          newShots[index] = e.target.value;
+                          setFormData({ ...formData, screenshots: newShots });
+                        }}
+                        placeholder="رابط الصورة"
+                        className="flex-1 bg-secondary/50 border-border text-sm"
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -379,13 +473,13 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
           <div className="flex gap-3 pt-4">
             <Button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || isUploadingScreenshots}
               className="flex-1 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
             >
-              {mutation.isPending ? (
+              {mutation.isPending || isUploadingScreenshots ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                  جاري الحفظ...
+                  {isUploadingScreenshots ? 'جاري رفع الصور...' : 'جاري الحفظ...'}
                 </>
               ) : (
                 'حفظ الأداة'
