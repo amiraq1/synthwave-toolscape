@@ -55,11 +55,23 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
 
     const mutation = useMutation({
         mutationFn: async (values: FormValues) => {
-            const { error } = await (supabase as any).from('posts').insert([{
-                title: values.title,
-                content: values.content,
-                image_url: values.image_url || null,
-            }]);
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
+
+            if (userError) throw userError;
+            if (!user) throw new Error('يجب تسجيل الدخول لإنشاء مقال');
+
+            const { error } = await (supabase as any).from('posts').insert([
+                {
+                    title: values.title,
+                    content: values.content,
+                    image_url: values.image_url || null,
+                    author_id: user.id,
+                },
+            ]);
+
             if (error) throw error;
         },
         onSuccess: () => {
