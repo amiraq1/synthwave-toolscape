@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -10,9 +13,17 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
+} from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -21,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles, LogIn } from 'lucide-react';
+import { Loader2, Sparkles, LogIn, Plus, Trash2 } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
@@ -31,6 +42,20 @@ interface AddToolModalProps {
 const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
 const pricingTypes = ['مجاني', 'مدفوع'];
 
+// 1. تعريف مخطط التحقق (Validation Schema)
+const formSchema = z.object({
+  title: z.string().min(2, 'اسم الأداة يجب أن يكون حرفين على الأقل'),
+  description: z.string().min(10, 'الوصف يجب أن يكون 10 أحرف على الأقل').max(500, 'الوصف طويل جداً'),
+  url: z.string().url('يرجى إدخال رابط صحيح (https://...)'),
+  image_url: z.string().url('يرجى إدخال رابط صورة صحيح').optional().or(z.literal('')),
+  category: z.string().min(1, 'يرجى اختيار التصنيف'),
+  pricing_type: z.string(),
+  features: z.array(z.object({ value: z.string().min(1, 'الميزة لا يمكن أن تكون فارغة') })).optional(),
+  screenshots: z.array(z.object({ value: z.string().url('رابط غير صحيح') })).optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -38,44 +63,56 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
+  // 2. إعداد النموذج (React Hook Form)
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      url: '',
+      image_url: '',
+      category: '',
+      pricing_type: 'مجاني',
+      features: [{ value: '' }], // حقل واحد افتراضي
+      screenshots: [],
+    },
+  });
+
+  // إدارة الحقول الديناميكية
+  const { fields: featureFields, append: appendFeature, remove: removeFeature } = useFieldArray({
+    control: form.control,
+    name: "features",
+  });
+
+  const { fields: screenshotFields, append: appendScreenshot, remove: removeScreenshot } = useFieldArray({
+    control: form.control,
+    name: "screenshots",
+  });
+
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setIsAuthenticated(!!session);
     };
-    
+
     if (open) {
       checkAuth();
+      form.reset(); // إعادة تعيين النموذج عند الفتح
     }
-  }, [open]);
+  }, [open, form]);
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    url: '',
-    image_url: '',
-    category: '',
-    pricing_type: 'مجاني',
-    features: ['', '', ''] as string[],
-    screenshots: ['', '', ''] as string[],
-  });
-
+  // تحسين الوصف باستخدام AI
   const enhanceDescription = async () => {
-    if (!formData.title.trim()) {
-      toast({
-        title: 'مطلوب',
-        description: 'يرجى إدخال اسم الأداة أولاً',
-        variant: 'destructive',
-      });
+    const currentTitle = form.getValues('title');
+    const currentDesc = form.getValues('description');
+
+    if (!currentTitle.trim()) {
+      form.setError('title', { message: 'يرجى إدخال اسم الأداة أولاً' });
       return;
     }
 
-    if (!formData.description.trim()) {
-      toast({
-        title: 'مطلوب',
-        description: 'يرجى إدخال وصف مبدئي للأداة',
-        variant: 'destructive',
-      });
+    if (!currentDesc.trim()) {
+      form.setError('description', { message: 'يرجى إدخال وصف مبدئي للأداة' });
       return;
     }
 
@@ -83,27 +120,25 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     try {
       const { data, error } = await supabase.functions.invoke('enhance-description', {
         body: {
-          toolName: formData.title,
-          description: formData.description,
+          toolName: currentTitle,
+          description: currentDesc,
         },
       });
 
       if (error) throw error;
 
       if (data?.enhancedDescription) {
-        setFormData({ ...formData, description: data.enhancedDescription });
+        form.setValue('description', data.enhancedDescription, { shouldValidate: true });
         toast({
-          title: 'تم التحسين!',
+          title: '✨ تم التحسين!',
           description: 'تم تحسين الوصف بنجاح',
         });
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error enhancing description:', error);
-      }
+      console.error('Error enhancing:', error);
       toast({
         title: 'خطأ',
-        description: 'فشل في تحسين الوصف. يرجى المحاولة مرة أخرى.',
+        description: 'فشل في تحسين الوصف.',
         variant: 'destructive',
       });
     } finally {
@@ -112,82 +147,70 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   };
 
   const mutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      // Filter out empty features & screenshots
-      const filteredFeatures = data.features.filter(f => f.trim() !== '');
-      const filteredScreenshots = data.screenshots.filter(s => s.trim() !== '');
+    mutationFn: async (values: FormValues) => {
+      // تنظيف البيانات قبل الإرسال
+      const cleanFeatures = values.features?.map(f => f.value).filter(Boolean) || [];
+      const cleanScreenshots = values.screenshots?.map(s => s.value).filter(Boolean) || [];
+
       const { error } = await supabase.from('tools').insert([{
-        ...data,
-        features: filteredFeatures.length > 0 ? filteredFeatures : null,
-        screenshots: filteredScreenshots.length > 0 ? filteredScreenshots : [],
+        title: values.title,
+        description: values.description,
+        url: values.url,
+        image_url: values.image_url || null,
+        category: values.category,
+        pricing_type: values.pricing_type,
+        features: cleanFeatures.length > 0 ? cleanFeatures : null,
+        screenshots: cleanScreenshots.length > 0 ? cleanScreenshots : [],
       }]);
       if (error) throw error;
     },
     onSuccess: () => {
       toast({
-        title: 'تمت الإضافة بنجاح!',
-        description: 'تم إضافة الأداة الجديدة إلى الدليل.',
+        title: '🎉 تم!',
+        description: 'تمت إضافة الأداة بنجاح.',
+        className: "bg-emerald-500/10 border-emerald-500/20 text-emerald-500",
       });
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       onOpenChange(false);
-      setFormData({
-        title: '',
-        description: '',
-        url: '',
-        image_url: '',
-        category: '',
-        pricing_type: 'مجاني',
-        features: ['', '', ''],
-        screenshots: ['', '', ''],
-      });
+      form.reset();
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: 'حدث خطأ',
-        description: 'فشل في إضافة الأداة. يرجى المحاولة مرة أخرى.',
+        description: 'فشل في إضافة الأداة. حاول مرة أخرى.',
         variant: 'destructive',
       });
-      if (import.meta.env.DEV) {
-        console.error('Error adding tool:', error);
-      }
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.description || !formData.url || !formData.category) {
-      toast({
-        title: 'بيانات ناقصة',
-        description: 'يرجى ملء جميع الحقول المطلوبة.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    mutation.mutate(formData);
+  const onSubmit = (values: FormValues) => {
+    mutation.mutate(values);
   };
 
-  // Show login prompt if not authenticated
+  // واجهة التحقق من الدخول
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md bg-background border-border" dir="rtl">
+        <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border-white/10" dir="rtl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold gradient-text text-right">
+            <div className="mx-auto w-12 h-12 rounded-full bg-neon-purple/10 flex items-center justify-center mb-4">
+              <LogIn className="w-6 h-6 text-neon-purple" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-center">
               تسجيل الدخول مطلوب
             </DialogTitle>
-            <DialogDescription className="text-right text-muted-foreground">
-              يجب عليك تسجيل الدخول لإضافة أداة جديدة
+            <DialogDescription className="text-center">
+              يجب عليك تسجيل الدخول للمساهمة وإضافة أدوات جديدة
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col gap-4 mt-6">
+          <div className="flex flex-col gap-3 mt-6">
             <Button
               onClick={() => {
                 onOpenChange(false);
                 navigate('/auth');
               }}
-              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
+              className="w-full bg-primary hover:bg-primary/90"
             >
-              <LogIn className="h-4 w-4 ml-2" />
               تسجيل الدخول
             </Button>
             <Button
@@ -203,204 +226,270 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     );
   }
 
-  // Show loading while checking auth
-  if (isAuthenticated === null) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md bg-background border-border" dir="rtl">
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-neon-purple" />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  if (isAuthenticated === null) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-background border-border" dir="rtl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold gradient-text text-right">
+      <DialogContent className="sm:max-w-2xl bg-background/95 backdrop-blur-xl border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar" dir="rtl">
+        <DialogHeader className="space-y-4">
+          <DialogTitle className="text-2xl font-bold gradient-text w-fit">
             إضافة أداة جديدة
           </DialogTitle>
+          <DialogDescription>
+            ساهم في إثراء الدليل بإضافة أدوات مفيدة. يرجى التأكد من صحة البيانات.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">اسم الأداة *</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="مثال: ChatGPT"
-              className="bg-secondary/50 border-border"
-            />
-          </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="description">وصف قصير *</Label>
+            {/* القسم الأساسي */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>اسم الأداة <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="مثال: ChatGPT" {...field} className="bg-secondary/30" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>رابط الموقع <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://..." dir="ltr" {...field} className="bg-secondary/30" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* الوصف والتحسين */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>الوصف <span className="text-red-500">*</span></FormLabel>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={enhanceDescription}
+                      disabled={isEnhancing}
+                      className="text-xs h-6 px-2 text-neon-purple hover:bg-neon-purple/10"
+                    >
+                      {isEnhancing ? <Loader2 className="w-3 h-3 animate-spin ml-1" /> : <Sparkles className="w-3 h-3 ml-1" />}
+                      تحسين بالذكاء الاصطناعي
+                    </Button>
+                  </div>
+                  <FormControl>
+                    <Textarea
+                      placeholder="اشرح ما تفعله الأداة باختصار..."
+                      className="resize-none bg-secondary/30 min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* التصنيف والسعر والصورة */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>التصنيف <span className="text-red-500">*</span></FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-secondary/30">
+                          <SelectValue placeholder="اختر..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pricing_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>السعر</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-secondary/30">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {pricingTypes.map((type) => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="image_url"
+                render={({ field }) => (
+                  <FormItem className="col-span-2 md:col-span-1">
+                    <FormLabel>رابط الشعار</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://... أو فارغ" dir="ltr" {...field} className="bg-secondary/30" />
+                    </FormControl>
+                    <FormDescription className="text-[10px] truncate">
+                      اتركه فارغاً لجلب الأيقونة تلقائياً
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* الميزات (ديناميكي) */}
+            <div className="space-y-2">
+              <FormLabel className="flex justify-between items-center">
+                <span>أهم المميزات</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => appendFeature({ value: '' })}
+                  className="h-6 text-xs"
+                >
+                  <Plus className="w-3 h-3 ml-1" /> إضافة ميزة
+                </Button>
+              </FormLabel>
+              <div className="space-y-2">
+                {featureFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name={`features.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder={`الميزة رقم ${index + 1}`} {...field} className="bg-secondary/30 h-9" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFeature(index)}
+                      className="h-9 w-9 text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+                {featureFields.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-2 border border-dashed rounded-md">
+                    لا توجد ميزات مضافة.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* لقطات الشاشة (ديناميكي) */}
+            <div className="space-y-2">
+              <FormLabel className="flex justify-between items-center">
+                <span>روابط لقطات الشاشة</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => appendScreenshot({ value: '' })}
+                  className="h-6 text-xs"
+                >
+                  <Plus className="w-3 h-3 ml-1" /> إضافة صورة
+                </Button>
+              </FormLabel>
+              <div className="space-y-2">
+                {screenshotFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name={`screenshots.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder={`رابط الصورة ${index + 1}`} dir="ltr" {...field} className="bg-secondary/30 h-9" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeScreenshot(index)}
+                      className="h-9 w-9 text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* الأزرار */}
+            <div className="flex gap-3 pt-6 border-t border-white/5">
               <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={enhanceDescription}
-                disabled={isEnhancing}
-                className="text-xs gap-1 h-7 px-2 text-neon-purple hover:text-neon-blue hover:bg-neon-purple/10"
+                type="submit"
+                disabled={mutation.isPending}
+                className="flex-1 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-all duration-300"
               >
-                {isEnhancing ? (
+                {mutation.isPending ? (
                   <>
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    جاري التحسين...
+                    <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                    جاري الحفظ...
                   </>
                 ) : (
-                  <>
-                    <Sparkles className="h-3 w-3" />
-                    ✨ تحسين الوصف تلقائياً
-                  </>
+                  'حفظ الأداة'
                 )}
               </Button>
-            </div>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="اكتب وصفاً مختصراً للأداة..."
-              className="bg-secondary/50 border-border resize-none"
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="url">رابط الموقع *</Label>
-            <Input
-              id="url"
-              type="url"
-              value={formData.url}
-              onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-              placeholder="https://example.com"
-              className="bg-secondary/50 border-border"
-              dir="ltr"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="image_url">أيقونة/إيموجي الأداة</Label>
-            <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="🤖 أو رابط صورة"
-              className="bg-secondary/50 border-border"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>التصنيف *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
               >
-                <SelectTrigger className="bg-secondary/50 border-border">
-                  <SelectValue placeholder="اختر التصنيف" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border-border z-50">
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                إلغاء
+              </Button>
             </div>
-
-            <div className="space-y-2">
-              <Label>السعر</Label>
-              <Select
-                value={formData.pricing_type}
-                onValueChange={(value) => setFormData({ ...formData, pricing_type: value })}
-              >
-                <SelectTrigger className="bg-secondary/50 border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-background border-border z-50">
-                  {pricingTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-3">
-            <Label>أهم المميزات (اختياري - حتى 3 مميزات)</Label>
-            {formData.features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <span className="text-emerald-500 text-lg">✓</span>
-                <Input
-                  value={feature}
-                  onChange={(e) => {
-                    const newFeatures = [...formData.features];
-                    newFeatures[index] = e.target.value;
-                    setFormData({ ...formData, features: newFeatures });
-                  }}
-                  placeholder={`الميزة ${index + 1}`}
-                  className="bg-secondary/50 border-border"
-                  maxLength={100}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Screenshots */}
-          <div className="space-y-3">
-            <Label>روابط لقطات الشاشة (اختياري - حتى 3 صور)</Label>
-            {formData.screenshots.map((shot, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <span className="text-neon-blue text-lg">🖼️</span>
-                <Input
-                  value={shot}
-                  onChange={(e) => {
-                    const newShots = [...formData.screenshots];
-                    newShots[index] = e.target.value;
-                    setFormData({ ...formData, screenshots: newShots });
-                  }}
-                  placeholder={`رابط الصورة ${index + 1} (اختياري)`}
-                  className="bg-secondary/50 border-border"
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={mutation.isPending}
-              className="flex-1 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
-            >
-              {mutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                  جاري الحفظ...
-                </>
-              ) : (
-                'حفظ الأداة'
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              إلغاء
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
