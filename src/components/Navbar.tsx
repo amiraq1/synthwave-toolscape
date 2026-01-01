@@ -85,6 +85,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               الأسئلة الشائعة
             </button>
+            <button
+              onClick={() => navigate('/blog')}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+            >
+              المدونة
+            </button>
 
             <Button
               onClick={onAddClick}
@@ -183,6 +189,14 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               <Plus className="h-5 w-5" />
               أضف أداة
+            </Button>
+
+            <Button
+              onClick={() => { setMobileMenuOpen(false); navigate('/blog'); }}
+              variant="outline"
+              className="w-full gap-2 border-border/50 py-6 text-base"
+            >
+              المدونة
             </Button>
 
             {user ? (
