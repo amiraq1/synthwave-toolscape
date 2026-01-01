@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles, LogIn } from 'lucide-react';
+import { Loader2, Sparkles, LogIn, Plus, Trash2 } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
@@ -42,7 +42,6 @@ interface AddToolModalProps {
 const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
 const pricingTypes = ['مجاني', 'مدفوع'];
 
-// 1. تعريف مخطط التحقق (Validation Schema)
 const formSchema = z.object({
   title: z.string().min(2, 'اسم الأداة يجب أن يكون حرفين على الأقل'),
   description: z.string().min(10, 'الوصف يجب أن يكون 10 أحرف على الأقل').max(500, 'الوصف طويل جداً'),
@@ -63,7 +62,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  // 2. إعداد النموذج (React Hook Form)
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,12 +71,11 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       image_url: '',
       category: '',
       pricing_type: 'مجاني',
-      features: [{ value: '' }], // حقل واحد افتراضي
+      features: [{ value: '' }],
       screenshots: [],
     },
   });
 
-  // إدارة الحقول الديناميكية
   const { fields: featureFields, append: appendFeature, remove: removeFeature } = useFieldArray({
     control: form.control,
     name: "features",
@@ -97,20 +94,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
     if (open) {
       checkAuth();
-      form.reset(); // إعادة تعيين النموذج عند الفتح
+      form.reset();
     }
   }, [open, form]);
-
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    url: '',
-    image_url: '',
-    category: '',
-    pricing_type: 'مجاني',
-    features: ['', '', ''] as string[],
-    screenshots: ['', '', ''] as string[],
-  });
 
   const enhanceDescription = async () => {
     const currentTitle = form.getValues('title');
@@ -156,42 +142,20 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     }
   };
 
-  const uploadScreenshots = async (): Promise<string[]> => {
-    const uploadedUrls: string[] = [];
-    
-    for (let i = 0; i < screenshotFiles.length; i++) {
-      const file = screenshotFiles[i];
-      if (!file) continue;
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('tool-screenshots')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('tool-screenshots')
-        .getPublicUrl(filePath);
-
-      uploadedUrls.push(publicUrl);
-    }
-
-    return uploadedUrls;
-  };
-
   const mutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      // Filter out empty features & screenshots
-      const filteredFeatures = data.features.filter(f => f.trim() !== '');
-      const filteredScreenshots = data.screenshots.filter(s => s.trim() !== '');
+    mutationFn: async (values: FormValues) => {
+      const cleanFeatures = values.features?.map(f => f.value).filter(Boolean) || [];
+      const cleanScreenshots = values.screenshots?.map(s => s.value).filter(Boolean) || [];
+
       const { error } = await supabase.from('tools').insert([{
-        ...data,
-        features: filteredFeatures.length > 0 ? filteredFeatures : null,
-        screenshots: filteredScreenshots.length > 0 ? filteredScreenshots : [],
+        title: values.title,
+        description: values.description,
+        url: values.url,
+        image_url: values.image_url || null,
+        category: values.category,
+        pricing_type: values.pricing_type,
+        features: cleanFeatures.length > 0 ? cleanFeatures : null,
+        screenshots: cleanScreenshots.length > 0 ? cleanScreenshots : [],
       }]);
       if (error) throw error;
     },
@@ -203,16 +167,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       });
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       onOpenChange(false);
-      setFormData({
-        title: '',
-        description: '',
-        url: '',
-        image_url: '',
-        category: '',
-        pricing_type: 'مجاني',
-        features: ['', '', ''],
-        screenshots: ['', '', ''],
-      });
+      form.reset();
     },
     onError: () => {
       toast({
@@ -227,7 +182,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     mutation.mutate(values);
   };
 
-  // واجهة التحقق من الدخول
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -282,8 +236,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
-
-            {/* القسم الأساسي */}
             <div className="grid md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -314,7 +266,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               />
             </div>
 
-            {/* الوصف والتحسين */}
             <FormField
               control={form.control}
               name="description"
@@ -346,7 +297,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               )}
             />
 
-            {/* التصنيف والسعر والصورة */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
@@ -412,7 +362,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               />
             </div>
 
-            {/* الميزات (ديناميكي) */}
             <div className="space-y-2">
               <FormLabel className="flex justify-between items-center">
                 <span>أهم المميزات</span>
@@ -460,51 +409,74 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               </div>
             </div>
 
-          {/* Screenshots */}
-          <div className="space-y-3">
-            <Label>روابط لقطات الشاشة (اختياري - حتى 3 صور)</Label>
-            {formData.screenshots.map((shot, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <span className="text-neon-blue text-lg">🖼️</span>
-                <Input
-                  value={shot}
-                  onChange={(e) => {
-                    const newShots = [...formData.screenshots];
-                    newShots[index] = e.target.value;
-                    setFormData({ ...formData, screenshots: newShots });
-                  }}
-                  placeholder={`رابط الصورة ${index + 1} (اختياري)`}
-                  className="bg-secondary/50 border-border"
-                />
+            <div className="space-y-2">
+              <FormLabel className="flex justify-between items-center">
+                <span>روابط لقطات الشاشة</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => appendScreenshot({ value: '' })}
+                  className="h-6 text-xs"
+                >
+                  <Plus className="w-3 h-3 ml-1" /> إضافة صورة
+                </Button>
+              </FormLabel>
+              <div className="space-y-2">
+                {screenshotFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name={`screenshots.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder={`رابط الصورة ${index + 1}`} dir="ltr" {...field} className="bg-secondary/30 h-9" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeScreenshot(index)}
+                      className="h-9 w-9 text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={mutation.isPending}
-              className="flex-1 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
-            >
-              {mutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                  جاري الحفظ...
-                </>
-              ) : (
-                'حفظ الأداة'
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              إلغاء
-            </Button>
-          </div>
-        </form>
+            <div className="flex gap-3 pt-6 border-t border-white/5">
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className="flex-1 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-all duration-300"
+              >
+                {mutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin ml-2" />
+                    جاري الحفظ...
+                  </>
+                ) : (
+                  'حفظ الأداة'
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
+              >
+                إلغاء
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
