@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ToolRow from './ToolRow';
+import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,15 +15,6 @@ interface ToolsGridProps {
   onFetchNextPage?: () => void;
 }
 
-/**
- * ToolsGrid - عرض قائمة الأدوات (List View)
- * 
- * التحسينات:
- * - List بدلاً من Grid = عناصر DOM أقل
- * - ToolRow خفيف (~10 عناصر) بدلاً من ToolCard (~25 عنصر)
- * - أداء أفضل على الجوال
- * - TBT أقل
- */
 const ToolsGrid = ({
   tools,
   isLoading,
@@ -64,9 +55,11 @@ const ToolsGrid = ({
   // Loading State
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20" dir="rtl">
-        <Loader2 className="h-10 w-10 animate-spin text-neon-purple" />
-        <span className="sr-only">جاري تحميل الأدوات...</span>
+      <div className="flex justify-center items-center py-20 min-h-[400px]" dir="rtl">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
+          <span className="text-muted-foreground animate-pulse">جاري تحميل الأدوات...</span>
+        </div>
       </div>
     );
   }
@@ -74,9 +67,12 @@ const ToolsGrid = ({
   // Error State
   if (error) {
     return (
-      <div className="text-center py-16" dir="rtl">
-        <p className="text-xl text-destructive">حدث خطأ في تحميل البيانات</p>
-        <p className="text-muted-foreground mt-2">يرجى المحاولة مرة أخرى</p>
+      <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir="rtl">
+        <div className="bg-destructive/10 p-4 rounded-full mb-4">
+          <Loader2 className="h-8 w-8 text-destructive" />
+        </div>
+        <p className="text-xl font-bold text-destructive mb-2">حدث خطأ في تحميل البيانات</p>
+        <p className="text-muted-foreground">يرجى التحقق من الاتصال والمحاولة مرة أخرى</p>
       </div>
     );
   }
@@ -85,17 +81,17 @@ const ToolsGrid = ({
   if (tools.length === 0) {
     return (
       <>
-        <div
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-          className="sr-only"
-        >
+        <div role="status" aria-live="polite" className="sr-only">
           {announcement}
         </div>
-        <div className="text-center py-16" dir="rtl">
-          <p className="text-xl text-muted-foreground">لم يتم العثور على أدوات مطابقة</p>
-          <p className="text-muted-foreground mt-2">جرب البحث بكلمات مختلفة</p>
+        <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir="rtl">
+          <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4 text-3xl grayscale opacity-50">
+            🔍
+          </div>
+          <p className="text-xl font-semibold text-foreground">لم يتم العثور على أدوات</p>
+          <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+            جرب البحث بكلمات مختلفة أو تغيير التصنيف المختار.
+          </p>
         </div>
       </>
     );
@@ -103,40 +99,40 @@ const ToolsGrid = ({
 
   return (
     <>
-      {/* Accessibility Announcement */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" className="sr-only">
         {announcement}
       </div>
 
-      {/* Tools List (Column Layout) */}
-      <div className="flex flex-col gap-3 px-2 sm:px-4 pb-6" role="list">
-        {tools.map((tool) => (
-          <ToolRow key={tool.id} tool={tool} />
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8"
+        role="list"
+      >
+        {tools.map((tool, index) => (
+          <ToolCard key={tool.id} tool={tool} index={index} />
         ))}
       </div>
 
       {/* Load More Button */}
       {hasNextPage && (
-        <div className="flex justify-center pb-12">
+        <div className="flex justify-center pb-16 pt-4">
           <Button
             onClick={() => onFetchNextPage?.()}
             disabled={isFetchingNextPage}
             variant="outline"
             size="lg"
-            className="bg-card/50 border-neon-purple/30 hover:bg-card text-foreground min-w-[180px]"
+            className="
+              bg-card/30 backdrop-blur-sm border-white/10 
+              hover:bg-neon-purple/10 hover:border-neon-purple/50 hover:text-neon-purple
+              transition-all duration-300 min-w-[200px] h-12 text-base font-medium shadow-lg
+            "
           >
             {isFetchingNextPage ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="ml-2 h-5 w-5 animate-spin" />
                 جاري التحميل...
               </>
             ) : (
-              'تحميل المزيد'
+              'عرض المزيد من الأدوات'
             )}
           </Button>
         </div>
