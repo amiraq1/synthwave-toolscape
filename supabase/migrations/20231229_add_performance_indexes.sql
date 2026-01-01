@@ -5,6 +5,9 @@
 -- to improve search and filter performance.
 -- ============================================
 
+-- Enable pg_trgm extension for trigram indexes (required for text search)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- Index for category filtering (most common filter)
 CREATE INDEX IF NOT EXISTS idx_tools_category 
 ON public.tools (category);
@@ -32,13 +35,6 @@ ON public.public_reviews (tool_id);
 -- Index for reviews by user (for user's review history)
 CREATE INDEX IF NOT EXISTS idx_reviews_user_id 
 ON public.public_reviews (user_id);
-
--- ============================================
--- NOTE: For trigram indexes to work, you need
--- to enable the pg_trgm extension first:
--- ============================================
--- CREATE EXTENSION IF NOT EXISTS pg_trgm;
--- ============================================
 
 -- Analyze tables to update statistics
 ANALYZE public.tools;
