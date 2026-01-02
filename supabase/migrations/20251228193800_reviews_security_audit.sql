@@ -64,7 +64,7 @@ SELECT
   r.comment,
   r.created_at,
   -- Hash user_id to prevent PII exposure while maintaining consistency
-  encode(digest(r.user_id::text || '::nabd_salt_v1', 'sha256'), 'hex') AS reviewer_alias
+  md5(r.user_id::text || '::nabd_salt_v1') AS reviewer_alias
 FROM public.reviews r;
 
 -- Revoke ALL privileges first, then grant only SELECT

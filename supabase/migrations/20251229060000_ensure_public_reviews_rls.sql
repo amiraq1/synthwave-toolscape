@@ -50,7 +50,7 @@ SELECT
   r.rating,
   r.comment,
   r.created_at,
-  encode(digest(r.user_id::text || '::nabd_salt_v1', 'sha256'), 'hex') AS reviewer_alias
+  md5(r.user_id::text || '::nabd_salt_v1') AS reviewer_alias
 FROM public.reviews r;
 
 -- 5) Strictly limit privileges on public_reviews VIEW (read-only)
