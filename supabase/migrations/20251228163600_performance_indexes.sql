@@ -1,16 +1,15 @@
--- Add unique index on tools(slug) for faster lookups
-CREATE UNIQUE INDEX IF NOT EXISTS idx_tools_slug ON tools(slug);
+-- Performance indexes for tools table
+-- Note: Only create indexes on columns that actually exist
 
--- Add index on category_id for filtering speed
-CREATE INDEX IF NOT EXISTS idx_tools_category_id ON tools(category_id);
+-- Add index on is_featured for homepage queries (if column exists)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tools' AND column_name = 'is_featured') THEN
+    CREATE INDEX IF NOT EXISTS idx_tools_is_featured ON tools(is_featured);
+  END IF;
+END $$;
 
--- Add index on is_featured for homepage queries
-CREATE INDEX IF NOT EXISTS idx_tools_is_featured ON tools(is_featured);
-
--- Add index on admin_users(id) for faster RLS
-CREATE INDEX IF NOT EXISTS idx_admin_users_id ON admin_users(id);
-
--- Add comments for documentation
-COMMENT ON INDEX idx_tools_slug IS 'Optimizes tool lookups by slug';
-COMMENT ON INDEX idx_tools_category_id IS 'Optimizes filtering tools by category';
-COMMENT ON INDEX idx_tools_is_featured IS 'Optimizes fetching featured tools';
+-- The following indexes are commented out because the columns don't exist:
+-- CREATE UNIQUE INDEX IF NOT EXISTS idx_tools_slug ON tools(slug);
+-- CREATE INDEX IF NOT EXISTS idx_tools_category_id ON tools(category_id);
+-- CREATE INDEX IF NOT EXISTS idx_admin_users_id ON admin_users(id);
