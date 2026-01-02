@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { Loader2, Plus, Calendar, FileText, Pencil, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Calendar, FileText, Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,10 +26,13 @@ import { useToast } from '@/hooks/use-toast';
 interface Post {
   id: string;
   title: string;
+  slug?: string;
   content: string;
+  excerpt?: string;
   image_url: string | null;
   created_at: string;
   is_published: boolean;
+  author_id?: string;
 }
 
 const Blog = () => {
@@ -43,12 +47,17 @@ const Blog = () => {
   const { data: posts, isLoading, error } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      // Admins see all posts, others see only published
+      const query = (supabase as any)
         .from('posts')
         .select('*')
-        .eq('is_published', true)
         .order('created_at', { ascending: false });
-      
+
+      if (!isAdmin) {
+        query.eq('is_published', true);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as Post[];
     },
@@ -72,9 +81,11 @@ const Blog = () => {
     },
   });
 
-  const getExcerpt = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength).trim() + '...';
+  const getExcerpt = (post: Post, maxLength: number = 150) => {
+    // Use excerpt if available, otherwise truncate content
+    const text = post.excerpt || post.content;
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
   };
 
   const handleEdit = (post: Post) => {
@@ -105,9 +116,9 @@ const Blog = () => {
             <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-2">المدونة</h1>
             <p className="text-muted-foreground">أحدث المقالات والأخبار عن الذكاء الاصطناعي</p>
           </div>
-          
+
           {isAdmin && (
-            <Button 
+            <Button
               onClick={handleAddNew}
               className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 gap-2"
             >
@@ -139,7 +150,7 @@ const Blog = () => {
         )}
 
         {/* Empty State */}
-        {!isLoading && !error && posts?.length === 0 && (
+        {!isLoading && !error && (!posts || posts.length === 0) && (
           <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center">
             <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4 text-3xl opacity-50">
               📝
@@ -149,7 +160,7 @@ const Blog = () => {
               كن أول من يشارك مقالاً!
             </p>
             {isAdmin && (
-              <Button 
+              <Button
                 onClick={handleAddNew}
                 className="mt-6 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 gap-2"
               >
@@ -164,7 +175,7 @@ const Blog = () => {
         {!isLoading && !error && posts && posts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <article 
+              <article
                 key={post.id}
                 className="group relative glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-neon-purple/30 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/10"
               >
@@ -190,18 +201,33 @@ const Blog = () => {
                   </div>
                 )}
 
+                {/* Published Status Badge */}
+                {isAdmin && !post.is_published && (
+                  <Badge className="absolute top-3 right-3 z-10 bg-yellow-500/20 text-yellow-500 border-yellow-500/30">
+                    <EyeOff className="w-3 h-3 mr-1" />
+                    مسودة
+                  </Badge>
+                )}
+
                 {/* Image */}
                 {post.image_url && (
                   <div className="aspect-video overflow-hidden bg-muted/20">
-                    <img 
-                      src={post.image_url} 
+                    <img
+                      src={post.image_url}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
                 )}
-                
+
+                {/* Placeholder if no image */}
+                {!post.image_url && (
+                  <div className="aspect-video bg-gradient-to-br from-neon-purple/20 to-neon-blue/20 flex items-center justify-center">
+                    <FileText className="w-12 h-12 text-muted-foreground/30" />
+                  </div>
+                )}
+
                 {/* Content */}
                 <div className="p-5">
                   {/* Date */}
@@ -219,12 +245,13 @@ const Blog = () => {
 
                   {/* Excerpt */}
                   <p className="text-sm text-muted-foreground line-clamp-3">
-                    {getExcerpt(post.content)}
+                    {getExcerpt(post)}
                   </p>
 
                   {/* Read More */}
-                  <button className="mt-4 text-sm font-medium text-neon-purple hover:text-neon-blue transition-colors">
-                    قراءة المزيد ←
+                  <button className="mt-4 text-sm font-medium text-neon-purple hover:text-neon-blue transition-colors flex items-center gap-1">
+                    <Eye className="w-4 h-4" />
+                    قراءة المزيد
                   </button>
                 </div>
               </article>
@@ -236,8 +263,8 @@ const Blog = () => {
       <Footer />
 
       {/* Post Dialog (Add/Edit) */}
-      <PostDialog 
-        open={postDialogOpen} 
+      <PostDialog
+        open={postDialogOpen}
         onOpenChange={handleCloseDialog}
         postToEdit={postToEdit}
       />
