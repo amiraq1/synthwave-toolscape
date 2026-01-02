@@ -74,6 +74,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
     const queryClient = useQueryClient();
     const [imagePreview, setImagePreview] = useState<string>('');
     const [imageError, setImageError] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const isEditMode = !!postToEdit;
 
@@ -194,6 +195,47 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploading(true);
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${crypto.randomUUID()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('blog_images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('blog_images')
+                .getPublicUrl(filePath);
+
+            form.setValue('image_url', publicUrl);
+            setImagePreview(publicUrl);
+            setImageError(false);
+
+            toast({
+                title: "تم الرفع بنجاح",
+                className: "bg-emerald-500/10 text-emerald-500",
+            });
+        } catch (error: any) {
+            console.error('Upload error:', error);
+            toast({
+                title: "فشل الرفع",
+                description: error.message,
+                variant: "destructive",
+            });
+        } finally {
+            setIsUploading(false);
+            e.target.value = '';
+        }
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
@@ -248,35 +290,55 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                                 </FormItem>
                             )} />
 
-                            {/* Image URL with Preview */}
-                            <FormField control={form.control} name="image_url" render={({ field }) => (
+                            {/* Image Upload & URL */}
+                            <div className="space-y-4 border border-white/5 bg-muted/10 p-4 rounded-xl">
                                 <FormItem>
-                                    <FormLabel className="text-xs flex items-center gap-1">
-                                        <ImageIcon className="w-3 h-3" /> صورة الغلاف
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
-                                    </FormControl>
-                                    <FormMessage className="text-[10px]" />
-
-                                    {/* Image Preview */}
-                                    <div className="mt-2 rounded-lg overflow-hidden border border-white/10 bg-muted/20 aspect-video flex items-center justify-center">
-                                        {imagePreview && !imageError ? (
-                                            <img
-                                                src={imagePreview}
-                                                alt="معاينة"
-                                                className="w-full h-full object-cover"
-                                                onError={() => setImageError(true)}
-                                            />
-                                        ) : (
-                                            <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
-                                                <ImageIcon className="w-8 h-8 opacity-30" />
-                                                <span>{imageError ? 'رابط الصورة غير صحيح' : 'معاينة الصورة'}</span>
+                                    <FormLabel className="text-xs">رفع صورة من الجهاز</FormLabel>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            className="bg-background/50 text-xs h-9 cursor-pointer file:text-foreground"
+                                            onChange={handleImageUpload}
+                                            disabled={isUploading}
+                                        />
+                                        {isUploading && (
+                                            <div className="flex items-center justify-center px-3 border border-white/10 rounded-md bg-muted/20">
+                                                <Loader2 className="h-4 w-4 animate-spin text-neon-purple" />
                                             </div>
                                         )}
                                     </div>
                                 </FormItem>
-                            )} />
+
+                                <FormField control={form.control} name="image_url" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs flex items-center gap-1">
+                                            <ImageIcon className="w-3 h-3" /> صورة الغلاف
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+
+                                        {/* Image Preview */}
+                                        <div className="mt-2 rounded-lg overflow-hidden border border-white/10 bg-muted/20 aspect-video flex items-center justify-center">
+                                            {imagePreview && !imageError ? (
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="معاينة"
+                                                    className="w-full h-full object-cover"
+                                                    onError={() => setImageError(true)}
+                                                />
+                                            ) : (
+                                                <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
+                                                    <ImageIcon className="w-8 h-8 opacity-30" />
+                                                    <span>{imageError ? 'رابط الصورة غير صحيح' : 'معاينة الصورة'}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </FormItem>
+                                )} />
+                            </div>
 
                             {/* Excerpt */}
                             <FormField control={form.control} name="excerpt" render={({ field }) => (
@@ -328,10 +390,10 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
 
                         </form>
                     </Form>
-                </div>
+                </div >
 
                 {/* Fixed Footer */}
-                <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
+                < DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2" >
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">
                         إلغاء
                     </Button>
@@ -347,10 +409,10 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             isEditMode ? 'حفظ التعديلات' : 'نشر المقال'
                         )}
                     </Button>
-                </DialogFooter>
+                </DialogFooter >
 
-            </DialogContent>
-        </Dialog>
+            </DialogContent >
+        </Dialog >
     );
 };
 
