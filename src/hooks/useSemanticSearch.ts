@@ -58,7 +58,7 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
         queryFn: async () => {
             if (!toolId) return [];
 
-            const { data, error } = await supabase.rpc('find_similar_tools', {
+            const { data, error } = await (supabase as any).rpc('find_similar_tools', {
                 tool_id: typeof toolId === 'string' ? parseInt(toolId, 10) : toolId,
                 limit_count: limit,
             });
