@@ -1,5 +1,6 @@
 import { Activity, Mail, Info, Phone, Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import NewsletterForm from './NewsletterForm';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -101,6 +102,15 @@ const Footer = () => {
                 ))}
               </ul>
             </nav>
+          </div>
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="py-6 border-t border-border/30 mb-6">
+          <div className="max-w-xl mx-auto text-center">
+            <h3 className="font-bold text-lg mb-2">📬 اشترك في نشرتنا الأسبوعية</h3>
+            <p className="text-sm text-muted-foreground mb-4">احصل على أحدث أدوات الذكاء الاصطناعي مباشرة في بريدك</p>
+            <NewsletterForm variant="compact" className="max-w-md mx-auto" />
           </div>
         </div>
 

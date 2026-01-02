@@ -14,6 +14,9 @@ export interface Tool {
   is_featured: boolean;
   is_sponsored?: boolean;
   sponsor_expiry?: string | null;
+  supports_arabic?: boolean;
+  coupon_code?: string | null;
+  deal_expiry?: string | null;
   features: string[] | null;
   screenshots?: string[] | null;
   average_rating?: number;

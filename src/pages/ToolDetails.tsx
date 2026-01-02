@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowRight, ExternalLink, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ExternalLink, Loader2, CheckCircle2, Copy, Tag, Languages, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTool } from '@/hooks/useTool';
@@ -174,6 +174,50 @@ const ToolDetails = () => {
               {tool.description}
             </p>
           </div>
+
+          {/* Coupon Code Section */}
+          {tool.coupon_code && (!tool.deal_expiry || new Date(tool.deal_expiry) > new Date()) && (
+            <div className="bg-gradient-to-r from-rose-500/10 to-pink-500/10 border-2 border-dashed border-rose-500/30 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+                  <Tag className="w-5 h-5 text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-rose-400">عرض حصري!</h3>
+                  <p className="text-sm text-muted-foreground">استخدم الكود للحصول على خصم</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <code className="flex-1 bg-background/50 border border-rose-500/20 rounded-xl px-4 py-3 text-lg font-mono text-center text-rose-300 tracking-wider">
+                  {tool.coupon_code}
+                </code>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-12 w-12 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl"
+                  onClick={() => {
+                    navigator.clipboard.writeText(tool.coupon_code || '');
+                    // You can add a toast here
+                  }}
+                >
+                  <Copy className="w-5 h-5" />
+                </Button>
+              </div>
+              {tool.deal_expiry && (
+                <p className="text-xs text-muted-foreground mt-3 text-center">
+                  ⏰ ينتهي العرض: {new Date(tool.deal_expiry).toLocaleDateString('ar-SA')}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Arabic Support Notice */}
+          {tool.supports_arabic && (
+            <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+              <Languages className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-400 font-medium">هذه الأداة تدعم اللغة العربية بالكامل 🇸🇦</span>
+            </div>
+          )}
 
           {/* Screenshots Gallery */}
           {tool.screenshots && tool.screenshots.length > 0 && (

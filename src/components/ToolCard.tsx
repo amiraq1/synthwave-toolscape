@@ -12,7 +12,9 @@ import {
   Music,
   LayoutGrid,
   Heart,
-  Crown
+  Crown,
+  Tag,
+  Languages
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -73,6 +75,8 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const toolIsBookmarked = isBookmarked(tool.id);
   const isSponsored = tool.is_sponsored === true;
+  const supportsArabic = tool.supports_arabic === true;
+  const hasDeal = !!tool.coupon_code && (!tool.deal_expiry || new Date(tool.deal_expiry) > new Date());
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
@@ -209,6 +213,22 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           >
             {tool.category}
           </Badge>
+
+          {/* Arabic Support Badge */}
+          {supportsArabic && (
+            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] px-1.5 py-0 gap-0.5">
+              <Languages className="w-2.5 h-2.5" />
+              عربي
+            </Badge>
+          )}
+
+          {/* Deal/Coupon Badge */}
+          {hasDeal && (
+            <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/20 text-[10px] px-1.5 py-0 gap-0.5 animate-pulse">
+              <Tag className="w-2.5 h-2.5" />
+              عرض
+            </Badge>
+          )}
         </div>
       </div>
 
