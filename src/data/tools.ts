@@ -1,77 +1,157 @@
-export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية';
+export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'صوت';
 
 export interface Tool {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  category: Category;
-  price: 'مجاني' | 'مدفوع';
-  icon: string;
+  category: string;
+  pricing_type: string;
   url: string;
-  gradient: string;
+  image_url?: string;
+  gradient?: string; // Optional: kept for backward compatibility if needed
+  is_featured?: boolean;
+  average_rating?: number;
+  reviews_count?: number;
+  features?: string[];
+  screenshots?: string[];
 }
 
-export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];
+export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
 
 export const tools: Tool[] = [
+  // --- Core Tools (Updated) ---
   {
     id: '1',
-    name: 'ChatGPT',
+    title: 'ChatGPT',
     description: 'أنجز مهام الكتابة، الترجمة، والبحث عن المعلومة فوراً مع مساعدك الذكي.',
     category: 'نصوص',
-    price: 'مجاني',
-    icon: '🤖',
+    pricing_type: 'مجاني',
     url: 'https://chat.openai.com',
-    gradient: 'from-emerald-500 to-teal-600',
+    image_url: '',
+    average_rating: 4.9,
+    reviews_count: 5000,
+    is_featured: true,
   },
   {
     id: '2',
-    name: 'Midjourney',
+    title: 'Midjourney',
     description: 'حول كلماتك إلى صور فنية مبهرة بتفاصيل دقيقة وإبداع لا حدود له.',
     category: 'صور',
-    price: 'مدفوع',
-    icon: '🎨',
+    pricing_type: 'مدفوع',
     url: 'https://midjourney.com',
-    gradient: 'from-purple-500 to-pink-600',
-  },
-  {
-    id: '3',
-    name: 'Jasper',
-    description: 'ضاعف إنتاجك من المحتوى التسويقي المميز وحسن نتائجك في محركات البحث.',
-    category: 'نصوص',
-    price: 'مدفوع',
-    icon: '✍️',
-    url: 'https://jasper.ai',
-    gradient: 'from-orange-500 to-red-600',
-  },
-  {
-    id: '4',
-    name: 'RunwayML',
-    description: 'اصنع فيديوهات احترافية وعدل عليها بمؤثرات بصرية مذهلة دون عناء.',
-    category: 'فيديو',
-    price: 'مدفوع',
-    icon: '🎬',
-    url: 'https://runwayml.com',
-    gradient: 'from-blue-500 to-cyan-600',
+    image_url: '',
+    average_rating: 4.8,
+    reviews_count: 3200,
   },
   {
     id: '5',
-    name: 'GitHub Copilot',
+    title: 'GitHub Copilot',
     description: 'سرّع عملية البرمجة واكتشف الأخطاء مبكراً مع اقتراحات الكود الذكية.',
     category: 'برمجة',
-    price: 'مدفوع',
-    icon: '💻',
+    pricing_type: 'مدفوع',
     url: 'https://github.com/features/copilot',
-    gradient: 'from-gray-600 to-gray-800',
+    image_url: '',
+    average_rating: 4.7,
+    reviews_count: 1500,
+  },
+
+  // --- New Generation Tools (2025/2026) ---
+
+  // Coding
+  {
+    id: '108',
+    title: 'Cursor',
+    description: 'محرر أكواد ثوري مبني للذكاء الاصطناعي. اكتب الكود، صحح الأخطاء، وابنِ مشاريع كاملة عبر الدردشة.',
+    category: 'برمجة',
+    pricing_type: 'مجاني',
+    url: 'https://cursor.sh',
+    image_url: '',
+    is_featured: true,
+    average_rating: 5.0,
+    reviews_count: 850,
+    features: ['شات ذكي مدمج في المحرر', 'تصحيح تلقائي للأخطاء', 'دعم إضافة مستودعات كاملة'],
   },
   {
-    id: '6',
-    name: 'Notion AI',
-    description: 'حول ملاحظاتك إلى خطط عمل واضحة واستفد من الذكاء الاصطناعي لتنظيم حياتك.',
+    id: '109',
+    title: 'Qwen 2.5',
+    description: 'نموذج لغوي قوي من Alibaba يتفوق في مهام البرمجة والرياضيات المعقدة.',
+    category: 'برمجة',
+    pricing_type: 'مجاني',
+    url: 'https://qwenlm.github.io',
+    image_url: '',
+    average_rating: 4.6,
+    reviews_count: 120,
+  },
+
+  // Video & Design
+  {
+    id: '105',
+    title: 'Google Veo',
+    description: 'مولد فيديو سينمائي من Google DeepMind بدقة 1080p وفهم عميق لفيزياء الحركة.',
+    category: 'فيديو',
+    pricing_type: 'مدفوع',
+    url: 'https://deepmind.google/technologies/veo',
+    image_url: '',
+    is_featured: true,
+    average_rating: 4.9,
+    reviews_count: 50,
+  },
+  {
+    id: '106',
+    title: 'Ideogram',
+    description: 'توليد صور مع نصوص دقيقة ومقروءة بداخلها، مثالي لتصميم الشعارات والبوسترات.',
+    category: 'صور',
+    pricing_type: 'مجاني',
+    url: 'https://ideogram.ai',
+    image_url: '',
+    average_rating: 4.7,
+    reviews_count: 400,
+  },
+
+  // Productivity & Agents
+  {
+    id: '101',
+    title: 'Zapier Agents',
+    description: 'أنشئ وكلاء ذكاء اصطناعي يعملون 24/7 لتنفيذ مهام معقدة عبر 6000+ تطبيق.',
     category: 'إنتاجية',
-    price: 'مدفوع',
-    icon: '📝',
-    url: 'https://notion.so',
-    gradient: 'from-amber-500 to-yellow-600',
+    pricing_type: 'مدفوع',
+    url: 'https://zapier.com/agents',
+    image_url: '',
+    is_featured: true,
+    average_rating: 4.8,
+    reviews_count: 210,
+  },
+  {
+    id: '102',
+    title: 'Claude 3.5 Artifacts',
+    description: 'ليس مجرد شات! أنشئ واجهات تفاعلية، مستندات، ورسومات بيانية مباشرة في المحادثة.',
+    category: 'نصوص',
+    pricing_type: 'مجاني',
+    url: 'https://claude.ai',
+    image_url: '',
+    average_rating: 4.9,
+    reviews_count: 1200,
+  },
+  {
+    id: '103',
+    title: 'Perplexity',
+    description: 'محرك إجابات فوري يغنيك عن البحث التقليدي، مع مصادر دقيقة وحديثة.',
+    category: 'إنتاجية',
+    pricing_type: 'مجاني',
+    url: 'https://www.perplexity.ai',
+    image_url: '',
+    average_rating: 4.8,
+    reviews_count: 900,
+  },
+  {
+    id: '107',
+    title: 'Hume AI',
+    description: 'الذكاء العاطفي للصوت. واجهة صوتية تتفاعل مع نبرة صوتك ومشاعرك.',
+    category: 'صوت',
+    pricing_type: 'تجربة مجانية',
+    url: 'https://hume.ai',
+    image_url: '',
+    average_rating: 4.5,
+    reviews_count: 60,
   },
 ];
