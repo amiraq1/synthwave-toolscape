@@ -10,12 +10,15 @@ import {
   Zap,
   Sparkles,
   Music,
-  LayoutGrid
+  LayoutGrid,
+  Heart
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
 
@@ -24,7 +27,7 @@ interface ToolCardProps {
   index: number;
 }
 
-// 1. ربط التصنيفات بأيقونات Lucide الحديثة
+// Category icons mapping
 const categoryIcons: Record<string, React.ElementType> = {
   'نصوص': Type,
   'صور': ImageIcon,
@@ -35,7 +38,7 @@ const categoryIcons: Record<string, React.ElementType> = {
   'الكل': LayoutGrid
 };
 
-// ألوان متدرجة لكل تصنيف
+// Category gradient colors
 const categoryGradients: Record<string, string> = {
   'نصوص': 'from-emerald-500/20 to-teal-600/20 text-emerald-400 border-emerald-500/20',
   'صور': 'from-purple-500/20 to-pink-600/20 text-purple-400 border-purple-500/20',
@@ -61,11 +64,13 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const prefetchTool = usePrefetchTool();
+  const { user } = useAuth();
+  const { isBookmarked, toggleBookmark, isToggling } = useBookmarks();
   const [imageError, setImageError] = useState(false);
 
-  // تحديد الستايل والأيقونة بناءً على التصنيف
   const categoryStyle = categoryGradients[tool.category] || 'from-gray-500/20 to-gray-600/20 text-gray-400 border-gray-500/20';
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
+  const toolIsBookmarked = isBookmarked(tool.id);
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
@@ -75,7 +80,15 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     prefetchTool(tool.id);
   };
 
-  // دالة لجلب Favicon الموقع في حال عدم وجود صورة
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    toggleBookmark(tool.id);
+  };
+
   const getFaviconUrl = (url: string) => {
     try {
       const hostname = new URL(url).hostname;
@@ -85,7 +98,6 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     }
   };
 
-  // المنطق: هل نعرض الصورة الأصلية؟ أم الـ Favicon؟ أم الأيقونة؟
   const showOriginalImage = tool.image_url && !imageError;
   const faviconUrl = !showOriginalImage ? getFaviconUrl(tool.url) : null;
 
@@ -97,15 +109,30 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
       dir="rtl"
     >
+      {/* Bookmark Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleBookmarkClick}
+        disabled={isToggling}
+        className={cn(
+          "absolute top-3 left-3 z-20 h-9 w-9 rounded-full backdrop-blur-sm transition-all",
+          toolIsBookmarked
+            ? "bg-rose-500/20 text-rose-500 hover:bg-rose-500/30"
+            : "bg-black/20 text-white/50 hover:text-rose-500 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100"
+        )}
+      >
+        <Heart className={cn("w-4 h-4", toolIsBookmarked && "fill-current")} />
+      </Button>
+
       {/* Top Section */}
       <div className="flex items-start gap-4 mb-4 z-10">
-
         {/* Smart Icon Container */}
         <div
           className={cn(
             "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-lg",
-            "bg-gradient-to-br border backdrop-blur-md", // الأساس الزجاجي
-            showOriginalImage ? "bg-white/5 border-white/10" : categoryStyle // تلوين الخلفية إذا كانت أيقونة
+            "bg-gradient-to-br border backdrop-blur-md",
+            showOriginalImage ? "bg-white/5 border-white/10" : categoryStyle
           )}
         >
           {showOriginalImage ? (
@@ -129,7 +156,6 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             />
           ) : null}
 
-          {/* Fallback Icon (يظهر إذا فشلت الصور) */}
           <div className={cn(
             "fallback-icon absolute inset-0 flex items-center justify-center",
             (showOriginalImage || faviconUrl) ? "hidden" : "flex"
@@ -190,7 +216,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         </Button>
       </div>
 
-      {/* Gradient Glow Effect (Background) */}
+      {/* Gradient Glow Effect */}
       <div className={cn(
         "absolute -right-10 -top-10 w-32 h-32 rounded-full blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none",
         tool.category === 'برمجة' ? 'bg-orange-500' : 'bg-neon-purple'

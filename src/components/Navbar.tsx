@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -91,6 +91,17 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               المدونة
             </button>
+
+            {/* Bookmarks - only for logged in users */}
+            {user && (
+              <button
+                onClick={() => navigate('/bookmarks')}
+                className="text-sm text-muted-foreground hover:text-rose-500 transition-colors px-3 py-2 flex items-center gap-1"
+              >
+                <Heart className="w-4 h-4" />
+                المفضلة
+              </button>
+            )}
 
             <Button
               onClick={onAddClick}
