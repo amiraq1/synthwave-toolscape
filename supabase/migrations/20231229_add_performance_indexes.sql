@@ -29,13 +29,14 @@ CREATE INDEX IF NOT EXISTS idx_tools_category_featured
 ON public.tools (category, is_featured DESC);
 
 -- Index for reviews by tool (for faster review loading)
+-- Note: public_reviews is a VIEW, indexes should be on the base table 'reviews'
 CREATE INDEX IF NOT EXISTS idx_reviews_tool_id 
-ON public.public_reviews (tool_id);
+ON public.reviews (tool_id);
 
 -- Index for reviews by user (for user's review history)
 CREATE INDEX IF NOT EXISTS idx_reviews_user_id 
-ON public.public_reviews (user_id);
+ON public.reviews (user_id);
 
 -- Analyze tables to update statistics
 ANALYZE public.tools;
-ANALYZE public.public_reviews;
+ANALYZE public.reviews;

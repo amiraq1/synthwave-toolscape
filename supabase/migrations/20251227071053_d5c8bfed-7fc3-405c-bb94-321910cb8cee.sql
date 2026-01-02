@@ -1,3 +1,6 @@
+-- Enable pgcrypto extension for digest function
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- reviews: تأكد RLS مفعّل
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 
