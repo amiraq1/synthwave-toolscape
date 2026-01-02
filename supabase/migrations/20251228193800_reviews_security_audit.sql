@@ -26,17 +26,20 @@ DROP POLICY IF EXISTS "Users can delete their own reviews" ON public.reviews;
 -- =============================================================================
 
 -- SELECT: Public read access (required for displaying reviews to visitors)
+DROP POLICY IF EXISTS "reviews_select_public" ON public.reviews;
 CREATE POLICY "reviews_select_public"
 ON public.reviews FOR SELECT
 USING (true);
 
 -- INSERT: Only authenticated users can add reviews, and only for themselves
+DROP POLICY IF EXISTS "reviews_insert_authenticated" ON public.reviews;
 CREATE POLICY "reviews_insert_authenticated"
 ON public.reviews FOR INSERT
 TO authenticated
 WITH CHECK (auth.uid() = user_id);
 
 -- UPDATE: Users can only update their own reviews
+DROP POLICY IF EXISTS "reviews_update_own" ON public.reviews;
 CREATE POLICY "reviews_update_own"
 ON public.reviews FOR UPDATE
 TO authenticated
@@ -44,6 +47,7 @@ USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
 -- DELETE: Users can only delete their own reviews
+DROP POLICY IF EXISTS "reviews_delete_own" ON public.reviews;
 CREATE POLICY "reviews_delete_own"
 ON public.reviews FOR DELETE
 TO authenticated
