@@ -15,6 +15,7 @@ TO authenticated
 USING (auth.uid() = user_id);
 
 -- إنشاء view عام للمراجعات بدون كشف user_id
+-- Using md5() which is built-in PostgreSQL function (no extension needed)
 CREATE OR REPLACE VIEW public.public_reviews AS
 SELECT
   r.id,
@@ -22,7 +23,7 @@ SELECT
   r.rating,
   r.comment,
   r.created_at,
-  encode(digest(r.user_id::text || '::nabd_salt_v1', 'sha256'), 'hex') AS reviewer_alias
+  md5(r.user_id::text || '::nabd_salt_v1') AS reviewer_alias
 FROM public.reviews r;
 
 -- منح صلاحية القراءة للجميع
