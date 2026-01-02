@@ -12,10 +12,7 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
     .eq('id', parseInt(id))
     .maybeSingle();
 
-  if (error) {
-    console.error('Error fetching tool:', error);
-    throw error;
-  }
+  if (error) throw error;
   if (!data) throw new Error('Tool not found');
 
   return data as Tool;
