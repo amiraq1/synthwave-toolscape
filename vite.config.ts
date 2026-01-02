@@ -144,6 +144,58 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     chunkSizeWarningLimit: 1000,
-    // Let Vite handle chunking automatically to avoid React loading order issues
+    // Optimized chunking for better FCP and load time
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // React core - loaded first for all pages
+          if (id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/scheduler/')) {
+            return 'react-core';
+          }
+
+          // React Router - needed for navigation
+          if (id.includes('node_modules/react-router')) {
+            return 'router';
+          }
+
+          // TanStack Query - data fetching
+          if (id.includes('node_modules/@tanstack')) {
+            return 'tanstack';
+          }
+
+          // Supabase client
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase';
+          }
+
+          // UI Components (Radix primitives)
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'ui-primitives';
+          }
+
+          // Icons - loaded on demand
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons';
+          }
+
+          // Date utilities
+          if (id.includes('node_modules/date-fns')) {
+            return 'date-utils';
+          }
+
+          // Form utilities
+          if (id.includes('node_modules/react-hook-form') ||
+            id.includes('node_modules/@hookform') ||
+            id.includes('node_modules/zod')) {
+            return 'forms';
+          }
+        },
+      },
+    },
+    // Use esbuild for faster minification (default in Vite)
+    target: 'esnext',
+    sourcemap: false,
   }
 }));
