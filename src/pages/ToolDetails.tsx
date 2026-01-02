@@ -69,6 +69,8 @@ const ToolDetails = () => {
     image: tool.image_url || undefined,
     category: tool.category,
     pricingType: tool.pricing_type,
+    rating: tool.average_rating,
+    reviewCount: tool.reviews_count,
   } : {
     type: 'website',
     name: 'نبض',
