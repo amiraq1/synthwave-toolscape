@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePageSkeleton from "@/components/skeletons/HomePageSkeleton";
 import ScrollToTop from "@/components/ScrollToTop";
+import ChatWidget from "@/components/ChatWidget";
 
 // Lazy load ALL pages for better performance and smaller initial bundle
 const Index = lazy(() => import("./pages/Index"));
@@ -57,6 +58,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatWidget />
         </Suspense>
       </BrowserRouter>
     </TooltipProvider>
