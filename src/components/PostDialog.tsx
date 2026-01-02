@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -27,9 +27,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Image as ImageIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-interface AddPostModalProps {
+interface Post {
+    id: string;
+    title: string;
+    content: string;
+    image_url: string | null;
+    created_at: string;
+    is_published: boolean;
+}
+
+interface PostDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    postToEdit?: Post | null;
 }
 
 const formSchema = z.object({
@@ -40,9 +50,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
+const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const [imageError, setImageError] = useState(false);
+
+    const isEditMode = !!postToEdit;
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -53,30 +67,62 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
         },
     });
 
+    // Pre-fill form when editing
+    useEffect(() => {
+        if (open && postToEdit) {
+            form.reset({
+                title: postToEdit.title,
+                content: postToEdit.content,
+                image_url: postToEdit.image_url || '',
+            });
+            setImagePreview(postToEdit.image_url || '');
+        } else if (open) {
+            form.reset({
+                title: '',
+                content: '',
+                image_url: '',
+            });
+            setImagePreview('');
+        }
+    }, [open, postToEdit, form]);
+
+    // Watch image URL for preview
+    const watchedImageUrl = form.watch('image_url');
+    useEffect(() => {
+        if (watchedImageUrl) {
+            setImagePreview(watchedImageUrl);
+            setImageError(false);
+        } else {
+            setImagePreview('');
+        }
+    }, [watchedImageUrl]);
+
     const mutation = useMutation({
         mutationFn: async (values: FormValues) => {
-            const {
-                data: { user },
-                error: userError,
-            } = await supabase.auth.getUser();
-
-            if (userError) throw userError;
-            if (!user) throw new Error('يجب تسجيل الدخول لإنشاء مقال');
-
-            const { error } = await (supabase as any).from('posts').insert([
-                {
+            if (isEditMode && postToEdit) {
+                // Update existing post
+                const { error } = await (supabase as any)
+                    .from('posts')
+                    .update({
+                        title: values.title,
+                        content: values.content,
+                        image_url: values.image_url || null,
+                    })
+                    .eq('id', postToEdit.id);
+                if (error) throw error;
+            } else {
+                // Create new post
+                const { error } = await (supabase as any).from('posts').insert([{
                     title: values.title,
                     content: values.content,
                     image_url: values.image_url || null,
-                    author_id: user.id,
-                },
-            ]);
-
-            if (error) throw error;
+                }]);
+                if (error) throw error;
+            }
         },
         onSuccess: () => {
             toast({
-                title: '🎉 تم نشر المقال بنجاح',
+                title: isEditMode ? '✅ تم التحديث' : '🎉 تم النشر',
                 className: "bg-emerald-500/10 text-emerald-500"
             });
             queryClient.invalidateQueries({ queryKey: ['posts'] });
@@ -85,7 +131,7 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
         },
         onError: () => toast({
             title: 'خطأ',
-            description: 'فشل في نشر المقال',
+            description: isEditMode ? 'فشل التحديث' : 'فشل النشر',
             variant: 'destructive'
         }),
     });
@@ -96,16 +142,18 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
 
                 {/* Fixed Header */}
                 <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
-                    <DialogTitle className="text-lg font-bold">إضافة مقال جديد</DialogTitle>
+                    <DialogTitle className="text-lg font-bold">
+                        {isEditMode ? 'تعديل المقال' : 'إضافة مقال جديد'}
+                    </DialogTitle>
                     <DialogDescription className="text-xs">
-                        شارك معرفتك مع المجتمع
+                        {isEditMode ? 'قم بتعديل بيانات المقال' : 'شارك معرفتك مع المجتمع'}
                     </DialogDescription>
                 </DialogHeader>
 
                 {/* Scrollable Form Body */}
                 <ScrollArea className="flex-1 p-4">
                     <Form {...form}>
-                        <form id="add-post-form" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4 pb-4">
+                        <form id="post-form" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4 pb-4">
 
                             {/* Title */}
                             <FormField control={form.control} name="title" render={({ field }) => (
@@ -118,7 +166,7 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
                                 </FormItem>
                             )} />
 
-                            {/* Image URL */}
+                            {/* Image URL with Preview */}
                             <FormField control={form.control} name="image_url" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs flex items-center gap-1">
@@ -128,6 +176,23 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
                                         <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
                                     </FormControl>
                                     <FormMessage className="text-[10px]" />
+
+                                    {/* Image Preview */}
+                                    <div className="mt-2 rounded-lg overflow-hidden border border-white/10 bg-muted/20 aspect-video flex items-center justify-center">
+                                        {imagePreview && !imageError ? (
+                                            <img
+                                                src={imagePreview}
+                                                alt="معاينة"
+                                                className="w-full h-full object-cover"
+                                                onError={() => setImageError(true)}
+                                            />
+                                        ) : (
+                                            <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
+                                                <ImageIcon className="w-8 h-8 opacity-30" />
+                                                <span>{imageError ? 'رابط الصورة غير صحيح' : 'معاينة الصورة'}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </FormItem>
                             )} />
 
@@ -139,7 +204,7 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
                                         <Textarea
                                             placeholder="اكتب محتوى المقال هنا..."
                                             {...field}
-                                            className="min-h-[200px] bg-background/50 resize-none text-sm"
+                                            className="min-h-[150px] bg-background/50 resize-none text-sm"
                                         />
                                     </FormControl>
                                     <FormMessage className="text-[10px]" />
@@ -157,11 +222,15 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
                     </Button>
                     <Button
                         type="submit"
-                        form="add-post-form"
+                        form="post-form"
                         disabled={mutation.isPending}
                         className="flex-1 h-9 bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
                     >
-                        {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'نشر المقال'}
+                        {mutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            isEditMode ? 'حفظ التعديلات' : 'نشر المقال'
+                        )}
                     </Button>
                 </DialogFooter>
 
@@ -170,4 +239,4 @@ const AddPostModal = ({ open, onOpenChange }: AddPostModalProps) => {
     );
 };
 
-export default AddPostModal;
+export default PostDialog;
