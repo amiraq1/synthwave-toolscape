@@ -53,7 +53,7 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
 async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
     console.log("Generating chat response...");
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -170,8 +170,22 @@ Deno.serve(async (req) => {
         let answer;
         try {
             answer = await generateChatResponse(systemPrompt, googleApiKey, []); // Stateless for now to keep it simple with contexts
-        } catch (e) {
+        } catch (e: any) {
             console.error("Failed step: Generate Chat Response", e);
+
+            // DEBUG: If 404/400, try to list models
+            if (e.message.includes("404") || e.message.includes("400")) {
+                console.log("Attempting to list available models for debugging...");
+                try {
+                    const listResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${googleApiKey}`);
+                    const listData = await listResp.json();
+                    const modelNames = listData.models ? listData.models.map((m: any) => m.name).join(", ") : "No models returned";
+                    console.log("Available Models:", modelNames);
+                    throw new Error(`Gemini Error: ${e.message} - AVAILABLE MODELS TO THIS KEY: ${modelNames}`);
+                } catch (listErr) {
+                    console.error("Failed to list models", listErr);
+                }
+            }
             throw e;
         }
 
