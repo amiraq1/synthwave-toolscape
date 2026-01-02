@@ -24,6 +24,7 @@ interface Tool {
 
 // Helper: Generate Embedding (using Gemini text-embedding-004)
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
+    console.log("Generating embedding for query...");
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
         {
@@ -38,16 +39,19 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
     );
 
     if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Gemini Embedding API error: ${error}`);
+        const errorText = await response.text();
+        console.error(`Gemini Embedding API Error: Status ${response.status}`, errorText);
+        throw new Error(`Gemini Embedding API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log("Embedding generated successfully.");
     return data.embedding.values;
 }
 
 // Helper: Generate Chat Response (using Gemini 1.5 Flash)
 async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
+    console.log("Generating chat response...");
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
@@ -70,11 +74,13 @@ async function generateChatResponse(prompt: string, apiKey: string, history: any
     );
 
     if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Gemini Chat API error: ${error}`);
+        const errorText = await response.text();
+        console.error(`Gemini Chat API Error: Status ${response.status}`, errorText);
+        throw new Error(`Gemini Chat API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log("Chat response generated successfully.");
     return data.candidates[0].content.parts[0].text;
 }
 
@@ -85,62 +91,91 @@ Deno.serve(async (req) => {
     }
 
     try {
+        console.log("--- Chat Function Started ---");
+
+        // 1. Env Check
         const googleApiKey = Deno.env.get("GOOGLE_API_KEY");
-        if (!googleApiKey) throw new Error("GOOGLE_API_KEY is not set");
+        if (!googleApiKey) {
+            console.error("GOOGLE_API_KEY is missing from environment variables.");
+            throw new Error("Server misconfiguration: GOOGLE_API_KEY missing");
+        }
+        console.log("GOOGLE_API_KEY is present.");
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
         const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-        const { query, history = [] } = await req.json() as ChatRequest;
+        // 2. Parse Request
+        let body: ChatRequest;
+        try {
+            body = await req.json();
+        } catch (e) {
+            console.error("Failed to parse request body:", e);
+            throw new Error("Invalid JSON body");
+        }
+
+        const { query, history = [] } = body;
+        console.log("Received Query:", query);
 
         if (!query) throw new Error("Query is required");
 
-        // 1. Generate Embedding for user query
-        const queryEmbedding = await generateEmbedding(query, googleApiKey);
+        // 3. Generate Embedding
+        let queryEmbedding: number[];
+        try {
+            queryEmbedding = await generateEmbedding(query, googleApiKey);
+        } catch (e) {
+            console.error("Failed step: Generate Embedding", e);
+            throw e;
+        }
 
-        // 2. Search for relevant tools using RPC
+        // 4. Search relevant tools
+        console.log("Searching for compatible tools in DB...");
         const { data: tools, error: searchError } = await supabase.rpc("match_tools", {
             query_embedding: queryEmbedding,
-            match_threshold: 0.5, // Slightly lower threshold for broader context
+            match_threshold: 0.5,
             match_count: 5
         });
 
-        if (searchError) throw searchError;
+        if (searchError) {
+            console.error("Supabase RPC match_tools Error:", searchError);
+            throw new Error(`Database Search Failed: ${searchError.message}`);
+        }
 
-        // 3. Construct Context from found tools
         const toolList = (tools as Tool[]) || [];
+        console.log(`Found ${toolList.length} relevant tools.`);
+
+        // 5. Construct Context
         const contextText = toolList.map(t =>
             `- **${t.title}** (${t.pricing_type}): ${t.description}. [الرابط](${t.url})`
         ).join("\n");
 
-        // 4. Construct System Prompt (The Persona)
+        // 6. System Prompt
         const systemPrompt = `
-    أنت "نبض AI" (Nabd AI)، المستشار الذكي لمنصة "نبض" المتخصصة في أدوات الذكاء الاصطناعي.
-    هدفُك هو مساعدة المستخدمين العرب في العثور على أفضل أدوات الـ AI التي تناسب احتياجاتهم وميزانيتهم بدقة.
+    أنت "نبض AI" (Nabd AI)، المستشار الذكي لمنصة "نبض".
+    هدفُك هو مساعدة المستخدمين العرب في العثور على أفضل أدوات الـ AI.
 
-    التعليمات الصارمة:
-    1.  **المصدر:** اعتمد حصراً على المعلومات الواردة في "السياق" (Context) أدناه للإجابة. لا تخترع أدوات غير موجودة.
-    2.  **اللغة:** تحدث باللغة العربية بطلاقة، بأسلوب ودود، مشجع، ومهني.
-    3.  **التنسيق:**
-        -   اجعل أسماء الأدوات بالخط العريض (**اسم الأداة**).
-        -   اذكر السعر بجانب الاسم (مثلاً: **ChatGPT** - مجاني).
-        -   قدم روابط الأدوات دائماً بهذا الشكل: [زيارة الموقع](الرابط).
-        -   استخدم القوائم النقطية لتسهيل القراءة.
-        -   استخدم الإيموجي المناسب لإضفاء الحيوية (✨، 💡، 🚀).
-    4.  **في حال عدم توفر المعلومة:** إذا لم تجد في السياق أدوات تناسب سؤال المستخدم، اعتذر بلطف، وقل: "للأسف، لا تتوفر لدي حالياً معلومات حول أدوات بهذا الوصف في قاعدة بياناتي، لكنني أتعلم باستمرار!".
-    
-    السياق (الأدوات المقترحة من قاعدة البيانات):
+    التعليمات:
+    1. اعتمد حصراً على "السياق" أدناه. لا تخترع أدوات.
+    2. تحدث بالعربية بودية واحترافية.
+    3. نسق الإجابة بذكاء (Bold للأسماء، روابط Markdown).
+    4. إذا لم تجد أدوات مناسبة في السياق، اعتذر واقترح بحثاً عاماً، لكن لا ترشح أدوات من خارج السياق.
+
+    السياق (الأدوات المقترحة):
     ${contextText}
 
     سؤال المستخدم: ${query}
     `;
 
-        // 5. Generate Response
-        // We send the systemPrompt + query combined as the last message for simplicity with the stateless history provided
-        // Ideally, for Gemini, we can use system_instruction, but putting it in the prompt works well too.
-        const answer = await generateChatResponse(systemPrompt, googleApiKey, []);
+        // 7. Generate Chat Response
+        let answer;
+        try {
+            answer = await generateChatResponse(systemPrompt, googleApiKey, []); // Stateless for now to keep it simple with contexts
+        } catch (e) {
+            console.error("Failed step: Generate Chat Response", e);
+            throw e;
+        }
 
+        console.log("Sending successful response.");
         return new Response(
             JSON.stringify({
                 answer,
@@ -149,10 +184,15 @@ Deno.serve(async (req) => {
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
-    } catch (error) {
-        console.error("Error:", error);
+    } catch (error: any) {
+        console.error("--- Chat Function Failed ---");
+        console.error("Error Details:", error.message || error);
+
         return new Response(
-            JSON.stringify({ error: String(error) }),
+            JSON.stringify({
+                error: error.message || "An internal error occurred",
+                details: String(error)
+            }),
             { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }
