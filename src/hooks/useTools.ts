@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية';
+export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'صوت';
 
 export interface Tool {
   id: number;
@@ -12,13 +12,15 @@ export interface Tool {
   image_url: string | null;
   pricing_type: string;
   is_featured: boolean;
+  is_sponsored?: boolean;
+  sponsor_expiry?: string | null;
   features: string[] | null;
   screenshots?: string[] | null;
   average_rating?: number;
   reviews_count?: number;
 }
 
-export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];
+export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
 
 const PAGE_SIZE = 12;
 
@@ -52,8 +54,11 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
       const from = pageParam as number;
       const to = from + PAGE_SIZE - 1;
 
+      // SPONSORED TOOLS FIRST, then Featured, then by ID
       const { data, error } = await query
+        .order('is_sponsored', { ascending: false, nullsFirst: false })
         .order('is_featured', { ascending: false })
+        .order('id', { ascending: false })
         .range(from, to);
 
       if (error) {

@@ -11,7 +11,8 @@ import {
   Sparkles,
   Music,
   LayoutGrid,
-  Heart
+  Heart,
+  Crown
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const categoryStyle = categoryGradients[tool.category] || 'from-gray-500/20 to-gray-600/20 text-gray-400 border-gray-500/20';
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const toolIsBookmarked = isBookmarked(tool.id);
+  const isSponsored = tool.is_sponsored === true;
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
@@ -105,10 +107,26 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     <article
       onClick={handleCardClick}
       onMouseEnter={handleMouseEnter}
-      className="group relative flex flex-col h-full bg-card/30 hover:bg-card/50 border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-2xl hover:shadow-neon-purple/5 backdrop-blur-sm cursor-pointer overflow-hidden"
+      className={cn(
+        "group relative flex flex-col h-full rounded-2xl p-5 transition-all duration-300 hover:translate-y-[-4px] backdrop-blur-sm cursor-pointer overflow-hidden",
+        // Sponsored styling
+        isSponsored
+          ? "bg-gradient-to-br from-amber-500/5 to-yellow-600/5 border-2 border-amber-500/40 hover:border-amber-400/60 shadow-[0_0_20px_-5px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.4)]"
+          : "bg-card/30 hover:bg-card/50 border border-white/5 hover:border-white/10 hover:shadow-2xl hover:shadow-neon-purple/5"
+      )}
       style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
       dir="rtl"
     >
+      {/* Sponsored Badge */}
+      {isSponsored && (
+        <div className="absolute top-3 right-3 z-20">
+          <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-[10px] px-2 py-0.5 border-0 gap-1">
+            <Crown className="w-3 h-3" />
+            ممول
+          </Badge>
+        </div>
+      )}
+
       {/* Bookmark Button */}
       <Button
         variant="ghost"
@@ -132,7 +150,11 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           className={cn(
             "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-lg",
             "bg-gradient-to-br border backdrop-blur-md",
-            showOriginalImage ? "bg-white/5 border-white/10" : categoryStyle
+            isSponsored
+              ? "border-amber-500/30 from-amber-500/10 to-yellow-600/10"
+              : showOriginalImage
+                ? "bg-white/5 border-white/10"
+                : categoryStyle
           )}
         >
           {showOriginalImage ? (
@@ -166,10 +188,15 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
 
         <div className="flex-1 min-w-0 pt-1">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h3 className="text-lg font-bold text-white group-hover:text-neon-purple transition-colors truncate">
+            <h3 className={cn(
+              "text-lg font-bold transition-colors truncate",
+              isSponsored
+                ? "text-amber-100 group-hover:text-amber-300"
+                : "text-white group-hover:text-neon-purple"
+            )}>
               {tool.title}
             </h3>
-            {tool.is_featured && (
+            {tool.is_featured && !isSponsored && (
               <span className="flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-neon-cyan opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
@@ -207,7 +234,12 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           asChild
           size="icon"
           variant="ghost"
-          className="h-8 w-8 rounded-full hover:bg-neon-purple/20 hover:text-neon-purple text-muted-foreground transition-colors"
+          className={cn(
+            "h-8 w-8 rounded-full transition-colors",
+            isSponsored
+              ? "hover:bg-amber-500/20 hover:text-amber-400 text-muted-foreground"
+              : "hover:bg-neon-purple/20 hover:text-neon-purple text-muted-foreground"
+          )}
           onClick={(e) => e.stopPropagation()}
         >
           <a href={tool.url} target="_blank" rel="noopener noreferrer" aria-label="Visit">
@@ -219,7 +251,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       {/* Gradient Glow Effect */}
       <div className={cn(
         "absolute -right-10 -top-10 w-32 h-32 rounded-full blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none",
-        tool.category === 'برمجة' ? 'bg-orange-500' : 'bg-neon-purple'
+        isSponsored ? 'bg-amber-500' : tool.category === 'برمجة' ? 'bg-orange-500' : 'bg-neon-purple'
       )} />
     </article>
   );
