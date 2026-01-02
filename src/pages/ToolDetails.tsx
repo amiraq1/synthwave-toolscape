@@ -152,7 +152,7 @@ const ToolDetails = () => {
                 <h1 className="text-4xl md:text-5xl font-bold text-foreground">
                   {tool.title}
                 </h1>
-                <AverageRating toolId={tool.id} size="md" />
+                <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
               </div>
 
               <div className="flex flex-wrap gap-3">
