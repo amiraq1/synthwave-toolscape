@@ -14,6 +14,9 @@ export interface Tool {
   reviews_count?: number;
   features?: string[];
   screenshots?: string[];
+  video_url?: string;
+  faqs?: { question: string; answer: string }[];
+  alternatives?: string[];
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
@@ -31,6 +34,12 @@ export const tools: Tool[] = [
     average_rating: 4.9,
     reviews_count: 5000,
     is_featured: true,
+    video_url: 'https://www.youtube.com/embed/outcGtbnMuQ',
+    faqs: [
+      { question: 'هل ChatGPT مجاني؟', answer: 'نعم، يوجد إصدار مجاني يعتمد على GPT-3.5 و GPT-4o mini، بالإضافة لإصدار Plus المدفوع.' },
+      { question: 'هل يدعم اللغة العربية؟', answer: 'نعم، يدعم ChatGPT اللغة العربية بشكل ممتاز في الكتابة والفهم.' }
+    ],
+    alternatives: ['102', '109'], // Claude & Qwen
   },
   {
     id: '2',

@@ -17,6 +17,7 @@ interface ToolSchema {
   pricingType: string;
   rating?: number;
   reviewCount?: number;
+  faq?: { question: string; answer: string }[];
 }
 
 interface ToolListSchema {
@@ -61,9 +62,9 @@ export const useStructuredData = (schema: SchemaType) => {
         break;
 
       case 'software':
-        jsonLd = {
-          '@context': 'https://schema.org',
+        const softwareSchema = {
           '@type': 'SoftwareApplication',
+          // ... software properties
           name: schema.name,
           description: schema.description,
           url: schema.url,
@@ -86,6 +87,31 @@ export const useStructuredData = (schema: SchemaType) => {
             },
           }),
         };
+
+        if (schema.faq && schema.faq.length > 0) {
+          jsonLd = {
+            '@context': 'https://schema.org',
+            '@graph': [
+              softwareSchema,
+              {
+                '@type': 'FAQPage',
+                mainEntity: schema.faq.map(item => ({
+                  '@type': 'Question',
+                  name: item.question,
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: item.answer,
+                  },
+                })),
+              },
+            ],
+          };
+        } else {
+          jsonLd = {
+            '@context': 'https://schema.org',
+            ...softwareSchema,
+          };
+        }
         break;
 
       case 'itemList':

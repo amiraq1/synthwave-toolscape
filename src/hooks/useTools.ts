@@ -21,6 +21,9 @@ export interface Tool {
   screenshots?: string[] | null;
   average_rating?: number;
   reviews_count?: number;
+  video_url?: string | null;
+  faqs?: { question: string; answer: string }[] | null;
+  alternatives?: number[] | null; // IDs of alternative tools
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
