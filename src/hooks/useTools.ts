@@ -62,7 +62,6 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
 
       // SPONSORED TOOLS FIRST, then Featured, then by ID
       const { data, error } = await query
-        .order('is_sponsored', { ascending: false, nullsFirst: false })
         .order('is_featured', { ascending: false })
         .order('id', { ascending: false })
         .range(from, to);
