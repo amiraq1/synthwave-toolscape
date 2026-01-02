@@ -25,7 +25,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Image as ImageIcon } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Post {
     id: string;
@@ -150,8 +149,8 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                     </DialogDescription>
                 </DialogHeader>
 
-                {/* Scrollable Form Body */}
-                <ScrollArea className="flex-1 p-4">
+                {/* Scrollable Form Body - Using native scroll for keyboard accessibility */}
+                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     <Form {...form}>
                         <form id="post-form" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4 pb-4">
 
@@ -213,7 +212,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
 
                         </form>
                     </Form>
-                </ScrollArea>
+                </div>
 
                 {/* Fixed Footer */}
                 <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
