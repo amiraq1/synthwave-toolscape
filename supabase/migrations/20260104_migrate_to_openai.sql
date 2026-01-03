@@ -1,9 +1,38 @@
 -- 1. Adjust Embedding Column for OpenAI (1536 dimensions)
+-- First, we must drop the view that depends on the tools table (implied select *)
+DROP VIEW IF EXISTS public.tools_ranked;
+
 -- We drop the old column to avoid type mismatch errors
 ALTER TABLE tools DROP COLUMN IF EXISTS embedding;
 ALTER TABLE tools ADD COLUMN embedding vector(1536);
 
+-- Recreate the view
+CREATE OR REPLACE VIEW public.tools_ranked AS
+SELECT 
+  t.*,
+  COALESCE(rs.average_rating, 0) as avg_rating,
+  COALESCE(rs.reviews_count, 0) as total_reviews,
+  get_tool_score(
+    rs.average_rating::numeric,
+    rs.reviews_count::int,
+    t.release_date,
+    t.arabic_score
+  ) as trending_score
+FROM public.tools t
+LEFT JOIN LATERAL (
+  SELECT 
+    ROUND(AVG(r.rating)::numeric, 1) as average_rating,
+    COUNT(r.id) as reviews_count
+  FROM public.reviews r
+  WHERE r.tool_id = t.id
+) rs ON true
+ORDER BY trending_score DESC;
+
 -- 2. Update Search Function
+-- We drop the function first to allow changing the input vector size from dynamic/768 to 1536
+DROP FUNCTION IF EXISTS match_tools(vector, float, int);
+DROP FUNCTION IF EXISTS match_tools(vector, double precision, int);
+
 CREATE OR REPLACE FUNCTION match_tools (
   query_embedding vector(1536),
   match_threshold float,
