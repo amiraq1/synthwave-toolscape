@@ -66,7 +66,7 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
             </div>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground/70 mt-3">
-            +100 أداة ذكاء اصطناعي في تصنيفات: نصوص، صور، فيديو، برمجة، إنتاجية
+            +100 أداة ذكاء اصطناعي في تصنيفات: نصوص، صور، فيديو، برمجة، إنتاجية، دراسة وطلاب
           </p>
         </div>
 

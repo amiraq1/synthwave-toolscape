@@ -41,7 +41,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
-const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية'];
+const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب'];
 const pricingTypes = ['مجاني', 'مدفوع', 'مجاني جزئياً'];
 
 const AdminToolsTable = () => {
