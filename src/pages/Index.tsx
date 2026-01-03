@@ -7,11 +7,14 @@ import ToolsGrid from "@/components/ToolsGrid";
 import ToolsTimeline from "@/components/ToolsTimeline";
 import AddToolModal from "@/components/AddToolModal";
 import Footer from "@/components/Footer";
-import { useTools, type Category } from "@/hooks/useTools";
+import { useTools, type Category, type Tool } from "@/hooks/useTools";
+import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
+import { Sparkles, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   useSEO({
@@ -44,10 +47,26 @@ const Index = () => {
     [data]
   );
 
+  // Hybrid Search: Falls back to semantic search when client-side results are low
+  const {
+    semanticTools,
+    isSemanticLoading,
+    isSemantic,
+  } = useHybridSearch(searchQuery, tools.length, 3);
+
+  // Determine which tools to display
+  const displayTools = useMemo(() => {
+    // If semantic search returned results and client-side is empty/low
+    if (isSemantic && semanticTools.length > 0) {
+      return semanticTools as unknown as Tool[];
+    }
+    return tools;
+  }, [tools, semanticTools, isSemantic]);
+
   // Structured data for tool list
   const structuredDataItems = useMemo(
-    () => tools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
-    [tools]
+    () => displayTools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
+    [displayTools]
   );
 
   useStructuredData({
@@ -125,20 +144,40 @@ const Index = () => {
             py-3 sm:py-4
           "
         >
-          <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
 
-          {/* Logic: Show Timeline by default (Discovery Mode), show Grid when searching/filtering */}
+            {/* Semantic Search Indicator */}
+            {searchQuery && (
+              <div className="flex items-center gap-2">
+                {isSemanticLoading && (
+                  <Badge variant="outline" className="gap-1 text-xs border-neon-purple/30 text-neon-purple animate-pulse">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    بحث ذكي...
+                  </Badge>
+                )}
+                {isSemantic && !isSemanticLoading && (
+                  <Badge className="gap-1.5 text-xs bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 text-neon-purple border border-neon-purple/30">
+                    <Sparkles className="w-3 h-3" />
+                    نتائج بحث ذكية 🤖
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Logic: Show Timeline by default, Grid when searching/filtering */}
           {!searchQuery && activeCategory === 'الكل' ? (
-            <ToolsTimeline tools={tools || []} />
+            <ToolsTimeline tools={displayTools || []} />
           ) : (
             <ToolsGrid
-              tools={tools || []}
-              isLoading={isLoading}
+              tools={displayTools || []}
+              isLoading={isLoading || isSemanticLoading}
               error={error}
               searchQuery={searchQuery}
               activeCategory={activeCategory}
               onFetchNextPage={fetchNextPage}
-              hasNextPage={hasNextPage}
+              hasNextPage={hasNextPage && !isSemantic}
               isFetchingNextPage={isFetchingNextPage}
             />
           )}

@@ -15,25 +15,24 @@ interface SemanticSearchResult extends Tool {
 
 /**
  * Hook for semantic search using vector embeddings
- * Requires OPENAI_API_KEY to be set in Supabase Edge Functions
+ * Uses the 'search' Edge Function with Gemini embeddings
  */
 export const useSemanticSearch = ({
     query,
-    threshold = 0.7,
-    limit = 10,
+    threshold = 0.3,
+    limit = 15,
     enabled = true,
 }: SemanticSearchOptions) => {
     return useQuery<SemanticSearchResult[]>({
         queryKey: ['semantic-search', query, threshold, limit],
         queryFn: async () => {
-            if (!query.trim()) return [];
+            if (!query.trim() || query.trim().length < 2) return [];
 
-            // Call the Edge Function to get embedding and search
-            const { data, error } = await supabase.functions.invoke('semantic-search', {
+            // Call the 'search' Edge Function
+            const { data, error } = await supabase.functions.invoke('search', {
                 body: {
                     query,
-                    match_threshold: threshold,
-                    match_count: limit,
+                    limit,
                 },
             });
 
@@ -42,11 +41,49 @@ export const useSemanticSearch = ({
                 throw error;
             }
 
+            if (data?.error) {
+                console.error('Search function error:', data.error);
+                return [];
+            }
+
             return data?.tools || [];
         },
-        enabled: enabled && query.trim().length > 2,
+        enabled: enabled && query.trim().length >= 2,
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+        retry: 1,
     });
+};
+
+/**
+ * Hook for hybrid search: combines client-side filtering with semantic fallback
+ * Automatically triggers semantic search when client-side results are insufficient
+ */
+export const useHybridSearch = (
+    query: string,
+    clientSideResultsCount: number,
+    minResultsThreshold: number = 3
+) => {
+    // Only enable semantic search when:
+    // 1. Query is at least 2 characters
+    // 2. Client-side search found less than threshold results
+    const shouldUseSemantic =
+        query.trim().length >= 2 &&
+        clientSideResultsCount < minResultsThreshold;
+
+    const semanticSearch = useSemanticSearch({
+        query,
+        enabled: shouldUseSemantic,
+        limit: 15,
+    });
+
+    return {
+        semanticTools: semanticSearch.data || [],
+        isSemanticLoading: semanticSearch.isLoading,
+        isSemanticError: semanticSearch.isError,
+        semanticError: semanticSearch.error,
+        isSemantic: shouldUseSemantic && (semanticSearch.data?.length || 0) > 0,
+        shouldUseSemantic,
+    };
 };
 
 /**
@@ -74,3 +111,5 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
         staleTime: 1000 * 60 * 10, // Cache for 10 minutes
     });
 };
+
+export default useSemanticSearch;
