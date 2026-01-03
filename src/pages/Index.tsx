@@ -167,7 +167,7 @@ const Index = () => {
           </div>
 
           {/* Logic: Show Timeline by default, Grid when searching/filtering */}
-          {!searchQuery && activeCategory === 'الكل' ? (
+          {(!searchQuery && activeCategory === 'الكل') ? (
             <ToolsTimeline tools={displayTools || []} />
           ) : (
             <ToolsGrid

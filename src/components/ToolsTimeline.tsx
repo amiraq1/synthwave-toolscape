@@ -16,9 +16,9 @@ const ToolsTimeline = ({ tools }: ToolsTimelineProps) => {
 
         tools.forEach((tool) => {
             // نستخدم release_date أو created_at كبديل
-            const dateStr = tool.release_date;
+            const dateStr = tool.release_date || (tool as any).created_at;
             // مفتاح التجميع (مثلاً: "يناير 2026")
-            let groupKey = "غير محدد";
+            let groupKey = "أدوات مميزة";
 
             if (dateStr) {
                 const date = new Date(dateStr);
