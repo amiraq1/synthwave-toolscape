@@ -51,7 +51,7 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
 // Helper: Generate Chat Response (using OpenAI GPT-4o)
 async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
     console.log("Generating chat response using OpenAI GPT-4o...");
-    
+
     const messages = [
         ...history.map(h => ({
             role: h.role === "model" ? "assistant" : h.role,
@@ -152,7 +152,6 @@ Deno.serve(async (req) => {
 
         // 3. Generate Embedding
         let queryEmbedding: number[];
-        try {
         try {
             queryEmbedding = await generateEmbedding(query, openaiApiKey);
         } catch (e) {
