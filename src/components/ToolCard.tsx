@@ -108,7 +108,24 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     toggleBookmark(tool.id);
   };
 
-  const getFaviconUrl = (url: string) => {
+  // Extract main domain for Clearbit (e.g., "chat.openai.com" -> "openai.com")
+  const getClearbitLogoUrl = (url: string): string | null => {
+    try {
+      const hostname = new URL(url).hostname;
+      // Remove 'www.' prefix and subdomains like 'chat.', 'app.', etc.
+      const parts = hostname.split('.');
+      // Get the main domain (last 2 parts for most TLDs)
+      const mainDomain = parts.length >= 2
+        ? parts.slice(-2).join('.')
+        : hostname;
+      return `https://logo.clearbit.com/${mainDomain}`;
+    } catch {
+      return null;
+    }
+  };
+
+  // Fallback to Google Favicon if Clearbit fails
+  const getFaviconUrl = (url: string): string | null => {
     try {
       const hostname = new URL(url).hostname;
       return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
@@ -117,8 +134,14 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     }
   };
 
+  // State for Clearbit logo error
+  const [clearbitError, setClearbitError] = useState(false);
+
+  // Image priority logic
   const showOriginalImage = tool.image_url && !imageError;
-  const faviconUrl = !showOriginalImage ? getFaviconUrl(tool.url) : null;
+  const clearbitLogoUrl = !showOriginalImage ? getClearbitLogoUrl(tool.url) : null;
+  const showClearbitLogo = clearbitLogoUrl && !clearbitError;
+  const faviconUrl = !showOriginalImage && !showClearbitLogo ? getFaviconUrl(tool.url) : null;
 
   return (
     <article
@@ -175,15 +198,16 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         {/* Smart Icon Container */}
         <div
           className={cn(
-            "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-lg",
-            "bg-gradient-to-br border backdrop-blur-md",
+            "w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-lg overflow-hidden",
+            "border backdrop-blur-md",
             isSponsored
-              ? "border-amber-500/30 from-amber-500/10 to-yellow-600/10"
-              : showOriginalImage
-                ? "bg-white/5 border-white/10"
-                : categoryStyle
+              ? "border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-yellow-600/10"
+              : (showOriginalImage || showClearbitLogo)
+                ? "bg-white/10 border-white/10" // Clean background for logos
+                : `bg-gradient-to-br ${categoryStyle}`
           )}
         >
+          {/* Priority 1: Manual image_url */}
           {showOriginalImage ? (
             <LazyImage
               src={tool.image_url!}
@@ -193,7 +217,17 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
               className="w-full h-full p-2 rounded-2xl object-contain"
               onError={() => setImageError(true)}
             />
+          ) : showClearbitLogo ? (
+            /* Priority 2: Clearbit High-Res Logo */
+            <img
+              src={clearbitLogoUrl!}
+              alt={tool.title}
+              className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-lg"
+              loading="lazy"
+              onError={() => setClearbitError(true)}
+            />
           ) : faviconUrl ? (
+            /* Priority 3: Google Favicon fallback */
             <img
               src={faviconUrl}
               alt={tool.title}
@@ -205,9 +239,10 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             />
           ) : null}
 
+          {/* Fallback: Category Icon */}
           <div className={cn(
             "fallback-icon absolute inset-0 flex items-center justify-center",
-            (showOriginalImage || faviconUrl) ? "hidden" : "flex"
+            (showOriginalImage || showClearbitLogo || faviconUrl) ? "hidden" : "flex"
           )}>
             <CategoryIcon className="w-7 h-7 sm:w-8 sm:h-8 opacity-90" strokeWidth={1.5} />
           </div>
