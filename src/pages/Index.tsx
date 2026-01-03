@@ -12,9 +12,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
-import { LayoutGrid, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const Index = () => {
   useSEO({
@@ -28,7 +25,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('timeline');
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -116,41 +112,7 @@ const Index = () => {
           "
         >
           <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50 border border-white/5 shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "gap-2 h-8 px-3 transition-all",
-                  viewMode === 'grid'
-                    ? "bg-neon-purple/20 text-neon-purple shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <LayoutGrid className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs">شبكة</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode('timeline')}
-                className={cn(
-                  "gap-2 h-8 px-3 transition-all",
-                  viewMode === 'timeline'
-                    ? "bg-neon-purple/20 text-neon-purple shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Clock className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs">تايم لاين</span>
-              </Button>
-            </div>
-          </div>
+          <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
         {/* Tools Display */}
         <section
@@ -165,16 +127,12 @@ const Index = () => {
         >
           <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
 
-          {/* منطق العرض الذكي:
-              - إذا لا يوجد بحث + التصنيف "الكل" + الوضع timeline → تايم لاين
-              - إذا يوجد بحث أو تصنيف محدد → شبكة (للمرونة في التصفية)
-              - الزر اليدوي يتجاوز هذا المنطق
-          */}
-          {(viewMode === 'timeline' || (!searchQuery && activeCategory === 'الكل')) && viewMode !== 'grid' ? (
-            <ToolsTimeline tools={tools} />
+          {/* Logic: Show Timeline by default (Discovery Mode), show Grid when searching/filtering */}
+          {!searchQuery && activeCategory === 'الكل' ? (
+            <ToolsTimeline tools={tools || []} />
           ) : (
             <ToolsGrid
-              tools={tools}
+              tools={tools || []}
               isLoading={isLoading}
               error={error}
               searchQuery={searchQuery}
