@@ -22,66 +22,67 @@ interface Tool {
     similarity: number;
 }
 
-// Helper: Generate Embedding (using Gemini text-embedding-004)
+// Helper: Generate Embedding (using OpenAI text-embedding-3-small)
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-    console.log("Generating embedding for query...");
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "models/text-embedding-004",
-                content: { parts: [{ text }] },
-                taskType: "RETRIEVAL_QUERY",
-            }),
-        }
-    );
+    console.log("Generating embedding for query using OpenAI...");
+    const response = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "text-embedding-3-small",
+            input: text.replace(/\n/g, ' ')
+        }),
+    });
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Gemini Embedding API Error: Status ${response.status}`, errorText);
-        throw new Error(`Gemini Embedding API Error: ${response.status} - ${errorText}`);
+        console.error(`OpenAI Embedding API Error: Status ${response.status}`, errorText);
+        throw new Error(`OpenAI Embedding API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     console.log("Embedding generated successfully.");
-    return data.embedding.values;
+    return data.data[0].embedding;
 }
 
-// Helper: Generate Chat Response (using Gemini 1.5 Flash)
+// Helper: Generate Chat Response (using OpenAI GPT-4o)
 async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
-    console.log("Generating chat response...");
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [
-                    ...history.map(h => ({
-                        role: h.role,
-                        parts: [{ text: h.parts }]
-                    })),
-                    { role: "user", parts: [{ text: prompt }] }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 1000,
-                }
-            }),
-        }
-    );
+    console.log("Generating chat response using OpenAI GPT-4o...");
+    
+    const messages = [
+        ...history.map(h => ({
+            role: h.role === "model" ? "assistant" : h.role,
+            content: h.parts
+        })),
+        { role: "user", content: prompt }
+    ];
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "gpt-4o",
+            messages: messages,
+            temperature: 0.7,
+            max_tokens: 1000,
+        }),
+    });
 
     if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Gemini Chat API Error: Status ${response.status}`, errorText);
-        throw new Error(`Gemini Chat API Error: ${response.status} - ${errorText}`);
+        console.error(`OpenAI Chat API Error: Status ${response.status}`, errorText);
+        throw new Error(`OpenAI Chat API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     console.log("Chat response generated successfully.");
-    return data.candidates[0].content.parts[0].text;
+    return data.choices[0].message.content;
 }
 
 Deno.serve(async (req) => {
@@ -94,12 +95,12 @@ Deno.serve(async (req) => {
         console.log("--- Chat Function Started ---");
 
         // 1. Env Check
-        const googleApiKey = Deno.env.get("GOOGLE_API_KEY");
-        if (!googleApiKey) {
-            console.error("GOOGLE_API_KEY is missing from environment variables.");
-            throw new Error("Server misconfiguration: GOOGLE_API_KEY missing");
+        const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
+        if (!openaiApiKey) {
+            console.error("OPENAI_API_KEY is missing from environment variables.");
+            throw new Error("Server misconfiguration: OPENAI_API_KEY missing");
         }
-        console.log("GOOGLE_API_KEY is present.");
+        console.log("OPENAI_API_KEY is present.");
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
         const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -152,7 +153,8 @@ Deno.serve(async (req) => {
         // 3. Generate Embedding
         let queryEmbedding: number[];
         try {
-            queryEmbedding = await generateEmbedding(query, googleApiKey);
+        try {
+            queryEmbedding = await generateEmbedding(query, openaiApiKey);
         } catch (e) {
             console.error("Failed step: Generate Embedding", e);
             throw e;
@@ -199,23 +201,9 @@ Deno.serve(async (req) => {
         // 7. Generate Chat Response
         let answer;
         try {
-            answer = await generateChatResponse(systemPrompt, googleApiKey, []); // Stateless for now to keep it simple with contexts
+            answer = await generateChatResponse(systemPrompt, openaiApiKey, []); // Stateless for now
         } catch (e: any) {
             console.error("Failed step: Generate Chat Response", e);
-
-            // DEBUG: If 404/400, try to list models
-            if (e.message.includes("404") || e.message.includes("400")) {
-                console.log("Attempting to list available models for debugging...");
-                try {
-                    const listResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${googleApiKey}`);
-                    const listData = await listResp.json();
-                    const modelNames = listData.models ? listData.models.map((m: any) => m.name).join(", ") : "No models returned";
-                    console.log("Available Models:", modelNames);
-                    throw new Error(`Gemini Error: ${e.message} - AVAILABLE MODELS TO THIS KEY: ${modelNames}`);
-                } catch (listErr) {
-                    console.error("Failed to list models", listErr);
-                }
-            }
             throw e;
         }
 
