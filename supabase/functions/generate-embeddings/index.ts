@@ -14,27 +14,28 @@ interface Tool {
     features: string[] | null;
 }
 
-// OpenAI Embedding API
+// Google Gemini Embedding API
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-    const response = await fetch("https://api.openai.com/v1/embeddings", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-            model: "text-embedding-3-small",
-            input: text.replace(/\n/g, ' ')
-        }),
-    });
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "models/text-embedding-004",
+                content: { parts: [{ text }] },
+                taskType: "RETRIEVAL_DOCUMENT",
+            }),
+        }
+    );
 
     if (!response.ok) {
         const error = await response.text();
-        throw new Error(`OpenAI API error: ${error}`);
+        throw new Error(`Gemini API error: ${error}`);
     }
 
     const data = await response.json();
-    return data.data[0].embedding;
+    return data.embedding.values;
 }
 
 Deno.serve(async (req) => {
@@ -44,9 +45,9 @@ Deno.serve(async (req) => {
     }
 
     try {
-        const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
-        if (!openaiApiKey) {
-            throw new Error("OPENAI_API_KEY is not set");
+        const googleApiKey = Deno.env.get("GEMINI_API_KEY");
+        if (!googleApiKey) {
+            throw new Error("GEMINI_API_KEY is not set");
         }
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -93,8 +94,8 @@ Deno.serve(async (req) => {
                     .filter(Boolean)
                     .join(" ");
 
-                // Generate embedding using OpenAI
-                const embedding = await generateEmbedding(searchText, openaiApiKey);
+                // Generate embedding using Google Gemini
+                const embedding = await generateEmbedding(searchText, googleApiKey);
 
                 // Update tool with embedding
                 const { error: updateError } = await supabase
@@ -117,7 +118,7 @@ Deno.serve(async (req) => {
         return new Response(
             JSON.stringify({
                 message: `Processed ${results.length} tools`,
-                model: "text-embedding-3-small",
+                model: "text-embedding-004",
                 results,
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
