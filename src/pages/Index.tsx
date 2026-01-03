@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
+import ToolsTimeline from "@/components/ToolsTimeline";
 import AddToolModal from "@/components/AddToolModal";
 import Footer from "@/components/Footer";
 import { useTools, type Category } from "@/hooks/useTools";
@@ -11,6 +12,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
+import { LayoutGrid, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
   useSEO({
@@ -24,6 +28,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -111,9 +116,43 @@ const Index = () => {
           "
         >
           <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
-          <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50 border border-white/5 shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  "gap-2 h-8 px-3 transition-all",
+                  viewMode === 'grid'
+                    ? "bg-neon-purple/20 text-neon-purple shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <LayoutGrid className="w-4 h-4" />
+                <span className="hidden sm:inline text-xs">شبكة</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode('timeline')}
+                className={cn(
+                  "gap-2 h-8 px-3 transition-all",
+                  viewMode === 'timeline'
+                    ? "bg-neon-purple/20 text-neon-purple shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Clock className="w-4 h-4" />
+                <span className="hidden sm:inline text-xs">تايم لاين</span>
+              </Button>
+            </div>
+          </div>
         </section>
-        {/* Grid */}
+        {/* Tools Display */}
         <section
           aria-labelledby="tools-heading"
           className="
@@ -126,16 +165,20 @@ const Index = () => {
         >
           <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
 
-          <ToolsGrid
-            tools={tools}
-            isLoading={isLoading}
-            error={error}
-            searchQuery={searchQuery}
-            activeCategory={activeCategory}
-            onFetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-          />
+          {viewMode === 'grid' ? (
+            <ToolsGrid
+              tools={tools}
+              isLoading={isLoading}
+              error={error}
+              searchQuery={searchQuery}
+              activeCategory={activeCategory}
+              onFetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
+          ) : (
+            <ToolsTimeline tools={tools} />
+          )}
         </section>
 
         {/* مساحة تنفّس أسفل الشبكة على الموبايل */}
