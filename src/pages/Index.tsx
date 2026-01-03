@@ -28,7 +28,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'timeline'>('timeline');
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -165,7 +165,14 @@ const Index = () => {
         >
           <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
 
-          {viewMode === 'grid' ? (
+          {/* منطق العرض الذكي:
+              - إذا لا يوجد بحث + التصنيف "الكل" + الوضع timeline → تايم لاين
+              - إذا يوجد بحث أو تصنيف محدد → شبكة (للمرونة في التصفية)
+              - الزر اليدوي يتجاوز هذا المنطق
+          */}
+          {(viewMode === 'timeline' || (!searchQuery && activeCategory === 'الكل')) && viewMode !== 'grid' ? (
+            <ToolsTimeline tools={tools} />
+          ) : (
             <ToolsGrid
               tools={tools}
               isLoading={isLoading}
@@ -176,8 +183,6 @@ const Index = () => {
               hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
             />
-          ) : (
-            <ToolsTimeline tools={tools} />
           )}
         </section>
 
