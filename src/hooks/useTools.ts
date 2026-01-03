@@ -24,6 +24,12 @@ export interface Tool {
   video_url?: string | null;
   faqs?: { question: string; answer: string }[] | null;
   alternatives?: number[] | null; // IDs of alternative tools
+  // TAAFT-Style Fields
+  tasks?: string[] | null; // Array of tasks/use-cases
+  arabic_score?: number; // 0-10 scale for Arabic support quality
+  release_date?: string | null; // ISO date for recency calculations
+  clicks_count?: number; // Popularity tracking
+  trending_score?: number; // Calculated score (from DB view/function)
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];

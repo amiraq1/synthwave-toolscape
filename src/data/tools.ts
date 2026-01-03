@@ -1,5 +1,5 @@
 export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
- 
+
 export interface Tool {
   id: string;
   title: string;
@@ -17,8 +17,14 @@ export interface Tool {
   video_url?: string;
   faqs?: { question: string; answer: string }[];
   alternatives?: string[];
+  // TAAFT-Style Fields
+  tasks?: string[]; // Array of tasks/use-cases (e.g. 'writing', 'summarizing')
+  arabic_score?: number; // 0-10 scale for Arabic support quality
+  release_date?: string; // ISO date string for recency calculations
+  clicks_count?: number; // Popularity tracking
+  trending_score?: number; // Calculated score from DB function
 }
- 
+
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
 
 export const tools: Tool[] = [
