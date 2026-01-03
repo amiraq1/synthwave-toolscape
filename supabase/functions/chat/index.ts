@@ -102,7 +102,37 @@ Deno.serve(async (req) => {
         console.log("GOOGLE_API_KEY is present.");
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
         const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+        // 2. Authenticate User (Require JWT)
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            console.log("No Authorization header provided.");
+            return new Response(
+                JSON.stringify({ error: 'يجب تسجيل الدخول لاستخدام نبض AI' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Create authenticated Supabase client
+        const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+            global: { headers: { Authorization: authHeader } }
+        });
+
+        const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+        if (authError || !user) {
+            console.log("Auth failed:", authError?.message || "No user found");
+            return new Response(
+                JSON.stringify({ error: 'غير مصرح: يرجى تسجيل الدخول لاستخدام نبض AI' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        console.log("User authenticated:", user.id);
+
+        // Create service client for database operations
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
         // 2. Parse Request
