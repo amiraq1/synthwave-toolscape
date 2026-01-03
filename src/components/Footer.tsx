@@ -18,6 +18,7 @@ const Footer = () => {
       { label: 'أدوات الصور', href: '/?category=صور' },
       { label: 'أدوات الفيديو', href: '/?category=فيديو' },
       { label: 'أدوات البرمجة', href: '/?category=برمجة' },
+      { label: 'أدوات الدراسة والطلاب', href: '/?category=دراسة وطلاب' },
     ],
   };
 

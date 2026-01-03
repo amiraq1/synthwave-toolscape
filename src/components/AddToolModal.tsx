@@ -39,7 +39,7 @@ interface AddToolModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
+const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
 const pricingTypes = ['مجاني', 'مدفوع'];
 
 const formSchema = z.object({

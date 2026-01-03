@@ -1,5 +1,5 @@
-export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'صوت';
-
+export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
+ 
 export interface Tool {
   id: string;
   title: string;
@@ -18,8 +18,8 @@ export interface Tool {
   faqs?: { question: string; answer: string }[];
   alternatives?: string[];
 }
-
-export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'صوت'];
+ 
+export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
 
 export const tools: Tool[] = [
   // --- Core Tools (Updated) ---
