@@ -66,11 +66,10 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
       const from = pageParam as number;
       const to = from + PAGE_SIZE - 1;
 
-      // TIMELINE SORTING: Sponsored first, then newest by release_date, fallback to created_at
+      // Sort by featured first, then newest
       const { data, error } = await query
-        .order('is_sponsored', { ascending: false, nullsFirst: false }) // الممول أولاً دائماً
-        .order('release_date', { ascending: false, nullsFirst: false }) // ثم الأحدث تاريخاً (نظام Timeline)
-        .order('created_at', { ascending: false })  // احتياطي للأدوات بدون تاريخ إصدار
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false })
         .range(from, to);
 
       if (error) {
