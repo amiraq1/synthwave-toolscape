@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ExternalLink,
@@ -14,7 +14,9 @@ import {
   Heart,
   Crown,
   Tag,
-  Languages
+  Languages,
+  Flame,
+  Clock
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -78,6 +80,17 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const supportsArabic = tool.supports_arabic === true;
   const hasDeal = !!tool.coupon_code && (!tool.deal_expiry || new Date(tool.deal_expiry) > new Date());
 
+  // TAAFT-Style Indicators
+  const isNew = useMemo(() => {
+    if (!tool.release_date) return false;
+    const releaseDate = new Date(tool.release_date);
+    const daysSinceRelease = Math.floor((Date.now() - releaseDate.getTime()) / (1000 * 60 * 60 * 24));
+    return daysSinceRelease <= 30;
+  }, [tool.release_date]);
+
+  const isTrending = tool.is_featured === true || (tool.clicks_count && tool.clicks_count > 1000);
+  const arabicScore = tool.arabic_score ?? (supportsArabic ? 7 : 0); // Default 7 if supports_arabic is true
+
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
   };
@@ -127,6 +140,16 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-[10px] px-2 py-0.5 border-0 gap-1">
             <Crown className="w-3 h-3" />
             ممول
+          </Badge>
+        </div>
+      )}
+
+      {/* NEW Badge - Pulsating Teal */}
+      {isNew && !isSponsored && (
+        <div className="absolute top-3 right-3 z-20">
+          <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold text-[10px] px-2 py-0.5 border-0 gap-1 animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.5)]">
+            <Clock className="w-3 h-3" />
+            جديد
           </Badge>
         </div>
       )}
@@ -200,7 +223,15 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             )}>
               {tool.title}
             </h3>
-            {tool.is_featured && !isSponsored && (
+
+            {/* Trending Indicator */}
+            {isTrending && (
+              <span className="flex items-center gap-0.5 text-orange-400" title="رائج">
+                <Flame className="w-4 h-4 fill-orange-400 animate-pulse" />
+              </span>
+            )}
+
+            {tool.is_featured && !isSponsored && !isTrending && (
               <span className="flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-neon-cyan opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
@@ -214,12 +245,29 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
             {tool.category}
           </Badge>
 
-          {/* Arabic Support Badge */}
-          {supportsArabic && (
-            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] px-1.5 py-0 gap-0.5">
-              <Languages className="w-2.5 h-2.5" />
-              عربي
-            </Badge>
+          {/* Arabic Support Badge with Score Meter */}
+          {(supportsArabic || arabicScore > 0) && (
+            <div className="flex items-center gap-1">
+              <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] px-1.5 py-0 gap-1">
+                <Languages className="w-2.5 h-2.5" />
+                عربي
+                {arabicScore > 0 && (
+                  <span className="flex gap-0.5 mr-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span
+                        key={i}
+                        className={cn(
+                          "w-1 h-2 rounded-sm",
+                          i < Math.ceil(arabicScore / 2)
+                            ? "bg-emerald-400"
+                            : "bg-emerald-400/20"
+                        )}
+                      />
+                    ))}
+                  </span>
+                )}
+              </Badge>
+            </div>
           )}
 
           {/* Deal/Coupon Badge */}
