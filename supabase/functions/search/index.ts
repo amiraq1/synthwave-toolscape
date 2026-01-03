@@ -22,28 +22,27 @@ interface ToolResult {
     similarity: number;
 }
 
-// Helper: Generate Embedding (using Gemini text-embedding-004)
+// Helper: Generate Embedding (using OpenAI text-embedding-3-small)
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "models/text-embedding-004",
-                content: { parts: [{ text }] },
-                taskType: "RETRIEVAL_QUERY",
-            }),
-        }
-    );
+    const response = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "text-embedding-3-small",
+            input: text.replace(/\n/g, ' ')
+        }),
+    });
 
     if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Embedding API Error: ${response.status} - ${errorText}`);
+        throw new Error(`OpenAI Embedding API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    return data.embedding.values;
+    return data.data[0].embedding;
 }
 
 Deno.serve(async (req) => {
@@ -56,9 +55,9 @@ Deno.serve(async (req) => {
         console.log("--- Semantic Search Started ---");
 
         // 1. Environment Check
-        const googleApiKey = Deno.env.get("GOOGLE_API_KEY");
-        if (!googleApiKey) {
-            throw new Error("GOOGLE_API_KEY missing");
+        const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
+        if (!openaiApiKey) {
+            throw new Error("OPENAI_API_KEY missing");
         }
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -79,7 +78,7 @@ Deno.serve(async (req) => {
         console.log("Search Query:", query);
 
         // 3. Generate Embedding for the query
-        const queryEmbedding = await generateEmbedding(query, googleApiKey);
+        const queryEmbedding = await generateEmbedding(query, openaiApiKey);
         console.log("Embedding generated successfully");
 
         // 4. Search using match_tools RPC
