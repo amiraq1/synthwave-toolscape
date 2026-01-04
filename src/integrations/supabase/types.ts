@@ -239,6 +239,34 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_public_reviews: {
+        Args: { p_tool_id?: number }
+        Returns: {
+          comment: string
+          created_at: string
+          display_name: string
+          id: string
+          rating: number
+          tool_id: number
+        }[]
+      }
+      get_trending_tools: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          category: string
+          clicks_count: number
+          created_at: string
+          description: string
+          features: string[]
+          id: number
+          image_url: string
+          pricing_type: string
+          source: string
+          taaft_url: string
+          title: string
+          url: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -246,6 +274,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_tool_clicks: { Args: { p_tool_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {

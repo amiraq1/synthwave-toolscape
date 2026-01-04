@@ -24,26 +24,31 @@ export interface ToolWithRating {
   review_count: number;
 }
 
-// Fetch reviews for a specific tool
+// Fetch reviews for a specific tool using secure RPC function
 export const useReviews = (toolId: number | undefined) => {
   return useQuery({
     queryKey: ['reviews', toolId],
     queryFn: async (): Promise<Review[]> => {
       if (!toolId) return [];
 
-      // Use public_reviews view which protects user_id by hashing it
-      const { data, error } = await (supabase as any)
-        .from('public_reviews')
-        .select('*')
-        .eq('tool_id', toolId)
-        .order('created_at', { ascending: false });
+      // Use get_public_reviews RPC function which excludes user_id
+      const { data, error } = await supabase
+        .rpc('get_public_reviews', { p_tool_id: toolId });
 
       if (error) {
         console.error('Error fetching reviews:', error);
         throw error;
       }
 
-      return (data || []) as Review[];
+      // Map display_name to reviewer_alias for compatibility
+      return (data || []).map((r: any) => ({
+        id: r.id,
+        tool_id: r.tool_id,
+        rating: r.rating,
+        comment: r.comment,
+        created_at: r.created_at,
+        reviewer_alias: r.display_name,
+      })) as Review[];
     },
     enabled: !!toolId,
   });
@@ -81,14 +86,14 @@ export const useReviewStats = (toolId: number | undefined) => {
   });
 };
 
-// Get all tools ratings
+// Get all tools ratings using secure RPC function
 export const useToolRatings = () => {
   return useQuery({
     queryKey: ['tool-ratings'],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('public_reviews')
-        .select('tool_id, rating');
+      // Use get_public_reviews RPC without tool_id filter to get all reviews
+      const { data, error } = await supabase
+        .rpc('get_public_reviews', {});
 
       if (error) throw error;
 
