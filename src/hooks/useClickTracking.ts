@@ -2,10 +2,18 @@ import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useClickTracking = () => {
-    const recordClick = useCallback(async (toolId: number) => {
+    const recordClick = useCallback(async (toolId: string | number) => {
+        const idAsNumber = Number(toolId);
+
+        if (isNaN(idAsNumber)) {
+            console.error('Invalid tool ID:', toolId);
+            return;
+        }
+
         try {
+            // @ts-ignore - Function exists in DB but types not updated yet
             const { error } = await supabase.rpc('record_tool_click', {
-                p_tool_id: toolId,
+                p_tool_id: idAsNumber,
                 p_referrer: document.referrer || null,
                 p_user_agent: navigator.userAgent || null
             });

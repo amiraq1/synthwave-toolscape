@@ -4,18 +4,18 @@ import { supabase } from '@/integrations/supabase/client';
 export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
 
 export interface Tool {
-  id: number;
+  id: string; // Changed to string for consistency
   title: string;
   description: string;
   category: string;
-  secondary_categories?: string[]; // Multi-category support
+  secondary_categories?: string[];
   url: string;
   image_url: string | null;
   pricing_type: string;
   pricing_details?: {
-    free?: { features?: string[]; limits?: string };
-    pro?: { price?: string; features?: string[]; billing?: string };
-    enterprise?: { features?: string[]; contact?: boolean };
+    free?: { features: string[]; limits?: string };
+    pro?: { price: string; features: string[]; billing?: string };
+    enterprise?: { features: string[]; contact?: boolean };
   } | null;
   is_featured: boolean;
   is_sponsored?: boolean;
@@ -29,13 +29,13 @@ export interface Tool {
   reviews_count?: number;
   video_url?: string | null;
   faqs?: { question: string; answer: string }[] | null;
-  alternatives?: number[] | null; // IDs of alternative tools
+  alternatives?: string[] | null; // IDs are strings now
   // TAAFT-Style Fields
-  tasks?: string[] | null; // Array of tasks/use-cases
-  arabic_score?: number; // 0-10 scale for Arabic support quality
-  release_date?: string | null; // ISO date for recency calculations
-  clicks_count?: number; // Popularity tracking
-  trending_score?: number; // Calculated score (from DB view/function)
+  tasks?: string[];
+  arabic_score?: number;
+  release_date?: string | null;
+  clicks_count?: number;
+  trending_score?: number;
 }
 
 export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
@@ -82,7 +82,14 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
         throw error;
       }
 
-      return (data ?? []) as Tool[];
+      // Transform data to match interface (convert id from number to string)
+      const transformedData = (data ?? []).map(item => ({
+        ...item,
+        id: String(item.id),
+        // Ensure other fields match too if needed, but 'as Tool[]' handles optional props mostly
+      }));
+
+      return transformedData as unknown as Tool[];
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
