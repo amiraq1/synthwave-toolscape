@@ -12,6 +12,7 @@ import ChatWidget from "@/components/ChatWidget";
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/tool/:id" element={<ToolDetails />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/install" element={<Install />} />
             <Route path="/settings" element={<Settings />} />
