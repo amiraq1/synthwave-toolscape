@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import HomePageSkeleton from "@/components/skeletons/HomePageSkeleton";
 import ScrollToTop from "@/components/ScrollToTop";
 // Lazy Load ChatWidget to defer react-markdown and other dependencies
@@ -76,7 +76,7 @@ const App = () => (
           },
         }}
       />
-      <BrowserRouter>
+      <HashRouter>
         <ScrollToTop />
         <Suspense fallback={<HomePageSkeleton />}>
           <Routes>
@@ -102,7 +102,7 @@ const App = () => (
         <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>
-      </BrowserRouter>
+      </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
