@@ -28,9 +28,23 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="نبض AI" />
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+  <link rel="icon" href="/synthwave-toolscape/favicon.ico" />
+  <link rel="apple-touch-icon" href="/synthwave-toolscape/pwa-192x192.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- GitHub Pages SPA redirect handler -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
 
   <!-- Preconnect for external resources (improves connection time) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -274,15 +288,15 @@
       border: 0;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-DDY7f-67.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/react-core-DF6eTxSH.js">
-  <link rel="modulepreload" crossorigin href="/assets/supabase-BI1TbgRl.js">
-  <link rel="modulepreload" crossorigin href="/assets/ui-primitives-B-Kf-2xP.js">
-  <link rel="modulepreload" crossorigin href="/assets/icons-D1KRm4qg.js">
-  <link rel="modulepreload" crossorigin href="/assets/tanstack-C82ICjHp.js">
-  <link rel="modulepreload" crossorigin href="/assets/router-BDgXhDEa.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-CJ4HvW2_.css">
-<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <script type="module" crossorigin src="/synthwave-toolscape/assets/index-BjzYchjk.js"></script>
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/react-core-DF6eTxSH.js">
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/supabase-BI1TbgRl.js">
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/ui-primitives-B-Kf-2xP.js">
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/icons-D1KRm4qg.js">
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/tanstack-C82ICjHp.js">
+  <link rel="modulepreload" crossorigin href="/synthwave-toolscape/assets/router-BDgXhDEa.js">
+  <link rel="stylesheet" crossorigin href="/synthwave-toolscape/assets/index-CJ4HvW2_.css">
+<link rel="manifest" href="/synthwave-toolscape/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/synthwave-toolscape/registerSW.js"></script></head>
 
 <body>
   <noscript>تحتاج لتفعيل JavaScript لتشغيل الموقع.</noscript>
