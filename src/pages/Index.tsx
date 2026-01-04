@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
 import ToolsTimeline from "@/components/ToolsTimeline";
-import AddToolModal from "@/components/AddToolModal";
+// Lazy load AddToolModal
+const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 import Footer from "@/components/Footer";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
@@ -28,6 +29,8 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // ... (rest of hook calls remain same)
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -189,7 +192,12 @@ const Index = () => {
 
       <Footer />
 
-      <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+      {/* Lazy Load AddToolModal only when requested */}
+      {isAddModalOpen && (
+        <Suspense fallback={null}>
+          <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+        </Suspense>
+      )}
     </div>
   );
 };

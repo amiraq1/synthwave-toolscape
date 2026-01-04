@@ -25,7 +25,7 @@ interface ToolListSchema {
   name: string;
   description: string;
   items: Array<{
-    id: number;
+    id: string | number;
     name: string;
     url: string;
   }>;
