@@ -31,24 +31,12 @@ export const useReviews = (toolId: number | undefined) => {
     queryFn: async (): Promise<Review[]> => {
       if (!toolId) return [];
 
-      // Try public_reviews view first, fallback to reviews table
-      let { data, error } = await (supabase as any)
+      // Use public_reviews view which protects user_id by hashing it
+      const { data, error } = await (supabase as any)
         .from('public_reviews')
         .select('*')
         .eq('tool_id', toolId)
         .order('created_at', { ascending: false });
-
-      if (error) {
-        // Fallback to reviews table
-        const fallback = await (supabase as any)
-          .from('reviews')
-          .select('*')
-          .eq('tool_id', toolId)
-          .order('created_at', { ascending: false });
-
-        data = fallback.data;
-        error = fallback.error;
-      }
 
       if (error) {
         console.error('Error fetching reviews:', error);
