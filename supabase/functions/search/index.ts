@@ -62,36 +62,50 @@ Deno.serve(async (req) => {
         }
 
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        // SECURITY FIX: Use ANON_KEY instead of SERVICE_ROLE_KEY
+        // This ensures RLS policies are respected and we don't bypass security
+        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
         // 2. Parse Request
         const body: SearchRequest = await req.json();
         const { query, limit = 10 } = body;
 
-        if (!query || query.trim().length < 2) {
+        // Input validation
+        if (!query || typeof query !== 'string') {
+            return new Response(
+                JSON.stringify({ tools: [], message: "Query is required" }),
+                { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+        }
+
+        const trimmedQuery = query.trim();
+        if (trimmedQuery.length < 2) {
             return new Response(
                 JSON.stringify({ tools: [], message: "Query too short" }),
                 { headers: { ...corsHeaders, "Content-Type": "application/json" } }
             );
         }
 
-        console.log("Search Query:", query);
+        // Validate and cap limit to prevent resource exhaustion
+        const safeLimit = Math.min(Math.max(1, Number(limit) || 10), 50);
+
+        console.log("Search Query:", trimmedQuery);
 
         // 3. Generate Embedding for the query
-        const queryEmbedding = await generateEmbedding(query, googleApiKey);
+        const queryEmbedding = await generateEmbedding(trimmedQuery, googleApiKey);
         console.log("Embedding generated successfully");
 
         // 4. Search using match_tools RPC
         const { data: tools, error: searchError } = await supabase.rpc("match_tools", {
             query_embedding: queryEmbedding,
             match_threshold: 0.3, // Lower threshold for broader results
-            match_count: limit
+            match_count: safeLimit
         });
 
         if (searchError) {
             console.error("RPC Error:", searchError);
-            throw new Error(`Search Failed: ${searchError.message}`);
+            throw new Error("Search failed");
         }
 
         const results = (tools as ToolResult[]) || [];
@@ -110,7 +124,7 @@ Deno.serve(async (req) => {
         console.error("Search Error:", error.message);
         return new Response(
             JSON.stringify({
-                error: error.message || "Search failed",
+                error: "Search failed",
                 tools: [],
                 semantic: false
             }),
