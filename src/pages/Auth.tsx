@@ -36,6 +36,7 @@ const Auth = () => {
   const { toast } = useToast();
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
@@ -59,15 +60,18 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
     try {
       if (mode === 'forgot-password') {
         // Validate email only
         const validation = emailSchema.safeParse({ email });
         if (!validation.success) {
+          const errorMessage = validation.error.errors[0].message;
+          setError(errorMessage);
           toast({
             title: 'خطأ في البيانات',
-            description: validation.error.errors[0].message,
+            description: errorMessage,
             variant: 'destructive',
           });
           setIsLoading(false);
@@ -79,9 +83,11 @@ const Auth = () => {
         });
 
         if (error) {
+          const errorMessage = 'حدث خطأ أثناء إرسال رابط إعادة التعيين';
+          setError(errorMessage);
           toast({
             title: 'خطأ',
-            description: 'حدث خطأ أثناء إرسال رابط إعادة التعيين',
+            description: errorMessage,
             variant: 'destructive',
           });
         } else {
@@ -96,9 +102,11 @@ const Auth = () => {
         // Validate email and password
         const validation = authSchema.safeParse({ email, password });
         if (!validation.success) {
+          const errorMessage = validation.error.errors[0].message;
+          setError(errorMessage);
           toast({
             title: 'خطأ في البيانات',
-            description: validation.error.errors[0].message,
+            description: errorMessage,
             variant: 'destructive',
           });
           setIsLoading(false);
@@ -112,6 +120,7 @@ const Auth = () => {
             if (error.message.includes('Invalid login credentials')) {
               message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
             }
+            setError(message);
             toast({
               title: 'خطأ',
               description: message,
@@ -130,6 +139,7 @@ const Auth = () => {
             if (error.message.includes('already registered')) {
               message = 'هذا البريد الإلكتروني مسجل بالفعل';
             }
+            setError(message);
             toast({
               title: 'خطأ',
               description: message,
@@ -263,6 +273,13 @@ const Auth = () => {
             >
               {getButtonText()}
             </Button>
+
+            {/* Error Message */}
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-3 font-medium">
+                {error}
+              </p>
+            )}
           </form>
 
           {/* Google Sign In */}
