@@ -170,6 +170,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         size="icon"
         onClick={handleBookmarkClick}
         disabled={isToggling}
+        aria-label={toolIsBookmarked ? "إزالة من المفضلة" : "إضافة للمفضلة"}
         className={cn(
           "absolute top-3 left-3 z-20 h-9 w-9 rounded-full backdrop-blur-sm transition-all",
           toolIsBookmarked
@@ -324,7 +325,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
           )}
           onClick={handleExternalClick}
         >
-          <a href={tool.url} target="_blank" rel="noopener noreferrer" aria-label="Visit">
+          <a href={tool.url} target="_blank" rel="noopener noreferrer" aria-label={`زيارة موقع ${tool.title}`}>
             <ExternalLink className="h-4 w-4" />
           </a>
         </Button>

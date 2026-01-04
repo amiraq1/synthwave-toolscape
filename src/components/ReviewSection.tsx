@@ -120,6 +120,7 @@ const ReviewCard = ({
                   variant="ghost"
                   size="icon"
                   onClick={onEdit}
+                  aria-label="تعديل التقييم"
                   className="h-7 w-7 hover:text-neon-purple"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -128,6 +129,7 @@ const ReviewCard = ({
                   variant="ghost"
                   size="icon"
                   onClick={onDelete}
+                  aria-label="حذف التقييم"
                   className="h-7 w-7 hover:text-destructive"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
