@@ -36,7 +36,7 @@ export const useSEO = ({
     const setMetaTag = (name: string, content: string, isProperty = false) => {
       const attr = isProperty ? 'property' : 'name';
       let meta = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
-      
+
       if (!meta) {
         meta = document.createElement('meta');
         meta.setAttribute(attr, name);
@@ -67,20 +67,20 @@ export const useSEO = ({
     setMetaTag('og:type', ogType, true);
 
     // Twitter tags
+    setMetaTag('twitter:card', 'summary_large_image');
     setMetaTag('twitter:title', ogTitle || title || DEFAULT_TITLE);
     setMetaTag('twitter:description', ogDescription || description || DEFAULT_DESCRIPTION);
     setMetaTag('twitter:image', ogImage || DEFAULT_IMAGE);
 
     // Canonical URL
-    if (canonical) {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'canonical';
-        document.head.appendChild(link);
-      }
-      link.href = canonical;
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
     }
+    // Use provided canonical or fall back to current window location (without query params for stricter SEO)
+    link.href = canonical || window.location.origin + window.location.pathname;
 
     // Cleanup function to reset to defaults when unmounting
     return () => {
