@@ -36,6 +36,64 @@ const Auth = () => {
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  // دالة التحقق من صحة البريد الإلكتروني
+  const validateEmail = (value: string): string => {
+    if (!value.trim()) {
+      return 'البريد الإلكتروني مطلوب';
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return 'يرجى إدخال بريد إلكتروني صالح';
+    }
+    return '';
+  };
+
+  // دالة التحقق من صحة كلمة المرور
+  const validatePassword = (value: string): string => {
+    if (!value) {
+      return 'كلمة المرور مطلوبة';
+    }
+    if (value.length < 6) {
+      return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+    }
+    return '';
+  };
+
+  // التحقق من صحة النموذج بالكامل
+  const isFormValid = (): boolean => {
+    const emailValid = validateEmail(email) === '';
+    const passwordValid = mode === 'forgot-password' || validatePassword(password) === '';
+    return emailValid && passwordValid;
+  };
+
+  // معالجة تغيير البريد الإلكتروني
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (emailError) {
+      setEmailError(validateEmail(value));
+    }
+  };
+
+  // معالجة فقدان التركيز على حقل البريد
+  const handleEmailBlur = () => {
+    setEmailError(validateEmail(email));
+  };
+
+  // معالجة تغيير كلمة المرور
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (passwordError) {
+      setPasswordError(validatePassword(value));
+    }
+  };
+
+  // معالجة فقدان التركيز على حقل كلمة المرور
+  const handlePasswordBlur = () => {
+    setPasswordError(validatePassword(password));
+  };
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
@@ -219,11 +277,15 @@ const Auth = () => {
                   type="email"
                   placeholder="example@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pr-10 bg-muted/50 border-border/50"
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                  onBlur={handleEmailBlur}
+                  className={`pr-10 bg-muted/50 border-border/50 ${emailError ? 'border-red-500 focus:border-red-500' : ''}`}
                   required
                 />
               </div>
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
 
             {mode !== 'forgot-password' && (
@@ -236,11 +298,15 @@ const Auth = () => {
                     type="password"
                     placeholder="••••••••"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10 bg-muted/50 border-border/50"
+                    onChange={(e) => handlePasswordChange(e.target.value)}
+                    onBlur={handlePasswordBlur}
+                    className={`pr-10 bg-muted/50 border-border/50 ${passwordError ? 'border-red-500 focus:border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {passwordError && (
+                  <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+                )}
               </div>
             )}
 
@@ -258,8 +324,8 @@ const Auth = () => {
 
             <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg"
+              disabled={isLoading || !isFormValid()}
+              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {getButtonText()}
             </Button>
