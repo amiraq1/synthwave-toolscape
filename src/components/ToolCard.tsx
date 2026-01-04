@@ -26,6 +26,7 @@ import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
+import { useClickTracking } from '@/hooks/useClickTracking';
 
 interface ToolCardProps {
   tool: Tool;
@@ -72,6 +73,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const { user } = useAuth();
   const { isBookmarked, toggleBookmark, isToggling } = useBookmarks();
   const [imageError, setImageError] = useState(false);
+  const { recordClick } = useClickTracking();
 
   const categoryStyle = categoryGradients[tool.category] || 'from-gray-500/20 to-gray-600/20 text-gray-400 border-gray-500/20';
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
@@ -93,6 +95,11 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
 
   const handleCardClick = () => {
     navigate(`/tool/${tool.id}`);
+  };
+
+  const handleExternalClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    recordClick(tool.id);
   };
 
   const handleMouseEnter = () => {
@@ -315,7 +322,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
               ? "hover:bg-amber-500/20 hover:text-amber-400 text-muted-foreground"
               : "hover:bg-neon-purple/20 hover:text-neon-purple text-muted-foreground"
           )}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleExternalClick}
         >
           <a href={tool.url} target="_blank" rel="noopener noreferrer" aria-label="Visit">
             <ExternalLink className="h-4 w-4" />
