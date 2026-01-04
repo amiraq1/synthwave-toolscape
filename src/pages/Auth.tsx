@@ -88,7 +88,7 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; autoS
 
   // خطأ افتراضي
   return {
-    message: 'حدث خطأ غير متوقع، يرجى المحاولة لاحقاً.',
+    message: `حدث خطأ غير متوقع: ${error.message || 'يرجى المحاولة لاحقاً'}`,
     showSignup: false,
     showLogin: false,
     showForgotPassword: false,
@@ -239,6 +239,7 @@ const Auth = () => {
         }
       }
     } catch (err: unknown) {
+      console.error('Authentication Error:', err);
       // Error Handling Logic
       const errorObj = err instanceof Error ? err : new Error('Unknown error');
       const errorResult = getErrorMessage(errorObj, mode);
