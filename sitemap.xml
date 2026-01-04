@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- الصفحة الرئيسية - Homepage -->
+  <url>
+    <loc>https://amiraq.org/</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://amiraq.org/"/>
+  </url>
+  
+  <!-- صفحة حول - About Page -->
+  <url>
+    <loc>https://amiraq.org/about</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- صفحة الأسئلة الشائعة - FAQ Page -->
+  <url>
+    <loc>https://amiraq.org/faq</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- صفحة اتصل بنا - Contact Page -->
+  <url>
+    <loc>https://amiraq.org/contact</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- صفحة التثبيت - Install Page -->
+  <url>
+    <loc>https://amiraq.org/install</loc>
+    <lastmod>2024-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- 
+    ملاحظة: صفحات الأدوات الفردية (/tool/:id) يتم توليدها ديناميكياً
+    لتحسين SEO بشكل أكبر، يُفضل إنشاء sitemap ديناميكي من خلال edge function
+    تقوم بجلب جميع الأدوات من قاعدة البيانات
+  -->
+
+</urlset>
