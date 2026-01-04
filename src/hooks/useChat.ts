@@ -46,7 +46,17 @@ export const useChat = () => {
 
         } catch (err: any) {
             console.error('Chat error:', err);
-            setError(err.message || 'حدث خطأ أثناء المحادثة');
+            
+            // تحسين رسالة الخطأ للمستخدم
+            let errorMessage = 'حدث خطأ أثناء المحادثة';
+            
+            if (err?.context?.status === 401 || err?.message?.includes('401') || err?.message?.includes('تسجيل الدخول')) {
+                errorMessage = 'يجب تسجيل الدخول لاستخدام نبض AI';
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
+            
+            setError(errorMessage);
             return null;
         } finally {
             setIsLoading(false);

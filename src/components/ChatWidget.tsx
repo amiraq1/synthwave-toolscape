@@ -10,7 +10,7 @@ import ReactMarkdown from 'react-markdown';
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const { messages, sendMessage, isLoading, clearChat } = useChat();
+    const { messages, sendMessage, isLoading, clearChat, error } = useChat();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom
@@ -133,6 +133,27 @@ const ChatWidget = () => {
                                     <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
                                     <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce [animation-delay:-0.15s]" />
                                     <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Error Message */}
+                        {error && !isLoading && (
+                            <div className="flex gap-3 ml-auto max-w-[90%]">
+                                <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shrink-0 border border-red-500/30 mt-1">
+                                    <Bot className="w-4 h-4 text-red-400" />
+                                </div>
+                                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl rounded-tr-none px-4 py-2.5 text-sm">
+                                    <p className="text-red-400 font-medium mb-1">⚠️ خطأ</p>
+                                    <p className="text-red-300/80 text-xs">{error}</p>
+                                    {error.includes('تسجيل الدخول') && (
+                                        <a 
+                                            href="/auth" 
+                                            className="inline-block mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors"
+                                        >
+                                            تسجيل الدخول →
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         )}
