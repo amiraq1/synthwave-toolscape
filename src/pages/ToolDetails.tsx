@@ -299,95 +299,112 @@ const ToolDetails = () => {
             </div>
           )}
 
-          {/* Use Cases / Tasks - NEW SECTION */}
+          {/* Use Cases / Tasks - UPDATED SECTION */}
           {tool.tasks && tool.tasks.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Target className="w-6 h-6 text-neon-purple" />
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
+                <Target className="text-neon-purple w-6 h-6" />
                 كيف تستفيد من هذه الأداة؟
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tool.tasks.map((task, index) => (
-                  <div
-                    key={index}
-                    className="group p-4 bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 border border-neon-purple/20 rounded-xl hover:border-neon-purple/40 transition-colors"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-neon-purple/20 flex items-center justify-center shrink-0 group-hover:bg-neon-purple/30 transition-colors">
-                        <Lightbulb className="w-4 h-4 text-neon-purple" />
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{task}</p>
-                    </div>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {tool.tasks.map((task, idx) => (
+                  <div key={idx} className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center gap-3 hover:bg-white/10 transition-colors">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <span className="text-muted-foreground">{task}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Pricing Details - NEW SECTION */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <DollarSign className="w-6 h-6 text-green-400" />
-              معلومات التسعير
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Free Tier */}
-              <div className={cn(
-                "p-5 rounded-2xl border",
-                tool.pricing_type === 'مجاني'
-                  ? "bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-500/30"
-                  : "bg-muted/30 border-border/50"
-              )}>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">🆓</span>
-                  <h3 className="font-bold text-lg">الخطة المجانية</h3>
-                </div>
-                <p className="text-3xl font-bold text-emerald-400 mb-2">$0</p>
-                <p className="text-sm text-muted-foreground">
-                  {tool.pricing_type === 'مجاني'
-                    ? "استخدام مجاني بالكامل"
-                    : tool.pricing_type === 'تجربة مجانية'
-                      ? "تجربة مجانية محدودة"
-                      : "غير متاح"
-                  }
-                </p>
-              </div>
+          {/* Pricing Details - UPDATED SECTION */}
+          {(tool.pricing_details || tool.pricing_type) && (
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
+                <DollarSign className="text-green-400 w-6 h-6" />
+                باقات الاشتراك
+              </h3>
 
-              {/* Pro Tier */}
-              <div className={cn(
-                "p-5 rounded-2xl border",
-                tool.pricing_type === 'مدفوع' || tool.pricing_type === 'تجربة مجانية'
-                  ? "bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30"
-                  : "bg-muted/30 border-border/50"
-              )}>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">⭐</span>
-                  <h3 className="font-bold text-lg">الخطة الاحترافية</h3>
-                </div>
-                <p className="text-3xl font-bold text-amber-400 mb-2">
-                  {tool.pricing_type === 'مجاني' ? '-' : 'مدفوع'}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {tool.pricing_type !== 'مجاني'
-                    ? "ميزات متقدمة ودعم أفضل"
-                    : "غير مطلوب"
-                  }
-                </p>
-              </div>
+              {tool.pricing_details ? (
+                // Display Detailed Pricing from DB JSON
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Free Plan */}
+                  {tool.pricing_details.free && (
+                    <div className="bg-white/5 p-5 rounded-xl border border-white/10 hover:border-emerald-500/30 transition-colors">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-2xl">🆓</span>
+                        <h4 className="font-bold text-lg text-emerald-400">مجاني</h4>
+                      </div>
+                      <ul className="space-y-2 text-sm text-gray-300">
+                        {tool.pricing_details.free.features?.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                        {tool.pricing_details.free.limits && (
+                          <li className="text-xs text-muted-foreground mt-2 border-t border-white/10 pt-2">
+                            الحدود: {tool.pricing_details.free.limits}
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
 
-              {/* Enterprise Tier */}
-              <div className="p-5 rounded-2xl border bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">🏢</span>
-                  <h3 className="font-bold text-lg">الشركات</h3>
+                  {/* Pro Plan */}
+                  {tool.pricing_details.pro && (
+                    <div className="bg-neon-purple/10 p-5 rounded-xl border border-neon-purple/30 relative hover:border-neon-purple/60 transition-colors">
+                      <div className="absolute top-0 right-0 bg-neon-purple text-white text-xs px-2 py-1 rounded-bl-lg rounded-tr-lg font-bold">موصى به</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-2xl">⭐</span>
+                        <h4 className="font-bold text-lg text-neon-purple">احترافي</h4>
+                      </div>
+                      <p className="text-2xl font-bold mb-3 text-white">{tool.pricing_details.pro.price}</p>
+                      <ul className="space-y-2 text-sm text-gray-300">
+                        {tool.pricing_details.pro.features?.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neon-purple shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Enterprise Plan */}
+                  {tool.pricing_details.enterprise && (
+                    <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 p-5 rounded-xl border border-purple-500/30 hover:border-purple-500/50 transition-colors">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-2xl">🏢</span>
+                        <h4 className="font-bold text-lg text-purple-400">للشركات</h4>
+                      </div>
+                      <ul className="space-y-2 text-sm text-gray-300">
+                        {tool.pricing_details.enterprise.features?.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      {tool.pricing_details.enterprise.contact && (
+                        <Button variant="outline" size="sm" className="w-full mt-4 border-purple-500/30 hover:bg-purple-500/10">
+                          تواصل معنا
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <p className="text-3xl font-bold text-purple-400 mb-2">تواصل معنا</p>
-                <p className="text-sm text-muted-foreground">
-                  حلول مخصصة للشركات
-                </p>
-              </div>
+              ) : (
+                // Fallback to Generic Pricing Cards based on pricing_type (Old Design Refined)
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className={cn("p-5 rounded-2xl border", tool.pricing_type === 'مجاني' ? "bg-emerald-500/10 border-emerald-500/30" : "bg-muted/30 border-border/50")}>
+                    <h3 className="font-bold text-lg mb-2">نوع التسعير</h3>
+                    <p className="text-2xl font-bold text-foreground">{tool.pricing_type}</p>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Comparison Table (Alternatives) */}
           {tool.alternatives && tool.alternatives.length > 0 && (

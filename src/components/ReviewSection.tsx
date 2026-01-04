@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 interface ReviewSectionProps {
-  toolId: number;
+  toolId: string | number;
   toolTitle?: string;
 }
 
