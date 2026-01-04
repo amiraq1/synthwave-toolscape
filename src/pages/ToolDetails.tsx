@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowRight, ExternalLink, Loader2, CheckCircle2, Copy, Tag, Languages, Check, Sparkles } from 'lucide-react';
+import { ArrowRight, ExternalLink, Loader2, CheckCircle2, Copy, Tag, Languages, Sparkles, Lightbulb, Target, DollarSign, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTool } from '@/hooks/useTool';
@@ -279,20 +279,113 @@ const ToolDetails = () => {
           {/* Features */}
           {tool.features && tool.features.length > 0 && (
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground">أهم المميزات</h2>
-              <ul className="space-y-3">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Zap className="w-6 h-6 text-amber-400" />
+                أهم المميزات
+              </h2>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {tool.features.map((feature, index) => (
                   <li
                     key={index}
-                    className="flex items-center gap-3 text-lg text-muted-foreground"
+                    className="flex items-center gap-3 p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-muted-foreground"
                   >
-                    <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
+          {/* Use Cases / Tasks - NEW SECTION */}
+          {tool.tasks && tool.tasks.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Target className="w-6 h-6 text-neon-purple" />
+                كيف تستفيد من هذه الأداة؟
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tool.tasks.map((task, index) => (
+                  <div
+                    key={index}
+                    className="group p-4 bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 border border-neon-purple/20 rounded-xl hover:border-neon-purple/40 transition-colors"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-neon-purple/20 flex items-center justify-center shrink-0 group-hover:bg-neon-purple/30 transition-colors">
+                        <Lightbulb className="w-4 h-4 text-neon-purple" />
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{task}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Pricing Details - NEW SECTION */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <DollarSign className="w-6 h-6 text-green-400" />
+              معلومات التسعير
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Free Tier */}
+              <div className={cn(
+                "p-5 rounded-2xl border",
+                tool.pricing_type === 'مجاني'
+                  ? "bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-500/30"
+                  : "bg-muted/30 border-border/50"
+              )}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🆓</span>
+                  <h3 className="font-bold text-lg">الخطة المجانية</h3>
+                </div>
+                <p className="text-3xl font-bold text-emerald-400 mb-2">$0</p>
+                <p className="text-sm text-muted-foreground">
+                  {tool.pricing_type === 'مجاني'
+                    ? "استخدام مجاني بالكامل"
+                    : tool.pricing_type === 'تجربة مجانية'
+                      ? "تجربة مجانية محدودة"
+                      : "غير متاح"
+                  }
+                </p>
+              </div>
+
+              {/* Pro Tier */}
+              <div className={cn(
+                "p-5 rounded-2xl border",
+                tool.pricing_type === 'مدفوع' || tool.pricing_type === 'تجربة مجانية'
+                  ? "bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30"
+                  : "bg-muted/30 border-border/50"
+              )}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">⭐</span>
+                  <h3 className="font-bold text-lg">الخطة الاحترافية</h3>
+                </div>
+                <p className="text-3xl font-bold text-amber-400 mb-2">
+                  {tool.pricing_type === 'مجاني' ? '-' : 'مدفوع'}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {tool.pricing_type !== 'مجاني'
+                    ? "ميزات متقدمة ودعم أفضل"
+                    : "غير مطلوب"
+                  }
+                </p>
+              </div>
+
+              {/* Enterprise Tier */}
+              <div className="p-5 rounded-2xl border bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🏢</span>
+                  <h3 className="font-bold text-lg">الشركات</h3>
+                </div>
+                <p className="text-3xl font-bold text-purple-400 mb-2">تواصل معنا</p>
+                <p className="text-sm text-muted-foreground">
+                  حلول مخصصة للشركات
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Comparison Table (Alternatives) */}
           {tool.alternatives && tool.alternatives.length > 0 && (

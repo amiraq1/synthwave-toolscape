@@ -8,9 +8,15 @@ export interface Tool {
   title: string;
   description: string;
   category: string;
+  secondary_categories?: string[]; // Multi-category support
   url: string;
   image_url: string | null;
   pricing_type: string;
+  pricing_details?: {
+    free?: { features?: string[]; limits?: string };
+    pro?: { price?: string; features?: string[]; billing?: string };
+    enterprise?: { features?: string[]; contact?: boolean };
+  } | null;
   is_featured: boolean;
   is_sponsored?: boolean;
   sponsor_expiry?: string | null;
