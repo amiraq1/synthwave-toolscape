@@ -21,6 +21,95 @@ const emailSchema = z.object({
 
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 
+// دالة مركزية لترجمة أخطاء Supabase إلى رسائل عربية ودية
+const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showSignup: boolean; showLogin: boolean; showForgotPassword: boolean } => {
+  const errorMessage = error.message.toLowerCase();
+
+  // أخطاء الاتصال
+  if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('connection')) {
+    return {
+      message: 'تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+      showSignup: false,
+      showLogin: false,
+      showForgotPassword: false,
+    };
+  }
+
+  // بيانات تسجيل دخول خاطئة
+  if (errorMessage.includes('invalid login credentials') || errorMessage.includes('invalid credentials')) {
+    return {
+      message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة. تحقق من بياناتك وحاول مرة أخرى.',
+      showSignup: true,
+      showLogin: false,
+      showForgotPassword: true,
+    };
+  }
+
+  // البريد الإلكتروني مسجل بالفعل
+  if (errorMessage.includes('already registered') || errorMessage.includes('already exists') || errorMessage.includes('user already')) {
+    return {
+      message: 'هذا البريد الإلكتروني مسجل بالفعل. يمكنك تسجيل الدخول أو استعادة كلمة المرور.',
+      showSignup: false,
+      showLogin: true,
+      showForgotPassword: true,
+    };
+  }
+
+  // تجاوز حد المحاولات
+  if (errorMessage.includes('rate limit') || errorMessage.includes('too many requests') || errorMessage.includes('too many attempts')) {
+    return {
+      message: 'لقد تجاوزت عدد المحاولات المسموح بها. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.',
+      showSignup: false,
+      showLogin: false,
+      showForgotPassword: false,
+    };
+  }
+
+  // البريد غير مُفعّل
+  if (errorMessage.includes('email not confirmed') || errorMessage.includes('confirm your email')) {
+    return {
+      message: 'يرجى تفعيل حسابك عبر الرابط المرسل إلى بريدك الإلكتروني.',
+      showSignup: false,
+      showLogin: false,
+      showForgotPassword: false,
+    };
+  }
+
+  // كلمة مرور ضعيفة
+  if (errorMessage.includes('weak password') || errorMessage.includes('password is too weak')) {
+    return {
+      message: 'كلمة المرور ضعيفة جداً. استخدم كلمة مرور أقوى تحتوي على أحرف وأرقام.',
+      showSignup: false,
+      showLogin: false,
+      showForgotPassword: false,
+    };
+  }
+
+  // صيغة بريد غير صالحة
+  if (errorMessage.includes('invalid email') || errorMessage.includes('email format')) {
+    return {
+      message: 'صيغة البريد الإلكتروني غير صحيحة. تأكد من كتابة البريد بشكل صحيح.',
+      showSignup: false,
+      showLogin: false,
+      showForgotPassword: false,
+    };
+  }
+
+  // خطأ افتراضي
+  const defaultMessages: Record<AuthMode, string> = {
+    'login': 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.',
+    'signup': 'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.',
+    'forgot-password': 'حدث خطأ أثناء إرسال رابط الاستعادة. يرجى المحاولة مرة أخرى.',
+  };
+
+  return {
+    message: defaultMessages[mode],
+    showSignup: false,
+    showLogin: false,
+    showForgotPassword: false,
+  };
+};
+
 const Auth = () => {
   useSEO({
     title: 'تسجيل الدخول',
@@ -38,6 +127,9 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showSignupSuggestion, setShowSignupSuggestion] = useState(false);
+  const [showLoginSuggestion, setShowLoginSuggestion] = useState(false);
+  const [showForgotPasswordSuggestion, setShowForgotPasswordSuggestion] = useState(false);
 
   // دالة التحقق من صحة البريد الإلكتروني
   const validateEmail = (value: string): string => {
@@ -114,6 +206,9 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setShowSignupSuggestion(false);
+    setShowLoginSuggestion(false);
+    setShowForgotPasswordSuggestion(false);
 
     try {
       if (mode === 'forgot-password') {
@@ -132,9 +227,9 @@ const Auth = () => {
         });
 
         if (error) {
-          const errorMessage = 'حدث خطأ أثناء إرسال رابط إعادة التعيين';
-          setError(errorMessage);
-          toast.error(errorMessage);
+          const errorResult = getErrorMessage(error, 'forgot-password');
+          setError(errorResult.message);
+          toast.error(errorResult.message);
         } else {
           toast.success('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
           setMode('login');
@@ -154,24 +249,22 @@ const Auth = () => {
         if (mode === 'login') {
           const { error } = await signIn(email, password);
           if (error) {
-            let message = 'حدث خطأ أثناء تسجيل الدخول';
-            if (error.message.includes('Invalid login credentials')) {
-              message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-            }
-            setError(message);
-            toast.error(message);
+            const errorResult = getErrorMessage(error, 'login');
+            setError(errorResult.message);
+            setShowSignupSuggestion(errorResult.showSignup);
+            setShowForgotPasswordSuggestion(errorResult.showForgotPassword);
+            toast.error(errorResult.message);
           } else {
             toast.success('مرحباً بك! تم تسجيل الدخول بنجاح');
           }
         } else {
           const { error } = await signUp(email, password, displayName || undefined);
           if (error) {
-            let message = 'حدث خطأ أثناء إنشاء الحساب';
-            if (error.message.includes('already registered')) {
-              message = 'هذا البريد الإلكتروني مسجل بالفعل';
-            }
-            setError(message);
-            toast.error(message);
+            const errorResult = getErrorMessage(error, 'signup');
+            setError(errorResult.message);
+            setShowLoginSuggestion(errorResult.showLogin);
+            setShowForgotPasswordSuggestion(errorResult.showForgotPassword);
+            toast.error(errorResult.message);
           } else {
             toast.success('تم إنشاء الحساب! مرحباً بك في نبض');
           }
@@ -332,9 +425,49 @@ const Auth = () => {
 
             {/* Error Message */}
             {error && (
-              <p className="text-red-500 text-sm text-center mt-3 font-medium">
-                {error}
-              </p>
+              <div className="text-center mt-3 space-y-2">
+                <p className="text-red-500 text-sm font-medium">
+                  {error}
+                </p>
+
+                {/* اقتراحات الحلول */}
+                <div className="flex flex-wrap justify-center gap-2 text-sm">
+                  {showSignupSuggestion && (
+                    <button
+                      type="button"
+                      onClick={() => setMode('signup')}
+                      className="text-neon-purple hover:underline font-semibold"
+                    >
+                      أنشئ حساباً جديداً
+                    </button>
+                  )}
+
+                  {showLoginSuggestion && (
+                    <button
+                      type="button"
+                      onClick={() => setMode('login')}
+                      className="text-neon-purple hover:underline font-semibold"
+                    >
+                      تسجيل الدخول
+                    </button>
+                  )}
+
+                  {showForgotPasswordSuggestion && (
+                    <>
+                      {(showSignupSuggestion || showLoginSuggestion) && (
+                        <span className="text-muted-foreground">أو</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setMode('forgot-password')}
+                        className="text-neon-blue hover:underline font-semibold"
+                      >
+                        استعادة كلمة المرور
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             )}
           </form>
 
