@@ -22,7 +22,7 @@ const emailSchema = z.object({
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 
 // دالة مركزية لترجمة أخطاء Supabase إلى رسائل عربية ودية
-const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showSignup: boolean; showLogin: boolean; showForgotPassword: boolean } => {
+const getErrorMessage = (error: Error, mode: AuthMode): { message: string; autoSwitchToLogin?: boolean; showSignup: boolean; showLogin: boolean; showForgotPassword: boolean } => {
   const errorMessage = error.message.toLowerCase();
 
   // أخطاء الاتصال
@@ -38,7 +38,7 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   // بيانات تسجيل دخول خاطئة
   if (errorMessage.includes('invalid login credentials') || errorMessage.includes('invalid credentials')) {
     return {
-      message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة. تحقق من بياناتك وحاول مرة أخرى.',
+      message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
       showSignup: true,
       showLogin: false,
       showForgotPassword: true,
@@ -46,9 +46,10 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   }
 
   // البريد الإلكتروني مسجل بالفعل
-  if (errorMessage.includes('already registered') || errorMessage.includes('already exists') || errorMessage.includes('user already')) {
+  if (errorMessage.includes('user already registered') || errorMessage.includes('already exists')) {
     return {
-      message: 'هذا البريد الإلكتروني مسجل بالفعل. يمكنك تسجيل الدخول أو استعادة كلمة المرور.',
+      message: 'هذا البريد مسجل بالفعل، جاري تحويلك لتسجيل الدخول...',
+      autoSwitchToLogin: true,
       showSignup: false,
       showLogin: true,
       showForgotPassword: true,
@@ -56,9 +57,9 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   }
 
   // تجاوز حد المحاولات
-  if (errorMessage.includes('rate limit') || errorMessage.includes('too many requests') || errorMessage.includes('too many attempts')) {
+  if (errorMessage.includes('rate limit') || errorMessage.includes('too many requests')) {
     return {
-      message: 'لقد تجاوزت عدد المحاولات المسموح بها. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.',
+      message: 'محاولات كثيرة جداً، يرجى الانتظار قليلاً.',
       showSignup: false,
       showLogin: false,
       showForgotPassword: false,
@@ -66,7 +67,7 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   }
 
   // البريد غير مُفعّل
-  if (errorMessage.includes('email not confirmed') || errorMessage.includes('confirm your email')) {
+  if (errorMessage.includes('email not confirmed')) {
     return {
       message: 'يرجى تفعيل حسابك عبر الرابط المرسل إلى بريدك الإلكتروني.',
       showSignup: false,
@@ -76,19 +77,9 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   }
 
   // كلمة مرور ضعيفة
-  if (errorMessage.includes('weak password') || errorMessage.includes('password is too weak')) {
+  if (errorMessage.includes('weak password')) {
     return {
-      message: 'كلمة المرور ضعيفة جداً. استخدم كلمة مرور أقوى تحتوي على أحرف وأرقام.',
-      showSignup: false,
-      showLogin: false,
-      showForgotPassword: false,
-    };
-  }
-
-  // صيغة بريد غير صالحة
-  if (errorMessage.includes('invalid email') || errorMessage.includes('email format')) {
-    return {
-      message: 'صيغة البريد الإلكتروني غير صحيحة. تأكد من كتابة البريد بشكل صحيح.',
+      message: 'كلمة المرور ضعيفة جداً. استخدم 6 أحرف على الأقل.',
       showSignup: false,
       showLogin: false,
       showForgotPassword: false,
@@ -96,14 +87,8 @@ const getErrorMessage = (error: Error, mode: AuthMode): { message: string; showS
   }
 
   // خطأ افتراضي
-  const defaultMessages: Record<AuthMode, string> = {
-    'login': 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.',
-    'signup': 'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.',
-    'forgot-password': 'حدث خطأ أثناء إرسال رابط الاستعادة. يرجى المحاولة مرة أخرى.',
-  };
-
   return {
-    message: defaultMessages[mode],
+    message: 'حدث خطأ غير متوقع، يرجى المحاولة لاحقاً.',
     showSignup: false,
     showLogin: false,
     showForgotPassword: false,
@@ -212,12 +197,11 @@ const Auth = () => {
 
     try {
       if (mode === 'forgot-password') {
-        // Validate email only
         const validation = emailSchema.safeParse({ email });
         if (!validation.success) {
-          const errorMessage = validation.error.errors[0].message;
-          setError(errorMessage);
-          toast.error(errorMessage);
+          const msg = validation.error.errors[0].message;
+          setError(msg);
+          toast.error(msg);
           setIsLoading(false);
           return;
         }
@@ -226,74 +210,51 @@ const Auth = () => {
           redirectTo: `${window.location.origin}/reset-password`,
         });
 
-        if (error) {
-          const errorResult = getErrorMessage(error, 'forgot-password');
-          setError(errorResult.message);
-          toast.error(errorResult.message);
-        } else {
-          toast.success('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
-          setMode('login');
-          setEmail('');
-        }
+        if (error) throw error;
+
+        toast.success('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
+        setMode('login');
+        setEmail('');
       } else {
         // Validate email and password
         const validation = authSchema.safeParse({ email, password });
         if (!validation.success) {
-          const errorMessage = validation.error.errors[0].message;
-          setError(errorMessage);
-          toast.error(errorMessage);
+          const msg = validation.error.errors[0].message;
+          setError(msg);
+          toast.error(msg);
           setIsLoading(false);
           return;
         }
 
         if (mode === 'login') {
           const { error } = await signIn(email, password);
-          if (error) {
-            const errorResult = getErrorMessage(error, 'login');
-            setError(errorResult.message);
-            setShowSignupSuggestion(errorResult.showSignup);
-            setShowForgotPasswordSuggestion(errorResult.showForgotPassword);
-            toast.error(errorResult.message);
-          } else {
-            toast.success('مرحباً بك! تم تسجيل الدخول بنجاح');
-          }
+          if (error) throw error;
+
+          toast.success('تم تسجيل الدخول بنجاح! 🚀');
         } else {
           const { error } = await signUp(email, password, displayName || undefined);
-          if (error) {
-            const errorResult = getErrorMessage(error, 'signup');
-            setError(errorResult.message);
-            setShowLoginSuggestion(errorResult.showLogin);
-            setShowForgotPasswordSuggestion(errorResult.showForgotPassword);
-            toast.error(errorResult.message);
-          } else {
-            toast.success('تم إنشاء الحساب! مرحباً بك في نبض');
-          }
+          if (error) throw error;
+
+          toast.success('تم إنشاء الحساب! مرحباً بك في نبض');
         }
       }
     } catch (err: unknown) {
-      // استخراج رسالة الخطأ من الـ Backend
-      let errorMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+      // Error Handling Logic
+      const errorObj = err instanceof Error ? err : new Error('Unknown error');
+      const errorResult = getErrorMessage(errorObj, mode);
 
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null) {
-        // معالجة أخطاء API المختلفة
-        const errorObj = err as Record<string, unknown>;
-        if (typeof errorObj.message === 'string') {
-          errorMessage = errorObj.message;
-        } else if (typeof errorObj.error === 'string') {
-          errorMessage = errorObj.error;
-        } else if (
-          typeof errorObj.data === 'object' &&
-          errorObj.data !== null &&
-          typeof (errorObj.data as Record<string, unknown>).message === 'string'
-        ) {
-          errorMessage = (errorObj.data as Record<string, unknown>).message as string;
-        }
+      // Auto-switch logic (Smart Suggestions)
+      if (errorResult.autoSwitchToLogin && mode === 'signup') {
+        toast(errorResult.message, { icon: '🔄' });
+        setTimeout(() => setMode('login'), 1500);
+      } else {
+        setError(errorResult.message);
+        toast.error(errorResult.message);
       }
 
-      setError(errorMessage);
-      toast.error(errorMessage);
+      setShowSignupSuggestion(errorResult.showSignup);
+      setShowLoginSuggestion(errorResult.showLogin);
+      setShowForgotPasswordSuggestion(errorResult.showForgotPassword);
     } finally {
       setIsLoading(false);
     }
