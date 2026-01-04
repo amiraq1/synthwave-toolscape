@@ -4,7 +4,7 @@ import { Activity, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
@@ -33,7 +33,6 @@ const Auth = () => {
   const [displayName, setDisplayName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,11 +41,7 @@ const Auth = () => {
     setIsGoogleLoading(true);
     const { error } = await signInWithGoogle();
     if (error) {
-      toast({
-        title: 'خطأ',
-        description: 'حدث خطأ أثناء تسجيل الدخول بـ Google',
-        variant: 'destructive',
-      });
+      toast.error('حدث خطأ أثناء تسجيل الدخول بـ Google');
       setIsGoogleLoading(false);
     }
   };
@@ -69,11 +64,7 @@ const Auth = () => {
         if (!validation.success) {
           const errorMessage = validation.error.errors[0].message;
           setError(errorMessage);
-          toast({
-            title: 'خطأ في البيانات',
-            description: errorMessage,
-            variant: 'destructive',
-          });
+          toast.error(errorMessage);
           setIsLoading(false);
           return;
         }
@@ -85,16 +76,9 @@ const Auth = () => {
         if (error) {
           const errorMessage = 'حدث خطأ أثناء إرسال رابط إعادة التعيين';
           setError(errorMessage);
-          toast({
-            title: 'خطأ',
-            description: errorMessage,
-            variant: 'destructive',
-          });
+          toast.error(errorMessage);
         } else {
-          toast({
-            title: 'تم الإرسال!',
-            description: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني',
-          });
+          toast.success('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
           setMode('login');
           setEmail('');
         }
@@ -104,11 +88,7 @@ const Auth = () => {
         if (!validation.success) {
           const errorMessage = validation.error.errors[0].message;
           setError(errorMessage);
-          toast({
-            title: 'خطأ في البيانات',
-            description: errorMessage,
-            variant: 'destructive',
-          });
+          toast.error(errorMessage);
           setIsLoading(false);
           return;
         }
@@ -121,16 +101,9 @@ const Auth = () => {
               message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
             }
             setError(message);
-            toast({
-              title: 'خطأ',
-              description: message,
-              variant: 'destructive',
-            });
+            toast.error(message);
           } else {
-            toast({
-              title: 'مرحباً بك!',
-              description: 'تم تسجيل الدخول بنجاح',
-            });
+            toast.success('مرحباً بك! تم تسجيل الدخول بنجاح');
           }
         } else {
           const { error } = await signUp(email, password, displayName || undefined);
@@ -140,19 +113,36 @@ const Auth = () => {
               message = 'هذا البريد الإلكتروني مسجل بالفعل';
             }
             setError(message);
-            toast({
-              title: 'خطأ',
-              description: message,
-              variant: 'destructive',
-            });
+            toast.error(message);
           } else {
-            toast({
-              title: 'تم إنشاء الحساب!',
-              description: 'مرحباً بك في نبض',
-            });
+            toast.success('تم إنشاء الحساب! مرحباً بك في نبض');
           }
         }
       }
+    } catch (err: unknown) {
+      // استخراج رسالة الخطأ من الـ Backend
+      let errorMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null) {
+        // معالجة أخطاء API المختلفة
+        const errorObj = err as Record<string, unknown>;
+        if (typeof errorObj.message === 'string') {
+          errorMessage = errorObj.message;
+        } else if (typeof errorObj.error === 'string') {
+          errorMessage = errorObj.error;
+        } else if (
+          typeof errorObj.data === 'object' &&
+          errorObj.data !== null &&
+          typeof (errorObj.data as Record<string, unknown>).message === 'string'
+        ) {
+          errorMessage = (errorObj.data as Record<string, unknown>).message as string;
+        }
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

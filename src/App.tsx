@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -40,6 +41,40 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <HotToaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#1a1a2e',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '16px',
+            direction: 'rtl',
+          },
+          success: {
+            style: {
+              background: '#065f46',
+              border: '1px solid #10b981',
+            },
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            style: {
+              background: '#7f1d1d',
+              border: '1px solid #ef4444',
+            },
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <BrowserRouter>
         <ScrollToTop />
         <Suspense fallback={<HomePageSkeleton />}>
