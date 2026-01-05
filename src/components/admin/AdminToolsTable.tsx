@@ -92,7 +92,7 @@ const AdminToolsTable = () => {
           pricing_type: formData.pricing_type,
           image_url: formData.image_url || null,
         })
-        .eq('id', editingTool.id);
+        .eq('id', parseInt(editingTool.id));
 
       if (error) throw error;
 
@@ -122,7 +122,7 @@ const AdminToolsTable = () => {
       const { error } = await supabase
         .from('tools')
         .delete()
-        .eq('id', deletingTool.id);
+        .eq('id', parseInt(deletingTool.id));
 
       if (error) throw error;
 
