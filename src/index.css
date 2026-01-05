@@ -113,12 +113,48 @@
   .card-glow:hover {
     box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.2);
     transform: translateY(-4px);
-    /* Reduced movement */
     border-color: rgba(139, 92, 246, 0.3);
   }
 
   .card-glow:active {
     transform: scale(0.98);
+  }
+
+  /* Gradient text utility */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--neon-purple)) 0%, hsl(var(--neon-blue)) 50%, hsl(var(--neon-cyan)) 100%);
+  }
+
+  /* Section divider */
+  .section-divider {
+    @apply relative;
+  }
+  
+  .section-divider::before {
+    content: '';
+    @apply absolute inset-x-0 top-0 h-px;
+    background: linear-gradient(90deg, transparent, hsl(var(--neon-purple) / 0.3), transparent);
+  }
+
+  /* Glow effects */
+  .glow-purple {
+    box-shadow: 0 0 30px -5px hsl(var(--neon-purple) / 0.4);
+  }
+  
+  .glow-blue {
+    box-shadow: 0 0 30px -5px hsl(var(--neon-blue) / 0.4);
+  }
+
+  /* Stats card styling */
+  .stats-card {
+    @apply relative overflow-hidden rounded-2xl border border-white/10 bg-card/50 backdrop-blur-sm p-6;
+  }
+  
+  .stats-card::before {
+    content: '';
+    @apply absolute inset-0 opacity-30;
+    background: linear-gradient(135deg, hsl(var(--neon-purple) / 0.1), transparent 60%);
   }
 
 }

@@ -117,34 +117,38 @@ const Index = () => {
         "
       >
         {/* Hero */}
-        <section aria-label="مقدمة وبحث" className="mb-4 sm:mb-6">
+        <section aria-label="مقدمة وبحث" className="mb-8 sm:mb-12">
           <HeroSection searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         </section>
 
-        {/* Filters */}
+        {/* Filters - Enhanced styling */}
         <section
           aria-labelledby="filters-heading"
           className="
-            mb-4 sm:mb-6
+            mb-6 sm:mb-8
             rounded-2xl
-            border
-            bg-card/50
-            px-3 sm:px-4
-            py-3 sm:py-4
+            border border-white/10
+            bg-card/40
+            backdrop-blur-sm
+            px-4 sm:px-6
+            py-4 sm:py-5
+            section-divider
           "
         >
           <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
-        {/* Tools Display */}
+
+        {/* Tools Display - Enhanced styling */}
         <section
           aria-labelledby="tools-heading"
           className="
             rounded-2xl
-            border
+            border border-white/10
             bg-card/30
-            px-3 sm:px-4
-            py-3 sm:py-4
+            backdrop-blur-sm
+            px-4 sm:px-6
+            py-5 sm:py-6
           "
         >
           <div className="flex items-center justify-between mb-4">
