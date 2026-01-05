@@ -1,4 +1,4 @@
-// Lovable v2 template
+// Lovable v3 - force env refresh
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
