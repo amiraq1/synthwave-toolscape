@@ -4,12 +4,12 @@ import path from "path";
 
 export default defineConfig({
   base: "/",
-  envDir: ".",
   server: {
     port: 8080,
   },
-  optimizeDeps: {
-    force: true,
+  define: {
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify('https://ksdodojvchiybbqxfhcl.supabase.co'),
+    'import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY': JSON.stringify('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZG9kb2p2Y2hpeWJicXhmaGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyMjczNzQsImV4cCI6MjA4MTgwMzM3NH0.aHyfrzZoNizRyi43PfqRRC4JsNGLTbTunEHXgkvRpM4'),
   },
   plugins: [react()],
   resolve: {
