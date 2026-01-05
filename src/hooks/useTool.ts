@@ -15,7 +15,11 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
   if (error) throw error;
   if (!data) throw new Error('Tool not found');
 
-  return data as Tool;
+  // Transform to match Tool interface (id as string)
+  return {
+    ...data,
+    id: String(data.id),
+  } as unknown as Tool;
 };
 
 /**
@@ -26,14 +30,12 @@ export const useTool = (id: string | undefined) => {
     queryKey: ['tool', id],
     queryFn: () => fetchToolById(id!),
     enabled: !!id,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 };
 
 /**
  * Hook to prefetch tool data on hover
- * Usage: const prefetch = usePrefetchTool();
- *        onMouseEnter={() => prefetch(tool.id)}
  */
 export const usePrefetchTool = () => {
   const queryClient = useQueryClient();
@@ -41,13 +43,12 @@ export const usePrefetchTool = () => {
   return (id: number | string) => {
     const toolId = String(id);
 
-    // Only prefetch if not already in cache
     const cached = queryClient.getQueryData(['tool', toolId]);
     if (!cached) {
       queryClient.prefetchQuery({
         queryKey: ['tool', toolId],
         queryFn: () => fetchToolById(toolId),
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 5,
       });
     }
   };

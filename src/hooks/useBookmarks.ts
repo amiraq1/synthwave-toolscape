@@ -123,7 +123,12 @@ export const useBookmarkedTools = () => {
                 .in('id', toolIds);
 
             if (toolsError) throw toolsError;
-            return tools || [];
+            
+            // Transform to match Tool interface (id as string)
+            return (tools || []).map(tool => ({
+                ...tool,
+                id: String(tool.id),
+            }));
         },
         enabled: !!user,
     });
