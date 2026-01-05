@@ -196,22 +196,6 @@ export type Database = {
           reviewer_alias: string | null
           tool_id: number | null
         }
-        Insert: {
-          comment?: string | null
-          created_at?: string | null
-          id?: string | null
-          rating?: number | null
-          reviewer_alias?: never
-          tool_id?: number | null
-        }
-        Update: {
-          comment?: string | null
-          created_at?: string | null
-          id?: string | null
-          rating?: number | null
-          reviewer_alias?: never
-          tool_id?: number | null
-        }
         Relationships: [
           {
             foreignKeyName: "reviews_tool_id_fkey"
