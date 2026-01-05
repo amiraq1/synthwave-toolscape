@@ -1,32 +1,20 @@
-# Long term caching for hashed assets and images
-/assets/*
+# Cache Control for Static Assets
+/assets/*.js
   Cache-Control: public, max-age=31536000, immutable
-
+/assets/*.css
+  Cache-Control: public, max-age=31536000, immutable
 /*.png
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=2592000
 /*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-/*.gif
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=2592000
 /*.webp
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=2592000
 /*.svg
-  Cache-Control: public, max-age=31536000, immutable
-/*.ico
-  Cache-Control: public, max-age=31536000, immutable
-/*.woff
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=2592000
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
 
-# No cache for entry points
+# Never cache index.html (to ensure updates are seen immediately)
 /index.html
-  Cache-Control: public, max-age=0, must-revalidate
-/sw.js
-  Cache-Control: public, max-age=0, must-revalidate
-/registerSW.js
-  Cache-Control: public, max-age=0, must-revalidate
-/manifest.webmanifest
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: no-cache
+
