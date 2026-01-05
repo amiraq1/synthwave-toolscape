@@ -93,7 +93,9 @@ export const useTools = (searchQuery: string, activeCategory: Category) => {
       }
       return allPages.length * PAGE_SIZE;
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnMount: false, // استخدام الكاش
+    placeholderData: (previousData) => previousData, // عرض البيانات القديمة أثناء التحديث
   });
 };

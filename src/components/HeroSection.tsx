@@ -41,7 +41,7 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '0.2s' }}>
           دليلك الشامل لأفضل أدوات AI التي ستحول طريقة عملك وإبداعك للأفضل
         </p>
 

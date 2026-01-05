@@ -24,13 +24,30 @@ export default defineConfig(({ mode }) => ({
       compress: {
         drop_console: true,
         drop_debugger: true,
+        passes: 2, // تمريرتين للضغط الأقصى
       },
     },
+    // تحسين حجم الـ chunks
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
-        // تقسيم آمن - فقط Supabase لأنه كبير
+        // تقسيم ذكي للملفات
         manualChunks: {
+          // فصل Supabase (كبير جداً ~160KB)
           'supabase': ['@supabase/supabase-js'],
+          // فصل مكتبات UI الثقيلة
+          'radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-popover',
+          ],
+          // فصل TanStack Query
+          'query': ['@tanstack/react-query'],
+          // فصل date-fns
+          'date': ['date-fns'],
         },
       },
     },
