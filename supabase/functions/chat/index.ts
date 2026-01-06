@@ -1,230 +1,117 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Types
-interface ChatRequest {
-    query: string;
-    history?: { role: "user" | "model"; parts: string }[];
-}
-
-interface Tool {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    pricing_type: string;
-    url: string;
-    similarity: number;
-}
-
-// Helper: Generate Embedding (using Gemini text-embedding-004)
-async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-    console.log("Generating embedding for query using Gemini...");
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "models/text-embedding-004",
-                content: { parts: [{ text }] },
-                taskType: "RETRIEVAL_QUERY",
-            }),
-        }
-    );
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Gemini Embedding API Error: Status ${response.status}`, errorText);
-        throw new Error(`Gemini Embedding API Error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log("Embedding generated successfully.");
-    return data.embedding.values;
-}
-
-// Helper: Generate Chat Response (using Gemini 2.5 Flash)
-async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
-    console.log("Generating chat response using Gemini...");
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [
-                    ...history.map(h => ({
-                        role: h.role,
-                        parts: [{ text: h.parts }]
-                    })),
-                    { role: "user", parts: [{ text: prompt }] }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 1000,
-                }
-            }),
-        }
-    );
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Gemini Chat API Error: Status ${response.status}`, errorText);
-        throw new Error(`Gemini Chat API Error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log("Chat response generated successfully.");
-    return data.candidates[0].content.parts[0].text;
-}
-
-Deno.serve(async (req) => {
-    // Handle CORS
-    if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
+serve(async (req) => {
+    // 1. Handle CORS pre-flight
+    if (req.method === 'OPTIONS') {
+        return new Response('ok', { headers: corsHeaders });
     }
 
     try {
-        console.log("--- Chat Function Started ---");
+        const { query } = await req.json();
+        console.log("🟢 [Chat] Received query:", query);
 
-        // 1. Env Check
-        const googleApiKey = Deno.env.get("GEMINI_API_KEY");
-        if (!googleApiKey) {
-            console.error("GEMINI_API_KEY is missing from environment variables.");
-            throw new Error("Server misconfiguration: GEMINI_API_KEY missing");
-        }
-        console.log("GEMINI_API_KEY is present.");
+        const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+        const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+        const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
-        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in Secrets!");
 
-        // 2. Authenticate User (Require JWT)
-        const authHeader = req.headers.get('Authorization');
-        if (!authHeader) {
-            console.log("No Authorization header provided.");
-            return new Response(
-                JSON.stringify({ error: 'يجب تسجيل الدخول لاستخدام نبض AI' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
+        // 2. Generate Embedding
+        console.log("🔄 Generating embedding...");
+        const embedRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: "models/text-embedding-004",
+                    content: { parts: [{ text: query }] }
+                })
+            }
+        );
 
-        // Create authenticated Supabase client
-        const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-            global: { headers: { Authorization: authHeader } }
-        });
-
-        const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-
-        if (authError || !user) {
-            console.log("Auth failed:", authError?.message || "No user found");
-            return new Response(
-                JSON.stringify({ error: 'غير مصرح: يرجى تسجيل الدخول لاستخدام نبض AI' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
+        if (!embedRes.ok) {
+            const errText = await embedRes.text();
+            console.error("🔴 Embedding API Error:", errText);
+            throw new Error(`Gemini Embedding Failed: ${errText}`);
         }
 
-        console.log("User authenticated:", user.id);
+        const embedData = await embedRes.json();
+        const embedding = embedData.embedding.values;
+        console.log("✅ Embedding generated. Vector length:", embedding.length);
 
-        // Create service client for database operations
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-        // 2. Parse Request
-        let body: ChatRequest;
-        try {
-            body = await req.json();
-        } catch (e) {
-            console.error("Failed to parse request body:", e);
-            throw new Error("Invalid JSON body");
-        }
-
-        const { query, history = [] } = body;
-        console.log("Received Query:", query);
-
-        if (!query) throw new Error("Query is required");
-
-        // 3. Generate Embedding
-        // 3. Generate Embedding
-        let queryEmbedding: number[];
-        try {
-            queryEmbedding = await generateEmbedding(query, googleApiKey);
-        } catch (e) {
-            console.error("Failed step: Generate Embedding", e);
-            throw e;
-        }
-
-        // 4. Search relevant tools
-        console.log("Searching for compatible tools in DB...");
-        const { data: tools, error: searchError } = await supabase.rpc("match_tools", {
-            query_embedding: queryEmbedding,
-            match_threshold: 0.5,
+        // 3. Search Database
+        console.log("🔍 Searching database...");
+        const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+        const { data: tools, error: searchError } = await supabase.rpc('match_tools', {
+            query_embedding: embedding,
+            match_threshold: 0.3,
             match_count: 5
         });
 
         if (searchError) {
-            console.error("Supabase RPC match_tools Error:", searchError);
+            console.error("🔴 DB Search Error:", searchError);
             throw new Error(`Database Search Failed: ${searchError.message}`);
         }
+        console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
 
-        const toolList = (tools as Tool[]) || [];
-        console.log(`Found ${toolList.length} relevant tools.`);
+        // 4. Generate Answer with Gemini
+        const context = tools?.map((t: any) =>
+            `- ${t.title} (${t.pricing_type}): ${t.description}`
+        ).join('\n') || "لا توجد أدوات مطابقة تماماً.";
 
-        // 5. Construct Context
-        const contextText = toolList.map(t =>
-            `- **${t.title}** (${t.pricing_type}): ${t.description}. [الرابط](${t.url})`
-        ).join("\n");
-
-        // 6. System Prompt
         const systemPrompt = `
-    أنت "نبض AI" (Nabd AI)، المستشار الذكي لمنصة "نبض".
-    هدفُك هو مساعدة المستخدمين العرب في العثور على أفضل أدوات الـ AI.
+      أنت المساعد الذكي لموقع "نبض AI" المتخصص في أدوات الذكاء الاصطناعي.
+      
+      السياق (أدوات وجدناها في قاعدة البيانات):
+      ${context}
 
-    التعليمات:
-    1. اعتمد حصراً على "السياق" أدناه. لا تخترع أدوات.
-    2. تحدث بالعربية بودية واحترافية.
-    3. نسق الإجابة بذكاء (Bold للأسماء، روابط Markdown).
-    4. إذا لم تجد أدوات مناسبة في السياق، اعتذر واقترح بحثاً عاماً، لكن لا ترشح أدوات من خارج السياق.
+      سؤال المستخدم: ${query}
 
-    السياق (الأدوات المقترحة):
-    ${contextText}
-
-    سؤال المستخدم: ${query}
+      المطلوب:
+      1. أجب بالعربية بلهجة ودودة ومحترفة.
+      2. رشح الأدوات المناسبة من السياق أعلاه.
+      3. إذا لم تجد أدوات مناسبة في السياق، قدم نصيحة عامة ولكن أخبر المستخدم أنك تبحث في قاعدة البيانات فقط.
+      4. كن مختصراً ومفيداً.
     `;
 
-        // 7. Generate Chat Response
-        let answer;
-        try {
-            answer = await generateChatResponse(systemPrompt, googleApiKey, []); // Stateless for now
-        } catch (e: any) {
-            console.error("Failed step: Generate Chat Response", e);
-            throw e;
+        console.log("🤖 Asking Gemini...");
+        const chatRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: systemPrompt }] }]
+                })
+            }
+        );
+
+        if (!chatRes.ok) {
+            const errText = await chatRes.text();
+            console.error("🔴 Chat API Error:", errText);
+            throw new Error(`Gemini Chat Failed: ${errText}`);
         }
 
-        console.log("Sending successful response.");
-        return new Response(
-            JSON.stringify({
-                answer,
-                tools: toolList
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        const chatData = await chatRes.json();
+        const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في التوليد.";
+        console.log("✅ Reply generated successfully.");
+
+        return new Response(JSON.stringify({ reply }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
 
     } catch (error: any) {
-        console.error("--- Chat Function Failed ---");
-        console.error("Error Details:", error.message || error);
-
-        return new Response(
-            JSON.stringify({
-                error: error.message || "An internal error occurred",
-                details: String(error)
-            }),
-            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        console.error("🔥 FATAL ERROR:", error.message);
+        return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
     }
 });
