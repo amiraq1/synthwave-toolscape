@@ -1,20 +1,21 @@
--- إضافة عمود is_published لجدول tools
--- Add is_published column to tools table for draft functionality
+-- إضافة عمود للتحكم في النشر (المسودات)
+-- Add is_published column to control draft/publish state
 
-ALTER TABLE public.tools 
-ADD COLUMN IF NOT EXISTS is_published boolean DEFAULT true;
+ALTER TABLE tools 
+ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true;
+-- الافتراضي true للأدوات القديمة
 
--- تعليق: الأدوات الموجودة تبقى منشورة، الأدوات الجديدة من auto-draft تكون مسودة
-COMMENT ON COLUMN public.tools.is_published IS 'Draft tools are false, published tools are true';
+-- تحديث سياسة الأمان (RLS) ليتمكن الزوار من رؤية "المنشور" فقط
+DROP POLICY IF EXISTS "Allow public read access" ON tools;
+DROP POLICY IF EXISTS "Anyone can view tools" ON tools;
 
--- تحديث سياسة القراءة للأدوات: المستخدمون العاديون يرون فقط المنشورة
--- Update RLS: Regular users only see published tools
-DROP POLICY IF EXISTS "Anyone can view tools" ON public.tools;
+CREATE POLICY "Allow public read access"
+ON tools FOR SELECT
+USING (is_published = true);
 
-CREATE POLICY "Anyone can view published tools"
-ON public.tools
-FOR SELECT
-USING (is_published = true OR public.has_role(auth.uid(), 'admin'));
+-- السماح للأدمن برؤية كل شيء (بما فيه المسودات)
+DROP POLICY IF EXISTS "Allow admin read all" ON tools;
 
--- المدراء يمكنهم رؤية كل الأدوات (منشورة ومسودات)
--- Admins can see all tools (published and drafts)
+CREATE POLICY "Allow admin read all"
+ON tools FOR SELECT
+USING (auth.role() = 'authenticated');
