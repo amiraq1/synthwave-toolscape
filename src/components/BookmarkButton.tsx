@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 
 interface BookmarkButtonProps {
-  toolId: number;
+  toolId: string | number;
   className?: string;
 }
 
@@ -15,10 +15,13 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Ensure we always work with a number for the DB
+  const numericToolId = Number(toolId);
+
   useEffect(() => {
     let mounted = true;
     const checkStatus = async () => {
-      if (!session) {
+      if (!session || isNaN(numericToolId)) {
         if (mounted) setIsSaved(false);
         return;
       }
@@ -28,12 +31,11 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
           .from("bookmarks")
           .select("tool_id")
           .eq("user_id", session.user.id)
-          .eq("tool_id", toolId)
+          .eq("tool_id", numericToolId)
           .maybeSingle();
 
         if (error) {
           console.error("Bookmark check error:", error);
-          // don't show toast on mount check to avoid noisy UX
         }
 
         if (mounted) setIsSaved(!!data);
@@ -46,7 +48,7 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
     return () => {
       mounted = false;
     };
-  }, [toolId, session]);
+  }, [numericToolId, session]);
 
   const toggleSave = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -57,6 +59,11 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       return;
     }
 
+    if (isNaN(numericToolId)) {
+      console.error("Invalid tool ID");
+      return;
+    }
+
     setLoading(true);
     try {
       if (isSaved) {
@@ -64,7 +71,7 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
           .from("bookmarks")
           .delete()
           .eq("user_id", session.user.id)
-          .eq("tool_id", toolId);
+          .eq("tool_id", numericToolId);
 
         if (error) throw error;
 
@@ -73,7 +80,7 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       } else {
         const { error } = await supabase
           .from("bookmarks")
-          .insert({ user_id: session.user.id, tool_id: toolId });
+          .insert({ user_id: session.user.id, tool_id: numericToolId });
 
         if (error) throw error;
 

@@ -152,13 +152,10 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         </div>
       )}
 
-      {/* Bookmark Button */}
+      {/* Bookmark Button - Always Visible */}
       <BookmarkButton
         toolId={tool.id}
-        className={cn(
-          "absolute top-3 left-3 z-20 h-9 w-9 rounded-full transition-all",
-          "opacity-0 group-hover:opacity-100"
-        )}
+        className="absolute top-3 left-3 z-20 h-9 w-9 rounded-full transition-all hover:scale-110"
       />
 
       {/* Top Section */}
