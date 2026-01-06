@@ -12,14 +12,16 @@ ALTER TABLE bookmarks ENABLE ROW LEVEL SECURITY;
 
 -- 3. السياسات (Policies)
 -- المستخدم يرى مفضلته فقط
+-- Ensure policies are idempotent: drop if exist, then create
+DROP POLICY IF EXISTS "Users view own bookmarks" ON bookmarks;
 CREATE POLICY "Users view own bookmarks" ON bookmarks 
 FOR SELECT USING (auth.uid() = user_id);
 
--- المستخدم يضيف للمفضلة
+DROP POLICY IF EXISTS "Users add bookmarks" ON bookmarks;
 CREATE POLICY "Users add bookmarks" ON bookmarks 
 FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- المستخدم يحذف من المفضلة
+DROP POLICY IF EXISTS "Users delete bookmarks" ON bookmarks;
 CREATE POLICY "Users delete bookmarks" ON bookmarks 
 FOR DELETE USING (auth.uid() = user_id);
 
