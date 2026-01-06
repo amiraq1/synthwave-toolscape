@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Loader2, Plus, Calendar, FileText, Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
+import BlogCard from '@/components/BlogCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -175,18 +177,16 @@ const Blog = () => {
         {!isLoading && !error && posts && posts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <article
-                key={post.id}
-                className="group relative glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-neon-purple/30 transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/10"
-              >
+              <div key={post.id} className="relative group">
                 {/* Admin Actions */}
                 {isAdmin && (
-                  <div className="absolute top-3 left-3 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-3 left-3 z-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => handleEdit(post)}
                       className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-neon-purple/20 hover:text-neon-purple"
+                      aria-label="تعديل المقال"
                     >
                       <Pencil className="w-4 h-4" />
                     </Button>
@@ -195,6 +195,7 @@ const Blog = () => {
                       size="icon"
                       onClick={() => setPostToDelete(post)}
                       className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-destructive/20 hover:text-destructive"
+                      aria-label="حذف المقال"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -203,58 +204,15 @@ const Blog = () => {
 
                 {/* Published Status Badge */}
                 {isAdmin && !post.is_published && (
-                  <Badge className="absolute top-3 right-3 z-10 bg-yellow-500/20 text-yellow-500 border-yellow-500/30">
+                  <Badge className="absolute top-3 right-3 z-20 bg-yellow-500/20 text-yellow-500 border-yellow-500/30">
                     <EyeOff className="w-3 h-3 mr-1" />
                     مسودة
                   </Badge>
                 )}
 
-                {/* Image */}
-                {post.image_url && (
-                  <div className="aspect-video overflow-hidden bg-muted/20">
-                    <img
-                      src={post.image_url}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-
-                {/* Placeholder if no image */}
-                {!post.image_url && (
-                  <div className="aspect-video bg-gradient-to-br from-neon-purple/20 to-neon-blue/20 flex items-center justify-center">
-                    <FileText className="w-12 h-12 text-muted-foreground/30" />
-                  </div>
-                )}
-
-                {/* Content */}
-                <div className="p-5">
-                  {/* Date */}
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                    <Calendar className="w-3 h-3" />
-                    <time dateTime={post.created_at}>
-                      {format(new Date(post.created_at), 'PPP', { locale: ar })}
-                    </time>
-                  </div>
-
-                  {/* Title */}
-                  <h2 className="text-lg font-bold text-foreground mb-2 line-clamp-2 group-hover:text-neon-purple transition-colors">
-                    {post.title}
-                  </h2>
-
-                  {/* Excerpt */}
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {getExcerpt(post)}
-                  </p>
-
-                  {/* Read More */}
-                  <Link to={`/blog/${post.id}`} className="mt-4 text-sm font-medium text-neon-purple hover:text-neon-blue transition-colors flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
-                    قراءة المزيد
-                  </Link>
-                </div>
-              </article>
+                {/* BlogCard Component */}
+                <BlogCard post={post} />
+              </div>
             ))}
           </div>
         )}
