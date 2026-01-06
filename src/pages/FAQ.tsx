@@ -38,7 +38,7 @@ const faqData: FAQItem[] = [
     },
     {
         question: 'ما هي تصنيفات الأدوات المتاحة؟',
-        answer: 'نصنف الأدوات إلى: نصوص (ChatGPT، Claude)، صور (Midjourney، DALL-E)، فيديو (Sora، Runway)، برمجة (GitHub Copilot)، وإنتاجية (Notion AI، Jasper).',
+        answer: 'نصنف الأدوات إلى: نصوص (ChatGPT، Claude Sonnet 4.5، Claude 3.5)، صور (Midjourney، DALL-E)، فيديو (Sora، Runway)، برمجة (GitHub Copilot)، وإنتاجية (Notion AI، Jasper).',
     },
     {
         question: 'هل الموقع متاح كتطبيق؟',
