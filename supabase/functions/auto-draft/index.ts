@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
 
     // 1. Call Gemini to "Arabize" the content
     const aiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,8 +77,8 @@ Output Format (JSON only, no markdown):
       throw new Error("Failed to parse AI response");
     }
 
-    // 2. Insert into Supabase (as Draft)
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+    // 2. Insert into Supabase (as Draft) - Use SERVICE_ROLE_KEY to bypass RLS
+    const supabase = createClient(SUPABASE_URL!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const { data, error } = await supabase.from('tools').insert({
       title: toolData.title,
       description: toolData.description,

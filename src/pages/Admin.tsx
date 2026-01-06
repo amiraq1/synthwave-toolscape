@@ -1,12 +1,4 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Settings, Wrench, Users, Loader2, ShieldAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAdminCheck } from '@/hooks/useAdminCheck';
-import AdminToolsTable from '@/components/admin/AdminToolsTable';
-import AdminUsersTable from '@/components/admin/AdminUsersTable';
-import { useSEO } from '@/hooks/useSEO';
+import { useAuth } from '@/hooks/useAuth';
 
 const Admin = () => {
   useSEO({
@@ -65,37 +57,18 @@ const Admin = () => {
               className="gap-2"
             >
               <ArrowRight className="h-5 w-5" />
-              العودة
-            </Button>
-          </div>
-        </div>
-      </header>
+                const { user, session } = useAuth();
+                const ADMIN_EMAIL = "amaralmdarking27@gmail.com"; // ايميل الأدمن
 
+                if (!session || !user || user.email !== ADMIN_EMAIL) {
+                  return (
+                    <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+                      <h1 className="text-3xl font-bold text-red-500 mb-2">⛔ دخول غير مصرح به</h1>
+                      <p className="text-gray-400">هذه المنطقة مخصصة للمشرفين فقط.</p>
+                      <Button className="mt-4" onClick={() => window.location.href = '/'}>
+                        العودة للرئيسية
+                      </Button>
+                    </div>
+                  );
+                }
       {/* Main Content */}
-      <main className="container mx-auto max-w-7xl px-4 py-8">
-        <Tabs defaultValue="tools" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mx-auto">
-            <TabsTrigger value="tools" className="gap-2">
-              <Wrench className="h-4 w-4" />
-              الأدوات
-            </TabsTrigger>
-            <TabsTrigger value="users" className="gap-2">
-              <Users className="h-4 w-4" />
-              المستخدمين
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="tools" className="glass rounded-xl p-6">
-            <AdminToolsTable />
-          </TabsContent>
-
-          <TabsContent value="users" className="glass rounded-xl p-6">
-            <AdminUsersTable />
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
-  );
-};
-
-export default Admin;
