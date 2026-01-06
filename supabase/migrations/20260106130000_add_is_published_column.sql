@@ -1,21 +1,27 @@
--- إضافة عمود للتحكم في النشر (المسودات)
--- Add is_published column to control draft/publish state
-
+-- 1. Add 'is_published' column
+-- Default is TRUE so existing tools remain visible.
 ALTER TABLE tools 
 ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true;
--- الافتراضي true للأدوات القديمة
 
--- تحديث سياسة الأمان (RLS) ليتمكن الزوار من رؤية "المنشور" فقط
+-- 2. Update RLS Policies
+-- First, drop existing policies to avoid conflicts
+DROP POLICY IF EXISTS "Enable read access for all users" ON tools;
+DROP POLICY IF EXISTS "Public can view tools" ON tools;
 DROP POLICY IF EXISTS "Allow public read access" ON tools;
 DROP POLICY IF EXISTS "Anyone can view tools" ON tools;
 
-CREATE POLICY "Allow public read access"
+-- Policy A: Public can ONLY see published tools
+CREATE POLICY "Public view published tools"
 ON tools FOR SELECT
 USING (is_published = true);
 
--- السماح للأدمن برؤية كل شيء (بما فيه المسودات)
-DROP POLICY IF EXISTS "Allow admin read all" ON tools;
-
-CREATE POLICY "Allow admin read all"
+-- Policy B: Admins/Authenticated users can see EVERYTHING (including drafts)
+CREATE POLICY "Admins view all tools"
 ON tools FOR SELECT
+USING (auth.role() = 'authenticated');
+
+-- Policy C: Allow admins to Insert/Update/Delete
+DROP POLICY IF EXISTS "Admins manage tools" ON tools;
+CREATE POLICY "Admins manage tools"
+ON tools FOR ALL
 USING (auth.role() = 'authenticated');
