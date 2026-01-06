@@ -68,7 +68,6 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const prefetchTool = usePrefetchTool();
-  const prefetchTool = usePrefetchTool();
   const [imageError, setImageError] = useState(false);
   const { recordClick } = useClickTracking();
 
@@ -102,7 +101,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     prefetchTool(tool.id);
   };
 
-  
+
 
   // Google Favicon API - reliable and fast
   const getFaviconUrl = (url: string): string | null => {
