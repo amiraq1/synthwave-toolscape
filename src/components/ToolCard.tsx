@@ -68,14 +68,12 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 const ToolCard = ({ tool, index }: ToolCardProps) => {
   const navigate = useNavigate();
   const prefetchTool = usePrefetchTool();
-  const { user } = useAuth();
-  const { isBookmarked, toggleBookmark, isToggling } = useBookmarks();
+  const prefetchTool = usePrefetchTool();
   const [imageError, setImageError] = useState(false);
   const { recordClick } = useClickTracking();
 
   const categoryStyle = categoryGradients[tool.category] || 'from-gray-500/20 to-gray-600/20 text-gray-400 border-gray-500/20';
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
-  const toolIsBookmarked = isBookmarked(tool.id);
   const isSponsored = tool.is_sponsored === true;
   const supportsArabic = tool.supports_arabic === true;
   const hasDeal = !!tool.coupon_code && (!tool.deal_expiry || new Date(tool.deal_expiry) > new Date());
@@ -104,14 +102,7 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
     prefetchTool(tool.id);
   };
 
-  const handleBookmarkClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    toggleBookmark(tool.id);
-  };
+  
 
   // Google Favicon API - reliable and fast
   const getFaviconUrl = (url: string): string | null => {
