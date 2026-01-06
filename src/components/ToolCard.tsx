@@ -11,7 +11,6 @@ import {
   Sparkles,
   Music,
   LayoutGrid,
-  Heart,
   Crown,
   Tag,
   Languages,
@@ -22,8 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
-import { useBookmarks } from '@/hooks/useBookmarks';
-import { useAuth } from '@/hooks/useAuth';
+import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
 import { useClickTracking } from '@/hooks/useClickTracking';
@@ -165,21 +163,13 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
       )}
 
       {/* Bookmark Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleBookmarkClick}
-        disabled={isToggling}
-        aria-label={toolIsBookmarked ? "إزالة من المفضلة" : "إضافة للمفضلة"}
+      <BookmarkButton
+        toolId={tool.id}
         className={cn(
-          "absolute top-3 left-3 z-20 h-9 w-9 rounded-full backdrop-blur-sm transition-all",
-          toolIsBookmarked
-            ? "bg-rose-500/20 text-rose-500 hover:bg-rose-500/30"
-            : "bg-black/20 text-white/50 hover:text-rose-500 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100"
+          "absolute top-3 left-3 z-20 h-9 w-9 rounded-full transition-all",
+          "opacity-0 group-hover:opacity-100"
         )}
-      >
-        <Heart className={cn("w-4 h-4", toolIsBookmarked && "fill-current")} />
-      </Button>
+      />
 
       {/* Top Section */}
       <div className="flex items-start gap-4 mb-4 z-10">

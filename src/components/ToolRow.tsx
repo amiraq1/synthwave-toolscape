@@ -1,6 +1,7 @@
-import { memo, useState, useMemo } from 'react';
+import { memo, useState, useMemo, KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, ChevronLeft, Type, Image as ImageIcon, Video, Code, Zap, Sparkles, LucideIcon } from 'lucide-react';
+import BookmarkButton from './BookmarkButton';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
@@ -87,10 +88,20 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const hasValidFavicon = faviconUrl && !faviconError;
     const showCategoryIcon = !hasValidImage && !hasValidFavicon;
 
+    const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+        }
+    };
+
     return (
-        <button
+        <div
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
+            onKeyDown={onKeyDown}
+            role="button"
+            tabIndex={0}
             className="
         w-full text-right
         flex items-center gap-4 p-4
@@ -161,7 +172,10 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             </div>
 
             {/* Arrow */}
-            <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
+            <div className="flex items-center gap-2">
+                <BookmarkButton toolId={tool.id} className="h-8 w-8 rounded-full" />
+                <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
+            </div>
         </button>
     );
 });
