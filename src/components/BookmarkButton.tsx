@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 
 interface BookmarkButtonProps {
-  toolId: string;
+  toolId: number;
   className?: string;
 }
 
@@ -100,9 +100,8 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       title={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
     >
       <Bookmark
-        className={`w-5 h-5 transition-all ${
-          isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"
-        }`}
+        className={`w-5 h-5 transition-all ${isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"
+          }`}
       />
     </Button>
   );
