@@ -175,7 +175,12 @@ const Index = () => {
 
           {/* Logic: Show Timeline by default, Grid when searching/filtering */}
           {(!searchQuery && activeCategory === 'الكل') ? (
-            <ToolsTimeline tools={displayTools || []} />
+            <ToolsTimeline 
+              tools={displayTools || []} 
+              onFetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+            />
           ) : (
             <ToolsGrid
               tools={displayTools || []}

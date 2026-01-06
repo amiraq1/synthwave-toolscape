@@ -7,9 +7,12 @@ import { CalendarDays } from 'lucide-react';
 
 interface ToolsTimelineProps {
     tools: Tool[];
+    onFetchNextPage?: () => void;
+    hasNextPage?: boolean;
+    isFetchingNextPage?: boolean;
 }
 
-const ToolsTimeline = ({ tools }: ToolsTimelineProps) => {
+const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage }: ToolsTimelineProps) => {
     // تجميع الأدوات حسب (الشهر سنة)
     const groupedTools = useMemo(() => {
         const groups: Record<string, Tool[]> = {};
@@ -76,6 +79,35 @@ const ToolsTimeline = ({ tools }: ToolsTimelineProps) => {
                     </div>
                 </div>
             ))}
+
+            {/* زر تحميل المزيد */}
+            {hasNextPage && (
+                <div className="flex justify-center pt-8 pb-4">
+                    <button
+                        onClick={() => onFetchNextPage?.()}
+                        disabled={isFetchingNextPage}
+                        className="
+                            group relative flex items-center gap-2 px-8 py-3 
+                            bg-card/40 backdrop-blur-md border border-neon-purple/30 
+                            rounded-full text-foreground font-medium
+                            hover:bg-neon-purple/10 hover:border-neon-purple/50 
+                            transition-all duration-300 disabled:opacity-50
+                        "
+                    >
+                        {isFetchingNextPage ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
+                                جاري التحميل...
+                            </>
+                        ) : (
+                            <>
+                                تحميل المزيد من الأدوات
+                                <div className="w-2 h-2 bg-neon-purple rounded-full group-hover:scale-150 transition-transform" />
+                            </>
+                        )}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
