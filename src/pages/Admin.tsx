@@ -1,4 +1,10 @@
-import { useAuth } from '@/hooks/useAuth';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, Settings, ShieldAlert, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
+import { useSEO } from '@/hooks/useSEO';
+import AdminToolsTable from '@/components/admin/AdminToolsTable';
 
 const Admin = () => {
   useSEO({
@@ -6,6 +12,7 @@ const Admin = () => {
     description: 'لوحة تحكم المشرفين لإدارة أدوات الذكاء الاصطناعي والمستخدمين',
     noIndex: true,
   });
+
   const navigate = useNavigate();
   const { isAdmin, loading } = useAdminCheck();
 
@@ -57,18 +64,18 @@ const Admin = () => {
               className="gap-2"
             >
               <ArrowRight className="h-5 w-5" />
-                const { user, session } = useAuth();
-                const ADMIN_EMAIL = "amaralmdarking27@gmail.com"; // ايميل الأدمن
+              العودة للرئيسية
+            </Button>
+          </div>
+        </div>
+      </header>
 
-                if (!session || !user || user.email !== ADMIN_EMAIL) {
-                  return (
-                    <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
-                      <h1 className="text-3xl font-bold text-red-500 mb-2">⛔ دخول غير مصرح به</h1>
-                      <p className="text-gray-400">هذه المنطقة مخصصة للمشرفين فقط.</p>
-                      <Button className="mt-4" onClick={() => window.location.href = '/'}>
-                        العودة للرئيسية
-                      </Button>
-                    </div>
-                  );
-                }
       {/* Main Content */}
+      <main className="container mx-auto max-w-7xl px-4 py-8">
+        <AdminToolsTable />
+      </main>
+    </div>
+  );
+};
+
+export default Admin;
