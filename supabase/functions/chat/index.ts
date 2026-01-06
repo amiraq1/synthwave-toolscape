@@ -49,11 +49,11 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
     return data.embedding.values;
 }
 
-// Helper: Generate Chat Response (using Gemini 1.5 Flash)
+// Helper: Generate Chat Response (using Gemini 2.0 Flash)
 async function generateChatResponse(prompt: string, apiKey: string, history: any[] = []) {
     console.log("Generating chat response using Gemini...");
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
