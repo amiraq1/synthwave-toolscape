@@ -249,10 +249,10 @@ const Blog = () => {
                   </p>
 
                   {/* Read More */}
-                  <button className="mt-4 text-sm font-medium text-neon-purple hover:text-neon-blue transition-colors flex items-center gap-1">
+                  <Link to={`/blog/${post.id}`} className="mt-4 text-sm font-medium text-neon-purple hover:text-neon-blue transition-colors flex items-center gap-1">
                     <Eye className="w-4 h-4" />
                     قراءة المزيد
-                  </button>
+                  </Link>
                 </div>
               </article>
             ))}
