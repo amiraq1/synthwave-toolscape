@@ -1,17 +1,17 @@
 import { Activity, Mail, Info, Phone, Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import NewsletterForm from './NewsletterForm';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     main: [
-      { label: 'الرئيسية', href: '/' },
-      { label: 'حول نبض', href: '/about' },
-      { label: 'الأسئلة الشائعة', href: '/faq' },
+      { label: t('nav.home'), href: '/' },
+      { label: t('nav.blog'), href: '/blog' },
       { label: 'اتصل بنا', href: '/contact' },
-      { label: 'تثبيت التطبيق', href: '/install' },
     ],
     categories: [
       { label: 'أدوات النصوص', href: '/?category=نصوص' },
@@ -118,7 +118,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
-            جميع الحقوق محفوظة © {currentYear} نبض AI
+            {t('footer.rights')}
           </p>
           <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
             <Link to="/about" className="hover:text-neon-purple transition-colors">

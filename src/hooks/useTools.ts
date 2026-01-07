@@ -6,8 +6,11 @@ export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'بر
 export interface Tool {
   id: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   category: string;
+  created_at?: string;
   secondary_categories?: string[];
   url: string;
   image_url: string | null;

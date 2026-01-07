@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
+import { useTranslation } from 'react-i18next';
 
 interface ToolCardProps {
   tool: Tool;
@@ -63,6 +64,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
   const isCompared = selectedTools.includes(String(tool.id));
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
 
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const isSponsored = tool.is_sponsored === true;
@@ -211,7 +214,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
               <div>
                 <h3 className="text-lg font-bold text-white group-hover:text-neon-purple transition-colors line-clamp-1">
-                  {tool.title}
+                  {isAr ? tool.title : (tool.title_en || tool.title)}
                 </h3>
                 {/* النجوم (يمكن ربطها بالتقييم الحقيقي لاحقاً) */}
                 <div className="flex items-center gap-2 mt-1">
@@ -223,7 +226,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
           {/* الوصف */}
           <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2 flex-grow">
-            {tool.description}
+            {isAr ? tool.description : (tool.description_en || tool.description)}
           </p>
 
           {/* المميزات (Badges) */}
@@ -257,7 +260,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer"
               onClick={handleExternalClick}
             >
-              عرض الموقع <ExternalLink className="w-3 h-3" />
+              {t('tools.visit')} <ExternalLink className="w-3 h-3" />
             </span>
           </div>
         </div>
