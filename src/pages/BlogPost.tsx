@@ -190,16 +190,19 @@ const BlogPost = () => {
         </div>
 
         {/* 2. محتوى المقال */}
-        <article className="container mx-auto px-4 py-8 sm:py-12 max-w-3xl">
-          <div className="prose prose-lg prose-invert mx-auto">
+        <article className="container mx-auto px-4 mt-12 max-w-3xl">
+          {/* تم إضافة الكلاس blog-content للتنسيقات العربية المحسنة */}
+          <div className="blog-content prose prose-lg prose-invert mx-auto max-w-none">
+
             {/* تحويل النص العادي إلى فقرات منسقة */}
             {post.content?.split('\n').map((paragraph: string, index: number) => (
               paragraph.trim() && (
-                <p key={index} className="text-gray-300 leading-relaxed mb-5 text-base sm:text-lg">
+                <p key={index}>
                   {paragraph}
                 </p>
               )
             ))}
+
           </div>
 
           {/* 3. خاتمة ومشاركة */}
