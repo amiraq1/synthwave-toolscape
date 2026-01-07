@@ -51,10 +51,10 @@ const Profile = () => {
             // Note: Assuming 'bookmarks' table exists and links to 'tools'. If not, this might fail.
             // Based on context, bookmarks might be 'bookmarks' table with 'tool_id'.
             // The user code assumes: .from("bookmarks").select("tools(*)")
-            const { data: bookmarksData } = await supabase
-                .from("bookmarks")
+            const { data: bookmarksData } = await (supabase
+                .from("bookmarks" as any)
                 .select("tools(*)")
-                .eq("user_id", userId);
+                .eq("user_id", userId) as any);
 
             if (bookmarksData) {
                 // bookmarksData is an array of objects { tools: { ... } }

@@ -27,12 +27,12 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from("bookmarks")
+        const { data, error } = await (supabase
+          .from("bookmarks" as any)
           .select("tool_id")
           .eq("user_id", session.user.id)
           .eq("tool_id", numericToolId)
-          .maybeSingle();
+          .maybeSingle() as any);
 
         if (error) {
           console.error("Bookmark check error:", error);
@@ -67,20 +67,20 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
     setLoading(true);
     try {
       if (isSaved) {
-        const { error } = await supabase
-          .from("bookmarks")
+        const { error } = await (supabase
+          .from("bookmarks" as any)
           .delete()
           .eq("user_id", session.user.id)
-          .eq("tool_id", numericToolId);
+          .eq("tool_id", numericToolId) as any);
 
         if (error) throw error;
 
         setIsSaved(false);
         toast.success("تمت الإزالة من المفضلة");
       } else {
-        const { error } = await supabase
-          .from("bookmarks")
-          .insert({ user_id: session.user.id, tool_id: numericToolId });
+        const { error } = await (supabase
+          .from("bookmarks" as any)
+          .insert({ user_id: session.user.id, tool_id: numericToolId } as any) as any);
 
         if (error) throw error;
 

@@ -42,11 +42,7 @@ export const useReviews = (toolId: string | number | undefined) => {
           rating,
           comment,
           created_at,
-          tool_id,
-          profiles (
-            display_name,
-            avatar_url
-          )
+          tool_id
         `)
         .eq('tool_id', idAsNumber)
         .order('created_at', { ascending: false });
@@ -57,14 +53,13 @@ export const useReviews = (toolId: string | number | undefined) => {
       }
 
       // Map function output to Review shape
-      return (data || []).map((r) => ({
+      return (data || []).map((r: any) => ({
         id: r.id,
         tool_id: idAsNumber,
         rating: r.rating,
         comment: r.comment,
         created_at: r.created_at,
-        reviewer_alias: r.profiles?.display_name || 'Anonymous',
-        avatar_url: r.profiles?.avatar_url,
+        reviewer_alias: 'مستخدم',
       })) as Review[];
     },
     enabled: !!toolId,

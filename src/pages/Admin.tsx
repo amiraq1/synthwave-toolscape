@@ -41,10 +41,11 @@ const Admin = () => {
     const { data: draftsData } = await supabase
       .from("tools")
       .select("*")
-      .eq("is_published", false)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false }) as { data: any[] | null };
 
-    if (draftsData) setDrafts(draftsData);
+    // Filter drafts (unpublished tools)
+    const filteredDrafts = (draftsData || []).filter((t: any) => t.is_published === false);
+    setDrafts(filteredDrafts);
 
     // جلب الإحصائيات (Count)
     const { count: toolsCount } = await supabase.from("tools").select("*", { count: 'exact', head: true });
@@ -57,7 +58,7 @@ const Admin = () => {
 
     setStats({
       totalTools: toolsCount || 0,
-      pendingDrafts: draftsData?.length || 0,
+      pendingDrafts: filteredDrafts.length,
       totalUsers: finalUsersCount
     });
   };

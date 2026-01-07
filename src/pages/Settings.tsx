@@ -27,8 +27,8 @@ const Settings = () => {
         .single();
 
       if (data) {
-        setFullName(data.display_name || ""); // Mapped display_name to fullName state
-        setAvatarUrl(data.avatar_url);
+        setFullName((data as any).display_name || ""); // Mapped display_name to fullName state
+        setAvatarUrl((data as any).avatar_url);
       }
       setLoading(false);
     };
