@@ -83,6 +83,7 @@ export const useReviewStats = (toolId: string | number | undefined) => {
 
       // Try RPC first
       // Try RPC first
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: rpcData, error: rpcError } = await supabase
         .rpc('get_tool_review_stats' as any, { p_tool_id: idAsNumber });
 
@@ -97,7 +98,7 @@ export const useReviewStats = (toolId: string | number | undefined) => {
         .eq('tool_id', idAsNumber);
 
       if (reviews && reviews.length > 0) {
-        const avg = reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length;
+        const avg = reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length;
         return { average_rating: Math.round(avg * 10) / 10, reviews_count: reviews.length };
       }
 
@@ -173,11 +174,7 @@ export const useAddReview = () => {
             tool_id: idAsNumber,
             rating,
             comment: comment?.trim() || null,
-            created_at: undefined, // Let DB handle it or if preserving original creation? upsert updates everything.
-            // Wait, checks original code logic for upsert.
-            // It was just updating/inserting.
-            // The type definition for insert/update might be strict.
-          } as any, // Temporary cast to avoid complex type matching issues with the exact Insert/Update type union if needed
+          },
           { onConflict: 'user_id,tool_id' }
         )
         .select()

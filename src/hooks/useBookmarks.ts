@@ -21,7 +21,7 @@ export const useBookmarks = () => {
         queryFn: async () => {
             if (!user) return [];
 
-            const { data, error } = await (supabase as any)
+            const { data, error } = await supabase
                 .from('bookmarks')
                 .select('tool_id')
                 .eq('user_id', user.id);
@@ -51,7 +51,7 @@ export const useBookmarks = () => {
 
             if (currentlyBookmarked) {
                 // Remove bookmark
-                const { error } = await (supabase as any)
+                const { error } = await supabase
                     .from('bookmarks')
                     .delete()
                     .eq('user_id', user.id)
@@ -61,7 +61,7 @@ export const useBookmarks = () => {
                 return { action: 'removed', toolId: id };
             } else {
                 // Add bookmark
-                const { error } = await (supabase as any)
+                const { error } = await supabase
                     .from('bookmarks')
                     .insert({ user_id: user.id, tool_id: id });
 
@@ -106,7 +106,7 @@ export const useBookmarkedTools = () => {
             if (!user) return [];
 
             // First get bookmarked tool IDs
-            const { data: bookmarks, error: bookmarksError } = await (supabase as any)
+            const { data: bookmarks, error: bookmarksError } = await supabase
                 .from('bookmarks')
                 .select('tool_id')
                 .eq('user_id', user.id);
@@ -123,7 +123,7 @@ export const useBookmarkedTools = () => {
                 .in('id', toolIds);
 
             if (toolsError) throw toolsError;
-            
+
             // Transform to match Tool interface (id as string)
             return (tools || []).map(tool => ({
                 ...tool,
