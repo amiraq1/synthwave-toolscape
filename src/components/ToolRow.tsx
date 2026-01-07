@@ -176,7 +176,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                 <BookmarkButton toolId={tool.id} className="h-8 w-8 rounded-full" />
                 <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
             </div>
-        </button>
+        </div>
     );
 });
 
