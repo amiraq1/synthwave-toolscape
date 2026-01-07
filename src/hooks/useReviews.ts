@@ -82,7 +82,6 @@ export const useReviewStats = (toolId: string | number | undefined) => {
 
 
       // Try RPC first
-      // Try RPC first
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: rpcData, error: rpcError } = await supabase
         .rpc('get_tool_review_stats' as any, { p_tool_id: idAsNumber });

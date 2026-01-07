@@ -61,7 +61,7 @@ export const useStructuredData = (schema: SchemaType) => {
         };
         break;
 
-      case 'software':
+      case 'software': {
         const softwareSchema = {
           '@type': 'SoftwareApplication',
           // ... software properties
@@ -113,6 +113,7 @@ export const useStructuredData = (schema: SchemaType) => {
           };
         }
         break;
+      }
 
       case 'itemList':
         jsonLd = {
