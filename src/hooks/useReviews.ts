@@ -34,9 +34,22 @@ export const useReviews = (toolId: string | number | undefined) => {
       const idAsNumber = Number(toolId);
       if (isNaN(idAsNumber)) return [];
 
-      // Use get_public_reviews RPC function which excludes user_id
+      // Use direct query with join instead of RPC to avoid 404 if migration is missing
       const { data, error } = await supabase
-        .rpc('get_public_reviews', { tool_id_input: idAsNumber });
+        .from('reviews')
+        .select(`
+          id,
+          rating,
+          comment,
+          created_at,
+          tool_id,
+          profiles (
+            display_name,
+            avatar_url
+          )
+        `)
+        .eq('tool_id', idAsNumber)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching reviews:', error);
@@ -50,8 +63,8 @@ export const useReviews = (toolId: string | number | undefined) => {
         rating: r.rating,
         comment: r.comment,
         created_at: r.created_at,
-        reviewer_alias: r.full_name,
-        avatar_url: r.avatar_url,
+        reviewer_alias: r.profiles?.display_name || 'Anonymous',
+        avatar_url: r.profiles?.avatar_url,
       })) as Review[];
     },
     enabled: !!toolId,

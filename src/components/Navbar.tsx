@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface NavbarProps {
-  onAddClick: () => void;
+  onAddClick?: () => void;
 }
 
 const Navbar = ({ onAddClick }: NavbarProps) => {
@@ -36,7 +36,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
   const handleAddClick = () => {
     setMobileMenuOpen(false);
-    onAddClick();
+    onAddClick?.();
   };
 
   const handleAuthClick = () => {
@@ -103,13 +103,15 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               </button>
             )}
 
-            <Button
-              onClick={onAddClick}
-              className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2"
-            >
-              <Plus className="h-5 w-5" />
-              أضف أداة
-            </Button>
+            {onAddClick && (
+              <Button
+                onClick={onAddClick}
+                className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2"
+              >
+                <Plus className="h-5 w-5" />
+                أضف أداة
+              </Button>
+            )}
 
             {user ? (
               <DropdownMenu>
@@ -194,13 +196,15 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               </div>
             )}
 
-            <Button
-              onClick={handleAddClick}
-              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2 py-6 text-base"
-            >
-              <Plus className="h-5 w-5" />
-              أضف أداة
-            </Button>
+            {onAddClick && (
+              <Button
+                onClick={handleAddClick}
+                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2 py-6 text-base"
+              >
+                <Plus className="h-5 w-5" />
+                أضف أداة
+              </Button>
+            )}
 
             <Button
               onClick={() => { setMobileMenuOpen(false); navigate('/blog'); }}

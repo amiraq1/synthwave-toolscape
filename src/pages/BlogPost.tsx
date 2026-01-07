@@ -35,7 +35,7 @@ const BlogPost = () => {
       if (!id) return;
 
       // جلب المقال
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("posts")
         .select("*")
         .eq("id", id)
@@ -46,7 +46,7 @@ const BlogPost = () => {
 
         // زيادة عداد المشاهدات
         try {
-          await (supabase as any).rpc("increment_post_views", { p_post_id: id });
+          await supabase.rpc("increment_post_views", { p_post_id: id });
         } catch (e) {
           // تجاهل الخطأ - قد لا تكون الدالة موجودة بعد
           console.log("Views increment skipped");

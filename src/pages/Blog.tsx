@@ -35,6 +35,7 @@ interface Post {
   created_at: string;
   is_published: boolean;
   author_id?: string;
+  views_count?: number;
 }
 
 const Blog = () => {
@@ -50,7 +51,7 @@ const Blog = () => {
     queryKey: ['posts'],
     queryFn: async () => {
       // Admins see all posts, others see only published
-      const query = (supabase as any)
+      let query = supabase
         .from('posts')
         .select('*')
         .order('created_at', { ascending: false });
@@ -67,7 +68,7 @@ const Blog = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (postId: string) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('posts')
         .delete()
         .eq('id', postId);

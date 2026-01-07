@@ -27,7 +27,7 @@ interface Comment {
     user_id: string;
     user?: {
         id: string;
-        username: string;
+        display_name: string | null;
         avatar_url: string | null;
     };
 }
@@ -47,7 +47,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     const { data: comments, isLoading } = useQuery({
         queryKey: ["post-comments", postId],
         queryFn: async () => {
-            const { data, error } = await (supabase as any)
+            const { data, error } = await supabase
                 .from("post_comments")
                 .select(`
           id,
@@ -56,7 +56,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
           user_id,
           profiles:user_id (
             id,
-            username,
+            display_name,
             avatar_url
           )
         `)
@@ -75,11 +75,12 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     // إضافة تعليق
     const addMutation = useMutation({
         mutationFn: async (content: string) => {
-            const { error } = await (supabase as any)
+            if (!user?.id) throw new Error("User not found");
+            const { error } = await supabase
                 .from("post_comments")
                 .insert({
                     post_id: postId,
-                    user_id: user?.id,
+                    user_id: user.id,
                     content,
                 });
             if (error) throw error;
@@ -104,7 +105,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     // حذف تعليق
     const deleteMutation = useMutation({
         mutationFn: async (commentId: string) => {
-            const { error } = await (supabase as any)
+            const { error } = await supabase
                 .from("post_comments")
                 .delete()
                 .eq("id", commentId);
@@ -214,14 +215,14 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                 <Avatar className="w-10 h-10 shrink-0">
                                     <AvatarImage src={comment.user?.avatar_url || undefined} />
                                     <AvatarFallback className="bg-neon-purple/20 text-neon-purple text-sm">
-                                        {comment.user?.username?.charAt(0)?.toUpperCase() || "؟"}
+                                        {comment.user?.display_name?.charAt(0)?.toUpperCase() || "؟"}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-2 mb-2">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span className="font-semibold text-white">
-                                                {comment.user?.username || "مستخدم"}
+                                                {comment.user?.display_name || "مستخدم"}
                                             </span>
                                             <span className="text-xs text-gray-500">
                                                 {format(new Date(comment.created_at), "d MMMM yyyy - HH:mm", { locale: ar })}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 
@@ -11,6 +11,7 @@ interface BlogPost {
     created_at: string;
     image_url?: string;
     reading_time?: number; // وقت القراءة (اختياري)
+    views_count?: number;
 }
 
 interface BlogCardProps {
@@ -46,7 +47,14 @@ const BlogCard = ({ post }: BlogCardProps) => {
                     {post.reading_time && (
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{post.reading_time} دقيقة للقراءة</span>
+                            <span>{post.reading_time} دقيقة</span>
+                        </div>
+                    )}
+                    {typeof post.views_count === 'number' && (
+                        <div className="flex items-center gap-1">
+                            {/* Eye icon imported from lucide-react? Need to check imports */}
+                            <Eye className="w-3 h-3" />
+                            <span>{post.views_count}</span>
                         </div>
                     )}
                 </div>

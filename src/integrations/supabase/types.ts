@@ -47,6 +47,48 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string
@@ -56,6 +98,9 @@ export type Database = {
           image_url: string | null
           is_published: boolean
           title: string
+          slug: string | null
+          excerpt: string | null
+          views_count: number | null
         }
         Insert: {
           author_id: string
@@ -65,6 +110,9 @@ export type Database = {
           image_url?: string | null
           is_published?: boolean
           title: string
+          slug?: string
+          excerpt?: string | null
+          views_count?: number
         }
         Update: {
           author_id?: string
@@ -74,6 +122,9 @@ export type Database = {
           image_url?: string | null
           is_published?: boolean
           title?: string
+          slug?: string
+          excerpt?: string | null
+          views_count?: number
         }
         Relationships: []
       }
@@ -295,6 +346,7 @@ export type Database = {
         Returns: boolean
       }
       increment_tool_clicks: { Args: { p_tool_id: number }; Returns: undefined }
+      increment_post_views: { Args: { p_post_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
