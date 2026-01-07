@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
 import EditDraftDialog from "@/components/EditDraftDialog";
+import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Admin = () => {
   useSEO({
@@ -134,54 +136,58 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background pb-20" dir="rtl">
       {/* Header */}
-      <header className="sticky top-0 z-50 glass border-b border-border/50 mb-8">
-        <div className="container mx-auto max-w-5xl px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Settings className="h-6 w-6 text-neon-purple" />
-              <h1 className="text-xl font-bold">لوحة التحكم</h1>
+              <h1 className="text-3xl font-bold mb-6">لوحة القيادة 🚀</h1>
             </div>
             <Button variant="ghost" onClick={() => navigate('/')} className="gap-2">
               <ArrowRight className="h-5 w-5" />
               العودة
             </Button>
+          </div >
+        </div >
+      </header >
+
+  <div className="container mx-auto px-4 max-w-5xl space-y-8">
+
+    {/* 📊 شريط الإحصائيات */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
+        <CardContent className="p-6 flex items-center justify-between">
+          <div>
+            <p className="text-gray-400 text-sm mb-1">إجمالي الأدوات</p>
+            <h3 className="text-3xl font-bold text-blue-400">{stats.totalTools}</h3>
           </div>
-        </div>
-      </header>
+          <Database className="w-8 h-8 text-blue-500/50" />
+        </CardContent>
+      </Card>
+      <Card className="bg-orange-900/10 border-orange-500/20 card-glow">
+        <CardContent className="p-6 flex items-center justify-between">
+          <div>
+            <p className="text-gray-400 text-sm mb-1">مسودات معلقة</p>
+            <h3 className="text-3xl font-bold text-orange-400">{stats.pendingDrafts}</h3>
+          </div>
+          <Edit className="w-8 h-8 text-orange-500/50" />
+        </CardContent>
+      </Card>
+      <Card className="bg-purple-900/10 border-purple-500/20 card-glow">
+        <CardContent className="p-6 flex items-center justify-between">
+          <div>
+            <p className="text-gray-400 text-sm mb-1">المستخدمين</p>
+            <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers || '-'}</h3>
+          </div>
+          <Users className="w-8 h-8 text-purple-500/50" />
+        </CardContent>
+      </Card>
+    </div>
 
-      <div className="container mx-auto px-4 max-w-5xl space-y-8">
 
-        {/* 📊 شريط الإحصائيات */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm mb-1">إجمالي الأدوات</p>
-                <h3 className="text-3xl font-bold text-blue-400">{stats.totalTools}</h3>
-              </div>
-              <Database className="w-8 h-8 text-blue-500/50" />
-            </CardContent>
-          </Card>
-          <Card className="bg-orange-900/10 border-orange-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm mb-1">مسودات معلقة</p>
-                <h3 className="text-3xl font-bold text-orange-400">{stats.pendingDrafts}</h3>
-              </div>
-              <Edit className="w-8 h-8 text-orange-500/50" />
-            </CardContent>
-          </Card>
-          <Card className="bg-purple-900/10 border-purple-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm mb-1">المستخدمين</p>
-                <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers || '-'}</h3>
-              </div>
-              <Users className="w-8 h-8 text-purple-500/50" />
-            </CardContent>
-          </Card>
-        </div>
+    {/* نظام التبويبات */}
+    <Tabs defaultValue="tools" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 bg-white/5 mb-8">
+        <TabsTrigger value="tools">🛠️ إدارة الأدوات والمحتوى</TabsTrigger>
+        <TabsTrigger value="users">👥 إدارة المستخدمين</TabsTrigger>
+      </TabsList>
 
+      <TabsContent value="tools" className="space-y-8">
         {/* ✨ مولد المحتوى */}
         <Card className="border-neon-purple/30 bg-card/40 backdrop-blur glass-card">
           <CardHeader>
@@ -269,18 +275,31 @@ const Admin = () => {
             ))}
           </div>
         </div>
+      </TabsContent>
 
-        {/* نافذة التعديل المنبثقة */}
-        {editingTool && (
-          <EditDraftDialog
-            isOpen={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
-            tool={editingTool}
-            onUpdate={fetchData}
-          />
-        )}
-      </div>
-    </div>
+      {/* تبويب المستخدمين (الجديد) */}
+      <TabsContent value="users">
+        <div className="bg-black/20 p-6 rounded-xl border border-white/10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Users className="text-neon-purple" />
+            قائمة المسجلين
+          </h2>
+          <AdminUsersTable />
+        </div>
+      </TabsContent>
+    </Tabs>
+
+    {/* نافذة التعديل المنبثقة */}
+    {editingTool && (
+      <EditDraftDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        tool={editingTool}
+        onUpdate={fetchData}
+      />
+    )}
+  </div>
+    </div >
   );
 };
 
