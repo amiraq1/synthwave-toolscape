@@ -11,6 +11,7 @@ export interface Review {
   comment: string | null;
   created_at: string;
   reviewer_alias?: string;
+  avatar_url?: string;
 }
 
 export interface ReviewStats {
@@ -35,21 +36,22 @@ export const useReviews = (toolId: string | number | undefined) => {
 
       // Use get_public_reviews RPC function which excludes user_id
       const { data, error } = await supabase
-        .rpc('get_public_reviews', { p_tool_id: idAsNumber });
+        .rpc('get_public_reviews', { tool_id_input: idAsNumber });
 
       if (error) {
         console.error('Error fetching reviews:', error);
         throw error;
       }
 
-      // Map display_name to reviewer_alias for compatibility
+      // Map function output to Review shape
       return (data || []).map((r: any) => ({
         id: r.id,
-        tool_id: r.tool_id,
+        tool_id: idAsNumber,
         rating: r.rating,
         comment: r.comment,
         created_at: r.created_at,
-        reviewer_alias: r.display_name,
+        reviewer_alias: r.full_name,
+        avatar_url: r.avatar_url,
       })) as Review[];
     },
     enabled: !!toolId,
