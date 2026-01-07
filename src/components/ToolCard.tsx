@@ -15,7 +15,8 @@ import {
   Tag,
   Languages,
   Flame,
-  Clock
+  Clock,
+  Scale
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
 import LazyImage from './LazyImage';
 import { useClickTracking } from '@/hooks/useClickTracking';
+import { useCompare } from '@/context/CompareContext';
 
 interface ToolCardProps {
   tool: Tool;
@@ -70,6 +72,8 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
   const [imageError, setImageError] = useState(false);
   const { recordClick } = useClickTracking();
+  const { selectedTools, addToCompare, removeFromCompare } = useCompare();
+  const isInCompareList = selectedTools.includes(tool.id);
 
   const categoryStyle = categoryGradients[tool.category] || 'from-gray-500/20 to-gray-600/20 text-gray-400 border-gray-500/20';
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
@@ -99,6 +103,16 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
 
   const handleMouseEnter = () => {
     prefetchTool(tool.id);
+  };
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isInCompareList) {
+      removeFromCompare(tool.id);
+    } else {
+      addToCompare(tool.id);
+    }
   };
 
 
@@ -152,11 +166,26 @@ const ToolCard = ({ tool, index }: ToolCardProps) => {
         </div>
       )}
 
-      {/* Bookmark Button - Always Visible */}
+      {/* Bookmark Button */}
       <BookmarkButton
         toolId={tool.id}
         className="absolute top-3 left-3 z-20 h-9 w-9 rounded-full transition-all hover:scale-110"
       />
+
+      {/* Compare Button */}
+      <button
+        onClick={handleCompareClick}
+        className={cn(
+          "absolute top-3 left-14 z-20 p-2 rounded-full backdrop-blur-md transition-all hover:scale-110",
+          isInCompareList
+            ? "bg-neon-purple text-white shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+            : "bg-black/30 text-gray-400 hover:bg-white/10 hover:text-white"
+        )}
+        title={isInCompareList ? "إزالة من المقارنة" : "أضف للمقارنة"}
+        aria-label={isInCompareList ? "إزالة من المقارنة" : "أضف للمقارنة"}
+      >
+        <Scale className="w-4 h-4" />
+      </button>
 
       {/* Top Section */}
       <div className="flex items-start gap-4 mb-4 z-10">

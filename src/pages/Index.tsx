@@ -8,6 +8,7 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 // Lazy load AddToolModal
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 import Footer from "@/components/Footer";
+import LivePulse from "@/components/LivePulse";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useAuth } from "@/hooks/useAuth";
@@ -104,6 +105,9 @@ const Index = () => {
 
       <Navbar onAddClick={handleAddClick} />
 
+      {/* شريط النبض المباشر */}
+      <LivePulse />
+
       <main
         id="main-content"
         role="main"
@@ -175,8 +179,8 @@ const Index = () => {
 
           {/* Logic: Show Timeline by default, Grid when searching/filtering */}
           {(!searchQuery && activeCategory === 'الكل') ? (
-            <ToolsTimeline 
-              tools={displayTools || []} 
+            <ToolsTimeline
+              tools={displayTools || []}
               onFetchNextPage={fetchNextPage}
               hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
