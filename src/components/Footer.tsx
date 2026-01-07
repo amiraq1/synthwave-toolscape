@@ -35,7 +35,7 @@ const Footer = () => {
               <span className="text-foreground/80 text-xl" lang="en">AI</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-              دليلك الذكي لاكتشاف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك.
+              {t('footer.about')}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-bold text-foreground">روابط سريعة</h3>
+            <h3 className="font-bold text-foreground">{t('footer.links')}</h3>
             <nav aria-label="روابط سريعة">
               <ul className="space-y-2">
                 {footerLinks.main.map((link) => (

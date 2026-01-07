@@ -11,10 +11,16 @@ const resources = {
             "nav.login": "دخول",
             "hero.title": "دليلك الذكي لعالم الذكاء الاصطناعي",
             "hero.subtitle": "اكتشف أفضل الأدوات التي تناسب احتياجاتك ببحث ذكي ودقيق.",
-            "search.placeholder": "ماذا تريد أن تصنع اليوم؟ (مثال: تصميم شعار)",
+            "search.placeholder": "عن ماذا تبحث؟ (مثال: مونتاج فيديو)",
             "tools.visit": "زيارة الموقع",
             "tools.details": "التفاصيل",
             "footer.rights": "جميع الحقوق محفوظة © 2026 نبض AI",
+            "filters.all": "الكل",
+            "filters.developer": "مبرمج",
+            "filters.designer": "مصمم",
+            "section.new_tools": "أحدث الأدوات",
+            "footer.about": "نبض AI هو منصتك الأولى لاكتشاف أدوات المستقبل.",
+            "footer.links": "روابط هامة",
         }
     },
     en: {
@@ -25,10 +31,16 @@ const resources = {
             "nav.login": "Login",
             "hero.title": "Your Smart Guide to the AI World",
             "hero.subtitle": "Discover the best tools for your needs with intelligent semantic search.",
-            "search.placeholder": "What do you want to create? (e.g. Logo Design)",
+            "search.placeholder": "What are you looking for? (e.g. Video Editing)",
             "tools.visit": "Visit Site",
             "tools.details": "Details",
             "footer.rights": "All rights reserved © 2026 Nabd AI",
+            "filters.all": "All",
+            "filters.developer": "Developer",
+            "filters.designer": "Designer",
+            "section.new_tools": "Newest Tools",
+            "footer.about": "Nabd AI is your #1 platform to discover future tools.",
+            "footer.links": "Important Links",
         }
     }
 };
