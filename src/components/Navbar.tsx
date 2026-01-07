@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -113,46 +113,65 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             )}
 
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-border/50"
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 glass">
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuItem
-                        onClick={handleAdminClick}
-                        className="gap-2 cursor-pointer text-neon-purple"
-                      >
-                        <Shield className="h-4 w-4" />
-                        لوحة التحكم
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem
-                    onClick={handleSettingsClick}
-                    className="gap-2 cursor-pointer"
-                  >
-                    <Settings className="h-4 w-4" />
-                    الإعدادات
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    تسجيل الخروج
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="rounded-full p-2 hover:bg-white/5 transition-colors"
+                >
+                  <UserCircle className="w-8 h-8 text-gray-300 hover:text-neon-purple" />
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-border/50"
+                    >
+                      <User className="h-4 w-4" />
+                      <span className="max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48 glass">
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={handleAdminClick}
+                          className="gap-2 cursor-pointer text-neon-purple"
+                        >
+                          <Shield className="h-4 w-4" />
+                          لوحة التحكم
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate('/profile');
+                      }}
+                      className="gap-2 cursor-pointer"
+                    >
+                      <UserCircle className="h-4 w-4" />
+                      الملف الشخصي
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleSettingsClick}
+                      className="gap-2 cursor-pointer"
+                    >
+                      <Settings className="h-4 w-4" />
+                      الإعدادات
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      تسجيل الخروج
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
               <Button
                 onClick={() => navigate('/auth')}
