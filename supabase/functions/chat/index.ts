@@ -16,6 +16,26 @@ serve(async (req) => {
         const { query } = await req.json();
         console.log("🟢 [Chat] Received query:", query);
 
+        // --- Internal key auth (optional) ---
+        // Allow calls that either provide a valid Authorization header (JWT)
+        // or include a matching `x-internal-key` header that equals the
+        // `INTERNAL_CHAT_KEY` secret set in Function's environment.
+        const authHeader = req.headers.get('authorization');
+        const internalHeader = req.headers.get('x-internal-key');
+        const INTERNAL_CHAT_KEY = Deno.env.get('INTERNAL_CHAT_KEY');
+
+        if (!authHeader) {
+            // If an internal key is configured, require it when Authorization is missing
+            if (INTERNAL_CHAT_KEY && internalHeader !== INTERNAL_CHAT_KEY) {
+                return new Response(JSON.stringify({ error: 'يجب تقديم مفتاح داخلي صالح أو تسجيل الدخول لاستخدام نبض AI' }), {
+                    status: 401,
+                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                });
+            }
+            // If no INTERNAL_CHAT_KEY is configured and no auth provided, fall through
+            // and let Supabase/edge runtime handle auth if required by project settings.
+        }
+
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
@@ -103,7 +123,8 @@ serve(async (req) => {
         const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في التوليد.";
         console.log("✅ Reply generated successfully.");
 
-        return new Response(JSON.stringify({ reply }), {
+        // Return both `answer` and legacy `reply` keys to keep clients working.
+        return new Response(JSON.stringify({ answer: reply, reply }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
