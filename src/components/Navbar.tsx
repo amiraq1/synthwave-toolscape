@@ -55,7 +55,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
+    <nav className="sticky top-0 z-50 glass border-b border-border/50 font-['Cairo']" dir="rtl">
       <div className="container mx-auto max-w-7xl px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -64,30 +64,29 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-[44px] min-h-[44px]"
           >
             <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-neon-purple animate-pulse" />
-            <span className="text-xl sm:text-2xl" aria-label="نبض AI - الصفحة الرئيسية">
-              <span className="font-extrabold gradient-text">نبض</span>
-              <span className="font-medium text-foreground/80 mr-1">AI</span>
-            </span>
+            <div className="flex items-center gap-2 font-extrabold text-xl tracking-wide" aria-label="نبض AI - الصفحة الرئيسية">
+              <span className="text-neon-purple">نبض</span> AI
+            </div>
           </button>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-6 text-sm font-bold text-gray-300">
             {/* Navigation Links */}
             <button
               onClick={() => navigate('/about')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+              className="hover:text-foreground transition-colors px-3 py-2"
             >
               حول
             </button>
             <button
               onClick={() => navigate('/faq')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+              className="hover:text-foreground transition-colors px-3 py-2"
             >
               الأسئلة الشائعة
             </button>
             <button
               onClick={() => navigate('/blog')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
+              className="hover:text-foreground transition-colors px-3 py-2"
             >
               المدونة
             </button>
@@ -96,7 +95,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             {user && (
               <button
                 onClick={() => navigate('/bookmarks')}
-                className="text-sm text-muted-foreground hover:text-rose-500 transition-colors px-3 py-2 flex items-center gap-1"
+                className="hover:text-rose-500 transition-colors px-3 py-2 flex items-center gap-1"
               >
                 <Heart className="w-4 h-4" />
                 المفضلة
