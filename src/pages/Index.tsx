@@ -9,6 +9,7 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 import Footer from "@/components/Footer";
 import LivePulse from "@/components/LivePulse";
+import PersonaFilter, { filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,6 +30,7 @@ const Index = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
+  const [activePersona, setActivePersona] = useState<PersonaId>("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // ... (rest of hook calls remain same)
@@ -46,10 +48,11 @@ const Index = () => {
     isFetchingNextPage
   } = useTools(searchQuery, activeCategory);
 
-  const tools = useMemo(() =>
-    data?.pages.flatMap(page => page) ?? [],
-    [data]
-  );
+  const tools = useMemo(() => {
+    const rawTools = data?.pages.flatMap(page => page) ?? [];
+    // Apply persona filter
+    return filterToolsByPersona(rawTools, activePersona);
+  }, [data, activePersona]);
 
   // Hybrid Search: Falls back to semantic search when client-side results are low
   const {
@@ -141,6 +144,9 @@ const Index = () => {
         >
           <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+
+          {/* Persona Filter */}
+          <PersonaFilter currentPersona={activePersona} onSelect={setActivePersona} />
         </section>
 
         {/* Tools Display - Enhanced styling */}
