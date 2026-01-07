@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import LanguageToggle from '@/components/LanguageToggle';
 
 interface NavbarProps {
   onAddClick?: () => void;
@@ -24,6 +26,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -73,6 +76,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
           <div className="hidden md:flex items-center gap-6 text-sm font-bold text-gray-300">
             {/* Navigation Links */}
             <button
+              onClick={() => navigate('/')}
+              className="hover:text-foreground transition-colors px-3 py-2"
+            >
+              {t('nav.home')}
+            </button>
+            <button
               onClick={() => navigate('/about')}
               className="hover:text-foreground transition-colors px-3 py-2"
             >
@@ -88,8 +97,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               onClick={() => navigate('/blog')}
               className="hover:text-foreground transition-colors px-3 py-2"
             >
-              المدونة
+              {t('nav.blog')}
             </button>
+            <LanguageToggle />
 
             {/* Bookmarks - only for logged in users */}
             {user && (
@@ -179,7 +189,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 className="gap-2 border-border/50"
               >
                 <LogIn className="h-4 w-4" />
-                دخول
+                {t('nav.login')}
               </Button>
             )}
           </div>
@@ -213,6 +223,10 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 <span className="text-sm truncate">{user.email}</span>
               </div>
             )}
+
+            <div className="flex justify-start px-1 mb-2">
+              <LanguageToggle />
+            </div>
 
             {onAddClick && (
               <Button
