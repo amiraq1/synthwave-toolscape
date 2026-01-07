@@ -11,6 +11,7 @@ import HomePageSkeleton from "@/components/skeletons/HomePageSkeleton";
 import ScrollToTop from "@/components/ScrollToTop";
 // Lazy Load ChatWidget to defer react-markdown and other dependencies
 const ChatWidget = lazy(() => import("@/components/ChatWidget"));
+const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 
 // Lazy load ALL pages for better performance and smaller initial bundle
 const Index = lazy(() => import("./pages/Index"));
@@ -109,6 +110,11 @@ const App = () => (
           {/* Load ChatWidget independently so it doesn't block initial page render */}
           <Suspense fallback={null}>
             <ChatWidget />
+          </Suspense>
+
+          {/* Floating Compare Bar */}
+          <Suspense fallback={null}>
+            <CompareFloatingBar />
           </Suspense>
         </HashRouter>
       </CompareProvider>
