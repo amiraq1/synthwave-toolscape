@@ -29,7 +29,7 @@ const ComparePage = () => {
             const { data } = await supabase
                 .from("tools")
                 .select("*")
-                .in("id", selectedTools);
+                .in("id", selectedTools.map(id => parseInt(id, 10)));
 
             if (data) {
                 // Transform data to match Tool interface

@@ -28,6 +28,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Bookmarks = lazy(() => import("./pages/Bookmarks"));
+const Compare = lazy(() => import("./pages/Compare"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -102,6 +103,7 @@ const App = () => (
               <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/library" element={<Bookmarks />} />
+              <Route path="/compare" element={<Compare />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
