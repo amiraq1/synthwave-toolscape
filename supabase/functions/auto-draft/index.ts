@@ -95,19 +95,20 @@ Output Format (JSON only, no markdown):
       throw error;
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return new Response(JSON.stringify({
+      success: true,
       tool: data[0],
-      message: "تم إنشاء مسودة الأداة بنجاح" 
+      message: "تم إنشاء مسودة الأداة بنجاح"
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Auto-draft error:", error);
-    return new Response(JSON.stringify({ 
+    const errMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({
       success: false,
-      error: error.message 
+      error: errMessage
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

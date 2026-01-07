@@ -66,7 +66,8 @@ serve(async (req) => {
         console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
 
         // 4. Generate Answer with Gemini
-        const context = tools?.map((t: any) =>
+        interface ToolMatch { title: string; pricing_type: string; description: string; }
+        const context = tools?.map((t: ToolMatch) =>
             `- ${t.title} (${t.pricing_type}): ${t.description}`
         ).join('\n') || "لا توجد أدوات مطابقة تماماً.";
 
@@ -112,9 +113,10 @@ serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error: any) {
-        console.error("🔥 FATAL ERROR:", error.message);
-        return new Response(JSON.stringify({ error: error.message }), {
+    } catch (error: unknown) {
+        const errMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error("🔥 FATAL ERROR:", errMessage);
+        return new Response(JSON.stringify({ error: errMessage }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
