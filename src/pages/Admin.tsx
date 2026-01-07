@@ -46,13 +46,17 @@ const Admin = () => {
 
     // جلب الإحصائيات (Count)
     const { count: toolsCount } = await supabase.from("tools").select("*", { count: 'exact', head: true });
-    // Note: Profiles access might be restricted by RLS, so handle errors gracefully
-    const { count: usersCount } = await supabase.from("profiles").select("*", { count: 'exact', head: true }).catch(() => ({ count: 0 }));
+    // Note: Profiles access might be restricted by RLS.
+    // We handle the error by checking 'error' from the response instead of .catch()
+    const { count: usersCount, error: usersError } = await supabase.from("profiles").select("*", { count: 'exact', head: true });
+
+    // If error (e.g. 403), default to 0
+    const finalUsersCount = usersError ? 0 : (usersCount || 0);
 
     setStats({
       totalTools: toolsCount || 0,
       pendingDrafts: draftsData?.length || 0,
-      totalUsers: usersCount || 0
+      totalUsers: finalUsersCount
     });
   };
 
@@ -77,7 +81,7 @@ const Admin = () => {
     try {
       const { error } = await supabase.functions.invoke("auto-draft", { body: formData });
       if (error) throw error;
-      toast.success("تم التوليد! راجع المسودة في الأسفل 👇");
+      toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
       setFormData({ name: "", url: "", description_en: "" });
       fetchData();
     } catch (error: any) {
@@ -88,7 +92,7 @@ const Admin = () => {
   };
 
   // 3. حذف المسودة
-  const deleteDraft = async (id: string) => {
+  const deleteDraft = async (id: number) => {
     if (!confirm("حذف نهائي؟")) return;
     await supabase.from("tools").delete().eq("id", id);
     toast.success("تم الحذف");

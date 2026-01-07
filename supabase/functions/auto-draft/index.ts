@@ -35,8 +35,8 @@ URL: ${url}
 Description: ${description_en || 'N/A'}
 
 Instructions:
-- **Title:** Translate to Arabic if generic, keep English if it's a brand name (e.g. ChatGPT).
-- **Description:** Write a professional, engaging Arabic description (2 sentences).
+- **Title:** Translate to Arabic if generic, keep English if it's a brand name (e.g. ChatGPT). **STRICTLY NO EMOJIS (🚫 🤖 ✨)** in title.
+- **Description:** Write a professional, engaging Arabic description (2 sentences). **STRICTLY NO EMOJIS (🚫 🤖 ✨)** in description.
 - **Category:** Choose best fit from: 'نصوص', 'صور', 'برمجة', 'فيديو', 'إنتاجية', 'صوت', 'دراسة وطلاب'.
 - **Pricing:** Guess based on context ('مجاني', 'مدفوع', 'تجربة مجانية').
 - **Features:** Extract 3 key features as an array of strings in Arabic.
