@@ -19,7 +19,7 @@ const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
 
     // بيانات للتعديل
-    const [formData, setFormData] = useState({ full_name: "", avatar_url: "" });
+    const [formData, setFormData] = useState({ display_name: "", avatar_url: "" });
 
     // بيانات النشاط
     const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -42,7 +42,7 @@ const Profile = () => {
             if (profileData) {
                 setProfile(profileData);
                 setFormData({
-                    full_name: profileData.full_name || "",
+                    display_name: profileData.display_name || "",
                     avatar_url: profileData.avatar_url || ""
                 });
             }
@@ -83,17 +83,7 @@ const Profile = () => {
         const { error } = await supabase
             .from("profiles")
             .update({
-                // The user code uses 'full_name', but previous files used 'display_name'.
-                // I should stick to user's code but verify schema if possible.
-                // Looking at previous migrations: 20251220140845...sql: display_name TEXT
-                // The user provided code uses `full_name`. I will preserve `full_name` as requested, but I should probably alias it or check if column exists.
-                // Wait, the user specifically provided code with `full_name`. I will assume they might have updated schema or want me to use this.
-                // However, if the column is 'display_name', this will error.
-                // I will use 'display_name' mapped to 'full_name' in the UI if necessary, OR assum the user KNOWS what they are doing.
-                // Let's assume the user made a mistake in the snippet vs existing schema, OR they want this new valid code.
-                // Migration 20251220140845 has `display_name`.
-                // I will use `display_name` in the API call but keep logic.
-                display_name: formData.full_name,
+                display_name: formData.display_name,
                 // avatar_url: formData.avatar_url // يمكن تفعيل هذا لاحقاً مع رفع الصور
             })
             .eq("id", session.user.id);
@@ -102,7 +92,7 @@ const Profile = () => {
             toast.error("فشل التحديث");
         } else {
             toast.success("تم تحديث معلوماتك بنجاح! 🎉");
-            setProfile({ ...profile, full_name: formData.full_name }); // Update local state
+            setProfile({ ...profile, display_name: formData.display_name }); // Update local state
             setIsEditing(false);
         }
     };
@@ -122,7 +112,7 @@ const Profile = () => {
                     <Avatar className="w-32 h-32 border-4 border-black/50 shadow-xl">
                         <AvatarImage src={profile?.avatar_url} />
                         <AvatarFallback className="text-4xl bg-neon-purple/20 text-neon-purple">
-                            {profile?.full_name?.[0] || profile?.display_name?.[0] || <User />}
+                            {profile?.display_name?.[0] || <User />}
                         </AvatarFallback>
                     </Avatar>
                 </div>
@@ -131,8 +121,8 @@ const Profile = () => {
                     {isEditing ? (
                         <div className="flex items-center gap-2 justify-center md:justify-start">
                             <Input
-                                value={formData.full_name}
-                                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                                value={formData.display_name}
+                                onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
                                 className="max-w-xs bg-black/20"
                                 placeholder="الاسم الكامل"
                             />
@@ -142,7 +132,7 @@ const Profile = () => {
                         </div>
                     ) : (
                         <h1 className="text-3xl font-bold text-white flex items-center justify-center md:justify-start gap-3">
-                            {profile?.full_name || profile?.display_name || "مستخدم جديد"}
+                            {profile?.display_name || "مستخدم جديد"}
                             <button onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-white transition-colors">
                                 <Edit2 className="w-4 h-4" />
                             </button>
