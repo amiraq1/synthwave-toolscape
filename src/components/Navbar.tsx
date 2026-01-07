@@ -82,6 +82,17 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               {t('nav.home')}
             </button>
             <button
+              onClick={() => {
+                navigate('/');
+                setTimeout(() => {
+                  document.getElementById('tools-heading')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+              className="hover:text-foreground transition-colors px-3 py-2"
+            >
+              {t('nav.tools')}
+            </button>
+            <button
               onClick={() => navigate('/about')}
               className="hover:text-foreground transition-colors px-3 py-2"
             >
@@ -99,6 +110,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               {t('nav.blog')}
             </button>
+
+            <div className="h-6 w-px bg-border/50 mx-2" /> {/* Divider */}
+
             <LanguageToggle />
 
             {/* Bookmarks - only for logged in users */}
