@@ -16,43 +16,9 @@ serve(async (req) => {
         const { query } = await req.json();
         console.log("🟢 [Chat] Received query:", query);
 
-        // --- Internal key auth (optional) ---
-        // Allow calls that either provide a valid Authorization header (JWT)
-        // or include a matching `x-internal-key` header that equals the
-        // `INTERNAL_CHAT_KEY` secret set in Function's environment.
-        const authHeader = req.headers.get('authorization');
-        const internalHeader = req.headers.get('x-internal-key');
-        const INTERNAL_CHAT_KEY = Deno.env.get('INTERNAL_CHAT_KEY');
-
-        if (!authHeader) {
-            // If an internal key is configured, require it when Authorization is missing
-            if (INTERNAL_CHAT_KEY && internalHeader !== INTERNAL_CHAT_KEY) {
-                return new Response(JSON.stringify({ error: 'يجب تقديم مفتاح داخلي صالح أو تسجيل الدخول لاستخدام نبض AI' }), {
-                    status: 401,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                });
-            }
-            // If no INTERNAL_CHAT_KEY is configured and no auth provided, fall through
-            // and let Supabase/edge runtime handle auth if required by project settings.
-        }
-
-        // --- Diagnostic endpoint (safe) ---
-        // If caller provides a valid internal key and requests debug via `x-debug: 1`,
-        // return a small diagnostic payload showing which headers were received
-        // and whether the internal key matched. This avoids leaking secrets.
-        const debugFlag = req.headers.get('x-debug');
-        const headersObj: Record<string, string> = {};
-        for (const [k, v] of req.headers) headersObj[k] = v || '';
-
-        if (INTERNAL_CHAT_KEY && internalHeader === INTERNAL_CHAT_KEY && debugFlag === '1') {
-            return new Response(JSON.stringify({
-                diagnostic: true,
-                internal_key_matched: true,
-                received_headers: headersObj,
-            }), {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
-        }
+        // Public function: no authentication required.
+        // Calls from the web are allowed; if you want to restrict access later,
+        // re-enable an internal key check or require JWT-based Authorization.
 
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
