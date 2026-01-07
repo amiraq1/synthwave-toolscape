@@ -36,6 +36,24 @@ serve(async (req) => {
             // and let Supabase/edge runtime handle auth if required by project settings.
         }
 
+        // --- Diagnostic endpoint (safe) ---
+        // If caller provides a valid internal key and requests debug via `x-debug: 1`,
+        // return a small diagnostic payload showing which headers were received
+        // and whether the internal key matched. This avoids leaking secrets.
+        const debugFlag = req.headers.get('x-debug');
+        const headersObj: Record<string, string> = {};
+        for (const [k, v] of req.headers) headersObj[k] = v || '';
+
+        if (INTERNAL_CHAT_KEY && internalHeader === INTERNAL_CHAT_KEY && debugFlag === '1') {
+            return new Response(JSON.stringify({
+                diagnostic: true,
+                internal_key_matched: true,
+                received_headers: headersObj,
+            }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+        }
+
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
