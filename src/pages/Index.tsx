@@ -30,7 +30,7 @@ const Index = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
-  const [activePersona, setActivePersona] = useState<PersonaId>("all");
+  const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // ... (rest of hook calls remain same)
@@ -50,16 +50,33 @@ const Index = () => {
 
   const tools = useMemo(() => {
     const rawTools = data?.pages.flatMap(page => page) ?? [];
-    // Apply persona filter
-    return filterToolsByPersona(rawTools, activePersona);
-  }, [data, activePersona]);
+    return rawTools;
+  }, [data]);
+
+  // Apply combined filters: search + persona
+  const filteredTools = useMemo(() => {
+    return tools.filter((tool) => {
+      // 1. Search filter (already handled by backend, but extra client-side filtering for persona)
+      const matchesSearch = searchQuery.trim() === '' ||
+        tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // 2. Persona filter
+      if (selectedPersona === "all") return matchesSearch;
+
+      const filtered = filterToolsByPersona([tool], selectedPersona);
+      const matchesPersona = filtered.length > 0;
+
+      return matchesSearch && matchesPersona;
+    });
+  }, [tools, searchQuery, selectedPersona]);
 
   // Hybrid Search: Falls back to semantic search when client-side results are low
   const {
     semanticTools,
     isSemanticLoading,
     isSemantic,
-  } = useHybridSearch(searchQuery, tools.length, 3);
+  } = useHybridSearch(searchQuery, filteredTools.length, 3);
 
   // Determine which tools to display
   const displayTools = useMemo(() => {
@@ -67,8 +84,8 @@ const Index = () => {
     if (isSemantic && semanticTools.length > 0) {
       return semanticTools as unknown as Tool[];
     }
-    return tools;
-  }, [tools, semanticTools, isSemantic]);
+    return filteredTools;
+  }, [filteredTools, semanticTools, isSemantic]);
 
   // Structured data for tool list
   const structuredDataItems = useMemo(
@@ -128,7 +145,12 @@ const Index = () => {
           <HeroSection searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         </section>
 
-        {/* Filters - Enhanced styling */}
+        {/* Persona Filter - أنا ... */}
+        <div className="container mx-auto mb-6">
+          <PersonaFilter currentPersona={selectedPersona} onSelect={setSelectedPersona} />
+        </div>
+
+        {/* Category Filters */}
         <section
           aria-labelledby="filters-heading"
           className="
@@ -144,9 +166,6 @@ const Index = () => {
         >
           <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-
-          {/* Persona Filter */}
-          <PersonaFilter currentPersona={activePersona} onSelect={setActivePersona} />
         </section>
 
         {/* Tools Display - Enhanced styling */}
