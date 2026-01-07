@@ -187,6 +187,7 @@
 }
 
 .blog-content p {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   line-height: 2;
   font-size: 1.125rem;
   margin-bottom: 2rem;
@@ -225,6 +226,7 @@
 }
 
 .blog-content li {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   margin-bottom: 0.75rem;
   line-height: 1.8;
   color: #cbd5e1;
