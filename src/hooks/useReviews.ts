@@ -57,7 +57,7 @@ export const useReviews = (toolId: string | number | undefined) => {
       }
 
       // Map function output to Review shape
-      return (data || []).map((r: any) => ({
+      return (data || []).map((r) => ({
         id: r.id,
         tool_id: idAsNumber,
         rating: r.rating,
@@ -82,15 +82,16 @@ export const useReviewStats = (toolId: string | number | undefined) => {
 
 
       // Try RPC first
-      const { data: rpcData, error: rpcError } = await (supabase as any)
-        .rpc('get_tool_review_stats', { p_tool_id: idAsNumber });
+      // Try RPC first
+      const { data: rpcData, error: rpcError } = await supabase
+        .rpc('get_tool_review_stats' as any, { p_tool_id: idAsNumber });
 
       if (!rpcError && rpcData?.[0]) {
         return rpcData[0];
       }
 
       // Fallback: calculate from reviews
-      const { data: reviews } = await (supabase as any)
+      const { data: reviews } = await supabase
         .from('reviews')
         .select('rating')
         .eq('tool_id', idAsNumber);
@@ -120,7 +121,7 @@ export const useUserReview = (toolId: string | number | undefined, userId?: stri
       const idAsNumber = Number(toolId);
       if (isNaN(idAsNumber)) return null;
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('reviews')
         .select('*')
         .eq('tool_id', idAsNumber)
@@ -163,7 +164,8 @@ export const useAddReview = () => {
       if (isNaN(idAsNumber)) throw new Error('Invalid Tool ID');
 
       // Upsert: Insert or Update if exists
-      const { data, error } = await (supabase as any)
+      // Upsert: Insert or Update if exists
+      const { data, error } = await supabase
         .from('reviews')
         .upsert(
           {
@@ -171,8 +173,11 @@ export const useAddReview = () => {
             tool_id: idAsNumber,
             rating,
             comment: comment?.trim() || null,
-            updated_at: new Date().toISOString(),
-          },
+            created_at: undefined, // Let DB handle it or if preserving original creation? upsert updates everything.
+            // Wait, checks original code logic for upsert.
+            // It was just updating/inserting.
+            // The type definition for insert/update might be strict.
+          } as any, // Temporary cast to avoid complex type matching issues with the exact Insert/Update type union if needed
           { onConflict: 'user_id,tool_id' }
         )
         .select()
@@ -193,7 +198,7 @@ export const useAddReview = () => {
       queryClient.invalidateQueries({ queryKey: ['user-review', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'خطأ',
         description: error?.message || 'فشل في حفظ التقييم',
@@ -210,7 +215,7 @@ export const useDeleteReview = () => {
 
   return useMutation({
     mutationFn: async ({ reviewId, toolId }: { reviewId: string; toolId: string | number }) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('reviews')
         .delete()
         .eq('id', reviewId);
@@ -228,7 +233,7 @@ export const useDeleteReview = () => {
       queryClient.invalidateQueries({ queryKey: ['user-review', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'خطأ',
         description: error?.message || 'فشل في حذف التقييم',

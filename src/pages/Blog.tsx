@@ -57,7 +57,7 @@ const Blog = () => {
         .order('created_at', { ascending: false });
 
       if (!isAdmin) {
-        query.eq('is_published', true);
+        query = query.eq('is_published', true);
       }
 
       const { data, error } = await query;
