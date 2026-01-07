@@ -24,12 +24,12 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from("post_bookmarks")
+        const { data, error } = await (supabase
+          .from("post_bookmarks" as any)
           .select("post_id")
           .eq("user_id", session.user.id)
           .eq("post_id", postId)
-          .maybeSingle();
+          .maybeSingle() as any);
 
         if (error) {
           console.error("Post bookmark check error:", error);
@@ -59,20 +59,20 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
     setLoading(true);
     try {
       if (isSaved) {
-        const { error } = await supabase
-          .from("post_bookmarks")
+        const { error } = await (supabase
+          .from("post_bookmarks" as any)
           .delete()
           .eq("user_id", session.user.id)
-          .eq("post_id", postId);
+          .eq("post_id", postId) as any);
 
         if (error) throw error;
 
         setIsSaved(false);
         toast.success("تمت الإزالة من المفضلة");
       } else {
-        const { error } = await supabase
-          .from("post_bookmarks")
-          .insert({ user_id: session.user.id, post_id: postId });
+        const { error } = await (supabase
+          .from("post_bookmarks" as any)
+          .insert({ user_id: session.user.id, post_id: postId } as any) as any);
 
         if (error) throw error;
 
