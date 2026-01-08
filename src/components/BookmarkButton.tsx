@@ -104,6 +104,7 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       onClick={toggleSave}
       disabled={loading}
       aria-pressed={isSaved}
+      aria-label={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
       title={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
     >
       <Bookmark

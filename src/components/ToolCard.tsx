@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { optimizeImage } from '@/utils/imageOptimizer';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
@@ -179,7 +180,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                 {/* Priority 1: Manual image_url */}
                 {showOriginalImage ? (
                   <LazyImage
-                    src={tool.image_url!}
+                    src={optimizeImage(tool.image_url, 400)}
                     alt={displayTitle}
                     width={48}
                     height={48}

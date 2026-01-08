@@ -19,4 +19,10 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, always sample the session when an error occurs.
 });
 
-createRoot(document.getElementById("root")!).render(<App />);
+import { HelmetProvider } from 'react-helmet-async';
+
+createRoot(document.getElementById("root")!).render(
+    <HelmetProvider>
+        <App />
+    </HelmetProvider>
+);

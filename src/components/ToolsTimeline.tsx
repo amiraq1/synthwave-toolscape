@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { format, isValid } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, Loader2 } from 'lucide-react';
 
 interface ToolsTimelineProps {
     tools: Tool[];
@@ -44,6 +44,29 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
     const sortedKeys = Object.keys(groupedTools);
     // (يفترض أن البيانات قادمة مرتبة من الباك إند، لذا سنعتمد على ترتيبها الطبيعي)
 
+    const observerTarget = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    onFetchNextPage?.();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
+
+        return () => {
+            if (observerTarget.current) {
+                observer.unobserve(observerTarget.current);
+            }
+        };
+    }, [hasNextPage, isFetchingNextPage, onFetchNextPage]);
+
     return (
         <div className="relative space-y-8 pb-10">
             {/* الخط الرأسي للتايم لاين */}
@@ -81,33 +104,21 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
             ))}
 
             {/* زر تحميل المزيد */}
-            {hasNextPage && (
-                <div className="flex justify-center pt-8 pb-4">
-                    <button
-                        onClick={() => onFetchNextPage?.()}
-                        disabled={isFetchingNextPage}
-                        className="
-                            group relative flex items-center gap-2 px-8 py-3 
-                            bg-card/40 backdrop-blur-md border border-neon-purple/30 
-                            rounded-full text-foreground font-medium
-                            hover:bg-neon-purple/10 hover:border-neon-purple/50 
-                            transition-all duration-300 disabled:opacity-50
-                        "
-                    >
-                        {isFetchingNextPage ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
-                                جاري التحميل...
-                            </>
-                        ) : (
-                            <>
-                                تحميل المزيد من الأدوات
-                                <div className="w-2 h-2 bg-neon-purple rounded-full group-hover:scale-150 transition-transform" />
-                            </>
-                        )}
-                    </button>
-                </div>
-            )}
+            {/* مؤشر التحميل اللانهائي */}
+            <div ref={observerTarget} className="py-12 flex flex-col items-center justify-center gap-3">
+                {isFetchingNextPage ? (
+                    <>
+                        <Loader2 className="w-8 h-8 text-neon-purple animate-spin" />
+                        <p className="text-gray-400 text-sm animate-pulse">جاري جلب المزيد من الأدوات الرائعة...</p>
+                    </>
+                ) : hasNextPage ? (
+                    <span className="text-gray-600 text-sm">اسحب للمزيد ↓</span>
+                ) : (
+                    <div className="text-gray-500 text-sm bg-white/5 px-6 py-2 rounded-full border border-white/5">
+                        🎉 لقد وصلت للنهاية! تصفحت {tools?.length || 0} أداة.
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

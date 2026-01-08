@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ArrowRight, Calendar, Clock, User, Share2, Eye } from "lucide-react";
@@ -136,8 +137,31 @@ const BlogPost = () => {
     );
   }
 
+  // Generate OG Image URL
+  const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
+  const ogImageUrl = post ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle)}&category=${encodeURIComponent(isAr ? "مدونة نبض AI" : "Pulse AI Blog")}` : "";
+
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={isAr ? "rtl" : "ltr"}>
+      <Helmet>
+        <title>{displayTitle} | {isAr ? "مدونة نبض AI" : "Pulse AI Blog"}</title>
+        <meta name="description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={`${displayTitle} | ${isAr ? "مدونة نبض AI" : "Pulse AI Blog"}`} />
+        <meta property="og:description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+        <meta property="og:image" content={ogImageUrl} />
+
+        {/* Article Data */}
+        <meta property="article:published_time" content={post.created_at} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={displayTitle} />
+        <meta name="twitter:description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+        <meta name="twitter:image" content={ogImageUrl} />
+      </Helmet>
       <Navbar />
 
       <main className="flex-1">

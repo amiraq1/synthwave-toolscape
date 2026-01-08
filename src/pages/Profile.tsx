@@ -1,38 +1,45 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Loader2, Heart, MessageSquare, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, User, Mail, Calendar, Edit2, Save, Bookmark, MessageSquare } from "lucide-react";
-import { toast } from "react-hot-toast";
-// import { format } from "date-fns"; // Removed unused import or will install if needed. User provided code uses it? User provided code imports it.
-import { format } from "date-fns";
 import ToolCard from "@/components/ToolCard";
+import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
-    const { session } = useAuth();
-    const [profile, setProfile] = useState<any>(null);
+    const { session, signOut } = useAuth();
+    const navigate = useNavigate();
+    const { t } = useTranslation();
+
     const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-
-    // بيانات للتعديل
-    const [formData, setFormData] = useState({ display_name: "", avatar_url: "" });
-
-    // بيانات النشاط
+    const [profile, setProfile] = useState<any>(null);
     const [bookmarks, setBookmarks] = useState<any[]>([]);
     const [reviews, setReviews] = useState<any[]>([]);
 
-    // 1. جلب بيانات المستخدم ونشاطه
+    // حالات التعديل
+    const [fullName, setFullName] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
+    const [updating, setUpdating] = useState(false);
+
     useEffect(() => {
-        const fetchData = async () => {
-            if (!session) return;
+        if (!session) {
+            if (!loading) navigate("/auth");
+            return;
+        }
+        fetchProfileData();
+    }, [session, loading]);
 
-            const userId = session.user.id;
+    const fetchProfileData = async () => {
+        try {
+            const userId = session?.user.id;
 
-            // جلب البروفايل
+            // 1. جلب بيانات البروفايل
             const { data: profileData } = await supabase
                 .from("profiles")
                 .select("*")
@@ -41,170 +48,190 @@ const Profile = () => {
 
             if (profileData) {
                 setProfile(profileData);
-                setFormData({
-                    display_name: profileData.display_name || "",
-                    avatar_url: profileData.avatar_url || ""
-                });
+                setFullName(profileData.full_name || "");
+                setAvatarUrl(profileData.avatar_url || "");
             }
 
-            // جلب المفضلة
-            // Note: Assuming 'bookmarks' table exists and links to 'tools'. If not, this might fail.
-            // Based on context, bookmarks might be 'bookmarks' table with 'tool_id'.
-            // The user code assumes: .from("bookmarks").select("tools(*)")
-            const { data: bookmarksData } = await (supabase
-                .from("bookmarks" as any)
-                .select("tools(*)")
-                .eq("user_id", userId) as any);
+            // 2. جلب المفضلة (مع بيانات الأدوات)
+            const { data: bookmarksData } = await supabase
+                .from("bookmarks")
+                .select(`
+          tool_id,
+          tools (*)
+        `)
+                .eq("user_id", userId);
 
             if (bookmarksData) {
-                // bookmarksData is an array of objects { tools: { ... } }
-                // We map it to just get the tool objects
+                // استخراج مصفوفة الأدوات فقط
                 const tools = bookmarksData.map((b: any) => b.tools).filter(Boolean);
                 setBookmarks(tools);
             }
 
-            // جلب المراجعات
+            // 3. جلب مراجعات المستخدم
             const { data: reviewsData } = await supabase
                 .from("reviews")
-                .select("*, tools(title)")
-                .eq("user_id", userId);
+                .select(`
+          *,
+          tools (title)
+        `)
+                .eq("user_id", userId)
+                .order("created_at", { ascending: false });
 
             if (reviewsData) setReviews(reviewsData);
 
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        } finally {
             setLoading(false);
-        };
+        }
+    };
 
-        fetchData();
-    }, [session]);
-
-    // 2. تحديث البروفايل
-    const handleUpdate = async () => {
+    const handleUpdateProfile = async () => {
         if (!session) return;
+        setUpdating(true);
+
         const { error } = await supabase
             .from("profiles")
             .update({
-                display_name: formData.display_name,
-                // avatar_url: formData.avatar_url // يمكن تفعيل هذا لاحقاً مع رفع الصور
+                full_name: fullName,
+                avatar_url: avatarUrl,
+                updated_at: new Date().toISOString(),
             })
             .eq("id", session.user.id);
 
         if (error) {
-            toast.error("فشل التحديث");
+            toast.error("فشل تحديث البيانات");
         } else {
-            toast.success("تم تحديث معلوماتك بنجاح! 🎉");
-            setProfile({ ...profile, display_name: formData.display_name }); // Update local state
-            setIsEditing(false);
+            toast.success("تم تحديث البروفايل بنجاح ✅");
+            setProfile({ ...profile, full_name: fullName, avatar_url: avatarUrl });
         }
+        setUpdating(false);
     };
 
-    if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-neon-purple" /></div>;
-    if (!session) return <div className="text-center p-10">يرجى تسجيل الدخول</div>;
+    if (loading) return <div className="flex justify-center mt-20"><Loader2 className="animate-spin text-neon-purple w-12 h-12" /></div>;
 
     return (
-        <div className="container mx-auto px-4 py-10 max-w-5xl min-h-screen">
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
+            <Helmet>
+                <title>{t('profile.title')} | نبض AI</title>
+            </Helmet>
 
-            {/* 1. بطاقة الهوية (Header) */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-                {/* خلفية جمالية */}
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-neon-purple to-blue-500" />
-
-                <div className="relative group">
-                    <Avatar className="w-32 h-32 border-4 border-black/50 shadow-xl">
-                        <AvatarImage src={profile?.avatar_url} />
-                        <AvatarFallback className="text-4xl bg-neon-purple/20 text-neon-purple">
-                            {profile?.display_name?.[0] || <User />}
-                        </AvatarFallback>
-                    </Avatar>
-                </div>
-
-                <div className="flex-1 text-center md:text-right space-y-2">
-                    {isEditing ? (
-                        <div className="flex items-center gap-2 justify-center md:justify-start">
-                            <Input
-                                value={formData.display_name}
-                                onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                                className="max-w-xs bg-black/20"
-                                placeholder="الاسم الكامل"
-                            />
-                            <Button onClick={handleUpdate} size="sm" className="bg-green-600 hover:bg-green-700">
-                                <Save className="w-4 h-4" />
-                            </Button>
-                        </div>
-                    ) : (
-                        <h1 className="text-3xl font-bold text-white flex items-center justify-center md:justify-start gap-3">
-                            {profile?.display_name || "مستخدم جديد"}
-                            <button onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-white transition-colors">
-                                <Edit2 className="w-4 h-4" />
-                            </button>
-                        </h1>
-                    )}
-
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-gray-400 text-sm">
-                        <span className="flex items-center gap-1">
-                            <Mail className="w-4 h-4 text-neon-purple" /> {session.user.email}
-                        </span>
-                        <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4 text-neon-purple" />
-                            انضم في {profile?.created_at ? format(new Date(profile.created_at), 'MMMM yyyy') : '-'}
-                        </span>
+            {/* الهيدر الشخصي */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8 flex flex-col md:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-4">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-neon-purple to-blue-600 p-1">
+                    <div className="w-full h-full rounded-full bg-black overflow-hidden flex items-center justify-center">
+                        {profile?.avatar_url ? (
+                            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-3xl font-bold text-white">{profile?.full_name?.[0] || session?.user.email?.[0]?.toUpperCase()}</span>
+                        )}
                     </div>
                 </div>
+
+                <div className="flex-1 text-center md:text-right">
+                    <h1 className="text-3xl font-bold text-white mb-2">{profile?.full_name || t('profile.title')}</h1>
+                    <p className="text-gray-400">{session?.user.email}</p>
+                    <div className="flex justify-center md:justify-start gap-4 mt-4 text-sm text-gray-500">
+                        <span className="flex items-center gap-1"><Heart className="w-4 h-4 text-red-400" /> {bookmarks.length} {t('profile.library')}</span>
+                        <span className="flex items-center gap-1"><MessageSquare className="w-4 h-4 text-blue-400" /> {reviews.length} {t('profile.reviews')}</span>
+                    </div>
+                </div>
+
+                <Button variant="destructive" onClick={() => { signOut(); navigate('/'); }} className="gap-2">
+                    <LogOut className="w-4 h-4" /> {t('profile.logout')}
+                </Button>
             </div>
 
-            {/* 2. التبويبات (المفضلة + المراجعات) */}
+            {/* التبويبات والمحتوى */}
             <Tabs defaultValue="bookmarks" className="w-full">
-                <TabsList className="bg-black/20 border border-white/5 mb-8 w-full justify-start overflow-x-auto">
-                    <TabsTrigger value="bookmarks" className="gap-2">
-                        <Bookmark className="w-4 h-4" /> أدواتي المفضلة ({bookmarks.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="reviews" className="gap-2">
-                        <MessageSquare className="w-4 h-4" /> مراجعاتي ({reviews.length})
-                    </TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 mb-8">
+                    <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple">{t('profile.library')}</TabsTrigger>
+                    <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple">{t('profile.reviews')}</TabsTrigger>
+                    <TabsTrigger value="settings" className="data-[state=active]:bg-neon-purple">{t('profile.settings')}</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="bookmarks">
+                {/* 1. تبويب المفضلة */}
+                <TabsContent value="bookmarks" className="animate-in fade-in">
                     {bookmarks.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {bookmarks.map((tool) => (
+                            {bookmarks.map(tool => (
                                 <ToolCard key={tool.id} tool={tool} />
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20 text-gray-500">
-                            <Bookmark className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>لا توجد أدوات في المفضلة بعد.</p>
+                        <div className="text-center py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                            <Heart className="w-12 h-12 mx-auto text-gray-600 mb-4" />
+                            <p className="text-gray-400">{t('profile.no_bookmarks')}</p>
+                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">تصفح الأدوات</Button>
                         </div>
                     )}
                 </TabsContent>
 
-                <TabsContent value="reviews">
-                    {reviews.length > 0 ? (
-                        <div className="space-y-4">
-                            {reviews.map((review) => (
-                                <Card key={review.id} className="bg-white/5 border-white/10">
-                                    <CardContent className="p-6">
-                                        <h3 className="text-lg font-bold text-neon-purple mb-2">
-                                            {review.tools?.title || "أداة غير معروفة"}
-                                        </h3>
-                                        <div className="flex items-center gap-1 text-yellow-500 mb-2">
-                                            {[...Array(5)].map((_, i) => (
-                                                <div key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-current' : 'text-gray-600'}`}>★</div>
+                {/* 2. تبويب المراجعات */}
+                <TabsContent value="reviews" className="animate-in fade-in">
+                    <div className="space-y-4">
+                        {reviews.length > 0 ? (
+                            reviews.map(review => (
+                                <div key={review.id} className="bg-white/5 p-6 rounded-xl border border-white/10">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="font-bold text-white text-lg">{review.tools?.title}</h3>
+                                        <div className="flex text-yellow-400 text-sm">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <span key={i}>{i < review.rating ? "★" : "☆"}</span>
                                             ))}
                                         </div>
-                                        <p className="text-gray-300">{review.comment}</p>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                    </div>
+                                    <p className="text-gray-300 mb-4">"{review.comment}"</p>
+                                    <div className="text-xs text-gray-500">
+                                        تم النشر: {new Date(review.created_at).toLocaleDateString('ar-EG')}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-20 text-gray-500">لا توجد مراجعات حتى الآن.</div>
+                        )}
+                    </div>
+                </TabsContent>
+
+                {/* 3. تبويب الإعدادات */}
+                <TabsContent value="settings" className="animate-in fade-in">
+                    <div className="bg-white/5 p-8 rounded-2xl border border-white/10 max-w-2xl mx-auto">
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <Settings className="w-5 h-5 text-neon-purple" /> {t('profile.settings')}
+                        </h2>
+
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label className="text-gray-300">الاسم الكامل</Label>
+                                <Input
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    className="bg-black/20 border-white/10 text-white"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label className="text-gray-300">رابط الصورة الرمزية (Avatar URL)</Label>
+                                <Input
+                                    value={avatarUrl}
+                                    onChange={(e) => setAvatarUrl(e.target.value)}
+                                    placeholder="https://example.com/avatar.jpg"
+                                    className="bg-black/20 border-white/10 text-white"
+                                />
+                                <p className="text-xs text-gray-500">يمكنك استخدام رابط صورة من GitHub أو Google.</p>
+                            </div>
+
+                            <Button
+                                onClick={handleUpdateProfile}
+                                disabled={updating}
+                                className="w-full bg-neon-purple hover:bg-neon-purple/80 mt-4"
+                            >
+                                {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : t('profile.save')}
+                            </Button>
                         </div>
-                    ) : (
-                        <div className="text-center py-20 text-gray-500">
-                            <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>لم تقم بكتابة أي مراجعات بعد.</p>
-                        </div>
-                    )}
+                    </div>
                 </TabsContent>
             </Tabs>
-
         </div>
     );
 };

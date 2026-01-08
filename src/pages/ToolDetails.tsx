@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, ExternalLink, Loader2, Tag, Sparkles, Lightbulb, DollarSign, Globe, Check } from 'lucide-react';
@@ -8,6 +9,7 @@ import { cn } from '@/lib/utils';
 import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
 import SimilarTools from '@/components/SimilarTools';
+import ToolGallery from "@/components/ToolGallery";
 import { useSEO } from '@/hooks/useSEO';
 import { useStructuredData } from '@/hooks/useStructuredData';
 import {
@@ -83,8 +85,29 @@ const ToolDetails = () => {
     );
   }
 
+
+
+  const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
+  const ogImageUrl = tool ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle || "")}&category=${encodeURIComponent(tool.category)}` : "";
+
   return (
     <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
+      <Helmet>
+        <title>{displayTitle} | نبض AI</title>
+        <meta name="description" content={displayDescription} />
+
+        {/* Open Graph / Facebook & WhatsApp */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`${displayTitle} | نبض AI`} />
+        <meta property="og:description" content={displayDescription} />
+        <meta property="og:image" content={ogImageUrl} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={displayTitle} />
+        <meta name="twitter:description" content={displayDescription} />
+        <meta name="twitter:image" content={ogImageUrl} />
+      </Helmet>
       {/* Background gradient orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -106,31 +129,17 @@ const ToolDetails = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-5xl animate-fade-in">
 
-        {/* 1. رأس الصفحة (Header) */}
-        <div className="flex flex-col md:flex-row gap-8 mb-10">
-          {/* صورة / أيقونة الأداة */}
-          <div className="w-full md:w-1/3">
-            <div className="aspect-video bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden relative group">
-              {tool.image_url ? (
-                <img
-                  src={tool.image_url}
-                  alt={displayTitle}
-                  className="w-full h-full object-contain p-4"
-                />
-              ) : (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-tr from-neon-purple/20 to-transparent" />
-                  <h1 className="text-6xl font-bold text-white/10 group-hover:text-neon-purple/20 transition-colors">
-                    {displayTitle?.charAt(0)}
-                  </h1>
-                </>
-              )}
-            </div>
+        {/* 1. Header (Gallery & Primary Info) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+
+          {/* Right: Gallery */}
+          <div>
+            <ToolGallery title={displayTitle || ""} images={tool.image_url ? [tool.image_url] : []} />
           </div>
 
-          {/* معلومات الأداة + الملخص السريع */}
-          <div className="w-full md:w-2/3 flex flex-col justify-center">
-            <div className="flex items-center gap-3 mb-4 flex-wrap">
+          {/* Left: Info & Quick Summary */}
+          <div className="flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-4">
               <h1 className="text-4xl font-bold text-white">{displayTitle}</h1>
               <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
             </div>
@@ -151,19 +160,6 @@ const ToolDetails = () => {
                 <span className="text-xs text-gray-400 block">{isAr ? "التصنيف" : "Category"}</span>
                 <span className="font-bold text-sm text-white">{tool.category}</span>
               </div>
-              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
-                <Globe className="w-5 h-5 mx-auto mb-1 text-purple-400" />
-                <span className="text-xs text-gray-400 block">{isAr ? "الموقع" : "Website"}</span>
-                <a
-                  href={tool.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => recordClick(tool.id)}
-                  className="font-bold text-sm text-neon-purple hover:underline"
-                >
-                  {isAr ? "زيارة ↗" : "Visit ↗"}
-                </a>
-              </div>
               {tool.is_featured && (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                   <Sparkles className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
@@ -172,52 +168,73 @@ const ToolDetails = () => {
                 </div>
               )}
             </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 mt-auto">
+              <a
+                href={tool.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => recordClick(tool.id)}
+                className="flex-1 bg-neon-purple text-white text-center py-3 rounded-xl font-bold hover:bg-neon-purple/80 transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)] flex items-center justify-center gap-2"
+              >
+                <ExternalLink className="h-5 w-5" />
+                {isAr ? "زيارة الموقع الرسمي" : "Visit Official Website"}
+              </a>
+            </div>
+            {tool.pricing_type !== 'مجاني' && (
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                {isAr ? "* قد يتطلب التسجيل بطاقة ائتمان" : "* May require credit card for signup"}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* 2. المميزات والمحتوى */}
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-8">
-            {/* Features Section */}
+        {/* 2. Main Content (Features, FAQ, Sidebar) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            {/* Features - Collapsible */}
             {tool.features && tool.features.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  <Check className="text-neon-purple" />
-                  {isAr ? "المميزات الرئيسية" : "Key Features"}
-                </h3>
-                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                  <ul className="space-y-4">
-                    {tool.features.map((feature: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-neon-purple/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-neon-purple" />
-                        </div>
-                        <span className="text-gray-300">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <Accordion type="single" collapsible defaultValue="features" className="border border-white/10 rounded-xl bg-white/5 overflow-hidden">
+                <AccordionItem value="features" className="border-none px-4">
+                  <AccordionTrigger className="hover:no-underline py-4">
+                    <span className="flex items-center gap-2 font-bold text-white text-lg">
+                      <Check className="text-neon-purple w-5 h-5" />
+                      {isAr ? "المميزات الرئيسية" : "Key Features"}
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4 text-gray-300">
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {tool.features.map((feature: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-3 bg-black/20 p-3 rounded-lg">
+                          <div className="w-2 h-2 rounded-full bg-neon-purple mt-2 shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             )}
 
-            {/* FAQs Section */}
+            {/* FAQs - Collapsible */}
             {tool.faqs && tool.faqs.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  <Lightbulb className="text-neon-purple" />
+              <div className="border border-white/10 rounded-xl bg-white/5 overflow-hidden p-4">
+                <h3 className="flex items-center gap-2 font-bold text-white text-lg mb-4">
+                  <Lightbulb className="text-neon-purple w-5 h-5" />
                   {isAr ? "الأسئلة الشائعة" : "FAQ"}
                 </h3>
-                <Accordion type="single" collapsible className="space-y-3">
+                <Accordion type="single" collapsible className="space-y-2">
                   {tool.faqs.map((faq, idx) => (
                     <AccordionItem
                       key={idx}
                       value={`faq-${idx}`}
-                      className="bg-white/5 border border-white/10 rounded-xl px-6"
+                      className="bg-black/20 border border-white/5 rounded-lg px-4"
                     >
-                      <AccordionTrigger className="text-foreground hover:no-underline py-4">
+                      <AccordionTrigger className="text-foreground hover:no-underline py-3 text-sm font-medium">
                         {faq.question}
                       </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground pb-4">
+                      <AccordionContent className="text-gray-400 pb-3 text-sm">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>
@@ -227,52 +244,32 @@ const ToolDetails = () => {
             )}
 
             {/* Reviews Section */}
-            <div className="glass rounded-2xl p-6 md:p-8">
+            <div className="mt-8 glass rounded-2xl p-6 md:p-8">
               <ReviewSection toolId={tool.id} />
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* CTA Button */}
-            <div className="bg-gradient-to-br from-neon-purple/10 to-neon-blue/10 rounded-xl p-6 border border-white/10 sticky top-24">
-              <h4 className="font-bold text-lg mb-3 text-white">
-                {isAr ? "جرب الأداة الآن" : "Try this tool now"}
-              </h4>
-              <Button
-                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 text-white font-bold py-3 gap-2"
-                asChild
+            {/* Ad / Promo */}
+            <div className="bg-gradient-to-br from-white/5 to-white/0 p-6 rounded-2xl border border-white/10">
+              <h3 className="font-bold text-white mb-2">{isAr ? "هل جربت هذه الأداة؟" : "Have you tried this tool?"}</h3>
+              <p className="text-sm text-gray-400 mb-4">{isAr ? "شاركنا رأيك وساعد الآخرين في اتخاذ القرار." : "Share your experience and help others decide."}</p>
+              <button
+                onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg text-sm transition-colors border border-white/5"
               >
-                <a
-                  href={tool.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => recordClick(tool.id)}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  {isAr ? "زيارة الموقع" : "Visit Website"}
-                </a>
-              </Button>
-              {tool.pricing_type !== 'مجاني' && (
-                <p className="text-xs text-muted-foreground mt-3 text-center">
-                  {isAr
-                    ? "* قد يتطلب التسجيل بطاقة ائتمان"
-                    : "* May require credit card for signup"
-                  }
-                </p>
-              )}
+                {isAr ? "كتابة مراجعة" : "Write a Review"}
+              </button>
             </div>
 
-            {/* Ad Space Placeholder */}
             <div className="bg-black/40 rounded-xl p-6 border border-white/5 text-center">
               <p className="text-gray-500 text-sm">{isAr ? "مساحة إعلانية" : "Ad Space"}</p>
             </div>
           </div>
         </div>
 
-        {/* 3. Similar Tools */}
         <SimilarTools currentToolId={tool.id} category={tool.category} />
-
       </div>
     </div>
   );
