@@ -23,23 +23,35 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            // فصل React Core عن DOM (لأن DOM أثقل)
-            if (id.includes('react-dom')) return 'vendor-react-dom';
-            if (id.includes('react')) return 'vendor-react-core';
+          // 1. عزل مكتبات React الأساسية
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'vendor-react-core';
+          }
 
-            // فصل Supabase
-            if (id.includes('@supabase')) return 'vendor-supabase';
+          // 2. عزل Supabase (لأنه ثقيل)
+          if (id.includes('@supabase')) {
+            return 'vendor-supabase';
+          }
 
-            // فصل مكتبات التصميم (Radix UI ثقيلة وتستخدم في Shadcn)
-            if (id.includes('@radix-ui')) return 'vendor-ui-radix';
+          // 3. عزل Sentry (لأنه للمراقبة فقط ولا يؤثر على العرض)
+          if (id.includes('@sentry')) {
+            return 'vendor-monitoring';
+          }
 
-            // فصل مكتبات الرسوم (Lucide / Framer Motion)
-            if (id.includes('lucide-react')) return 'vendor-icons';
-            if (id.includes('framer-motion')) return 'vendor-animation';
+          // 4. عزل مكتبات الواجهة (Radix UI المستخدمة في Shadcn)
+          // هذه المكتبات تحتوي على منطق كثير يسبب بطء التفاعل الأولي
+          if (id.includes('@radix-ui')) {
+            return 'vendor-ui-headless';
+          }
 
-            // باقي المكتبات تذهب في ملف vendor عام
-            return 'vendor-utils';
+          // 5. عزل Framer Motion (إذا كنت تستخدمها للأنميشن فهي ثقيلة جداً)
+          if (id.includes('framer-motion')) {
+            return 'vendor-animation';
+          }
+
+          // 6. عزل الأيقونات
+          if (id.includes('lucide-react')) {
+            return 'vendor-icons';
           }
         },
       },
