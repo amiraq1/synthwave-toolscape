@@ -1,39 +1,4 @@
-# نبض AI - دليل أدوات الذكاء الاصطناعي
-# Nabd AI - AI Tools Directory
-
-# Allow all crawlers
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /settings
-Disallow: /auth
-Disallow: /reset-password
 
-# Google
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-# Bing
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-# Social Media Crawlers
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-User-agent: Pinterest
-Allow: /
-
-# Static Sitemap
 Sitemap: https://amiraq.org/sitemap.xml
-
-# Host
-Host: https://amiraq.org
