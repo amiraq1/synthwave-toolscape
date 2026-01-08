@@ -101,6 +101,7 @@ const AppContent = () => {
       <Suspense fallback={null}>
         <ChatWidget />
         <CompareFloatingBar />
+        <ScrollToTopButton />
         {isAddModalOpen && (
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         )}
