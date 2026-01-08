@@ -76,7 +76,7 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
     queryKey: ["tools", selectedPersona, searchQuery, category],
 
     queryFn: async ({ pageParam = 0 }) => {
-      const itemsPerPage = 12; // عدد العناصر في كل دفعة
+      const itemsPerPage = 9; // عدد العناصر في كل دفعة
       const from = (pageParam as number);
       const to = from + itemsPerPage - 1;
 
@@ -142,7 +142,7 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
     getNextPageParam: (lastPage, allPages) => {
       // إذا كانت الصفحة الحالية فارغة أو أقل من العدد المطلوب، فلا توجد صفحات تالية
       // lastPage is Tool[]
-      return lastPage.length < 12 ? undefined : allPages.length * 12;
+      return lastPage.length < 9 ? undefined : allPages.length * 9;
     },
 
     // 3. استخدام دالة Select للتحويل (Data Transformation) ✅
