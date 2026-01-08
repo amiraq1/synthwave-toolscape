@@ -34,16 +34,21 @@
 
   <!-- GitHub Pages SPA redirect handler -->
   <script type="text/javascript">
+    // تنظيف الرابط النهائي من أي تكرار أو رموز /~and~/ قبل إعادة التوجيه
     (function (l) {
       if (l.search[1] === '/') {
         var decoded = l.search.slice(1).split('&').map(function (s) {
-          return s.replace(/~and~/g, '&')
+          return s.replace(/~and~/g, '&');
         }).join('?');
-        window.history.replaceState(null, null,
-          l.pathname.slice(0, -1) + decoded + l.hash
-        );
+          // تنظيف شامل لأي رموز /~and~/ أو تكرار غير متوقع في الرابط النهائي
+          var cleanDecoded = decoded.replace(/(\/|\?)+(~and~)+(\/|\?)+/g, '');
+          // إزالة أي تكرار زائد في نهاية الرابط
+          var finalPath = (l.pathname.replace(/\/$/, '') + cleanDecoded + l.hash)
+            .replace(/(~and~)+/g, '')
+            .replace(/\/+/g, '/');
+          window.history.replaceState(null, null, finalPath);
       }
-    }(window.location))
+    }(window.location));
   </script>
 
   <!-- Preconnect for external resources (improves connection time) -->
