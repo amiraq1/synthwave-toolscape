@@ -23,25 +23,23 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // تقسيم ملفات المكتبات الكبيرة لتقليل حجم الملف الرئيسي
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
-            // Add ui library chunk
-            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'vendor-ui';
-            }
-            // Add animation library chunk
-            if (id.includes('framer-motion')) {
-              return 'vendor-animation';
-            }
+            // فصل React Core عن DOM (لأن DOM أثقل)
+            if (id.includes('react-dom')) return 'vendor-react-dom';
+            if (id.includes('react')) return 'vendor-react-core';
+
+            // فصل Supabase
+            if (id.includes('@supabase')) return 'vendor-supabase';
+
+            // فصل مكتبات التصميم (Radix UI ثقيلة وتستخدم في Shadcn)
+            if (id.includes('@radix-ui')) return 'vendor-ui-radix';
+
+            // فصل مكتبات الرسوم (Lucide / Framer Motion)
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('framer-motion')) return 'vendor-animation';
+
+            // باقي المكتبات تذهب في ملف vendor عام
+            return 'vendor-utils';
           }
         },
       },
