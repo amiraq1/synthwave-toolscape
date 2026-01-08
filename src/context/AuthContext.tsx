@@ -10,6 +10,8 @@ interface AuthState {
     signOut: () => Promise<{ error: any }>;
     signIn: (email: string, password: string) => Promise<{ error: any }>;
     signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
+    signIn: (email: string, password: string) => Promise<{ error: any }>;
+    signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthState>({
