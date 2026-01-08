@@ -23,7 +23,7 @@ serve(async (req) => {
     // 1. جلب الأدوات المنشورة
     const { data: tools } = await supabaseClient
       .from('tools')
-      .select('id, updated_at')
+      .select('id, created_at')
       .eq('is_published', true);
 
     // 2. جلب المقالات المنشورة
@@ -59,7 +59,7 @@ serve(async (req) => {
       xml += `
       <url>
         <loc>${BASE_URL}/tool/${tool.id}</loc>
-        <lastmod>${new Date(tool.updated_at || new Date()).toISOString()}</lastmod>
+        <lastmod>${new Date(tool.created_at || new Date()).toISOString()}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
       </url>`;
