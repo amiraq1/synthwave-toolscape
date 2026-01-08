@@ -31,8 +31,21 @@ export const useChat = () => {
                 parts: m.content
             }));
 
+            // Get current session to pass auth token
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                setError('يجب تسجيل الدخول لاستخدام نبض AI');
+                // Remove the user message we just added
+                setMessages(messages);
+                return null;
+            }
+
             const { data, error: funcError } = await supabase.functions.invoke('chat', {
-                body: { query, history }
+                body: { query, history },
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`
+                }
             });
 
             if (funcError) throw funcError;

@@ -13,18 +13,42 @@ serve(async (req: Request) => {
     }
 
     try {
-        const { query } = await req.json();
-        console.log("🟢 [Chat] Received query:", query);
-
-        // Public function: no authentication required.
-        // Calls from the web are allowed; if you want to restrict access later,
-        // re-enable an internal key check or require JWT-based Authorization.
+        // Authentication required to prevent abuse and quota exhaustion
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader?.startsWith('Bearer ')) {
+            return new Response(
+                JSON.stringify({ error: 'يجب تسجيل الدخول لاستخدام نبض AI' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
 
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
         if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in Secrets!");
+
+        // Verify user authentication
+        const authSupabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+            global: { headers: { Authorization: authHeader } }
+        });
+
+        const token = authHeader.replace('Bearer ', '');
+        const { data: claimsData, error: claimsError } = await authSupabase.auth.getClaims(token);
+        
+        if (claimsError || !claimsData?.claims) {
+            console.error("🔴 Auth error:", claimsError?.message);
+            return new Response(
+                JSON.stringify({ error: 'جلسة غير صالحة، يرجى تسجيل الدخول مجدداً' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const userId = claimsData.claims.sub;
+        console.log("✅ Authenticated user:", userId);
+
+        const { query } = await req.json();
+        console.log("🟢 [Chat] Received query:", query);
 
         // 2. Generate Embedding
         console.log("🔄 Generating embedding...");
