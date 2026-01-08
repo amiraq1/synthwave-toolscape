@@ -6,6 +6,31 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting: 20 requests per minute per user
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 20;
+
+// In-memory rate limit store (resets on function cold start, but provides immediate protection)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetIn: number } {
+    const now = Date.now();
+    const userLimit = rateLimitStore.get(userId);
+
+    if (!userLimit || now > userLimit.resetTime) {
+        // Reset or initialize
+        rateLimitStore.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+        return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+    }
+
+    if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
+        return { allowed: false, remaining: 0, resetIn: userLimit.resetTime - now };
+    }
+
+    userLimit.count++;
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - userLimit.count, resetIn: userLimit.resetTime - now };
+}
+
 serve(async (req: Request) => {
     // 1. Handle CORS pre-flight
     if (req.method === 'OPTIONS') {
@@ -44,8 +69,29 @@ serve(async (req: Request) => {
             );
         }
 
-        const userId = claimsData.claims.sub;
+        const userId = claimsData.claims.sub as string;
         console.log("✅ Authenticated user:", userId);
+
+        // Rate limiting check
+        const rateLimit = checkRateLimit(userId);
+        if (!rateLimit.allowed) {
+            console.warn(`⚠️ Rate limit exceeded for user: ${userId}`);
+            return new Response(
+                JSON.stringify({ 
+                    error: 'لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار قليلاً.',
+                    retryAfter: Math.ceil(rateLimit.resetIn / 1000)
+                }),
+                { 
+                    status: 429, 
+                    headers: { 
+                        ...corsHeaders, 
+                        'Content-Type': 'application/json',
+                        'Retry-After': String(Math.ceil(rateLimit.resetIn / 1000))
+                    } 
+                }
+            );
+        }
+        console.log(`📊 Rate limit: ${rateLimit.remaining} requests remaining`);
 
         const { query } = await req.json();
         console.log("🟢 [Chat] Received query:", query);
