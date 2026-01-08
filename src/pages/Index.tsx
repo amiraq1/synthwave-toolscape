@@ -172,7 +172,11 @@ const Index = () => {
       >
         {/* Hero */}
         <section aria-label="مقدمة وبحث" className="mb-8 sm:mb-12">
-          <HeroSection searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          <HeroSection
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            isSearching={isLoading || isSemanticLoading}
+          />
         </section>
 
         {/* Persona Filter - أنا ... */}
