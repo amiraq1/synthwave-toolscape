@@ -43,7 +43,11 @@ const Index = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
-  } = useTools(searchQuery, activeCategory);
+  } = useTools({
+    searchQuery,
+    selectedPersona,
+    category: activeCategory
+  });
 
   const tools = useMemo(() => {
     const rawTools = data?.pages.flatMap(page => page) ?? [];
