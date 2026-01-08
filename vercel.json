@@ -5,7 +5,7 @@
             "destination": "https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/sitemap"
         },
         {
-            "source": "/(.*)",
+            "source": "/((?!assets/|.*\\..*).*)",
             "destination": "/index.html"
         }
     ],
@@ -20,16 +20,7 @@
             ]
         },
         {
-            "source": "/(.*)\\.(png|jpg|jpeg|gif|webp|ico|svg)",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=31536000, immutable"
-                }
-            ]
-        },
-        {
-            "source": "/(.*)\\.(css|js)",
+            "source": "/(.*)\\.(png|jpg|jpeg|gif|webp|svg|ico)",
             "headers": [
                 {
                     "key": "Cache-Control",
