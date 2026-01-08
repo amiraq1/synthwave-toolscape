@@ -1,17 +1,21 @@
-// App v2 - Fresh build trigger
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import HomePageSkeleton from "@/components/skeletons/HomePageSkeleton";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
+import { AuthProvider } from "@/context/AuthContext";
+import { CompareProvider } from "@/context/CompareContext";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
-// Lazy Load ChatWidget to defer react-markdown and other dependencies
-const ChatWidget = lazy(() => import("@/components/ChatWidget"));
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
-// Lazy load ALL pages for better performance and smaller initial bundle
+// Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -24,89 +28,138 @@ const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Bookmarks = lazy(() => import("./pages/Bookmarks"));
+const ComparePage = lazy(() => import("./pages/Compare"));
+const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Lazy Load Components
+const ChatWidget = lazy(() => import("@/components/ChatWidget"));
+const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
+const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 10, // 10 minutes - البيانات تبقى fresh لفترة أطول
-      gcTime: 1000 * 60 * 30, // 30 minutes - الاحتفاظ بالكاش لفترة أطول
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes
       retry: 1,
       refetchOnWindowFocus: false,
-      refetchOnReconnect: false, // تجنب إعادة الجلب عند العودة للاتصال
-      refetchOnMount: false, // استخدام الكاش إذا كان موجوداً
     },
   },
 });
 
+const AppContent = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleAddClick = () => {
+    if (!user) {
+      toast({
+        title: "يجب تسجيل الدخول للمشاركة",
+        description: "سجل دخولك لإضافة أداة جديدة",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+    setIsAddModalOpen(true);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
+      <Navbar onAddClick={handleAddClick} />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/tool/:id" element={<ToolDetails />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/install" element={<Install />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/library" element={<Bookmarks />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+
+      <Footer />
+
+      {/* Floating Components */}
+      <Suspense fallback={null}>
+        <ChatWidget />
+        <CompareFloatingBar />
+        <ScrollToTopButton />
+        {isAddModalOpen && (
+          <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+        )}
+      </Suspense>
+    </div>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <HotToaster
-        position="top-right"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#1a1a2e',
-            color: '#fff',
-            borderRadius: '12px',
-            padding: '16px',
-            direction: 'rtl',
-          },
-          success: {
-            style: {
-              background: '#065f46',
-              border: '1px solid #10b981',
-            },
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            style: {
-              background: '#7f1d1d',
-              border: '1px solid #ef4444',
-            },
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
-      <HashRouter>
-        <ScrollToTop />
-        <Suspense fallback={<HomePageSkeleton />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/tool/:id" element={<ToolDetails />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/install" element={<Install />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/bookmarks" element={<Bookmarks />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-
-        {/* Load ChatWidget independently so it doesn't block initial page render */}
-        <Suspense fallback={null}>
-          <ChatWidget />
-        </Suspense>
-      </HashRouter>
-    </TooltipProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <CompareProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <HotToaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#1a1a2e',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  direction: 'rtl',
+                },
+                success: {
+                  style: {
+                    background: '#065f46',
+                    border: '1px solid #10b981',
+                  },
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#fff',
+                  },
+                },
+                error: {
+                  style: {
+                    background: '#7f1d1d',
+                    border: '1px solid #ef4444',
+                  },
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#fff',
+                  },
+                },
+              }}
+            />
+            <BrowserRouter>
+              <ScrollToTop />
+              <AppContent />
+            </BrowserRouter>
+          </TooltipProvider>
+        </CompareProvider>
+      </AuthProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

@@ -3,7 +3,9 @@ export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'بر
 export interface Tool {
   id: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   category: string;
   pricing_type: string;
   url: string;
@@ -45,7 +47,23 @@ export const tools: Tool[] = [
       { question: 'هل ChatGPT مجاني؟', answer: 'نعم، يوجد إصدار مجاني يعتمد على GPT-3.5 و GPT-4o mini، بالإضافة لإصدار Plus المدفوع.' },
       { question: 'هل يدعم اللغة العربية؟', answer: 'نعم، يدعم ChatGPT اللغة العربية بشكل ممتاز في الكتابة والفهم.' }
     ],
-    alternatives: ['102', '109'], // Claude & Qwen
+    alternatives: ['102', '109', '110'], // Claude 3.5 & Qwen & Sonnet 4.5
+  },
+  // --- Claude Sonnet 4.5 (enabled for all clients) ---
+  {
+    id: '110',
+    title: 'Claude Sonnet 4.5',
+    description: 'نموذج Claude Sonnet 4.5 من Anthropic مع دعم عربي محسّن، قدرة أعلى على الحوار الطويل، وتوليد نصوص إبداعية دقيقة.',
+    category: 'نصوص',
+    pricing_type: 'مدفوع',
+    url: 'https://claude.ai',
+    image_url: '',
+    average_rating: 4.9,
+    reviews_count: 300,
+    is_featured: true,
+    features: ['دعم عربي محسّن', 'حوار طويل المدى', 'توليد إبداعي عالي الجودة'],
+    arabic_score: 9,
+    release_date: '2025-11-01',
   },
   {
     id: '2',

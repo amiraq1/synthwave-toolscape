@@ -1,17 +1,17 @@
 import { Activity, Mail, Info, Phone, Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import NewsletterForm from './NewsletterForm';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     main: [
-      { label: 'الرئيسية', href: '/' },
-      { label: 'حول نبض', href: '/about' },
-      { label: 'الأسئلة الشائعة', href: '/faq' },
+      { label: t('nav.home'), href: '/' },
+      { label: t('nav.blog'), href: '/blog' },
       { label: 'اتصل بنا', href: '/contact' },
-      { label: 'تثبيت التطبيق', href: '/install' },
     ],
     categories: [
       { label: 'أدوات النصوص', href: '/?category=نصوص' },
@@ -35,14 +35,14 @@ const Footer = () => {
               <span className="text-foreground/80 text-xl" lang="en">AI</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-              دليلك الذكي لاكتشاف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك.
+              {t('footer.about')}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
               <a
                 href="mailto:contact@amiraq.org"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="البريد الإلكتروني"
+                aria-label="أرسل لنا بريدًا إلكترونيًا"
               >
                 <Mail className="h-4 w-4 text-muted-foreground" />
               </a>
@@ -51,7 +51,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="تويتر"
+                aria-label="تابعنا على تويتر"
               >
                 <Twitter className="h-4 w-4 text-muted-foreground" />
               </a>
@@ -60,7 +60,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="جيت هب"
+                aria-label="رابط المستودع على جيت هب"
               >
                 <Github className="h-4 w-4 text-muted-foreground" />
               </a>
@@ -69,7 +69,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-bold text-foreground">روابط سريعة</h3>
+            <h3 className="font-bold text-foreground">{t('footer.links')}</h3>
             <nav aria-label="روابط سريعة">
               <ul className="space-y-2">
                 {footerLinks.main.map((link) => (
@@ -118,7 +118,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
-            جميع الحقوق محفوظة © {currentYear} نبض AI
+            {t('footer.rights')}
           </p>
           <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
             <Link to="/about" className="hover:text-neon-purple transition-colors">

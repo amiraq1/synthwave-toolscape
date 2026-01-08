@@ -130,7 +130,7 @@
   .section-divider {
     @apply relative;
   }
-  
+
   .section-divider::before {
     content: '';
     @apply absolute inset-x-0 top-0 h-px;
@@ -141,7 +141,7 @@
   .glow-purple {
     box-shadow: 0 0 30px -5px hsl(var(--neon-purple) / 0.4);
   }
-  
+
   .glow-blue {
     box-shadow: 0 0 30px -5px hsl(var(--neon-blue) / 0.4);
   }
@@ -150,7 +150,7 @@
   .stats-card {
     @apply relative overflow-hidden rounded-2xl border border-white/10 bg-card/50 backdrop-blur-sm p-6;
   }
-  
+
   .stats-card::before {
     content: '';
     @apply absolute inset-0 opacity-30;
@@ -179,4 +179,139 @@
     /* Add extra spacing from edges */
     margin: 8px !important;
   }
+}
+
+/* تحسينات المدونة العربية */
+.blog-content {
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+}
+
+.blog-content p {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  line-height: 2;
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  color: #e2e8f0;
+  text-align: justify;
+}
+
+.blog-content h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #a78bfa;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.blog-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-bottom: 2rem;
+  padding-right: 1.5rem;
+}
+
+.blog-content li {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  margin-bottom: 0.75rem;
+  line-height: 1.8;
+  color: #cbd5e1;
+}
+
+.blog-content li::marker {
+  color: #a78bfa;
+}
+
+/* تنسيق الاقتباسات */
+.blog-content blockquote {
+  border-right: 4px solid #7c3aed;
+  border-left: none;
+  background: rgba(124, 58, 237, 0.1);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+  font-style: italic;
+  color: #ddd;
+}
+
+/* تنسيق الكود */
+.blog-content code {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'Fira Code', monospace;
+}
+
+.blog-content pre {
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.blog-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* تنسيق الروابط */
+.blog-content a {
+  color: #a78bfa;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s ease;
+}
+
+.blog-content a:hover {
+  color: #c4b5fd;
+}
+
+/* تنسيق الصور */
+.blog-content img {
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* تنسيق الجداول */
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+.blog-content th,
+.blog-content td {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1rem;
+  text-align: right;
+}
+
+.blog-content th {
+  background: rgba(124, 58, 237, 0.1);
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.blog-content tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
 }

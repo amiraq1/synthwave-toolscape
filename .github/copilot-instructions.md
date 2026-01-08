@@ -1,24 +1,91 @@
-# AI Coding Guide
+# AI Coding Guide — نبض (Nabd) AI Tools Directory
 
-- **Stack & entry**: Vite + React 18 + TypeScript, React Router 6, TanStack Query, Tailwind/shadcn. App mounts in `src/main.tsx` and routes/lazy-loading live in `src/App.tsx` (all pages lazy, chat widget lazy but rendered globally).
-- **Routing pattern**: Keep routes added in `src/App.tsx`; scroll reset handled by `src/components/ScrollToTop.tsx`. Add new routes above the `*` catch-all.
-- **Data layer**: Supabase client is configured in `src/integrations/supabase/client.ts` using `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Alias `@` maps to `src` (see `vite.config.ts`).
-- **Tools listing**: `src/hooks/useTools.ts` drives infinite scrolling with `useInfiniteQuery`, pulls from `tools` table, sanitizes search (escapes `%`, `_`, `\`, trims to 100 chars), and orders featured first then newest. `Tool.id` is treated as string; convert IDs to numbers before querying when needed.
-- **Hybrid search**: `src/hooks/useSemanticSearch.ts` calls Supabase Edge Function `search` for semantic results; `useHybridSearch` auto-enables when client results < threshold. Keep parity between client filtering and server embeddings.
-- **Chat**: `src/hooks/useChat.ts` invokes Supabase Edge Function `chat`, sends last 5 messages as history, and appends model replies. UI in `src/components/ChatWidget.tsx`.
-- **Tool details**: `src/hooks/useTool.ts` fetches a single tool via `tools` table (string ID parsed to int) and exposes a prefetch helper; use this on hover in cards to warm cache.
-- **Reviews**: `src/hooks/useReviews.ts` uses RPC functions `get_public_reviews` and `get_tool_review_stats`; mutations invalidate `reviews`, `review-stats`, `user-review`, and `tool-ratings` query keys. Error handling already toasts localized messages—reuse patterns.
-- **Home page UX**: `src/pages/Index.tsx` is RTL-first, switches between timeline and grid depending on search/filter, and gates Add Tool modal behind auth. Respect the accessibility skip link and structured data hooks when editing.
-- **Auth**: `src/hooks/useAuth.ts` listens to Supabase auth changes, stores session in localStorage, and sets `RETURN_TO_KEY` for Google OAuth; the callback route `/auth/callback` should clear and navigate back. Prefer these helpers over direct Supabase calls.
-- **Styling**: Tailwind with `cn` helper (`src/lib/utils.ts`); design leans neon/gradient + RTL. Shadcn UI components live under `src/components/ui`.
-- **Performance**: Vite config enables PWA (manifest rtl/ar), aggressive runtime caching for Supabase and fonts, manual Rollup chunking for core libs, and image optimization (`vite.config.ts`). Keep new assets PWA-friendly (add to `includeAssets` if necessary).
-- **Scripts**: `npm run dev` (port 8080), `npm run build`, `npm run build:dev` (dev mode build), `npm run preview`, `npm run lint`. Use `pnpm`/`npm` consistently; lockfile is `bun.lockb` but project scripts expect Node/npm.
-- **Environment**: Minimum required envs: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. Edge functions expect Supabase service keys configured server-side; do not ship secrets to the client.
-- **Data contracts**: `tools` rows include pricing, features, FAQs, alternatives, ratings, trending metrics; favor optional chaining and null checks. Reviews table accessed via RPC excludes `user_id`—keep PII out of the client.
-- **Internationalization**: Text is Arabic-first; keep copy RTL-aware and avoid hardcoded LTR layouts. Badges/toasts already localized; maintain tone/emoji patterns.
-- **SEO/structured data**: Use `useSEO` and `useStructuredData` hooks on new pages to set titles/OG/meta and JSON-LD; see `src/pages/Index.tsx` for usage.
-- **File organization**: Pages under `src/pages`, shared UI in `src/components`, data utilities/hooks under `src/hooks` and `src/lib`, Supabase types in `src/integrations/supabase/types.ts`, edge function sources under `supabase/functions`.
-- **Testing/demo scripts**: Repo includes `test-chat.ts`, `test-db.ts`, `test-taaft.ts` for quick integration checks; align new utilities with these patterns if extending CLI tooling.
-- **When adding features**: Prefer TanStack Query for async state (set `staleTime`/`gcTime`), sanitize user input before Supabase filters, and route all DB access through `supabase` client or RPCs. Keep lazy loading for heavy components and preserve skeleton fallbacks.
+## Architecture Overview
+Arabic-first AI tools directory built with **Vite + React 18 + TypeScript**, **TanStack Query**, **Supabase** (auth + DB + Edge Functions), **Tailwind/shadcn**. Uses **HashRouter** for static hosting compatibility.
 
-If anything here seems off or incomplete, let me know what to clarify or expand.
+## Critical Patterns
+
+### Routing & Lazy Loading
+- All pages lazy-loaded in `src/App.tsx` — add new routes **above** the `*` catch-all
+- Global `ChatWidget` is lazy-rendered on every page; `ScrollToTop` handles navigation scroll reset
+- Dev server runs on port 8080: `npm run dev`
+
+### Data Layer (Supabase)
+- Client: `src/integrations/supabase/client.ts` — uses `VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY`
+- **Tool.id is string on client, int in DB** — always use `parseInt(id)` when querying, `String(id)` when returning
+- Types auto-generated: `src/integrations/supabase/types.ts`
+
+### TanStack Query Conventions
+```ts
+// Standard cache config used project-wide
+staleTime: 1000 * 60 * 10,  // 10 min
+gcTime: 1000 * 60 * 30,     // 30 min
+refetchOnWindowFocus: false
+```
+- Query keys: `['tools']`, `['tool', id]`, `['reviews', toolId]`, `['semantic-search', query]`
+- Review mutations invalidate: `reviews`, `review-stats`, `user-review`, `tool-ratings`
+
+### Search Architecture
+1. **Client-side**: `src/hooks/useTools.ts` — `useInfiniteQuery` with ILIKE search, sanitizes `%`, `_`, `\` chars, trims to 100 chars
+2. **Semantic fallback**: `src/hooks/useSemanticSearch.ts` — `useHybridSearch` triggers Edge Function when results < 3
+3. **Edge Functions**: `supabase/functions/search/` uses Gemini `text-embedding-004` for vector search
+
+### Edge Functions (Deno)
+Located in `supabase/functions/`:
+- `chat/` — Gemini 1.5 Flash chat with tool recommendations
+- `search/` — Semantic vector search via `GEMINI_API_KEY`
+- `generate-embeddings/` — Backfill embeddings for tools
+- `auto-draft/` — AI-powered tool creation (Gemini Arabization)
+
+Server-side envs: `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`
+
+### Auth Pattern
+`src/hooks/useAuth.ts` manages Supabase auth state. Google OAuth stores return URL in `sessionStorage` as `nabd_return_to`. Always use hook helpers, not direct `supabase.auth` calls.
+
+## UI/UX Conventions
+
+### RTL-First Design
+- All layouts default RTL; Tailwind utilities respect direction
+- Arabic category names: `الكل`, `نصوص`, `صور`, `فيديو`, `برمجة`, `إنتاجية`, `دراسة وطلاب`, `صوت`
+- Keep emoji/icon patterns consistent with existing toasts and badges
+
+### Component Patterns
+- `cn()` helper from `src/lib/utils.ts` for conditional classnames
+- Shadcn components in `src/components/ui/` — prefer these over custom implementations
+- `LazyImage` for optimized image loading; `usePrefetchTool()` for hover prefetch on cards
+
+### SEO & Structured Data
+New pages must use:
+```tsx
+useSEO({ title: "...", description: "...", keywords: "...", ogType: "website" });
+useStructuredData({ type: "itemList", name: "...", items: [...] });
+```
+
+## Key Files Reference
+| Purpose | Location |
+|---------|----------|
+| Route definitions | `src/App.tsx` |
+| Tools listing hook | `src/hooks/useTools.ts` |
+| Single tool fetch | `src/hooks/useTool.ts` |
+| Reviews (RPC-based) | `src/hooks/useReviews.ts` |
+| Auth state | `src/hooks/useAuth.ts` |
+| Supabase types | `src/integrations/supabase/types.ts` |
+| Build config | `vite.config.ts` |
+
+## Scripts
+```bash
+npm run dev        # Dev server (port 8080)
+npm run build      # Production build
+npm run build:dev  # Dev-mode build
+npm run preview    # Preview production build
+npm run lint       # ESLint
+```
+
+## Adding Features Checklist
+- [ ] Lazy-load new pages in `App.tsx`
+- [ ] Use TanStack Query with project cache defaults
+- [ ] Sanitize user input before Supabase queries
+- [ ] Add skeleton fallback for Suspense boundaries
+- [ ] Include SEO hooks on new pages
+- [ ] Keep Arabic text RTL-aware
+- [ ] Access reviews via RPC (never expose `user_id` to client)

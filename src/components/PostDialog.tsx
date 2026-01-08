@@ -142,9 +142,11 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             // Generate slug if empty
             const finalSlug = values.slug || generateSlug(values.title) + '-' + Date.now().toString(36);
 
+            if (!user?.id) throw new Error("User not authenticated");
+
             if (isEditMode && postToEdit) {
                 // Update existing post
-                const { error } = await (supabase as any)
+                const { error } = await supabase
                     .from('posts')
                     .update({
                         title: values.title,
@@ -158,15 +160,15 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                 if (error) throw error;
             } else {
                 // Create new post
-                const { error } = await (supabase as any).from('posts').insert([{
+                const { error } = await supabase.from('posts').insert({
                     title: values.title,
                     slug: finalSlug,
                     content: values.content,
                     excerpt: values.excerpt || null,
                     image_url: values.image_url || null,
                     is_published: values.is_published,
-                    author_id: user?.id,
-                }]);
+                    author_id: user.id,
+                });
                 if (error) throw error;
             }
         },

@@ -34,13 +34,13 @@
 
   <!-- GitHub Pages SPA redirect handler -->
   <script type="text/javascript">
-    (function(l) {
-      if (l.search[1] === '/' ) {
-        var decoded = l.search.slice(1).split('&').map(function(s) { 
+    (function (l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
           return s.replace(/~and~/g, '&')
         }).join('?');
         window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
+          l.pathname.slice(0, -1) + decoded + l.hash
         );
       }
     }(window.location))
@@ -49,6 +49,12 @@
   <!-- Preconnect for external resources (improves connection time) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Load IBM Plex Sans Arabic for blog content -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" crossorigin>
+
   <link rel="dns-prefetch" href="https://iazvsdwkbfzjhscyfvec.supabase.co" />
   <link rel="preconnect" href="https://iazvsdwkbfzjhscyfvec.supabase.co" />
 

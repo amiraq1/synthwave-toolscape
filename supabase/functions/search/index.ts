@@ -120,8 +120,9 @@ Deno.serve(async (req) => {
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
-    } catch (error: any) {
-        console.error("Search Error:", error.message);
+    } catch (error: unknown) {
+        const errMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error("Search Error:", errMessage);
         return new Response(
             JSON.stringify({
                 error: "Search failed",

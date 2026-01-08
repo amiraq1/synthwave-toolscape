@@ -11,6 +11,7 @@ export interface Review {
   comment: string | null;
   created_at: string;
   reviewer_alias?: string;
+  avatar_url?: string;
 }
 
 export interface ReviewStats {
@@ -33,23 +34,32 @@ export const useReviews = (toolId: string | number | undefined) => {
       const idAsNumber = Number(toolId);
       if (isNaN(idAsNumber)) return [];
 
-      // Use get_public_reviews RPC function which excludes user_id
+      // Use direct query with join instead of RPC to avoid 404 if migration is missing
       const { data, error } = await supabase
-        .rpc('get_public_reviews', { p_tool_id: idAsNumber });
+        .from('reviews')
+        .select(`
+          id,
+          rating,
+          comment,
+          created_at,
+          tool_id
+        `)
+        .eq('tool_id', idAsNumber)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching reviews:', error);
         throw error;
       }
 
-      // Map display_name to reviewer_alias for compatibility
+      // Map function output to Review shape
       return (data || []).map((r: any) => ({
         id: r.id,
-        tool_id: r.tool_id,
+        tool_id: idAsNumber,
         rating: r.rating,
         comment: r.comment,
         created_at: r.created_at,
-        reviewer_alias: r.display_name,
+        reviewer_alias: 'مستخدم',
       })) as Review[];
     },
     enabled: !!toolId,
@@ -67,21 +77,22 @@ export const useReviewStats = (toolId: string | number | undefined) => {
 
 
       // Try RPC first
-      const { data: rpcData, error: rpcError } = await (supabase as any)
-        .rpc('get_tool_review_stats', { p_tool_id: idAsNumber });
+      const { data: rpcData, error: rpcError } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .rpc('get_tool_review_stats' as any, { p_tool_id: idAsNumber });
 
       if (!rpcError && rpcData?.[0]) {
         return rpcData[0];
       }
 
       // Fallback: calculate from reviews
-      const { data: reviews } = await (supabase as any)
+      const { data: reviews } = await supabase
         .from('reviews')
         .select('rating')
         .eq('tool_id', idAsNumber);
 
       if (reviews && reviews.length > 0) {
-        const avg = reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length;
+        const avg = reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length;
         return { average_rating: Math.round(avg * 10) / 10, reviews_count: reviews.length };
       }
 
@@ -105,7 +116,7 @@ export const useUserReview = (toolId: string | number | undefined, userId?: stri
       const idAsNumber = Number(toolId);
       if (isNaN(idAsNumber)) return null;
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('reviews')
         .select('*')
         .eq('tool_id', idAsNumber)
@@ -148,7 +159,8 @@ export const useAddReview = () => {
       if (isNaN(idAsNumber)) throw new Error('Invalid Tool ID');
 
       // Upsert: Insert or Update if exists
-      const { data, error } = await (supabase as any)
+      // Upsert: Insert or Update if exists
+      const { data, error } = await supabase
         .from('reviews')
         .upsert(
           {
@@ -156,7 +168,6 @@ export const useAddReview = () => {
             tool_id: idAsNumber,
             rating,
             comment: comment?.trim() || null,
-            updated_at: new Date().toISOString(),
           },
           { onConflict: 'user_id,tool_id' }
         )
@@ -178,7 +189,7 @@ export const useAddReview = () => {
       queryClient.invalidateQueries({ queryKey: ['user-review', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'خطأ',
         description: error?.message || 'فشل في حفظ التقييم',
@@ -195,7 +206,7 @@ export const useDeleteReview = () => {
 
   return useMutation({
     mutationFn: async ({ reviewId, toolId }: { reviewId: string; toolId: string | number }) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('reviews')
         .delete()
         .eq('id', reviewId);
@@ -213,7 +224,7 @@ export const useDeleteReview = () => {
       queryClient.invalidateQueries({ queryKey: ['user-review', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'خطأ',
         description: error?.message || 'فشل في حذف التقييم',

@@ -1,109 +1,125 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Google Gemini Embedding API
-async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "models/text-embedding-004",
-                content: { parts: [{ text }] },
-                taskType: "RETRIEVAL_QUERY",
-            }),
-        }
-    );
-
-    if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Gemini API error: ${error}`);
-    }
-
-    const data = await response.json();
-    return data.embedding.values;
-}
-
-Deno.serve(async (req) => {
-    // Handle CORS preflight
-    if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
+serve(async (req) => {
+    // 1. التعامل مع طلبات OPTIONS (CORS preflight)
+    if (req.method === 'OPTIONS') {
+        return new Response('ok', { headers: corsHeaders });
     }
 
     try {
-        const googleApiKey = Deno.env.get("GEMINI_API_KEY");
-        if (!googleApiKey) {
-            throw new Error("GEMINI_API_KEY is not set");
-        }
-
-        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-        // SECURITY FIX: Use ANON_KEY instead of SERVICE_ROLE_KEY
-        // This ensures RLS policies are respected and we don't bypass security
-        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-        const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+        // التحقق من المدخلات (Input Validation)
         const { query, match_threshold = 0.7, match_count = 10 } = await req.json();
 
-        // Input validation
-        if (!query || typeof query !== "string") {
-            return new Response(
-                JSON.stringify({ error: "Query is required", tools: [] }),
-                { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
+        if (!query || typeof query !== 'string' || query.trim().length === 0) {
+            throw new Error("ERR_INVALID_QUERY: نص البحث مطلوب.");
         }
 
-        const trimmedQuery = query.trim();
-        if (trimmedQuery.length < 2) {
-            return new Response(
-                JSON.stringify({ error: "Query too short", tools: [] }),
-                { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-        }
+        // تنظيف النص (إزالة المسافات الزائدة وتحويله لأحرف صغيرة لزيادة فرصة المطابقة في الكاش)
+        const cleanQuery = query.trim().toLowerCase();
 
-        // Validate and cap parameters to prevent resource exhaustion
-        const safeMatchCount = Math.min(Math.max(1, Number(match_count) || 10), 50);
-        const safeThreshold = Math.min(Math.max(0, Number(match_threshold) || 0.7), 1);
+        const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+        const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+        const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
-        // Generate embedding for the search query using Google Gemini
-        const queryEmbedding = await generateEmbedding(trimmedQuery, googleApiKey);
+        const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
 
-        // Call the match_tools function
-        const { data: tools, error: searchError } = await supabase.rpc(
-            "match_tools",
-            {
-                query_embedding: queryEmbedding,
-                match_threshold: safeThreshold,
-                match_count: safeMatchCount,
+        // ---------------------------------------------------------
+        // 2. فحص الكاش (Caching Layer) 🚀
+        // ---------------------------------------------------------
+        let embedding: number[] | null = null;
+
+        const { data: cachedData } = await supabase
+            .from('query_cache')
+            .select('embedding')
+            .eq('query_text', cleanQuery)
+            .maybeSingle(); // Changed single() to maybeSingle() to handle no results gracefully
+
+        if (cachedData) {
+            console.log(`🔥 Cache HIT for query: "${cleanQuery}"`);
+            // إذا كان stored as string في بعض الحالات، parse it. في vector type غالبًا يعود كـ string or array
+            embedding = typeof cachedData.embedding === 'string' ? JSON.parse(cachedData.embedding) : cachedData.embedding;
+        } else {
+            console.log(`❄️ Cache MISS for query: "${cleanQuery}" - Calling Gemini`);
+
+            // 3. طلب Gemini (إذا لم نجد كاش)
+            if (!GEMINI_API_KEY) {
+                throw new Error("ERR_SERVER_CONFIG: مفتاح Gemini مفقود.");
             }
-        );
 
-        if (searchError) {
-            console.error("RPC Error:", searchError);
-            throw new Error("Search failed");
+            const embeddingResp = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: "models/text-embedding-004",
+                        content: { parts: [{ text: cleanQuery }] } // نرسل النص المنظف
+                    })
+                }
+            );
+
+            if (!embeddingResp.ok) {
+                const errData = await embeddingResp.json();
+                console.error("Gemini API Error:", errData);
+                throw new Error("ERR_AI_SERVICE: فشل الاتصال بخدمة الذكاء الاصطناعي.");
+            }
+
+            const embeddingData = await embeddingResp.json();
+            embedding = embeddingData.embedding?.values;
+
+            if (!embedding) {
+                throw new Error("ERR_EMBEDDING_FAILED: لم يتم توليد المتجهات بنجاح.");
+            }
+
+            // 4. حفظ في الكاش للمستقبل
+            const { error: insertError } = await supabase.from('query_cache').insert({
+                query_text: cleanQuery,
+                embedding: embedding
+            });
+
+            if (insertError) {
+                console.error("Cache Insert Error (Non-blocking):", insertError);
+            }
         }
+
+        // ---------------------------------------------------------
+        // 5. البحث في قاعدة البيانات (RPC Call)
+        // ---------------------------------------------------------
+        const { data: tools, error: dbError } = await supabase.rpc('match_tools', {
+            query_embedding: embedding,
+            match_threshold: match_threshold,
+            match_count: match_count,
+        });
+
+        if (dbError) {
+            console.error("Database RPC Error:", dbError);
+            throw new Error("ERR_DATABASE: حدث خطأ أثناء البحث في قاعدة البيانات.");
+        }
+
+        // 6. الرد بنجاح
+        return new Response(JSON.stringify(tools), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+    } catch (error: any) {
+        console.error("Function Error:", error.message);
+        const isClientError = error.message.startsWith("ERR_INVALID");
 
         return new Response(
             JSON.stringify({
-                tools: tools || [],
-                query: trimmedQuery,
-                embedding_model: "text-embedding-004",
-                dimensions: queryEmbedding.length,
+                error: true,
+                code: error.message.split(':')[0] || "ERR_UNKNOWN",
+                message: isClientError ? error.message.split(':')[1] || error.message : "حدث خطأ غير متوقع، يرجى المحاولة لاحقاً."
             }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-    } catch (error) {
-        console.error("Error:", error);
-        return new Response(
-            JSON.stringify({ error: "Search failed", tools: [] }),
             {
-                status: 500,
-                headers: { ...corsHeaders, "Content-Type": "application/json" },
+                status: isClientError ? 400 : 500,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             }
         );
     }

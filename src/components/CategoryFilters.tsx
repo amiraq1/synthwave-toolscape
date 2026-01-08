@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useTranslation } from 'react-i18next';
 
 export type PricingFilter = 'all' | 'مجاني' | 'مدفوع';
 export type SortOption = 'newest' | 'rating' | 'popular';
@@ -41,11 +42,20 @@ const CategoryFilters = ({
   sortBy = 'newest',
   onSortChange,
 }: CategoryFiltersProps) => {
-  const currentPricingLabel = pricingOptions.find(p => p.value === pricing)?.label || 'الكل';
+  const { t, i18n } = useTranslation();
+
+  // Dynamic Pricing Function because we need t()
+  const pOptions = [
+    { value: 'all', label: t('filters.all') },
+    { value: 'مجاني', label: 'مجاني' },
+    { value: 'مدفوع', label: 'مدفوع' },
+  ];
+
+  const currentPricingLabel = pOptions.find(p => p.value === pricing)?.label || t('filters.all');
   const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.label || 'الأحدث';
 
   return (
-    <div className="space-y-4 py-6 sm:py-8 px-4" dir="rtl">
+    <div className="space-y-4 py-6 sm:py-8 px-4" dir={i18n.dir()}>
       {/* Category Tabs */}
       <nav aria-label="تصفية حسب الفئات" className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {categories.map((category) => (
@@ -85,7 +95,7 @@ const CategoryFilters = ({
                     pricing !== 'all' && "border-neon-purple/50 text-neon-purple"
                   )}
                 >
-                  السعر: {currentPricingLabel}
+                  {currentPricingLabel}
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>

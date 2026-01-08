@@ -11,7 +11,7 @@ export const useClickTracking = () => {
         }
 
         try {
-            // @ts-ignore - Function exists in DB but types not updated yet
+            // @ts-expect-error - Function exists in DB but types not updated yet
             const { error } = await supabase.rpc('record_tool_click', {
                 p_tool_id: idAsNumber,
                 p_referrer: document.referrer || null,

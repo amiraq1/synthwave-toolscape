@@ -1,31 +1,45 @@
-import { Search, Sparkles, ArrowDown, Zap, Users, Star } from 'lucide-react';
+import { Search, Sparkles, ArrowDown, Zap, Users, Star, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
+import TrendingTools from "@/components/TrendingTools";
 
 interface HeroSectionProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  isSearching?: boolean;
 }
 
-const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
+const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionProps) => {
+  const { t } = useTranslation();
+
   const scrollToTools = () => {
     const toolsSection = document.getElementById('tools-heading');
     toolsSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
-    <section className="relative py-16 sm:py-20 md:py-28 px-4 text-center overflow-hidden" dir="rtl">
+    <section className="relative py-16 sm:py-20 md:py-28 px-4 text-center overflow-hidden">
       {/* Enhanced background effects */}
       <div className="absolute top-10 left-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-purple/25 rounded-full blur-[120px] sm:blur-[180px] -z-10" />
       <div className="absolute bottom-10 right-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-blue/20 rounded-full blur-[120px] sm:blur-[180px] -z-10" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[200px] -z-10" />
-      
+
       {/* Grid pattern */}
-      <div className="absolute inset-0 opacity-[0.15] -z-10" style={{ 
-        backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)", 
-        backgroundSize: "32px 32px" 
+      <div className="absolute inset-0 opacity-[0.15] -z-10" style={{
+        backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)",
+        backgroundSize: "32px 32px"
       }} />
+
+      {/* Trending Bar */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <TrendingTools />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-8 sm:space-y-10">
         {/* Badge */}
@@ -36,13 +50,12 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
 
         {/* Main headline with better typography */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <span className="block text-foreground mb-2">اكتشف قوة</span>
-          <span className="gradient-text">الذكاء الاصطناعي</span>
+          {t('hero.title')}
         </h1>
 
         {/* Subheadline */}
         <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          دليلك الشامل لأفضل أدوات AI التي ستحول طريقة عملك وإبداعك للأفضل
+          {t('hero.subtitle')}
         </p>
 
         {/* CTA Buttons */}
@@ -85,16 +98,25 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
         {/* Search Bar - Enhanced */}
         <div className="relative max-w-2xl mx-auto mt-8 sm:mt-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <div className="glass-card rounded-2xl p-2 glow-purple transition-all duration-500 focus-within:glow-blue hover:scale-[1.02]">
-            <div className="relative flex items-center">
-              <Search className="absolute right-4 sm:right-5 h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+            <form onSubmit={handleSearch} className="relative flex items-center">
+              <Button
+                type="submit"
+                size="icon"
+                variant="ghost"
+                className={`absolute ${document.dir === 'rtl' ? 'right-2' : 'left-2'} h-10 w-10 text-muted-foreground hover:bg-transparent hover:text-neon-purple transition-colors`}
+                aria-label="ابحث الآن"
+                disabled={isSearching}
+              >
+                {isSearching ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5 sm:h-6 sm:w-6" />}
+              </Button>
               <Input
                 type="text"
-                placeholder="ابحث عن أداة ذكاء اصطناعي..."
+                placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full pr-12 sm:pr-14 py-5 sm:py-7 text-base sm:text-lg bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
+                className={`w-full ${document.dir === 'rtl' ? 'pr-12 sm:pr-14' : 'pl-12 sm:pl-14'} py-5 sm:py-7 text-base sm:text-lg bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60`}
               />
-            </div>
+            </form>
           </div>
           <p className="text-sm text-muted-foreground/60 mt-4">
             نصوص • صور • فيديو • برمجة • إنتاجية • دراسة

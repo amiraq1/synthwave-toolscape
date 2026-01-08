@@ -8,7 +8,7 @@ export interface ChatMessage {
 
 export interface ChatResponse {
     answer: string;
-    tools: any[];
+    tools: unknown[];
 }
 
 export const useChat = () => {
@@ -31,8 +31,21 @@ export const useChat = () => {
                 parts: m.content
             }));
 
+            // Get current session to pass auth token
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                setError('يجب تسجيل الدخول لاستخدام نبض AI');
+                // Remove the user message we just added
+                setMessages(messages);
+                return null;
+            }
+
             const { data, error: funcError } = await supabase.functions.invoke('chat', {
-                body: { query, history }
+                body: { query, history },
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`
+                }
             });
 
             if (funcError) throw funcError;
@@ -44,18 +57,19 @@ export const useChat = () => {
 
             return response;
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Chat error:', err);
-            
+
             // تحسين رسالة الخطأ للمستخدم
             let errorMessage = 'حدث خطأ أثناء المحادثة';
-            
-            if (err?.context?.status === 401 || err?.message?.includes('401') || err?.message?.includes('تسجيل الدخول')) {
+
+            const error = err as { context?: { status?: number }; message?: string } | null;
+            if (error?.context?.status === 401 || error?.message?.includes('401') || error?.message?.includes('تسجيل الدخول')) {
                 errorMessage = 'يجب تسجيل الدخول لاستخدام نبض AI';
-            } else if (err?.message) {
-                errorMessage = err.message;
+            } else if (error?.message) {
+                errorMessage = error.message;
             }
-            
+
             setError(errorMessage);
             return null;
         } finally {

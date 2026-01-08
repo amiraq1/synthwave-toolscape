@@ -1,12 +1,18 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Settings, Wrench, Users, Loader2, ShieldAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAdminCheck } from '@/hooks/useAdminCheck';
-import AdminToolsTable from '@/components/admin/AdminToolsTable';
-import AdminUsersTable from '@/components/admin/AdminUsersTable';
-import { useSEO } from '@/hooks/useSEO';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "react-hot-toast";
+import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, Settings, ArrowRight, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
+import { useSEO } from "@/hooks/useSEO";
+import EditDraftDialog from "@/components/EditDraftDialog";
+import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Admin = () => {
   useSEO({
@@ -14,20 +20,99 @@ const Admin = () => {
     description: 'لوحة تحكم المشرفين لإدارة أدوات الذكاء الاصطناعي والمستخدمين',
     noIndex: true,
   });
+
+  const { session } = useAuth();
   const navigate = useNavigate();
-  const { isAdmin, loading } = useAdminCheck();
+  const { isAdmin, loading: authLoading } = useAdminCheck();
+
+  const [loading, setLoading] = useState(false);
+  const [drafts, setDrafts] = useState<any[]>([]);
+  const [stats, setStats] = useState({ totalTools: 0, pendingDrafts: 0, totalUsers: 0 });
+
+  // للتحكم في نافذة التعديل
+  const [editingTool, setEditingTool] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [formData, setFormData] = useState({ name: "", url: "", description_en: "" });
+
+  // 1. جلب البيانات والإحصائيات
+  const fetchData = async () => {
+    // جلب المسودات
+    const { data: draftsData } = await supabase
+      .from("tools")
+      .select("*")
+      .order("created_at", { ascending: false }) as { data: any[] | null };
+
+    // Filter drafts (unpublished tools)
+    const filteredDrafts = (draftsData || []).filter((t: any) => t.is_published === false);
+    setDrafts(filteredDrafts);
+
+    // جلب الإحصائيات (Count)
+    const { count: toolsCount } = await supabase.from("tools").select("*", { count: 'exact', head: true });
+    // Note: Profiles access might be restricted by RLS.
+    // We handle the error by checking 'error' from the response instead of .catch()
+    const { count: usersCount, error: usersError } = await supabase.from("profiles").select("*", { count: 'exact', head: true });
+
+    // If error (e.g. 403), default to 0
+    const finalUsersCount = usersError ? 0 : (usersCount || 0);
+
+    setStats({
+      totalTools: toolsCount || 0,
+      pendingDrafts: filteredDrafts.length,
+      totalUsers: finalUsersCount
+    });
+  };
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      navigate('/');
+    if (isAdmin) {
+      fetchData();
     }
-  }, [isAdmin, loading, navigate]);
+  }, [isAdmin]);
 
-  if (loading) {
+  // Auth Check Effect
+  useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      // Allow time to see "Not Authorized" before redirect or just stay there
+    }
+  }, [isAdmin, authLoading]);
+
+
+  // 2. التوليد الآلي
+  const handleAutoDraft = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase.functions.invoke("auto-draft", { body: formData });
+      if (error) throw error;
+      toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
+      setFormData({ name: "", url: "", description_en: "" });
+      fetchData();
+    } catch (error: any) {
+      toast.error("خطأ: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 3. حذف المسودة
+  const deleteDraft = async (id: number) => {
+    if (!confirm("حذف نهائي؟")) return;
+    await supabase.from("tools").delete().eq("id", id);
+    toast.success("تم الحذف");
+    fetchData();
+  };
+
+  // 4. فتح نافذة التعديل
+  const openEdit = (tool: any) => {
+    setEditingTool(tool);
+    setIsDialogOpen(true);
+  };
+
+  if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin text-neon-purple mx-auto" />
+      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir="rtl">
+        <div>
+          <Loader2 className="h-12 w-12 animate-spin text-neon-purple mx-auto mb-4" />
           <p className="text-muted-foreground">جاري التحقق من الصلاحيات...</p>
         </div>
       </div>
@@ -36,12 +121,12 @@ const Admin = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-4">
+      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir="rtl">
+        <div className="space-y-4 max-w-md">
           <ShieldAlert className="h-16 w-16 text-destructive mx-auto" />
           <h1 className="text-2xl font-bold">غير مصرح</h1>
-          <p className="text-muted-foreground">ليس لديك صلاحية الوصول لهذه الصفحة</p>
-          <Button onClick={() => navigate('/')}>
+          <p className="text-muted-foreground">ليس لديك صلاحية الوصول لهذه الصفحة. يجب أن تكون مشرفاً.</p>
+          <Button onClick={() => navigate('/')} className="w-full">
             العودة للرئيسية
           </Button>
         </div>
@@ -50,50 +135,159 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
-      {/* Header */}
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
-        <div className="container mx-auto max-w-7xl px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Settings className="h-6 w-6 text-neon-purple" />
-              <h1 className="text-xl font-bold">لوحة التحكم</h1>
-            </div>
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="gap-2"
-            >
-              <ArrowRight className="h-5 w-5" />
-              العودة
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-20" dir="rtl">
+      <div className="container mx-auto p-6 max-w-6xl min-h-screen space-y-8">
+        <h1 className="text-3xl font-bold mb-6">لوحة القيادة 🚀</h1>
 
-      {/* Main Content */}
-      <main className="container mx-auto max-w-7xl px-4 py-8">
-        <Tabs defaultValue="tools" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mx-auto">
-            <TabsTrigger value="tools" className="gap-2">
-              <Wrench className="h-4 w-4" />
-              الأدوات
-            </TabsTrigger>
-            <TabsTrigger value="users" className="gap-2">
-              <Users className="h-4 w-4" />
-              المستخدمين
-            </TabsTrigger>
+        {/* 📊 شريط الإحصائيات */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm mb-1">إجمالي الأدوات</p>
+                <h3 className="text-3xl font-bold text-blue-400">{stats.totalTools}</h3>
+              </div>
+              <Database className="w-8 h-8 text-blue-500/50" />
+            </CardContent>
+          </Card>
+          <Card className="bg-orange-900/10 border-orange-500/20 card-glow">
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm mb-1">مسودات معلقة</p>
+                <h3 className="text-3xl font-bold text-orange-400">{stats.pendingDrafts}</h3>
+              </div>
+              <Edit className="w-8 h-8 text-orange-500/50" />
+            </CardContent>
+          </Card>
+          <Card className="bg-purple-900/10 border-purple-500/20 card-glow">
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm mb-1">المستخدمين</p>
+                <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers || '-'}</h3>
+              </div>
+              <Users className="w-8 h-8 text-purple-500/50" />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* نظام التبويبات */}
+        <Tabs defaultValue="tools" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-white/5 mb-8">
+            <TabsTrigger value="tools">🛠️ إدارة الأدوات والمحتوى</TabsTrigger>
+            <TabsTrigger value="users">👥 إدارة المستخدمين</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="tools" className="glass rounded-xl p-6">
-            <AdminToolsTable />
+          <TabsContent value="tools" className="space-y-8">
+            {/* ✨ مولد المحتوى */}
+            <Card className="border-neon-purple/30 bg-card/40 backdrop-blur glass-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-neon-purple">
+                  <Sparkles className="w-5 h-5" /> إضافة أداة جديدة (AI Auto-Draft)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAutoDraft} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">اسم الأداة (English)</label>
+                      <Input
+                        placeholder="e.g. ChatGPT"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        className="bg-black/20 text-left"
+                        dir="ltr"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">الرابط (URL)</label>
+                      <Input
+                        placeholder="https://openai.com/chatgpt"
+                        value={formData.url}
+                        onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                        required
+                        className="bg-black/20 text-left"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-muted-foreground">وصف مختصر (English) ليساعد الذكاء الاصطناعي</label>
+                    <Textarea
+                      placeholder="An AI chatbot developed by OpenAI..."
+                      value={formData.description_en}
+                      onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
+                      required
+                      className="bg-black/20 text-left"
+                      dir="ltr"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full bg-neon-purple hover:bg-neon-purple/80" disabled={loading}>
+                    {loading ? <Loader2 className="animate-spin mr-2" /> : <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> توليد البيانات تلقائياً</span>}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* 📝 قائمة المسودات */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
+                <BarChart3 className="w-5 h-5" /> مراجعة المسودات ({drafts.length})
+              </h2>
+
+              {drafts.length === 0 && (
+                <div className="text-center py-12 border border-dashed border-white/10 rounded-xl bg-white/5">
+                  <Database className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400">كل شيء نظيف! لا توجد مسودات معلقة.</p>
+                </div>
+              )}
+
+              <div className="grid gap-4">
+                {drafts.map((tool) => (
+                  <div key={tool.id} className="bg-card/40 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center group hover:border-neon-purple/30 transition-all hover:bg-white/5">
+                    <div className="flex-1 w-full">
+                      <h3 className="font-bold text-lg text-white flex items-center flex-wrap gap-2 mb-1">
+                        {tool.title}
+                        <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full text-gray-400 font-normal border border-white/5">{tool.category}</span>
+                      </h3>
+                      <p className="text-sm text-gray-400 line-clamp-2 pl-4">{tool.description}</p>
+                    </div>
+
+                    <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+                      <Button size="sm" variant="outline" onClick={() => openEdit(tool)} className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300">
+                        <Edit className="w-4 h-4 ml-1" /> مراجعة ونشر
+                      </Button>
+                      <Button size="icon" variant="destructive" onClick={() => deleteDraft(tool.id)} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </TabsContent>
 
-          <TabsContent value="users" className="glass rounded-xl p-6">
-            <AdminUsersTable />
+          <TabsContent value="users">
+            <div className="bg-black/20 p-6 rounded-xl border border-white/10">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Users className="text-neon-purple" />
+                قائمة المسجلين
+              </h2>
+              <AdminUsersTable />
+            </div>
           </TabsContent>
         </Tabs>
-      </main>
+
+        {/* نافذة التعديل المنبثقة */}
+        {editingTool && (
+          <EditDraftDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            tool={editingTool}
+            onUpdate={fetchData}
+          />
+        )}
+      </div>
     </div>
   );
 };

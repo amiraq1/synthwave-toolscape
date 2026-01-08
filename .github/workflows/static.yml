@@ -18,13 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          clean: true
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - run: npm ci
+      - name: Clean npm cache
+        run: npm cache clean --force
+
+      - run: npm ci --force
       
       - name: Verify Supabase Environment Variables
         run: |
