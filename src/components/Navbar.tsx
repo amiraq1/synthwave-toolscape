@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import LanguageToggle from '@/components/LanguageToggle';
 import NotificationsMenu from '@/components/NotificationsMenu';
 
@@ -210,97 +211,137 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation rounded-lg hover:bg-muted/50 transition-colors"
-            aria-label={mobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6 text-foreground" />
-            ) : (
-              <Menu className="h-6 w-6 text-foreground" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={cn(
-            "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-            mobileMenuOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"
-          )}
-        >
-          <div className="flex flex-col gap-3 py-4 border-t border-border/50">
-            {user && (
-              <div className="flex items-center gap-2 text-muted-foreground px-1 py-2">
-                <User className="h-4 w-4" />
-                <span className="text-sm truncate">{user.email}</span>
-              </div>
-            )}
-
-            <div className="flex justify-start px-1 mb-2">
-              <LanguageToggle />
-            </div>
-
-            {onAddClick && (
-              <Button
-                onClick={handleAddClick}
-                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2 py-6 text-base"
-              >
-                <Plus className="h-5 w-5" />
-                أضف أداة
-              </Button>
-            )}
-
-            <Button
-              onClick={() => { setMobileMenuOpen(false); navigate('/blog'); }}
-              variant="outline"
-              className="w-full gap-2 border-border/50 py-6 text-base"
-            >
-              المدونة
-            </Button>
-
-            {user ? (
-              <>
-                {isAdmin && (
-                  <Button
-                    onClick={handleAdminClick}
-                    variant="outline"
-                    className="w-full gap-2 border-neon-purple/50 text-neon-purple py-6 text-base"
-                  >
-                    <Shield className="h-5 w-5" />
-                    لوحة التحكم
-                  </Button>
-                )}
-                <Button
-                  onClick={handleSettingsClick}
-                  variant="outline"
-                  className="w-full gap-2 border-border/50 py-6 text-base"
-                >
-                  <Settings className="h-5 w-5" />
-                  الإعدادات
+          {/* Mobile Menu using Sheet */}
+          <div className="md:hidden">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="فتح القائمة">
+                  <Menu className="w-6 h-6" />
                 </Button>
-                <Button
-                  onClick={handleSignOut}
-                  variant="outline"
-                  className="w-full gap-2 border-destructive/50 text-destructive py-6 text-base"
-                >
-                  <LogOut className="h-5 w-5" />
-                  تسجيل الخروج
-                </Button>
-              </>
-            ) : (
-              <Button
-                onClick={handleAuthClick}
-                variant="outline"
-                className="w-full gap-2 border-border/50 py-6 text-base"
-              >
-                <LogIn className="h-5 w-5" />
-                تسجيل الدخول
-              </Button>
-            )}
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background/95 backdrop-blur-xl border-l border-border/50">
+                <div className="flex flex-col gap-6 py-8">
+
+                  {/* User Info in Mobile */}
+                  {user && (
+                    <div className="flex items-center gap-3 px-2 pb-4 border-b border-white/10">
+                      <div className="w-10 h-10 rounded-full bg-neon-purple/20 flex items-center justify-center text-neon-purple font-bold">
+                        {user.email?.[0]?.toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-white">{user.user_metadata?.full_name || "مستخدم"}</span>
+                        <span className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={() => { setMobileMenuOpen(false); navigate('/'); }}
+                      variant="ghost"
+                      className="justify-start gap-3 text-lg"
+                    >
+                      <Activity className="w-5 h-5 text-neon-purple" />
+                      {t('nav.home')}
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate('/');
+                        setTimeout(() => {
+                          document.getElementById('tools-heading')?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      }}
+                      variant="ghost"
+                      className="justify-start gap-3 text-lg"
+                    >
+                      <Settings className="w-5 h-5" />
+                      {t('nav.tools')}
+                    </Button>
+
+                    <Button
+                      onClick={() => { setMobileMenuOpen(false); navigate('/blog'); }}
+                      variant="ghost"
+                      className="justify-start gap-3 text-lg"
+                    >
+                      <span className="text-xl">📰</span>
+                      {t('nav.blog')}
+                    </Button>
+
+                    {user && (
+                      <Button
+                        onClick={() => { setMobileMenuOpen(false); navigate('/bookmarks'); }}
+                        variant="ghost"
+                        className="justify-start gap-3 text-lg"
+                      >
+                        <Heart className="w-5 h-5 text-rose-500" />
+                        المفضلة
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="h-px bg-white/10 my-2" />
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex justify-start px-2">
+                      <LanguageToggle />
+                    </div>
+
+                    {onAddClick && (
+                      <Button
+                        onClick={handleAddClick}
+                        className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity gap-2 py-6 text-base"
+                      >
+                        <Plus className="h-5 w-5" />
+                        أضف أداة
+                      </Button>
+                    )}
+
+                    {user ? (
+                      <>
+                        {isAdmin && (
+                          <Button
+                            onClick={handleAdminClick}
+                            variant="outline"
+                            className="w-full gap-2 border-neon-purple/50 text-neon-purple py-6 text-base"
+                          >
+                            <Shield className="h-5 w-5" />
+                            لوحة التحكم
+                          </Button>
+                        )}
+                        <Button
+                          onClick={handleSettingsClick}
+                          variant="outline"
+                          className="w-full gap-2 border-border/50 py-6 text-base"
+                        >
+                          <Settings className="h-5 w-5" />
+                          الإعدادات
+                        </Button>
+                        <Button
+                          onClick={handleSignOut}
+                          variant="outline"
+                          className="w-full gap-2 border-destructive/50 text-destructive py-6 text-base"
+                        >
+                          <LogOut className="h-5 w-5" />
+                          تسجيل الخروج
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={handleAuthClick}
+                        variant="outline"
+                        className="w-full gap-2 border-border/50 py-6 text-base"
+                      >
+                        <LogIn className="h-5 w-5" />
+                        {t('nav.login')}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
