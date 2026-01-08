@@ -32,6 +32,7 @@ const CompareFloatingBar = () => {
                         <button
                             onClick={clearCompare}
                             className="text-[10px] text-gray-400 hover:text-red-400 text-right underline"
+                            aria-label={isAr ? "إلغاء المقارنة" : "Cancel comparison"}
                         >
                             {isAr ? "إلغاء الكل" : "Clear all"}
                         </button>
