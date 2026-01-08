@@ -21,13 +21,13 @@ export const useBookmarks = () => {
         queryFn: async () => {
             if (!user) return [];
 
-            const { data, error } = await supabase
-                .from('bookmarks')
+            const { data, error } = await (supabase
+                .from('bookmarks' as any)
                 .select('tool_id')
-                .eq('user_id', user.id);
+                .eq('user_id', user.id) as any);
 
             if (error) throw error;
-            return data as { tool_id: number }[];
+            return (data || []) as { tool_id: number }[];
         },
         enabled: !!user,
     });
@@ -51,19 +51,19 @@ export const useBookmarks = () => {
 
             if (currentlyBookmarked) {
                 // Remove bookmark
-                const { error } = await supabase
-                    .from('bookmarks')
+                const { error } = await (supabase
+                    .from('bookmarks' as any)
                     .delete()
                     .eq('user_id', user.id)
-                    .eq('tool_id', id);
+                    .eq('tool_id', id) as any);
 
                 if (error) throw error;
                 return { action: 'removed', toolId: id };
             } else {
                 // Add bookmark
-                const { error } = await supabase
-                    .from('bookmarks')
-                    .insert({ user_id: user.id, tool_id: id });
+                const { error } = await (supabase
+                    .from('bookmarks' as any)
+                    .insert({ user_id: user.id, tool_id: id } as any) as any);
 
                 if (error) throw error;
                 return { action: 'added', toolId: id };
@@ -106,15 +106,15 @@ export const useBookmarkedTools = () => {
             if (!user) return [];
 
             // First get bookmarked tool IDs
-            const { data: bookmarks, error: bookmarksError } = await supabase
-                .from('bookmarks')
+            const { data: bookmarks, error: bookmarksError } = await (supabase
+                .from('bookmarks' as any)
                 .select('tool_id')
-                .eq('user_id', user.id);
+                .eq('user_id', user.id) as any);
 
             if (bookmarksError) throw bookmarksError;
             if (!bookmarks || bookmarks.length === 0) return [];
 
-            const toolIds = bookmarks.map((b: { tool_id: number }) => b.tool_id);
+            const toolIds = (bookmarks as { tool_id: number }[]).map((b) => b.tool_id);
 
             // Then fetch full tool data
             const { data: tools, error: toolsError } = await supabase

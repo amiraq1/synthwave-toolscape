@@ -15,7 +15,7 @@ interface ReviewData {
     created_at: string;
     rating: number;
     tools: { title: string } | null;
-    profiles: { full_name: string | null } | null;
+    profiles: { display_name: string | null } | null;
 }
 
 interface ToolData {
@@ -31,27 +31,26 @@ const LivePulse = () => {
             // 1. جلب آخر المراجعات
             const { data: reviews } = await supabase
                 .from("reviews")
-                .select("created_at, rating, tools(title), profiles(full_name)")
+                .select("created_at, rating, tools(title)")
                 .order("created_at", { ascending: false })
-                .limit(3);
+                .limit(3) as { data: ReviewData[] | null };
 
             // 2. جلب آخر الأدوات المضافة
             const { data: newTools } = await supabase
                 .from("tools")
                 .select("created_at, title")
-                .eq("is_published", true)
                 .order("created_at", { ascending: false })
-                .limit(3);
+                .limit(3) as { data: ToolData[] | null };
 
             // 3. دمج البيانات وتنسيقها
             const feed: Activity[] = [
-                ...((reviews as unknown as ReviewData[]) || []).map((r) => ({
+                ...(reviews || []).map((r) => ({
                     type: "review" as const,
-                    text: `قام ${r.profiles?.full_name || "مستخدم"} بتقييم ${r.tools?.title || "أداة"}`,
+                    text: `تقييم جديد على ${r.tools?.title || "أداة"}`,
                     icon: <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />,
                     time: r.created_at,
                 })),
-                ...((newTools as unknown as ToolData[]) || []).map((t) => ({
+                ...(newTools || []).map((t) => ({
                     type: "new_tool" as const,
                     text: `✨ أداة جديدة: ${t.title}`,
                     icon: <Zap className="w-3 h-3 text-neon-purple fill-neon-purple" />,

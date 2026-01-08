@@ -53,21 +53,16 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
           id,
           content,
           created_at,
-          user_id,
-          profiles:user_id (
-            id,
-            display_name,
-            avatar_url
-          )
+          user_id
         `)
                 .eq("post_id", postId)
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false }) as { data: any[] | null; error: any };
 
             if (error) throw error;
 
-            return data?.map((comment: any) => ({
+            return (data || []).map((comment: any) => ({
                 ...comment,
-                user: comment.profiles
+                user: { id: comment.user_id, display_name: null, avatar_url: null }
             })) as Comment[];
         },
     });
@@ -82,7 +77,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                     post_id: postId,
                     user_id: user.id,
                     content,
-                });
+                } as any);
             if (error) throw error;
         },
         onSuccess: () => {
@@ -108,7 +103,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             const { error } = await supabase
                 .from("post_comments")
                 .delete()
-                .eq("id", commentId);
+                .eq("id", commentId) as { error: any };
             if (error) throw error;
         },
         onSuccess: () => {

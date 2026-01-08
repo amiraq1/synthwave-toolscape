@@ -6,6 +6,31 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting: 20 requests per minute per user
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 20;
+
+// In-memory rate limit store (resets on function cold start, but provides immediate protection)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetIn: number } {
+    const now = Date.now();
+    const userLimit = rateLimitStore.get(userId);
+
+    if (!userLimit || now > userLimit.resetTime) {
+        // Reset or initialize
+        rateLimitStore.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+        return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+    }
+
+    if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
+        return { allowed: false, remaining: 0, resetIn: userLimit.resetTime - now };
+    }
+
+    userLimit.count++;
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - userLimit.count, resetIn: userLimit.resetTime - now };
+}
+
 serve(async (req: Request) => {
     // 1. Handle CORS pre-flight
     if (req.method === 'OPTIONS') {
@@ -13,18 +38,63 @@ serve(async (req: Request) => {
     }
 
     try {
-        const { query } = await req.json();
-        console.log("🟢 [Chat] Received query:", query);
-
-        // Public function: no authentication required.
-        // Calls from the web are allowed; if you want to restrict access later,
-        // re-enable an internal key check or require JWT-based Authorization.
+        // Authentication required to prevent abuse and quota exhaustion
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader?.startsWith('Bearer ')) {
+            return new Response(
+                JSON.stringify({ error: 'يجب تسجيل الدخول لاستخدام نبض AI' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
 
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
         if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in Secrets!");
+
+        // Verify user authentication
+        const authSupabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+            global: { headers: { Authorization: authHeader } }
+        });
+
+        const token = authHeader.replace('Bearer ', '');
+        const { data: claimsData, error: claimsError } = await authSupabase.auth.getClaims(token);
+        
+        if (claimsError || !claimsData?.claims) {
+            console.error("🔴 Auth error:", claimsError?.message);
+            return new Response(
+                JSON.stringify({ error: 'جلسة غير صالحة، يرجى تسجيل الدخول مجدداً' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const userId = claimsData.claims.sub as string;
+        console.log("✅ Authenticated user:", userId);
+
+        // Rate limiting check
+        const rateLimit = checkRateLimit(userId);
+        if (!rateLimit.allowed) {
+            console.warn(`⚠️ Rate limit exceeded for user: ${userId}`);
+            return new Response(
+                JSON.stringify({ 
+                    error: 'لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار قليلاً.',
+                    retryAfter: Math.ceil(rateLimit.resetIn / 1000)
+                }),
+                { 
+                    status: 429, 
+                    headers: { 
+                        ...corsHeaders, 
+                        'Content-Type': 'application/json',
+                        'Retry-After': String(Math.ceil(rateLimit.resetIn / 1000))
+                    } 
+                }
+            );
+        }
+        console.log(`📊 Rate limit: ${rateLimit.remaining} requests remaining`);
+
+        const { query } = await req.json();
+        console.log("🟢 [Chat] Received query:", query);
 
         // 2. Generate Embedding
         console.log("🔄 Generating embedding...");
