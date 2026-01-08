@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import TrendingTools from "@/components/TrendingTools";
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -29,6 +30,11 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
         backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)",
         backgroundSize: "32px 32px"
       }} />
+
+      {/* Trending Bar */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <TrendingTools />
+      </div>
 
       <div className="max-w-5xl mx-auto space-y-8 sm:space-y-10">
         {/* Badge */}
