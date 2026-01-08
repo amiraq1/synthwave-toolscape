@@ -180,7 +180,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                 {showOriginalImage ? (
                   <LazyImage
                     src={tool.image_url!}
-                    alt={tool.title}
+                    alt={displayTitle}
                     width={48}
                     height={48}
                     className="w-full h-full p-1.5 object-contain"
@@ -190,7 +190,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                   /* Priority 2: Google Favicon */
                   <img
                     src={faviconUrl}
-                    alt={tool.title}
+                    alt={displayTitle}
                     className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
                     loading="lazy"
                     onError={(e) => {

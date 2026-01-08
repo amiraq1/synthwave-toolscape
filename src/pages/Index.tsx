@@ -9,7 +9,7 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 import Footer from "@/components/Footer";
 import LivePulse from "@/components/LivePulse";
-import PersonaFilter, { filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
+import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useAuth } from "@/hooks/useAuth";
@@ -52,6 +52,32 @@ const Index = () => {
     const rawTools = data?.pages.flatMap(page => page) ?? [];
     return rawTools;
   }, [data]);
+
+  // 🧮 حساب العدادات لكل وظيفة
+  const personaCounts = useMemo(() => {
+    if (!tools || tools.length === 0) return {};
+
+    const counts: Record<string, number> = {};
+
+    // 1. حساب الكل
+    counts["all"] = tools.length;
+
+    // 2. حساب باقي الوظائف
+    PERSONAS.forEach((persona) => {
+      if (persona.id === 'all') return;
+
+      // نعد كم أداة تطابق تصنيفات هذه الوظيفة
+      const matchCount = tools.filter((t) =>
+        persona.categories.some((cat) =>
+          t.category?.toLowerCase().includes(cat.toLowerCase())
+        )
+      ).length;
+
+      counts[persona.id] = matchCount;
+    });
+
+    return counts;
+  }, [tools]); // يعيد الحساب فقط إذا تغيرت قائمة الأدوات
 
   // Apply combined filters: search + persona
   const filteredTools = useMemo(() => {
@@ -147,7 +173,11 @@ const Index = () => {
 
         {/* Persona Filter - أنا ... */}
         <div className="container mx-auto mb-6">
-          <PersonaFilter currentPersona={selectedPersona} onSelect={setSelectedPersona} />
+          <PersonaFilter
+            currentPersona={selectedPersona}
+            onSelect={(id) => setSelectedPersona(id as PersonaId)}
+            counts={personaCounts}
+          />
         </div>
 
         {/* Category Filters */}
