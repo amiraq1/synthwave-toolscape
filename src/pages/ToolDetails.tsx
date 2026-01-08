@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, ExternalLink, Loader2, CheckCircle2, Copy, Tag, Languages, Sparkles, Lightbulb, Target, DollarSign, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,23 +65,29 @@ const categoryGradients: Record<string, string> = {
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
+
   const { data: tool, isLoading, error } = useTool(id);
   const { recordClick } = useClickTracking();
 
+  const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
+  const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
+
   useSEO({
-    title: tool?.title,
-    description: tool?.description ? `${tool.description.slice(0, 150)}...` : undefined,
-    keywords: tool ? `${tool.title}، ${tool.category}، ذكاء اصطناعي، أدوات AI` : undefined,
-    ogTitle: tool?.title,
-    ogDescription: tool?.description,
+    title: displayTitle,
+    description: displayDescription ? `${displayDescription.slice(0, 150)}...` : undefined,
+    keywords: tool ? `${displayTitle}، ${tool.category}، ذكاء اصطناعي، أدوات AI` : undefined,
+    ogTitle: displayTitle,
+    ogDescription: displayDescription,
     ogImage: tool?.image_url || undefined,
     ogType: 'article',
   });
 
   useStructuredData(tool ? {
     type: 'software',
-    name: tool.title,
-    description: tool.description,
+    name: displayTitle || tool.title,
+    description: displayDescription || tool.description,
     url: tool.url,
     image: tool.image_url || undefined,
     category: tool.category,
@@ -108,7 +115,7 @@ const ToolDetails = () => {
 
   if (error || !tool) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir="rtl">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir={isAr ? "rtl" : "ltr"}>
         <p className="text-2xl text-destructive">لم يتم العثور على الأداة</p>
         <Button onClick={() => navigate('/')} variant="outline" className="gap-2">
           <ArrowRight className="h-4 w-4" />
@@ -121,7 +128,7 @@ const ToolDetails = () => {
   const gradient = categoryGradients[tool.category] || 'from-neon-purple to-neon-blue';
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
       {/* Background gradient orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -134,8 +141,8 @@ const ToolDetails = () => {
             variant="ghost"
             className="gap-2 text-muted-foreground hover:text-foreground"
           >
-            <ArrowRight className="h-5 w-5" />
-            العودة للرئيسية
+            <ArrowRight className={cn("h-5 w-5", !isAr && "rotate-180")} />
+            {isAr ? "العودة للرئيسية" : "Back to Home"}
           </Button>
         </div>
       </header>
@@ -152,7 +159,7 @@ const ToolDetails = () => {
             <div className="flex-1 space-y-4">
               <div className="flex items-center gap-4 flex-wrap">
                 <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                  {tool.title}
+                  {displayTitle}
                 </h1>
                 <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
               </div>
@@ -191,7 +198,7 @@ const ToolDetails = () => {
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground">نبذة عن الأداة</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              {tool.description}
+              {displayDescription}
             </p>
           </div>
 
@@ -424,7 +431,7 @@ const ToolDetails = () => {
                     {/* Current Tool */}
                     <TableRow className="bg-neon-purple/5 hover:bg-neon-purple/10 border-border/50">
                       <TableCell className="font-bold text-neon-purple">
-                        {tool.title} (الحالية)
+                        {displayTitle} (الحالية)
                       </TableCell>
                       <TableCell>{tool.pricing_type}</TableCell>
                       <TableCell>{tool.category}</TableCell>

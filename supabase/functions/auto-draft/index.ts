@@ -82,6 +82,10 @@ Output Format (JSON only, no markdown):
     const { data, error } = await supabase.from('tools').insert({
       title: toolData.title,
       description: toolData.description,
+
+      title_en: name,
+      description_en: description_en,
+
       url: url,
       category: toolData.category,
       pricing_type: toolData.pricing_type,

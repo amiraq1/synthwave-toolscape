@@ -3,7 +3,9 @@ export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'بر
 export interface Tool {
   id: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   category: string;
   pricing_type: string;
   url: string;
