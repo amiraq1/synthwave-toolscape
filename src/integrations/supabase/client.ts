@@ -2,8 +2,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://placeholder.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "placeholder-key";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://iazvsdwkbfzjhscyfvec.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhenZzZHdrYmZ6amhzY3lmdmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5ODE1MTgsImV4cCI6MjA4MjU1NzUxOH0.Hgcu4o9btWdxkhnA4BhQYpal_uoJ5gQn0dHYQoX4yyM";
 
 if (!SUPABASE_URL) {
   console.error('Missing VITE_SUPABASE_URL environment variable');
@@ -16,8 +16,8 @@ if (!SUPABASE_PUBLISHABLE_KEY) {
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(
-  SUPABASE_URL || 'https://ksdodojvchiybbqxfhcl.supabase.co',
-  SUPABASE_PUBLISHABLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZG9kb2p2Y2hpeWJicXhmaGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyMjczNzQsImV4cCI6MjA4MTgwMzM3NH0.aHyfrzZoNizRyi43PfqRRC4JsNGLTbTunEHXgkvRpM4',
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       storage: localStorage,
