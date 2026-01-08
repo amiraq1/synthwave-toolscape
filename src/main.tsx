@@ -7,17 +7,18 @@ import { HelmetProvider } from 'react-helmet-async';
 import * as Sentry from "@sentry/react";
 
 // دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
+// تعطيل Sentry مؤقتًا لعزل سبب الخطأ
 const initMonitoring = () => {
-    Sentry.init({
-        dsn: "https://93afb9202654e4183b0876bde628d4c4@o4510224060317696.ingest.us.sentry.io/4510676177649664",
-        integrations: [
-            Sentry.browserTracingIntegration(),
-            Sentry.replayIntegration(),
-        ],
-        tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
-        replaysOnErrorSampleRate: 1.0,
-    });
+    // Sentry.init({
+    //     dsn: "https://93afb9202654e4183b0876bde628d4c4@o4510224060317696.ingest.us.sentry.io/4510676177649664",
+    //     integrations: [
+    //         Sentry.browserTracingIntegration(),
+    //         Sentry.replayIntegration(),
+    //     ],
+    //     tracesSampleRate: 1.0,
+    //     replaysSessionSampleRate: 0.1,
+    //     replaysOnErrorSampleRate: 1.0,
+    // });
 };
 
 // استخدام requestIdleCallback لتأجيل التحميل
