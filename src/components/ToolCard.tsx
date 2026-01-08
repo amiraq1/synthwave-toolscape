@@ -67,6 +67,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
+  const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
+  const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
+
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const isSponsored = tool.is_sponsored === true;
   const supportsArabic = tool.supports_arabic === true;
@@ -214,9 +217,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
               <div>
                 <h3 className="text-lg font-bold text-white group-hover:text-neon-purple transition-colors line-clamp-1">
-                  {isAr ? tool.title : (tool.title_en || tool.title)}
+                  {displayTitle}
                 </h3>
-                {/* النجوم (يمكن ربطها بالتقييم الحقيقي لاحقاً) */}
                 <div className="flex items-center gap-2 mt-1">
                   <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
                 </div>
@@ -226,7 +228,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
           {/* الوصف */}
           <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2 flex-grow">
-            {isAr ? tool.description : (tool.description_en || tool.description)}
+            {displayDescription}
           </p>
 
           {/* المميزات (Badges) */}
