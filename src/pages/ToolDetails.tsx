@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, ExternalLink, Loader2, CheckCircle2, Copy, Tag, Languages, Sparkles, Lightbulb, Target, DollarSign, Zap } from 'lucide-react';
+import { ArrowRight, ExternalLink, Loader2, Tag, Sparkles, Lightbulb, DollarSign, Globe, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
+import SimilarTools from '@/components/SimilarTools';
 import { useSEO } from '@/hooks/useSEO';
 import { useStructuredData } from '@/hooks/useStructuredData';
 import {
@@ -16,56 +16,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useClickTracking } from '@/hooks/useClickTracking';
-
-// Component to handle tool icon with fallback
-const ToolIcon = ({ imageUrl, gradient }: { imageUrl: string | null; gradient: string }) => {
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <div className={cn(
-      "w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-5xl md:text-6xl shrink-0 overflow-hidden border border-white/20",
-      `bg-gradient-to-br ${gradient}`
-    )}>
-      {imageUrl && !imageError ? (
-        <img
-          src={imageUrl}
-          alt=""
-          width={144}
-          height={144}
-          loading="eager"
-          decoding="async"
-          className="w-full h-full object-contain p-4 bg-white/10 rounded-xl"
-          onError={() => setImageError(true)}
-        />
-      ) : (
-        <span>🤖</span>
-      )}
-    </div>
-  );
-};
-
-// Category gradient mapping
-const categoryGradients: Record<string, string> = {
-  'نصوص': 'from-emerald-500 to-teal-600',
-  'صور': 'from-purple-500 to-pink-600',
-  'فيديو': 'from-blue-500 to-cyan-600',
-  'برمجة': 'from-gray-600 to-gray-800',
-  'إنتاجية': 'from-amber-500 to-yellow-600',
-};
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
   const { data: tool, isLoading, error } = useTool(id);
@@ -116,16 +72,16 @@ const ToolDetails = () => {
   if (error || !tool) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir={isAr ? "rtl" : "ltr"}>
-        <p className="text-2xl text-destructive">لم يتم العثور على الأداة</p>
+        <p className="text-2xl text-destructive">
+          {isAr ? "لم يتم العثور على الأداة" : "Tool not found"}
+        </p>
         <Button onClick={() => navigate('/')} variant="outline" className="gap-2">
-          <ArrowRight className="h-4 w-4" />
-          العودة للرئيسية
+          <ArrowRight className={cn("h-4 w-4", !isAr && "rotate-180")} />
+          {isAr ? "العودة للرئيسية" : "Back to Home"}
         </Button>
       </div>
     );
   }
-
-  const gradient = categoryGradients[tool.category] || 'from-neon-purple to-neon-blue';
 
   return (
     <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
@@ -148,362 +104,176 @@ const ToolDetails = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto max-w-5xl px-4 py-12 space-y-12">
-        <div className="glass rounded-3xl p-8 md:p-12 space-y-8">
-          {/* Tool Header */}
-          <div className="flex flex-col md:flex-row items-start gap-8">
-            {/* Icon/Image */}
-            <ToolIcon imageUrl={tool.image_url} gradient={gradient} />
+      <div className="container mx-auto px-4 py-8 max-w-5xl animate-fade-in">
 
-            {/* Info */}
-            <div className="flex-1 space-y-4">
-              <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                  {displayTitle}
-                </h1>
-                <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Badge
-                  variant="secondary"
-                  className="bg-neon-purple/20 text-neon-purple border-neon-purple/30 text-base px-4 py-1"
-                >
-                  {tool.category}
-                </Badge>
-                <Badge
-                  variant="secondary"
-                  className={cn(
-                    "border text-base px-4 py-1",
-                    tool.pricing_type === 'مجاني'
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                      : "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                  )}
-                >
-                  {tool.pricing_type}
-                </Badge>
-                {tool.is_featured && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-base px-4 py-1"
-                  >
-                    ⭐ مميز
-                  </Badge>
-                )}
-              </div>
+        {/* 1. رأس الصفحة (Header) */}
+        <div className="flex flex-col md:flex-row gap-8 mb-10">
+          {/* صورة / أيقونة الأداة */}
+          <div className="w-full md:w-1/3">
+            <div className="aspect-video bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden relative group">
+              {tool.image_url ? (
+                <img
+                  src={tool.image_url}
+                  alt={displayTitle}
+                  className="w-full h-full object-contain p-4"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-neon-purple/20 to-transparent" />
+                  <h1 className="text-6xl font-bold text-white/10 group-hover:text-neon-purple/20 transition-colors">
+                    {displayTitle?.charAt(0)}
+                  </h1>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground">نبذة عن الأداة</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+          {/* معلومات الأداة + الملخص السريع */}
+          <div className="w-full md:w-2/3 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+              <h1 className="text-4xl font-bold text-white">{displayTitle}</h1>
+              <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
+            </div>
+
+            <p className="text-xl text-gray-300 mb-6 leading-relaxed">
               {displayDescription}
             </p>
+
+            {/* Quick Summary Boxes */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
+                <DollarSign className="w-5 h-5 mx-auto mb-1 text-green-400" />
+                <span className="text-xs text-gray-400 block">{isAr ? "السعر" : "Price"}</span>
+                <span className="font-bold text-sm text-white">{tool.pricing_type}</span>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
+                <Tag className="w-5 h-5 mx-auto mb-1 text-blue-400" />
+                <span className="text-xs text-gray-400 block">{isAr ? "التصنيف" : "Category"}</span>
+                <span className="font-bold text-sm text-white">{tool.category}</span>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
+                <Globe className="w-5 h-5 mx-auto mb-1 text-purple-400" />
+                <span className="text-xs text-gray-400 block">{isAr ? "الموقع" : "Website"}</span>
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordClick(tool.id)}
+                  className="font-bold text-sm text-neon-purple hover:underline"
+                >
+                  {isAr ? "زيارة ↗" : "Visit ↗"}
+                </a>
+              </div>
+              {tool.is_featured && (
+                <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
+                  <Sparkles className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
+                  <span className="text-xs text-gray-400 block">{isAr ? "الحالة" : "Status"}</span>
+                  <span className="font-bold text-sm text-yellow-400">{isAr ? "⭐ مميز" : "⭐ Featured"}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 2. المميزات والمحتوى */}
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="md:col-span-2 space-y-8">
+            {/* Features Section */}
+            {tool.features && tool.features.length > 0 && (
+              <div>
+                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <Check className="text-neon-purple" />
+                  {isAr ? "المميزات الرئيسية" : "Key Features"}
+                </h3>
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <ul className="space-y-4">
+                    {tool.features.map((feature: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-neon-purple/20 flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="w-3 h-3 text-neon-purple" />
+                        </div>
+                        <span className="text-gray-300">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {/* FAQs Section */}
+            {tool.faqs && tool.faqs.length > 0 && (
+              <div>
+                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <Lightbulb className="text-neon-purple" />
+                  {isAr ? "الأسئلة الشائعة" : "FAQ"}
+                </h3>
+                <Accordion type="single" collapsible className="space-y-3">
+                  {tool.faqs.map((faq, idx) => (
+                    <AccordionItem
+                      key={idx}
+                      value={`faq-${idx}`}
+                      className="bg-white/5 border border-white/10 rounded-xl px-6"
+                    >
+                      <AccordionTrigger className="text-foreground hover:no-underline py-4">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground pb-4">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            )}
+
+            {/* Reviews Section */}
+            <div className="glass rounded-2xl p-6 md:p-8">
+              <ReviewSection toolId={tool.id} />
+            </div>
           </div>
 
-          {/* Coupon Code Section */}
-          {tool.coupon_code && (!tool.deal_expiry || new Date(tool.deal_expiry) > new Date()) && (
-            <div className="bg-gradient-to-r from-rose-500/10 to-pink-500/10 border-2 border-dashed border-rose-500/30 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
-                  <Tag className="w-5 h-5 text-rose-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-rose-400">عرض حصري!</h3>
-                  <p className="text-sm text-muted-foreground">استخدم الكود للحصول على خصم</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <code className="flex-1 bg-background/50 border border-rose-500/20 rounded-xl px-4 py-3 text-lg font-mono text-center text-rose-300 tracking-wider">
-                  {tool.coupon_code}
-                </code>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-12 w-12 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl"
-                  onClick={() => {
-                    navigator.clipboard.writeText(tool.coupon_code || '');
-                    // You can add a toast here
-                  }}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* CTA Button */}
+            <div className="bg-gradient-to-br from-neon-purple/10 to-neon-blue/10 rounded-xl p-6 border border-white/10 sticky top-24">
+              <h4 className="font-bold text-lg mb-3 text-white">
+                {isAr ? "جرب الأداة الآن" : "Try this tool now"}
+              </h4>
+              <Button
+                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 text-white font-bold py-3 gap-2"
+                asChild
+              >
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordClick(tool.id)}
                 >
-                  <Copy className="w-5 h-5" />
-                </Button>
-              </div>
-              {tool.deal_expiry && (
+                  <ExternalLink className="h-4 w-4" />
+                  {isAr ? "زيارة الموقع" : "Visit Website"}
+                </a>
+              </Button>
+              {tool.pricing_type !== 'مجاني' && (
                 <p className="text-xs text-muted-foreground mt-3 text-center">
-                  ⏰ ينتهي العرض: {new Date(tool.deal_expiry).toLocaleDateString('ar-SA')}
+                  {isAr
+                    ? "* قد يتطلب التسجيل بطاقة ائتمان"
+                    : "* May require credit card for signup"
+                  }
                 </p>
               )}
             </div>
-          )}
 
-          {/* Arabic Support Notice */}
-          {tool.supports_arabic && (
-            <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-              <Languages className="w-5 h-5 text-emerald-400" />
-              <span className="text-emerald-400 font-medium">هذه الأداة تدعم اللغة العربية بالكامل 🇸🇦</span>
+            {/* Ad Space Placeholder */}
+            <div className="bg-black/40 rounded-xl p-6 border border-white/5 text-center">
+              <p className="text-gray-500 text-sm">{isAr ? "مساحة إعلانية" : "Ad Space"}</p>
             </div>
-          )}
-
-          {/* Screenshots Gallery */}
-          {tool.screenshots && tool.screenshots.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground">لقطات الشاشة</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {tool.screenshots.map((shot, index) => (
-                  <div
-                    key={index}
-                    className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/20 aspect-video"
-                  >
-                    <img
-                      src={shot}
-                      alt={`لقطة شاشة ${index + 1} لـ ${tool.title}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Video Demonstration */}
-          {tool.video_url && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground">فيديو توضيحي</h2>
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-border/60 bg-black/20 shadow-xl">
-                <iframe
-                  src={tool.video_url}
-                  title={`Video demonstration for ${tool.title}`}
-                  className="absolute top-0 left-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Features */}
-          {tool.features && tool.features.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Zap className="w-6 h-6 text-amber-400" />
-                أهم المميزات
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {tool.features.map((feature, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center gap-3 p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-muted-foreground"
-                  >
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Use Cases / Tasks - UPDATED SECTION */}
-          {tool.tasks && tool.tasks.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
-                <Target className="text-neon-purple w-6 h-6" />
-                كيف تستفيد من هذه الأداة؟
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {tool.tasks.map((task, idx) => (
-                  <div key={idx} className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center gap-3 hover:bg-white/10 transition-colors">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                    <span className="text-muted-foreground">{task}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Pricing Details - UPDATED SECTION */}
-          {(tool.pricing_details || tool.pricing_type) && (
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
-                <DollarSign className="text-green-400 w-6 h-6" />
-                باقات الاشتراك
-              </h3>
-
-              {tool.pricing_details ? (
-                // Display Detailed Pricing from DB JSON
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Free Plan */}
-                  {tool.pricing_details.free && (
-                    <div className="bg-white/5 p-5 rounded-xl border border-white/10 hover:border-emerald-500/30 transition-colors">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-2xl">🆓</span>
-                        <h4 className="font-bold text-lg text-emerald-400">مجاني</h4>
-                      </div>
-                      <ul className="space-y-2 text-sm text-gray-300">
-                        {tool.pricing_details.free.features?.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                            {f}
-                          </li>
-                        ))}
-                        {tool.pricing_details.free.limits && (
-                          <li className="text-xs text-muted-foreground mt-2 border-t border-white/10 pt-2">
-                            الحدود: {tool.pricing_details.free.limits}
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Pro Plan */}
-                  {tool.pricing_details.pro && (
-                    <div className="bg-neon-purple/10 p-5 rounded-xl border border-neon-purple/30 relative hover:border-neon-purple/60 transition-colors">
-                      <div className="absolute top-0 right-0 bg-neon-purple text-white text-xs px-2 py-1 rounded-bl-lg rounded-tr-lg font-bold">موصى به</div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-2xl">⭐</span>
-                        <h4 className="font-bold text-lg text-neon-purple">احترافي</h4>
-                      </div>
-                      <p className="text-2xl font-bold mb-3 text-white">{tool.pricing_details.pro.price}</p>
-                      <ul className="space-y-2 text-sm text-gray-300">
-                        {tool.pricing_details.pro.features?.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-neon-purple shrink-0" />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Enterprise Plan */}
-                  {tool.pricing_details.enterprise && (
-                    <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 p-5 rounded-xl border border-purple-500/30 hover:border-purple-500/50 transition-colors">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-2xl">🏢</span>
-                        <h4 className="font-bold text-lg text-purple-400">للشركات</h4>
-                      </div>
-                      <ul className="space-y-2 text-sm text-gray-300">
-                        {tool.pricing_details.enterprise.features?.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
-                      {tool.pricing_details.enterprise.contact && (
-                        <Button variant="outline" size="sm" className="w-full mt-4 border-purple-500/30 hover:bg-purple-500/10">
-                          تواصل معنا
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // Fallback to Generic Pricing Cards based on pricing_type (Old Design Refined)
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className={cn("p-5 rounded-2xl border", tool.pricing_type === 'مجاني' ? "bg-emerald-500/10 border-emerald-500/30" : "bg-muted/30 border-border/50")}>
-                    <h3 className="font-bold text-lg mb-2">نوع التسعير</h3>
-                    <p className="text-2xl font-bold text-foreground">{tool.pricing_type}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Comparison Table (Alternatives) */}
-          {tool.alternatives && tool.alternatives.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground">مقارنة مع البدائل</h2>
-              <div className="border border-border/50 rounded-xl overflow-hidden glass">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-white/5 border-border/50">
-                      <TableHead className="text-right">الأداة</TableHead>
-                      <TableHead className="text-right">السعر</TableHead>
-                      <TableHead className="text-right">التصنيف</TableHead>
-                      <TableHead className="text-right">التقييم</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {/* Current Tool */}
-                    <TableRow className="bg-neon-purple/5 hover:bg-neon-purple/10 border-border/50">
-                      <TableCell className="font-bold text-neon-purple">
-                        {displayTitle} (الحالية)
-                      </TableCell>
-                      <TableCell>{tool.pricing_type}</TableCell>
-                      <TableCell>{tool.category}</TableCell>
-                      <TableCell>⭐ {tool.average_rating || '-'}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          )}
-
-          {/* FAQ Section */}
-          {tool.faqs && tool.faqs.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-foreground">الأسئلة الشائعة</h2>
-              <Accordion type="single" collapsible className="w-full">
-                {tool.faqs.map((faq, index) => (
-                  <AccordionItem key={index} value={`item-${index}`} className="border-b border-border/50">
-                    <AccordionTrigger className="text-lg font-medium hover:text-neon-purple hover:no-underline">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground text-base leading-relaxed">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          )}
-
-          {/* Smart CTA Button */}
-          <div className="pt-6">
-            <Button
-              asChild
-              size="lg"
-              className={cn(
-                "w-full md:w-auto gap-3 text-lg px-8 py-6 shadow-xl transition-all duration-300 hover:scale-105",
-                tool.pricing_type === 'مجاني'
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 shadow-emerald-500/20"
-                  : tool.pricing_type === 'تجربة مجانية'
-                    ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-amber-500/20"
-                    : "bg-gradient-to-r from-neon-purple to-neon-blue hover:from-neon-purple/80 hover:to-neon-blue/80 shadow-neon-purple/20"
-              )}
-            >
-              <a
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => recordClick(tool.id)}
-              >
-                {tool.pricing_type === 'مجاني' ? (
-                  <>جرب الأداة مجاناً <ExternalLink className="h-5 w-5" /></>
-                ) : tool.pricing_type === 'تجربة مجانية' ? (
-                  <>ابدأ التجربة المجانية <Sparkles className="h-5 w-5" /></>
-                ) : (
-                  <>زيارة الموقع الرسمي <ExternalLink className="h-5 w-5" /></>
-                )}
-              </a>
-            </Button>
-            {tool.pricing_type !== 'مجاني' && (
-              <p className="text-xs text-muted-foreground mt-3 mr-2">
-                * قد يتطلب التسجيل بطاقة ائتمان في بعض المواقع
-              </p>
-            )}
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <div className="glass rounded-3xl p-8 md:p-12">
-          <ReviewSection toolId={tool.id} />
-        </div>
-      </main>
+        {/* 3. Similar Tools */}
+        <SimilarTools currentToolId={tool.id} category={tool.category} />
+
+      </div>
     </div>
   );
 };
