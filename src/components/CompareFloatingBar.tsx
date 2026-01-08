@@ -1,48 +1,46 @@
 import { useCompare } from "@/context/CompareContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, Scale } from "lucide-react";
+import { ArrowRight, ArrowLeft, Scale } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const CompareFloatingBar = () => {
     const { selectedTools, clearCompare } = useCompare();
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
+    const Arrow = isAr ? ArrowLeft : ArrowRight;
 
     if (selectedTools.length === 0) return null;
 
     return (
-        <div
-            className={cn(
-                "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4",
-                "animate-fade-in"
-            )}
-        >
-            <div className="bg-black/80 backdrop-blur-xl border border-neon-purple/50 rounded-full p-3 shadow-[0_0_30px_rgba(124,58,237,0.3)] flex items-center justify-between">
-                {/* Left Side - Info */}
-                <div className="flex items-center gap-3 px-2">
-                    <div className="flex items-center gap-2">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 animate-in slide-in-from-bottom-5 duration-300">
+            <div
+                className="bg-[#1a1a2e]/90 backdrop-blur-xl border border-neon-purple/50 rounded-full p-2 pl-6 shadow-[0_0_30px_rgba(124,58,237,0.3)] flex items-center justify-between"
+                dir={isAr ? "rtl" : "ltr"}
+            >
+                <div className="flex items-center gap-3">
+                    <div className="bg-neon-purple/20 p-2 rounded-full">
                         <Scale className="w-4 h-4 text-neon-purple" />
-                        <span className="text-white font-bold text-sm">
-                            {selectedTools.length} أدوات محددة
-                        </span>
                     </div>
-                    <button
-                        onClick={clearCompare}
-                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition-colors"
-                        aria-label="إلغاء المقارنة"
-                    >
-                        <X className="w-3 h-3" />
-                        إلغاء
-                    </button>
+                    <div className="flex flex-col">
+                        <span className="text-white font-bold text-sm">
+                            {isAr
+                                ? `${selectedTools.length} أدوات محددة`
+                                : `${selectedTools.length} tools selected`
+                            }
+                        </span>
+                        <button
+                            onClick={clearCompare}
+                            className="text-[10px] text-gray-400 hover:text-red-400 text-right underline"
+                        >
+                            {isAr ? "إلغاء الكل" : "Clear all"}
+                        </button>
+                    </div>
                 </div>
 
-                {/* Right Side - Compare Button */}
-                <Link to={`/compare?tools=${selectedTools.join(',')}`}>
-                    <Button
-                        size="sm"
-                        className="bg-neon-purple hover:bg-neon-purple/80 rounded-full px-6 gap-2"
-                    >
-                        مقارنة
-                        <ArrowLeft className="w-4 h-4" />
+                <Link to="/compare">
+                    <Button size="sm" className="bg-neon-purple hover:bg-neon-purple/80 rounded-full px-6 h-9">
+                        {isAr ? "مقارنة" : "Compare"} <Arrow className="w-4 h-4 mr-2" />
                     </Button>
                 </Link>
             </div>

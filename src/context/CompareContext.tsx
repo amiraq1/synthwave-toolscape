@@ -1,20 +1,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
+import i18n from "@/i18n";
 
 interface CompareContextType {
     selectedTools: string[];
     addToCompare: (id: string) => void;
     removeFromCompare: (id: string) => void;
     clearCompare: () => void;
-    isInCompare: (id: string) => boolean;
 }
 
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
 export const CompareProvider = ({ children }: { children: ReactNode }) => {
-    // استرجاع البيانات المحفوظة من LocalStorage إن وجدت
+    const isAr = i18n.language === 'ar';
+
+    // استرجاع البيانات من LocalStorage لتبقى الاختيارات حتى بعد التحديث
     const [selectedTools, setSelectedTools] = useState<string[]>(() => {
-        if (typeof window === "undefined") return [];
         const saved = localStorage.getItem("compare_tools");
         return saved ? JSON.parse(saved) : [];
     });
@@ -24,40 +25,28 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
     }, [selectedTools]);
 
     const addToCompare = (id: string) => {
+        const currentIsAr = i18n.language === 'ar';
+
         if (selectedTools.includes(id)) {
-            toast.error("هذه الأداة مضافة للمقارنة بالفعل");
+            toast.error(currentIsAr ? "هذه الأداة موجودة في القائمة بالفعل" : "This tool is already in the list");
             return;
         }
         if (selectedTools.length >= 3) {
-            toast.error("يمكنك مقارنة 3 أدوات كحد أقصى حالياً");
+            toast.error(currentIsAr ? "يمكنك مقارنة 3 أدوات كحد أقصى" : "You can compare up to 3 tools max");
             return;
         }
         setSelectedTools([...selectedTools, id]);
-        toast.success("تمت الإضافة للمقارنة 🆚");
+        toast.success(currentIsAr ? "تمت الإضافة للمقارنة ⚖️" : "Added to compare ⚖️");
     };
 
     const removeFromCompare = (id: string) => {
         setSelectedTools(selectedTools.filter((itemId) => itemId !== id));
-        toast.info("تمت الإزالة من المقارنة");
     };
 
-    const clearCompare = () => {
-        setSelectedTools([]);
-        toast.info("تم مسح قائمة المقارنة");
-    };
-
-    const isInCompare = (id: string) => selectedTools.includes(id);
+    const clearCompare = () => setSelectedTools([]);
 
     return (
-        <CompareContext.Provider
-            value={{
-                selectedTools,
-                addToCompare,
-                removeFromCompare,
-                clearCompare,
-                isInCompare
-            }}
-        >
+        <CompareContext.Provider value={{ selectedTools, addToCompare, removeFromCompare, clearCompare }}>
             {children}
         </CompareContext.Provider>
     );
@@ -65,8 +54,6 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
 
 export const useCompare = () => {
     const context = useContext(CompareContext);
-    if (!context) {
-        throw new Error("useCompare must be used within a CompareProvider");
-    }
+    if (!context) throw new Error("useCompare must be used within a CompareProvider");
     return context;
 };

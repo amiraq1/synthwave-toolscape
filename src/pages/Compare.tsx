@@ -2,21 +2,16 @@ import { useEffect, useState } from "react";
 import { useCompare } from "@/context/CompareContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { Check, X, Loader2, Star, ArrowRight } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { useSEO } from "@/hooks/useSEO";
-import type { Tool } from "@/hooks/useTools";
+import { Check, X, Loader2, ExternalLink, Scale } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const ComparePage = () => {
-    useSEO({
-        title: "مقارنة الأدوات",
-        description: "قارن بين أدوات الذكاء الاصطناعي المختلفة واختر الأنسب لاحتياجاتك",
-    });
-
-    const { selectedTools, removeFromCompare, clearCompare } = useCompare();
-    const [tools, setTools] = useState<Tool[]>([]);
+    const { selectedTools, removeFromCompare } = useCompare();
+    const [tools, setTools] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,193 +24,146 @@ const ComparePage = () => {
             const { data } = await supabase
                 .from("tools")
                 .select("*")
-                .in("id", selectedTools.map(id => parseInt(id, 10)));
+                .in("id", selectedTools);
 
-            if (data) {
-                // Transform data to match Tool interface
-                const transformedData = data.map(item => ({
-                    ...item,
-                    id: String(item.id),
-                })) as unknown as Tool[];
-                setTools(transformedData);
-            }
+            if (data) setTools(data);
             setLoading(false);
         };
         fetchData();
     }, [selectedTools]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-background">
-                <Navbar />
-                <div className="flex justify-center items-center p-20">
-                    <Loader2 className="w-8 h-8 animate-spin text-neon-purple" />
-                </div>
-            </div>
-        );
-    }
+    if (loading) return (
+        <div className="flex justify-center p-20">
+            <Loader2 className="animate-spin text-neon-purple" />
+        </div>
+    );
 
-    if (tools.length === 0) {
-        return (
-            <div className="min-h-screen bg-background">
-                <Navbar />
-                <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-4">
-                    <div className="text-6xl mb-4">⚖️</div>
-                    <h2 className="text-2xl font-bold mb-4 text-white">لم تختر أي أدوات للمقارنة</h2>
-                    <p className="text-gray-400 mb-6">اختر حتى 3 أدوات من الصفحة الرئيسية للمقارنة بينها</p>
-                    <Link
-                        to="/"
-                        className="flex items-center gap-2 bg-neon-purple hover:bg-neon-purple/80 text-white px-6 py-3 rounded-full transition-colors"
-                    >
-                        <ArrowRight className="w-4 h-4" />
-                        تصفح الأدوات
-                    </Link>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
+    if (tools.length === 0) return (
+        <div className="min-h-screen flex flex-col items-center justify-center text-center p-4" dir={isAr ? "rtl" : "ltr"}>
+            <Scale className="w-16 h-16 text-gray-600 mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-white">
+                {isAr ? "لم تختر أي أدوات للمقارنة" : "No tools selected for comparison"}
+            </h2>
+            <p className="text-gray-400 mb-6">
+                {isAr
+                    ? "اضغط على أيقونة الميزان ⚖️ في بطاقات الأدوات لإضافتها هنا."
+                    : "Click the scale icon ⚖️ on tool cards to add them here."
+                }
+            </p>
+            <Link to="/">
+                <Button>{isAr ? "تصفح الأدوات" : "Browse Tools"}</Button>
+            </Link>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-background">
-            <Navbar />
+        <div className="container mx-auto px-4 py-12 min-h-screen" dir={isAr ? "rtl" : "ltr"}>
+            <h1 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3">
+                <Scale className="text-neon-purple" />
+                {isAr ? "مقارنة الأدوات" : "Compare Tools"}
+            </h1>
 
-            <div className="container mx-auto px-4 py-12">
-                {/* Header */}
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
-                        مقارنة الأدوات ⚔️
-                    </h1>
-                    <p className="text-gray-400">
-                        قارن بين {tools.length} أدوات لاختيار الأنسب لك
-                    </p>
-                    <button
-                        onClick={clearCompare}
-                        className="mt-4 text-sm text-gray-500 hover:text-red-400 underline transition-colors"
-                    >
-                        مسح المقارنة
-                    </button>
-                </div>
-
-                {/* Comparison Table */}
-                <div className="overflow-x-auto rounded-2xl border border-white/10">
-                    <table className="w-full min-w-[600px] border-collapse">
-                        <thead>
-                            <tr>
-                                <th className="p-4 w-1/4 bg-white/5 border-b border-white/10"></th>
-                                {tools.map(tool => (
-                                    <th
-                                        key={tool.id}
-                                        className="p-4 min-w-[200px] bg-white/5 border-b border-white/10 relative"
-                                    >
+            <div className="overflow-x-auto pb-10">
+                <table className={`w-full min-w-[800px] border-collapse ${isAr ? 'text-right' : 'text-left'}`}>
+                    <thead>
+                        <tr>
+                            <th className="p-4 w-1/4"></th>
+                            {tools.map(tool => {
+                                const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
+                                return (
+                                    <th key={tool.id} className="p-4 w-1/4 min-w-[220px] bg-white/5 border border-white/10 rounded-t-xl relative align-top">
                                         <button
                                             onClick={() => removeFromCompare(tool.id)}
-                                            className="absolute top-2 right-2 p-1 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
-                                            aria-label="إزالة من المقارنة"
+                                            className="absolute top-2 left-2 text-gray-500 hover:text-red-500 p-1 bg-black/20 rounded-full"
+                                            title={isAr ? "إزالة" : "Remove"}
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
-                                        <h3 className="text-xl font-bold text-neon-purple mb-2">{tool.title}</h3>
-                                        <span className="text-xs bg-white/10 px-2 py-1 rounded-full text-gray-300">
-                                            {tool.category}
-                                        </span>
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="text-gray-300">
-                            {/* السعر */}
-                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 font-bold text-white bg-white/5">💰 السعر</td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 text-center">
-                                        <span className={`font-semibold ${tool.pricing_type === 'مجاني' ? 'text-emerald-400' : 'text-amber-400'
-                                            }`}>
-                                            {tool.pricing_type}
-                                        </span>
-                                    </td>
-                                ))}
-                            </tr>
 
-                            {/* التقييم */}
-                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 font-bold text-white bg-white/5">⭐ التقييم</td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 text-center">
-                                        <div className="flex items-center justify-center gap-1 text-yellow-400">
-                                            <Star className="w-4 h-4 fill-yellow-400" />
-                                            <span>{tool.average_rating?.toFixed(1) || '--'}/5</span>
-                                            {tool.reviews_count && (
-                                                <span className="text-gray-500 text-xs">({tool.reviews_count})</span>
-                                            )}
+                                        <div className="mt-4 text-center">
+                                            <div className="w-12 h-12 mx-auto bg-neon-purple/20 rounded-lg flex items-center justify-center text-neon-purple font-bold text-xl mb-3 border border-neon-purple/30">
+                                                {displayTitle.charAt(0)}
+                                            </div>
+                                            <h3 className="text-xl font-bold text-white mb-1">{displayTitle}</h3>
+                                            <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded-full">{tool.category}</span>
                                         </div>
-                                    </td>
-                                ))}
-                            </tr>
+                                    </th>
+                                );
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody className="text-gray-300">
+                        {/* Pricing Type */}
+                        <tr className="border-b border-white/5 hover:bg-white/5">
+                            <td className="p-4 font-bold text-white bg-white/5">
+                                {isAr ? "نوع السعر" : "Pricing"}
+                            </td>
+                            {tools.map(tool => (
+                                <td key={tool.id} className="p-4 text-center">
+                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${tool.pricing_type === 'مجاني' ? 'bg-green-500/10 text-green-400' :
+                                            tool.pricing_type === 'مدفوع' ? 'bg-orange-500/10 text-orange-400' : 'bg-blue-500/10 text-blue-400'
+                                        }`}>
+                                        {tool.pricing_type}
+                                    </span>
+                                </td>
+                            ))}
+                        </tr>
 
-                            {/* دعم العربية */}
-                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 font-bold text-white bg-white/5">🌍 دعم العربية</td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 text-center">
-                                        {tool.supports_arabic ? (
-                                            <Check className="w-5 h-5 text-emerald-400 mx-auto" />
-                                        ) : (
-                                            <X className="w-5 h-5 text-red-400 mx-auto" />
-                                        )}
+                        {/* Description */}
+                        <tr className="border-b border-white/5 hover:bg-white/5">
+                            <td className="p-4 font-bold text-white bg-white/5 align-top">
+                                {isAr ? "الوصف" : "Description"}
+                            </td>
+                            {tools.map(tool => {
+                                const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
+                                return (
+                                    <td key={tool.id} className="p-4 text-sm leading-relaxed align-top">
+                                        {displayDescription}
                                     </td>
-                                ))}
-                            </tr>
+                                );
+                            })}
+                        </tr>
 
-                            {/* المميزات */}
-                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 font-bold text-white bg-white/5 align-top">✨ أهم المميزات</td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 align-top">
-                                        <ul className="space-y-2 text-sm text-right">
-                                            {tool.features?.slice(0, 5).map((feat, i) => (
-                                                <li key={i} className="flex items-start gap-2">
-                                                    <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                                    <span>{feat}</span>
-                                                </li>
-                                            )) || (
-                                                    <span className="text-gray-500">لا توجد مميزات</span>
-                                                )}
-                                        </ul>
-                                    </td>
-                                ))}
-                            </tr>
+                        {/* Features */}
+                        <tr className="border-b border-white/5 hover:bg-white/5">
+                            <td className="p-4 font-bold text-white bg-white/5 align-top">
+                                {isAr ? "المميزات" : "Features"}
+                            </td>
+                            {tools.map(tool => (
+                                <td key={tool.id} className="p-4 align-top">
+                                    <ul className="space-y-2 text-sm">
+                                        {tool.features?.map((feat: string, i: number) => (
+                                            <li key={i} className="flex items-start gap-2">
+                                                <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                                                <span>{feat}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </td>
+                            ))}
+                        </tr>
 
-                            {/* الوصف */}
-                            <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-4 font-bold text-white bg-white/5 align-top">📝 الوصف</td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 text-sm text-gray-400 align-top">
-                                        {tool.description}
-                                    </td>
-                                ))}
-                            </tr>
-
-                            {/* زر التفاصيل */}
-                            <tr>
-                                <td className="p-4 bg-transparent"></td>
-                                {tools.map(tool => (
-                                    <td key={tool.id} className="p-4 text-center">
-                                        <Link
-                                            to={`/tool/${tool.id}`}
-                                            className="block w-full py-3 bg-white/10 hover:bg-neon-purple rounded-xl transition-colors text-white text-sm font-medium"
-                                        >
-                                            عرض التفاصيل
-                                        </Link>
-                                    </td>
-                                ))}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        {/* Actions */}
+                        <tr>
+                            <td className="p-4 bg-transparent"></td>
+                            {tools.map(tool => (
+                                <td key={tool.id} className="p-4 text-center">
+                                    <Link to={`/tool/${tool.id}`}>
+                                        <Button variant="outline" className="w-full mb-2 border-white/10 hover:bg-white/5">
+                                            {isAr ? "التفاصيل" : "Details"}
+                                        </Button>
+                                    </Link>
+                                    <a href={tool.url} target="_blank" rel="noreferrer">
+                                        <Button className="w-full bg-neon-purple hover:bg-neon-purple/80">
+                                            {isAr ? "زيارة الموقع" : "Visit Site"} <ExternalLink className="w-3 h-3 mr-2" />
+                                        </Button>
+                                    </a>
+                                </td>
+                            ))}
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <Footer />
         </div>
     );
 };
