@@ -10,6 +10,7 @@ const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 import Footer from "@/components/Footer";
 import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
+import RecommendedForYou from "@/components/RecommendedForYou";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useAuth } from "@/hooks/useAuth";
@@ -179,6 +180,9 @@ const Index = () => {
             counts={personaCounts}
           />
         </div>
+
+        {/* Recommended For You - يظهر فقط للمستخدمين المسجلين */}
+        <RecommendedForYou />
 
         {/* Category Filters */}
         <section

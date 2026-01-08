@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import LanguageToggle from '@/components/LanguageToggle';
+import NotificationsMenu from '@/components/NotificationsMenu';
 
 interface NavbarProps {
   onAddClick?: () => void;
@@ -114,6 +115,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             <div className="h-6 w-px bg-border/50 mx-2" /> {/* Divider */}
 
             <LanguageToggle />
+            <NotificationsMenu />
 
             {/* Bookmarks - only for logged in users */}
             {user && (
