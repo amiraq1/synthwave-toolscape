@@ -42,7 +42,7 @@ const Footer = () => {
               <a
                 href="mailto:contact@amiraq.org"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="البريد الإلكتروني"
+                aria-label="أرسل لنا بريدًا إلكترونيًا"
               >
                 <Mail className="h-4 w-4 text-muted-foreground" />
               </a>
@@ -51,7 +51,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="تويتر"
+                aria-label="تابعنا على تويتر"
               >
                 <Twitter className="h-4 w-4 text-muted-foreground" />
               </a>
@@ -60,7 +60,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
-                aria-label="جيت هب"
+                aria-label="رابط المستودع على جيت هب"
               >
                 <Github className="h-4 w-4 text-muted-foreground" />
               </a>
