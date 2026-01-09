@@ -14,43 +14,39 @@ import 'reactflow/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { Plus, Play, Save } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import AINode from '@/components/workflow/AINode';
+
+const nodeTypes = {
+    aiNode: AINode,
+};
 
 // 1. تعريف العقد الأولية (أمثلة)
 const initialNodes = [
     {
         id: '1',
         type: 'input',
-        data: { label: 'مدخلات المستخدم (نص)' },
+        data: { label: 'مدخلات المستخدم: "أريد تصميم شعار لشركة قهوة"' },
         position: { x: 250, y: 50 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #7c3aed', padding: '10px', borderRadius: '8px' }
+        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #7c3aed', padding: '10px', borderRadius: '8px', width: 300 }
     },
     {
         id: '2',
-        data: { label: '🤖 ChatGPT (تحليل النص)' },
-        position: { x: 100, y: 200 },
-        style: { background: '#0f172a', color: '#fff', border: '1px solid #334155', padding: '10px', borderRadius: '8px' }
+        type: 'aiNode',
+        data: { label: 'تحليل الطلب واستخراج الألوان المناسبة لشركة قهوة وتوليد وصف تفصيلي للشعار' },
+        position: { x: 250, y: 150 },
     },
     {
         id: '3',
-        data: { label: '🎨 Midjourney (توليد صورة)' },
-        position: { x: 400, y: 200 },
-        style: { background: '#0f172a', color: '#fff', border: '1px solid #334155', padding: '10px', borderRadius: '8px' }
-    },
-    {
-        id: '4',
-        type: 'output',
-        data: { label: 'النتيجة النهائية (بوست انستجرام)' },
-        position: { x: 250, y: 350 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #10b981', padding: '10px', borderRadius: '8px' }
+        type: 'aiNode',
+        data: { label: 'توليد 3 أفكار تسويقية مبتكرة بناءً على وصف الشعار' },
+        position: { x: 250, y: 400 },
     },
 ];
 
 // 2. تعريف التوصيلات الأولية
 const initialEdges = [
     { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: '#7c3aed' } },
-    { id: 'e1-3', source: '1', target: '3', animated: true, style: { stroke: '#7c3aed' } },
-    { id: 'e2-4', source: '2', target: '4' },
-    { id: 'e3-4', source: '3', target: '4' },
+    { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: '#7c3aed' } },
 ];
 
 const Workflow = () => {
@@ -97,6 +93,7 @@ const Workflow = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                nodeTypes={nodeTypes}
                 fitView
                 className="bg-[#0f0f1a]"
             >
@@ -104,6 +101,7 @@ const Workflow = () => {
                 <MiniMap
                     nodeColor={(n) => {
                         if (n.type === 'input') return '#7c3aed';
+                        if (n.type === 'ai-node') return '#7c3aed';
                         if (n.type === 'output') return '#10b981';
                         return '#334155';
                     }}
