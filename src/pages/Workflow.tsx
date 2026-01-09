@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import ReactFlow, {
     MiniMap,
     Controls,
@@ -12,52 +12,106 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Button } from '@/components/ui/button';
-import { Plus, Play, Save } from 'lucide-react';
+import { Plus, Play, Save, Loader2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import AINode from '@/components/workflow/AINode';
+import UserInputNode from '@/components/workflow/UserInputNode';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const nodeTypes = {
     aiNode: AINode,
+    userInput: UserInputNode,
 };
 
-// 1. تعريف العقد الأولية (أمثلة)
-const initialNodes = [
-    {
-        id: '1',
-        type: 'input',
-        data: { label: 'مدخلات المستخدم: "أريد تصميم شعار لشركة قهوة"' },
-        position: { x: 250, y: 50 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #7c3aed', padding: '10px', borderRadius: '8px', width: 300 }
-    },
-    {
-        id: '2',
-        type: 'aiNode',
-        data: { label: 'لخص لي أهم مميزات الذكاء الاصطناعي في 3 نقاط' },
-        position: { x: 250, y: 150 },
-    },
-    {
-        id: '3',
-        type: 'aiNode',
-        data: { label: 'توليد 3 أفكار تسويقية مبتكرة بناءً على وصف الشعار' },
-        position: { x: 250, y: 400 },
-    },
-];
-
-// 2. تعريف التوصيلات الأولية
+// التوصيلات الأولية
 const initialEdges = [
     { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: '#7c3aed' } },
-    { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: '#7c3aed' } },
 ];
 
 const Workflow = () => {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    // دالة مساعدة لتحديث قيمة النص في عقدة الإدخال
+    const updateNodeValue = useCallback((nodeId: string, value: string) => {
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === nodeId) {
+                    return { ...node, data: { ...node.data, value } };
+                }
+                return node;
+            })
+        );
+    }, []);
+
+    const [nodes, setNodes, onNodesChange] = useNodesState([
+        {
+            id: '1',
+            type: 'userInput',
+            data: { value: '', onChange: (val: string) => updateNodeValue('1', val) },
+            position: { x: 250, y: 50 },
+        },
+        {
+            id: '2',
+            type: 'aiNode',
+            data: { label: 'انتظار المدخلات...' },
+            position: { x: 250, y: 250 },
+        },
+    ] as any);
+
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [isRunning, setIsRunning] = useState(false);
 
     // دالة التوصيل بين العقد
     const onConnect = useCallback(
         (params: Connection | Edge) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#fff' } }, eds)),
         [setEdges],
     );
+
+    // 🚀 المحرك الرئيسي: دالة تشغيل سير العمل
+    const runWorkflow = async () => {
+        setIsRunning(true);
+        toast.info("جاري تشغيل سير العمل...");
+
+        try {
+            // 1. الحصول على النص من العقدة الأولى (Input Node)
+            const inputNode = nodes.find(n => n.id === '1');
+            const userPrompt = inputNode?.data?.value;
+
+            if (!userPrompt) {
+                toast.error("الرجاء كتابة نص في صندوق المدخلات أولاً!");
+                setIsRunning(false);
+                return;
+            }
+
+            // 2. تحديث العقدة الثانية لتظهر أنها "تفكر"
+            setNodes((nds) => nds.map(n =>
+                n.id === '2' ? { ...n, data: { ...n.data, label: `جاري معالجة: "${userPrompt.substring(0, 20)}..."` } } : n
+            ));
+
+            // 3. استدعاء الوكيل الذكي (Backend)
+            const { data: response, error } = await supabase.functions.invoke('chat-agent', {
+                body: { query: userPrompt }
+            });
+
+            if (error) throw error;
+
+            // 4. تحديث العقدة الثانية بالنتيجة النهائية
+            setNodes((nds) => nds.map(n =>
+                n.id === '2' ? { ...n, data: { ...n.data, label: response.reply || response.answer || 'تم المعالجة' } } : n
+            ));
+
+            toast.success("تم اكتمال سير العمل! 🎉");
+
+        } catch (error) {
+            console.error(error);
+            toast.error("حدث خطأ أثناء التشغيل");
+            // إعادة تعيين العقدة الثانية
+            setNodes((nds) => nds.map(n =>
+                n.id === '2' ? { ...n, data: { ...n.data, label: 'حدث خطأ - حاول مرة أخرى' } } : n
+            ));
+        } finally {
+            setIsRunning(false);
+        }
+    };
 
     return (
         <div className="h-[calc(100vh-64px)] w-full bg-[#0f0f1a] relative" dir="ltr">
@@ -80,8 +134,13 @@ const Workflow = () => {
                     <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 gap-2">
                         <Save className="w-4 h-4" /> حفظ المخطط
                     </Button>
-                    <Button className="bg-neon-purple hover:bg-neon-purple/80 gap-2">
-                        <Play className="w-4 h-4 fill-current" /> تشغيل التجربة
+                    <Button
+                        onClick={runWorkflow}
+                        disabled={isRunning}
+                        className="bg-neon-purple hover:bg-neon-purple/80 gap-2"
+                    >
+                        {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
+                        {isRunning ? 'جاري التشغيل...' : 'تشغيل التجربة'}
                     </Button>
                 </div>
             </div>
@@ -100,7 +159,7 @@ const Workflow = () => {
                 <Controls className="bg-black/50 border-white/10 fill-white text-black" />
                 <MiniMap
                     nodeColor={(n) => {
-                        if (n.type === 'input') return '#7c3aed';
+                        if (n.type === 'userInput') return '#7c3aed';
                         if (n.type === 'aiNode') return '#7c3aed';
                         if (n.type === 'output') return '#10b981';
                         return '#334155';
