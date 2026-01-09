@@ -139,19 +139,25 @@ serve(async (req: Request) => {
         console.log("✅ Embedding generated. Vector length:", embedding.length);
 
         // ─────────────────────────────────────────────
-        // 5. Search Database (RAG - Retrieval)
+        // 5. Search Database (RAG - Retrieval) - Optional
         // ─────────────────────────────────────────────
-        console.log("🔍 Searching database...");
-        const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-        const { data: tools, error: searchError } = await supabase.rpc('match_tools', {
-            query_embedding: embedding,
-            match_threshold: 0.5,
-            match_count: 5
-        });
+        let tools: any[] = [];
+        try {
+            console.log("🔍 Searching database...");
+            const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+            const { data: searchResults, error: searchError } = await supabase.rpc('match_tools', {
+                query_embedding: embedding,
+                match_threshold: 0.5,
+                match_count: 5
+            });
 
-        if (searchError) {
-            console.error("🔴 DB Search Error:", searchError);
-            throw new Error(`Database Search Failed: ${searchError.message}`);
+            if (searchError) {
+                console.warn("⚠️ DB Search Error (continuing without tools):", searchError.message);
+            } else {
+                tools = searchResults || [];
+            }
+        } catch (dbError) {
+            console.warn("⚠️ DB Search failed (continuing without tools):", dbError);
         }
         console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
 
