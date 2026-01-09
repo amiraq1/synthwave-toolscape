@@ -39,6 +39,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
+const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
