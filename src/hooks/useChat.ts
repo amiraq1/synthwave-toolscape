@@ -41,7 +41,7 @@ export const useChat = () => {
                 return null;
             }
 
-            const { data, error: funcError } = await supabase.functions.invoke('chat', {
+            const { data, error: funcError } = await supabase.functions.invoke('chat-agent', {
                 body: { query, history },
                 headers: {
                     Authorization: `Bearer ${session.access_token}`
