@@ -33,7 +33,7 @@ export const useChat = () => {
 
             // Get current session to pass auth token
             const { data: { session } } = await supabase.auth.getSession();
-            
+
             if (!session) {
                 setError('يجب تسجيل الدخول لاستخدام نبض AI');
                 // Remove the user message we just added
@@ -84,6 +84,7 @@ export const useChat = () => {
 
     return {
         messages,
+        setMessages,
         sendMessage,
         clearChat,
         isLoading,
