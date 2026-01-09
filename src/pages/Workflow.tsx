@@ -32,7 +32,7 @@ const initialNodes = [
     {
         id: '2',
         type: 'aiNode',
-        data: { label: 'تحليل الطلب واستخراج الألوان المناسبة لشركة قهوة وتوليد وصف تفصيلي للشعار' },
+        data: { label: 'لخص لي أهم مميزات الذكاء الاصطناعي في 3 نقاط' },
         position: { x: 250, y: 150 },
     },
     {
@@ -101,7 +101,7 @@ const Workflow = () => {
                 <MiniMap
                     nodeColor={(n) => {
                         if (n.type === 'input') return '#7c3aed';
-                        if (n.type === 'ai-node') return '#7c3aed';
+                        if (n.type === 'aiNode') return '#7c3aed';
                         if (n.type === 'output') return '#10b981';
                         return '#334155';
                     }}
