@@ -209,9 +209,9 @@ ${contextText}
         console.log("🤖 Asking Gemini...");
 
         // Build conversation history for context
-        const conversationHistory = history.slice(-4).map((msg: { role: string; parts: string }) => ({
+        const conversationHistory = history.slice(-4).map((msg: { role: string; content: string }) => ({
             role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.parts }]
+            parts: [{ text: msg.content }]
         }));
 
         const chatRes = await fetch(
