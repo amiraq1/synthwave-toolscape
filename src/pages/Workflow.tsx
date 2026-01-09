@@ -87,9 +87,21 @@ const Workflow = () => {
                 n.id === '2' ? { ...n, data: { ...n.data, label: `جاري معالجة: "${userPrompt.substring(0, 20)}..."` } } : n
             ));
 
-            // 3. استدعاء الوكيل الذكي (Backend)
+            // 3. جلب الجلسة للمصادقة
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                toast.error("يجب تسجيل الدخول لتشغيل سير العمل");
+                setIsRunning(false);
+                return;
+            }
+
+            // 4. استدعاء الوكيل الذكي (Backend) مع token المصادقة
             const { data: response, error } = await supabase.functions.invoke('chat-agent', {
-                body: { query: userPrompt }
+                body: { query: userPrompt },
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`
+                }
             });
 
             if (error) throw error;
