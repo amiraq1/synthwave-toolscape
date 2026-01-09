@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { optimizeImage } from '@/utils/imageOptimizer';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
@@ -25,7 +24,7 @@ import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
-import LazyImage from './LazyImage';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
 import { useTranslation } from 'react-i18next';
@@ -179,13 +178,11 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               )}>
                 {/* Priority 1: Manual image_url */}
                 {showOriginalImage ? (
-                  <LazyImage
-                    src={optimizeImage(tool.image_url, 400)}
+                  <ImageWithFallback
+                    src={tool.image_url}
                     alt={displayTitle}
-                    width={48}
-                    height={48}
+                    width={100}
                     className="w-full h-full p-1.5 object-contain"
-                    onError={() => setImageError(true)}
                   />
                 ) : faviconUrl ? (
                   /* Priority 2: Google Favicon */
