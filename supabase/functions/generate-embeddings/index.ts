@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     try {
         console.log("--- Generate Embeddings Started ---");
 
-        // SECURITY: Require authentication for this admin-only function
+        // SECURITY: Require authentication
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
             console.log("❌ No Authorization header provided.");
@@ -91,48 +91,47 @@ Deno.serve(async (req) => {
             throw new Error("GEMINI_API_KEY is not set");
         }
 
-        // Create authenticated client to verify user
-        const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-            global: { headers: { Authorization: authHeader } }
-        });
+        // Check if the request is using the SERVICE_ROLE_KEY directly
+        // This allows admin scripts (like our migration script) to run without a user session
+        const isServiceRole = authHeader.includes(supabaseServiceKey);
 
-        // Verify the user
-        const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-        if (authError || !user) {
-            console.log("❌ Auth failed:", authError?.message || "No user found");
-            return new Response(
-                JSON.stringify({ error: 'Invalid authentication', message_ar: 'فشل التحقق من الهوية' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
+        if (!isServiceRole) {
+            // Normal User Flow: Verify Admin Role
+            const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+                global: { headers: { Authorization: authHeader } }
+            });
+
+            // Verify the user
+            const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+            if (authError || !user) {
+                console.log("❌ Auth failed:", authError?.message || "No user found");
+                return new Response(
+                    JSON.stringify({ error: 'Invalid authentication', message_ar: 'فشل التحقق من الهوية' }),
+                    { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+            }
+
+            console.log("✅ User authenticated:", user.id);
+
+            // SECURITY: Check if user is admin
+            const { data: isAdmin, error: roleError } = await supabaseAuth.rpc('has_role', {
+                _user_id: user.id,
+                _role: 'admin'
+            });
+
+            if (roleError || !isAdmin) {
+                console.log("❌ User is not admin:", user.id);
+                return new Response(
+                    JSON.stringify({ error: 'Admin access required', message_ar: 'صلاحيات المشرف مطلوبة' }),
+                    { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+            }
+            console.log("✅ Admin access verified for user:", user.id);
+        } else {
+            console.log("✅ Service Role Key detected. Bypassing user check.");
         }
 
-        console.log("✅ User authenticated:", user.id);
-
-        // SECURITY: Check if user is admin before allowing database modifications
-        const { data: isAdmin, error: roleError } = await supabaseAuth.rpc('has_role', {
-            _user_id: user.id,
-            _role: 'admin'
-        });
-
-        if (roleError) {
-            console.error("❌ Role check failed:", roleError);
-            return new Response(
-                JSON.stringify({ error: 'Authorization check failed', message_ar: 'فشل التحقق من الصلاحيات' }),
-                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
-
-        if (!isAdmin) {
-            console.log("❌ User is not admin:", user.id);
-            return new Response(
-                JSON.stringify({ error: 'Admin access required', message_ar: 'صلاحيات المشرف مطلوبة' }),
-                { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
-
-        console.log("✅ Admin access verified for user:", user.id);
-
-        // Now use service role for database operations (after authorization)
+        // Now use service role for database operations
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
         // Parse request body
