@@ -14,7 +14,6 @@ import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 // Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
