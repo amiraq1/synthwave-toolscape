@@ -109,55 +109,61 @@ serve(async (req: Request) => {
         console.log("🟢 [Chat Agent] Received query:", query);
 
         // ─────────────────────────────────────────────
-        // 4. Generate Embedding (RAG - Retrieval)
+        // 4. Generate Embedding (RAG - Retrieval) - Optional
         // ─────────────────────────────────────────────
-        console.log("🔄 Generating embedding...");
-        const embedRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: "models/text-embedding-004",
-                    content: { parts: [{ text: query }] }
-                })
+        let embedding: number[] | null = null;
+        try {
+            console.log("🔄 Generating embedding...");
+            const embedRes = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: "models/text-embedding-004",
+                        content: { parts: [{ text: query }] }
+                    })
+                }
+            );
+
+            if (!embedRes.ok) {
+                const errText = await embedRes.text();
+                console.warn("⚠️ Embedding API Error (continuing without RAG):", errText);
+            } else {
+                const embedData = await embedRes.json();
+                embedding = embedData.embedding?.values || null;
+                if (embedding) {
+                    console.log("✅ Embedding generated. Vector length:", embedding.length);
+                }
             }
-        );
-
-        if (!embedRes.ok) {
-            const errText = await embedRes.text();
-            console.error("🔴 Embedding API Error:", errText);
-            throw new Error(`Gemini Embedding Failed: ${errText}`);
+        } catch (embError) {
+            console.warn("⚠️ Embedding failed (continuing without RAG):", embError);
         }
-
-        const embedData = await embedRes.json();
-        const embedding = embedData.embedding?.values;
-
-        if (!embedding) {
-            throw new Error("Failed to generate embedding");
-        }
-        console.log("✅ Embedding generated. Vector length:", embedding.length);
 
         // ─────────────────────────────────────────────
         // 5. Search Database (RAG - Retrieval) - Optional
         // ─────────────────────────────────────────────
         let tools: any[] = [];
-        try {
-            console.log("🔍 Searching database...");
-            const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-            const { data: searchResults, error: searchError } = await supabase.rpc('match_tools', {
-                query_embedding: embedding,
-                match_threshold: 0.5,
-                match_count: 5
-            });
+        if (embedding && embedding.length > 0) {
+            try {
+                console.log("🔍 Searching database...");
+                const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+                const { data: searchResults, error: searchError } = await supabase.rpc('match_tools', {
+                    query_embedding: embedding,
+                    match_threshold: 0.5,
+                    match_count: 5
+                });
 
-            if (searchError) {
-                console.warn("⚠️ DB Search Error (continuing without tools):", searchError.message);
-            } else {
-                tools = searchResults || [];
+                if (searchError) {
+                    console.warn("⚠️ DB Search Error (continuing without tools):", searchError.message);
+                } else {
+                    tools = searchResults || [];
+                }
+            } catch (dbError) {
+                console.warn("⚠️ DB Search failed (continuing without tools):", dbError);
             }
-        } catch (dbError) {
-            console.warn("⚠️ DB Search failed (continuing without tools):", dbError);
+        } else {
+            console.log("⏩ Skipping DB search (no embedding available)");
         }
         console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
 
@@ -221,7 +227,7 @@ ${contextText}
         }));
 
         const chatRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
