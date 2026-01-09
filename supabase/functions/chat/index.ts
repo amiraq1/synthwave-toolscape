@@ -6,11 +6,11 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Rate limiting: 20 requests per minute per user
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+// ─────────────────────────────────────────────────────────────────────────────
+// Rate Limiting: 20 requests per minute per user
+// ─────────────────────────────────────────────────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 20;
-
-// In-memory rate limit store (resets on function cold start, but provides immediate protection)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetIn: number } {
@@ -18,7 +18,6 @@ function checkRateLimit(userId: string): { allowed: boolean; remaining: number; 
     const userLimit = rateLimitStore.get(userId);
 
     if (!userLimit || now > userLimit.resetTime) {
-        // Reset or initialize
         rateLimitStore.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
         return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
     }
@@ -31,14 +30,19 @@ function checkRateLimit(userId: string): { allowed: boolean; remaining: number; 
     return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - userLimit.count, resetIn: userLimit.resetTime - now };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Handler
+// ─────────────────────────────────────────────────────────────────────────────
 serve(async (req: Request) => {
-    // 1. Handle CORS pre-flight
+    // Handle CORS preflight
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
 
     try {
-        // Authentication required to prevent abuse and quota exhaustion
+        // ─────────────────────────────────────────────
+        // 1. Authentication Check
+        // ─────────────────────────────────────────────
         const authHeader = req.headers.get('Authorization');
         if (!authHeader?.startsWith('Bearer ')) {
             return new Response(
@@ -51,25 +55,27 @@ serve(async (req: Request) => {
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
-        if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in Secrets!");
+        if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing!");
 
-        // Verify user authentication
+        // ─────────────────────────────────────────────
+        // 2. Verify User & Rate Limit
+        // ─────────────────────────────────────────────
         const authSupabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
             global: { headers: { Authorization: authHeader } }
         });
 
         const token = authHeader.replace('Bearer ', '');
-        const { data: claimsData, error: claimsError } = await authSupabase.auth.getClaims(token);
-        
-        if (claimsError || !claimsData?.claims) {
-            console.error("🔴 Auth error:", claimsError?.message);
+        const { data: { user }, error: authError } = await authSupabase.auth.getUser(token);
+
+        if (authError || !user) {
+            console.error("🔴 Auth error:", authError?.message);
             return new Response(
                 JSON.stringify({ error: 'جلسة غير صالحة، يرجى تسجيل الدخول مجدداً' }),
                 { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
         }
 
-        const userId = claimsData.claims.sub as string;
+        const userId = user.id;
         console.log("✅ Authenticated user:", userId);
 
         // Rate limiting check
@@ -77,26 +83,34 @@ serve(async (req: Request) => {
         if (!rateLimit.allowed) {
             console.warn(`⚠️ Rate limit exceeded for user: ${userId}`);
             return new Response(
-                JSON.stringify({ 
+                JSON.stringify({
                     error: 'لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار قليلاً.',
                     retryAfter: Math.ceil(rateLimit.resetIn / 1000)
                 }),
-                { 
-                    status: 429, 
-                    headers: { 
-                        ...corsHeaders, 
+                {
+                    status: 429,
+                    headers: {
+                        ...corsHeaders,
                         'Content-Type': 'application/json',
                         'Retry-After': String(Math.ceil(rateLimit.resetIn / 1000))
-                    } 
+                    }
                 }
             );
         }
         console.log(`📊 Rate limit: ${rateLimit.remaining} requests remaining`);
 
-        const { query } = await req.json();
+        // ─────────────────────────────────────────────
+        // 3. Parse Request
+        // ─────────────────────────────────────────────
+        const { query, history = [] } = await req.json();
+        if (!query || typeof query !== 'string') {
+            throw new Error("No valid query provided");
+        }
         console.log("🟢 [Chat] Received query:", query);
 
-        // 2. Generate Embedding
+        // ─────────────────────────────────────────────
+        // 4. Generate Embedding (RAG - Retrieval)
+        // ─────────────────────────────────────────────
         console.log("🔄 Generating embedding...");
         const embedRes = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
@@ -117,15 +131,21 @@ serve(async (req: Request) => {
         }
 
         const embedData = await embedRes.json();
-        const embedding = embedData.embedding.values;
+        const embedding = embedData.embedding?.values;
+
+        if (!embedding) {
+            throw new Error("Failed to generate embedding");
+        }
         console.log("✅ Embedding generated. Vector length:", embedding.length);
 
-        // 3. Search Database
+        // ─────────────────────────────────────────────
+        // 5. Search Database (RAG - Retrieval)
+        // ─────────────────────────────────────────────
         console.log("🔍 Searching database...");
         const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
         const { data: tools, error: searchError } = await supabase.rpc('match_tools', {
             query_embedding: embedding,
-            match_threshold: 0.3,
+            match_threshold: 0.5, // Lower threshold for better recall
             match_count: 5
         });
 
@@ -135,35 +155,90 @@ serve(async (req: Request) => {
         }
         console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
 
-        // 4. Generate Answer with Gemini
-        interface ToolMatch { title: string; pricing_type: string; description: string; }
-        const context = tools?.map((t: ToolMatch) =>
-            `- ${t.title} (${t.pricing_type}): ${t.description}`
-        ).join('\n') || "لا توجد أدوات مطابقة تماماً.";
+        // ─────────────────────────────────────────────
+        // 6. Build Context (RAG - Augmentation)
+        // ─────────────────────────────────────────────
+        interface ToolMatch {
+            title: string;
+            pricing_type: string;
+            description: string;
+            category?: string;
+            slug?: string;
+        }
 
+        let contextText = "لم يتم العثور على أدوات محددة في قاعدة البيانات لهذا السؤال.";
+
+        if (tools && tools.length > 0) {
+            contextText = tools.map((t: ToolMatch) =>
+                `📌 **${t.title}**
+   - الوصف: ${t.description}
+   - التسعير: ${t.pricing_type}
+   - التصنيف: ${t.category || 'عام'}
+   - الرابط: /tool/${t.slug || t.title.toLowerCase().replace(/\s+/g, '-')}`
+            ).join('\n\n');
+        }
+
+        // ─────────────────────────────────────────────
+        // 7. Build System Prompt (RAG - Generation)
+        // ─────────────────────────────────────────────
         const systemPrompt = `
-      أنت المساعد الذكي لموقع "نبض AI" المتخصص في أدوات الذكاء الاصطناعي.
-      
-      السياق (أدوات وجدناها في قاعدة البيانات):
-      ${context}
+أنت "مساعد نبض AI" 🤖، خبير ذكاء اصطناعي ودود ومحترف.
+مهمتك هي مساعدة المستخدمين في العثور على أفضل أدوات الذكاء الاصطناعي المناسبة لاحتياجاتهم.
 
-      سؤال المستخدم: ${query}
+═══════════════════════════════════════════════════════
+📚 معلومات من قاعدة بيانات "نبض":
+═══════════════════════════════════════════════════════
+${contextText}
+═══════════════════════════════════════════════════════
 
-      المطلوب:
-      1. أجب بالعربية بلهجة ودودة ومحترفة.
-      2. رشح الأدوات المناسبة من السياق أعلاه.
-      3. إذا لم تجد أدوات مناسبة في السياق، قدم نصيحة عامة ولكن أخبر المستخدم أنك تبحث في قاعدة البيانات فقط.
-      4. كن مختصراً ومفيداً.
-    `;
+📋 تعليمات هامة:
+1. تحدث باللغة العربية دائماً بنبرة ودية ومفيدة.
+2. إذا وجدت أدوات في السياق أعلاه، رشحها للمستخدم واشرح لماذا هي مناسبة لطلبه.
+3. استخدم الإيموجي باعتدال لجعل الرد أكثر حيوية.
+4. إذا لم تجد أدوات مناسبة، اعتذر بلطف واقترح كلمات بحث بديلة.
+5. اجعل إجابتك مختصرة (3-5 جمل) ومركزة على الفائدة.
+6. لا تخترع أدوات غير موجودة في السياق.
+7. إذا سأل المستخدم سؤالاً عاماً غير متعلق بالأدوات، أجب بإيجاز ثم وجهه للبحث في الموقع.
 
+سؤال المستخدم: ${query}
+`;
+
+        // ─────────────────────────────────────────────
+        // 8. Generate Response (RAG - Generation)
+        // ─────────────────────────────────────────────
         console.log("🤖 Asking Gemini...");
+
+        // Build conversation history for context
+        const conversationHistory = history.slice(-4).map((msg: { role: string; parts: string }) => ({
+            role: msg.role === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.parts }]
+        }));
+
         const chatRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: systemPrompt }] }]
+                    contents: [
+                        ...conversationHistory,
+                        {
+                            role: 'user',
+                            parts: [{ text: systemPrompt }]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        topK: 40,
+                        topP: 0.95,
+                        maxOutputTokens: 500,
+                    },
+                    safetySettings: [
+                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                    ]
                 })
             }
         );
@@ -175,11 +250,23 @@ serve(async (req: Request) => {
         }
 
         const chatData = await chatRes.json();
-        const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في التوليد.";
+        const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "عذراً، واجهت مشكلة في التفكير. حاول مرة أخرى! 🔄";
+
         console.log("✅ Reply generated successfully.");
 
-        // Return both `answer` and legacy `reply` keys to keep clients working.
-        return new Response(JSON.stringify({ answer: reply, reply }), {
+        // ─────────────────────────────────────────────
+        // 9. Return Response
+        // ─────────────────────────────────────────────
+        return new Response(JSON.stringify({
+            answer: reply,
+            reply, // Legacy support
+            toolsFound: tools?.length || 0,
+            rateLimit: {
+                remaining: rateLimit.remaining,
+                resetIn: Math.ceil(rateLimit.resetIn / 1000)
+            }
+        }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
