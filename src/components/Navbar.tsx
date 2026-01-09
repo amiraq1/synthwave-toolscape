@@ -112,6 +112,14 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               {t('nav.blog')}
             </button>
+            <button
+              onClick={() => navigate('/workflow')}
+              className="hover:text-foreground transition-colors px-3 py-2 text-neon-purple flex items-center gap-1"
+            >
+              <Activity className="w-4 h-4" />
+              المصنع
+              <span className="text-[10px] bg-neon-purple/20 px-1.5 rounded-full border border-neon-purple/30">Beta</span>
+            </button>
 
             <div className="h-6 w-px bg-border/50 mx-2" /> {/* Divider */}
 
@@ -267,6 +275,16 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                     >
                       <span className="text-xl">📰</span>
                       {t('nav.blog')}
+                    </Button>
+
+                    <Button
+                      onClick={() => { setMobileMenuOpen(false); navigate('/workflow'); }}
+                      variant="ghost"
+                      className="justify-start gap-3 text-lg"
+                    >
+                      <Activity className="w-5 h-5 text-neon-purple" />
+                      المصنع
+                      <span className="text-xs bg-neon-purple/20 px-2 rounded-full text-neon-purple">Beta</span>
                     </Button>
 
                     {user && (
