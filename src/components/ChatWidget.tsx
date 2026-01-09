@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useChat, ChatMessage } from '@/hooks/useChat';
+import { useChat, ChatMessage, ChatError, RetryState } from '@/hooks/useChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     MessageCircle, X, Send, Bot, User, Loader2, Sparkles,
     Trash2, Volume2, VolumeX, Minimize2, Maximize2,
-    ChevronDown, Copy, Check, ExternalLink, Keyboard
+    ChevronDown, Copy, Check, ExternalLink, Keyboard,
+    RefreshCw, XCircle, Clock, Wifi, WifiOff, AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -118,6 +119,11 @@ interface MessageBubbleProps {
     navigate: (path: string) => void;
 }
 
+const formatResponseTime = (ms: number): string => {
+    if (ms < 1000) return `${ms}ms`;
+    return `${(ms / 1000).toFixed(1)}s`;
+};
+
 const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBubbleProps) => {
     const isUser = msg.role === 'user';
     const toolCard = !isUser ? extractToolSlug(msg.content) : null;
@@ -126,7 +132,8 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
         <div
             className={cn(
                 "flex gap-3 max-w-[90%] group animate-slideInUp",
-                isUser ? "mr-auto flex-row-reverse" : "ml-auto"
+                isUser ? "mr-auto flex-row-reverse" : "ml-auto",
+                msg.status === 'error' && "opacity-60"
             )}
             style={{ animationDelay: '0.05s' }}
         >
@@ -134,11 +141,17 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
             <div className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center shrink-0 border mt-1 transition-transform group-hover:scale-110",
                 isUser
-                    ? "bg-white/10 border-white/20"
+                    ? msg.status === 'error'
+                        ? "bg-red-500/20 border-red-500/30"
+                        : "bg-white/10 border-white/20"
                     : "bg-gradient-to-br from-neon-purple to-blue-600 border-white/20 shadow-lg"
             )}>
                 {isUser
-                    ? <User className="w-4 h-4" aria-hidden="true" />
+                    ? msg.status === 'sending'
+                        ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        : msg.status === 'error'
+                            ? <AlertTriangle className="w-4 h-4 text-red-400" aria-hidden="true" />
+                            : <User className="w-4 h-4" aria-hidden="true" />
                     : <Bot className="w-4 h-4 text-white" aria-hidden="true" />
                 }
             </div>
@@ -147,11 +160,21 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
             <div className={cn(
                 "rounded-2xl px-4 py-2.5 text-sm shadow-sm relative",
                 isUser
-                    ? "bg-gradient-to-br from-white/10 to-white/5 text-white rounded-tl-none border border-white/10"
+                    ? msg.status === 'error'
+                        ? "bg-red-500/10 text-red-300 rounded-tl-none border border-red-500/20"
+                        : "bg-gradient-to-br from-white/10 to-white/5 text-white rounded-tl-none border border-white/10"
                     : "bg-card/80 text-foreground rounded-tr-none border border-white/5 backdrop-blur-sm"
             )}>
                 {isUser ? (
-                    <p>{msg.content}</p>
+                    <div>
+                        <p>{msg.content}</p>
+                        {msg.status === 'sending' && (
+                            <p className="text-[10px] text-white/40 mt-1">جاري الإرسال...</p>
+                        )}
+                        {msg.status === 'error' && (
+                            <p className="text-[10px] text-red-400 mt-1">فشل الإرسال</p>
+                        )}
+                    </div>
                 ) : (
                     <>
                         <div className="prose prose-invert prose-p:text-sm prose-a:text-neon-purple prose-a:no-underline hover:prose-a:underline prose-ul:my-1 prose-li:my-0.5 max-w-none">
@@ -173,6 +196,14 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
                                 {msg.content}
                             </ReactMarkdown>
                         </div>
+
+                        {/* Response Time Badge */}
+                        {msg.responseTime && (
+                            <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground/60">
+                                <Clock className="w-3 h-3" />
+                                <span>{formatResponseTime(msg.responseTime)}</span>
+                            </div>
+                        )}
 
                         {/* Tool Card Preview (if detected) */}
                         {toolCard && (
@@ -205,27 +236,97 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
     );
 };
 
-// Error display component
+// Error display component with retry support
 interface ErrorDisplayProps {
-    error: string;
+    error: ChatError;
+    onRetry?: () => void;
+    canRetry?: boolean;
 }
 
-const ErrorDisplay = ({ error }: ErrorDisplayProps) => (
+const getErrorIcon = (type: ChatError['type']) => {
+    switch (type) {
+        case 'network': return <WifiOff className="w-4 h-4 text-red-400" />;
+        case 'auth': return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
+        case 'timeout': return <Clock className="w-4 h-4 text-orange-400" />;
+        default: return <Bot className="w-4 h-4 text-red-400" />;
+    }
+};
+
+const ErrorDisplay = ({ error, onRetry, canRetry }: ErrorDisplayProps) => (
     <div className="flex gap-3 ml-auto max-w-[90%] animate-fadeIn" role="alert">
-        <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shrink-0 border border-red-500/30 mt-1">
-            <Bot className="w-4 h-4 text-red-400" aria-hidden="true" />
+        <div className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center shrink-0 border mt-1",
+            error.type === 'auth' ? "bg-yellow-500/20 border-yellow-500/30" : "bg-red-500/20 border-red-500/30"
+        )}>
+            {getErrorIcon(error.type)}
         </div>
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl rounded-tr-none px-4 py-2.5 text-sm">
-            <p className="text-red-400 font-medium mb-1">⚠️ خطأ</p>
-            <p className="text-red-300/80 text-xs">{error}</p>
-            {error.includes('تسجيل الدخول') && (
-                <a
-                    href="/auth"
-                    className="inline-block mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors"
-                >
-                    تسجيل الدخول →
-                </a>
-            )}
+        <div className={cn(
+            "rounded-2xl rounded-tr-none px-4 py-2.5 text-sm border",
+            error.type === 'auth'
+                ? "bg-yellow-500/10 border-yellow-500/20"
+                : "bg-red-500/10 border-red-500/20"
+        )}>
+            <p className={cn(
+                "font-medium mb-1",
+                error.type === 'auth' ? "text-yellow-400" : "text-red-400"
+            )}>
+                {error.type === 'network' && '📡 '}
+                {error.type === 'timeout' && '⏱️ '}
+                {error.type === 'auth' && '🔐 '}
+                {error.type === 'server' && '🖥️ '}
+                {error.type === 'unknown' && '⚠️ '}
+                خطأ
+            </p>
+            <p className="text-red-300/80 text-xs">{error.message}</p>
+
+            <div className="flex gap-2 mt-2">
+                {error.type === 'auth' && (
+                    <a
+                        href="/auth"
+                        className="inline-flex items-center gap-1 text-xs bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-full transition-colors"
+                    >
+                        تسجيل الدخول →
+                    </a>
+                )}
+                {error.retryable && canRetry && onRetry && (
+                    <button
+                        onClick={onRetry}
+                        className="inline-flex items-center gap-1 text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition-colors"
+                    >
+                        <RefreshCw className="w-3 h-3" />
+                        إعادة المحاولة
+                    </button>
+                )}
+            </div>
+        </div>
+    </div>
+);
+
+// Retry indicator component
+interface RetryIndicatorProps {
+    retryState: RetryState;
+    onCancel: () => void;
+}
+
+const RetryIndicator = ({ retryState, onCancel }: RetryIndicatorProps) => (
+    <div className="flex gap-3 ml-auto max-w-[80%] animate-fadeIn" role="status">
+        <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0 border border-orange-500/30 mt-1">
+            <RefreshCw className="w-4 h-4 text-orange-400 animate-spin" />
+        </div>
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl rounded-tr-none px-4 py-3 flex items-center gap-3">
+            <div>
+                <p className="text-xs text-orange-400 font-medium">جاري إعادة المحاولة...</p>
+                <p className="text-[10px] text-orange-300/70 mt-0.5">
+                    المحاولة {retryState.attempt} من {retryState.maxAttempts}
+                </p>
+            </div>
+            <button
+                onClick={onCancel}
+                className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
+                aria-label="إلغاء"
+            >
+                <XCircle className="w-4 h-4 text-orange-300" />
+            </button>
         </div>
     </div>
 );
@@ -286,7 +387,7 @@ const ChatWidget = () => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
 
-    const { messages, sendMessage, isLoading, clearChat, error, setMessages } = useChat();
+    const { messages, sendMessage, isLoading, clearChat, error, setMessages, retryState, cancelRequest, retryLastMessage } = useChat();
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -550,9 +651,22 @@ const ChatWidget = () => {
                                     />
                                 ))}
 
-                                {isLoading && <TypingIndicator />}
+                                {isLoading && !retryState.isRetrying && <TypingIndicator />}
 
-                                {error && !isLoading && <ErrorDisplay error={error} />}
+                                {retryState.isRetrying && (
+                                    <RetryIndicator
+                                        retryState={retryState}
+                                        onCancel={cancelRequest}
+                                    />
+                                )}
+
+                                {error && !isLoading && (
+                                    <ErrorDisplay
+                                        error={error}
+                                        onRetry={retryLastMessage}
+                                        canRetry={!isLoading}
+                                    />
+                                )}
                             </div>
 
                             {/* Scroll to Bottom Button */}
