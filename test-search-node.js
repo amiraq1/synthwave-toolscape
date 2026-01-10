@@ -1,5 +1,4 @@
 
-import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -18,41 +17,51 @@ if (!SUPABASE_ANON_KEY) {
     process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 async function testSearch(query) {
     console.log(`\n🔍 Searching for: "${query}"...`);
 
-    // Call the Edge Function
-    const { data, error } = await supabase.functions.invoke('search', {
-        body: { query, limit: 3 }
-    });
-
-    if (error) {
-        console.error("❌ Function Invoke Error:", error);
-        return;
-    }
-
-    if (data?.error) {
-        console.error("❌ API Error:", data.error);
-        return;
-    }
-
-    if (data?.tools && data.tools.length > 0) {
-        console.log(`✅ Found ${data.tools.length} results:`);
-        data.tools.forEach((tool, i) => {
-            console.log(`   ${i + 1}. [${Math.round(tool.similarity * 100)}%] ${tool.title} - ${tool.role || tool.category}`);
+    try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/search`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query, limit: 3 })
         });
-    } else {
-        console.log("⚠️ No semantic results found. (Embeddings might be missing)");
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(`❌ HTTP Error ${response.status}:`, data.error);
+            if (data.details) console.error("📝 Details:", data.details);
+            return;
+        }
+
+        if (data.error) {
+            console.error("❌ API Error:", data.error);
+            if (data.details) console.error("📝 Details:", data.details);
+            return;
+        }
+
+        if (data.tools && data.tools.length > 0) {
+            console.log(`✅ Found ${data.tools.length} results:`);
+            data.tools.forEach((tool, i) => {
+                console.log(`   ${i + 1}. [${Math.round(tool.similarity * 100)}%] ${tool.title} - ${tool.role || tool.category}`);
+            });
+        } else {
+            console.log("⚠️ No semantic results found.");
+        }
+
+    } catch (err) {
+        console.error("❌ Network Error:", err);
     }
 }
 
 // Run verify
 async function run() {
-    console.log("--- Semantic Search Test (Node.js) ---");
+    console.log("--- Semantic Search Test (Raw Fetch) ---");
     await testSearch("صناعة الصور");
-    await testSearch("كتابة المقالات");
     await testSearch("coding assistant");
 }
 

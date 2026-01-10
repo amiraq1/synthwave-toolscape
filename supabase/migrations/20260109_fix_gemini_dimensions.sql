@@ -16,7 +16,9 @@ CREATE OR REPLACE FUNCTION match_tools(
 RETURNS TABLE (
   id bigint,
   title text,
+  title_en text,
   description text,
+  description_en text,
   category text,
   url text,
   image_url text,
@@ -37,7 +39,9 @@ BEGIN
   SELECT
     t.id,
     t.title,
+    t.title_en,
     t.description,
+    t.description_en,
     t.category,
     t.url,
     t.image_url,
@@ -65,7 +69,9 @@ CREATE OR REPLACE FUNCTION find_similar_tools(
 RETURNS TABLE (
   id bigint,
   title text,
+  title_en text,
   description text,
+  description_en text,
   category text,
   image_url text,
   similarity float
@@ -92,7 +98,9 @@ BEGIN
   SELECT
     t.id,
     t.title,
+    t.title_en,
     t.description,
+    t.description_en,
     t.category,
     t.image_url,
     1 - (t.embedding <=> source_embedding) AS similarity

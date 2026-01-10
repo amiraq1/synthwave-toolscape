@@ -14,7 +14,9 @@ interface SearchRequest {
 interface ToolResult {
     id: number;
     title: string;
+    title_en?: string;
     description: string;
+    description_en?: string;
     category: string;
     pricing_type: string;
     url: string;
@@ -105,7 +107,7 @@ Deno.serve(async (req) => {
 
         if (searchError) {
             console.error("RPC Error:", searchError);
-            throw new Error("Search failed");
+            throw new Error(`Search failed: ${JSON.stringify(searchError)}`);
         }
 
         const results = (tools as ToolResult[]) || [];
@@ -122,10 +124,11 @@ Deno.serve(async (req) => {
 
     } catch (error: unknown) {
         const errMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error("Search Error:", errMessage);
+        console.error("❌ Search Fatal Error:", error);
         return new Response(
             JSON.stringify({
                 error: "Search failed",
+                details: errMessage, // Expose error details solely for debugging purpose
                 tools: [],
                 semantic: false
             }),

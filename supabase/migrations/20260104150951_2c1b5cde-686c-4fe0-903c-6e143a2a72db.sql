@@ -119,6 +119,8 @@ USING (auth.uid() = user_id);
 -- 5. Create secure function to get public review data
 -- This replaces direct access to reviews table
 -- ============================================
+DROP FUNCTION IF EXISTS public.get_public_reviews(BIGINT);
+
 CREATE OR REPLACE FUNCTION public.get_public_reviews(p_tool_id BIGINT DEFAULT NULL)
 RETURNS TABLE (
   id UUID,

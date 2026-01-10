@@ -26,17 +26,20 @@ ALTER TABLE public.post_comments ENABLE ROW LEVEL SECURITY;
 
 -- 5. سياسات الأمان للتعليقات
 -- القراءة: الجميع يستطيع قراءة التعليقات
+DROP POLICY IF EXISTS "Anyone can view post comments" ON public.post_comments;
 CREATE POLICY "Anyone can view post comments"
 ON public.post_comments FOR SELECT
 USING (true);
 
 -- الإضافة: المستخدمون المسجلون فقط
+DROP POLICY IF EXISTS "Authenticated users can add comments" ON public.post_comments;
 CREATE POLICY "Authenticated users can add comments"
 ON public.post_comments FOR INSERT
 TO authenticated
 WITH CHECK (auth.uid() = user_id);
 
 -- التعديل: صاحب التعليق فقط
+DROP POLICY IF EXISTS "Users can update own comments" ON public.post_comments;
 CREATE POLICY "Users can update own comments"
 ON public.post_comments FOR UPDATE
 TO authenticated
@@ -44,6 +47,7 @@ USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
 -- الحذف: صاحب التعليق أو المسؤول
+DROP POLICY IF EXISTS "Users can delete own comments" ON public.post_comments;
 CREATE POLICY "Users can delete own comments"
 ON public.post_comments FOR DELETE
 TO authenticated

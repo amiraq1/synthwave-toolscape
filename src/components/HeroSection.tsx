@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import TrendingTools from "@/components/TrendingTools";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -95,29 +96,14 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
           </div>
         </div>
 
-        {/* Search Bar - Enhanced */}
         <div className="relative max-w-2xl mx-auto mt-8 sm:mt-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <div className="glass-card rounded-2xl p-2 glow-purple transition-all duration-500 focus-within:glow-blue hover:scale-[1.02]">
-            <form onSubmit={handleSearch} className="relative flex items-center">
-              <Button
-                type="submit"
-                size="icon"
-                variant="ghost"
-                className={`absolute ${document.dir === 'rtl' ? 'right-2' : 'left-2'} h-10 w-10 text-muted-foreground hover:bg-transparent hover:text-neon-purple transition-colors`}
-                aria-label="ابحث الآن"
-                disabled={isSearching}
-              >
-                {isSearching ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5 sm:h-6 sm:w-6" />}
-              </Button>
-              <Input
-                type="text"
-                placeholder={t('search.placeholder')}
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className={`w-full ${document.dir === 'rtl' ? 'pr-12 sm:pr-14' : 'pl-12 sm:pl-14'} py-5 sm:py-7 text-base sm:text-lg bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60`}
-              />
-            </form>
-          </div>
+          <SearchAutocomplete
+            value={searchQuery}
+            onChange={onSearchChange}
+            onSearch={onSearchChange}
+            className="glass-card rounded-2xl p-2 glow-purple transition-all duration-500 hover:scale-[1.02] z-20"
+            inputClassName="bg-transparent border-none focus:ring-0 focus:bg-transparent shadow-none text-base sm:text-lg py-4 sm:py-6"
+          />
           <p className="text-sm text-muted-foreground/60 mt-4">
             نصوص • صور • فيديو • برمجة • إنتاجية • دراسة
           </p>

@@ -9,7 +9,9 @@ const corsHeaders = {
 interface Tool {
     id: number;
     title: string;
+    title_en?: string;
     description: string;
+    description_en?: string;
     category: string;
     features: string[] | null;
 }
@@ -55,7 +57,9 @@ function createSearchableText(tool: Tool): string {
     // Combine title, description, category, and features for better semantic matching
     const parts = [
         tool.title,
+        tool.title_en,
         tool.description,
+        tool.description_en,
         tool.category,
         ...(tool.features || []),
     ].filter(Boolean);
@@ -147,7 +151,7 @@ Deno.serve(async (req) => {
         // Fetch tools to process
         let query = supabase
             .from("tools")
-            .select("id, title, description, category, features");
+            .select("id, title, title_en, description, description_en, category, features");
 
         if (tool_id) {
             // Single tool - always regenerate
