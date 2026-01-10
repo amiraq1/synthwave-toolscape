@@ -100,131 +100,83 @@ serve(async (req: Request) => {
         console.log(`📊 Rate limit: ${rateLimit.remaining} requests remaining`);
 
         // ─────────────────────────────────────────────
-        // 3. Parse Request
+        // 3. Parse Request & Identify Agent
         // ─────────────────────────────────────────────
-        const { query, history = [] } = await req.json();
-        if (!query || typeof query !== 'string') {
-            throw new Error("No valid query provided");
-        }
-        console.log("🟢 [Chat Agent] Received query:", query);
+        const { query, history = [], agentSlug = 'general' } = await req.json();
+
+        // تعريف شخصيات الوكلاء (مدمجة هنا للسرعة والموثوقية بدلاً من قاعدة البيانات)
+        const AGENT_PERSONAS: Record<string, string> = {
+            'general': 'أنت مساعد ذكي شامل. ساعد المستخدم في أي طلب.',
+            'coder': 'أنت خبير برمجة ومطور محترف. ركز على الأدوات البرمجية والأكواد.',
+            'designer': 'أنت مصمم جرافيك وفنان رقمي. ركز على أدوات الصور والتصميم.',
+            'writer': 'أنت كاتب محتوى ومحرر مبدع. ركز على أدوات الكتابة والتحسين اللغوي.',
+            'video': 'أنت خبير مونتاج وفيديو. ركز على أدوات إنشاء وتحرير الفيديو.'
+        };
+
+        const currentPersona = AGENT_PERSONAS[agentSlug] || AGENT_PERSONAS['general'];
+        console.log(`👤 Agent Persona: ${agentSlug}`);
 
         // ─────────────────────────────────────────────
-        // 4. Generate Embedding (RAG - Retrieval) - Optional
+        // 4. Generate Embedding (Simple & Robust)
         // ─────────────────────────────────────────────
-        let embedding: number[] | null = null;
+        let contextText = "";
+        let toolsFound = 0;
+
         try {
-            console.log("🔄 Generating embedding...");
-            const embedRes = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: "models/text-embedding-004",
-                        content: { parts: [{ text: query }] }
-                    })
-                }
-            );
+            if (GEMINI_API_KEY) {
+                // توليد Embedding
+                const embedRes = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: "models/text-embedding-004",
+                            content: { parts: [{ text: query }] }
+                        })
+                    }
+                );
 
-            if (!embedRes.ok) {
-                const errText = await embedRes.text();
-                console.warn("⚠️ Embedding API Error (continuing without RAG):", errText);
-            } else {
-                const embedData = await embedRes.json();
-                embedding = embedData.embedding?.values || null;
-                if (embedding) {
-                    console.log("✅ Embedding generated. Vector length:", embedding.length);
+                if (embedRes.ok) {
+                    const embedData = await embedRes.json();
+                    const embedding = embedData.embedding?.values;
+
+                    if (embedding) {
+                        // بحث في قاعدة البيانات
+                        const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+                        const { data: searchResults } = await supabase.rpc('match_tools', {
+                            query_embedding: embedding,
+                            match_threshold: 0.5,
+                            match_count: 5
+                        });
+
+                        if (searchResults && searchResults.length > 0) {
+                            toolsFound = searchResults.length;
+                            contextText = "🛠️ **أدوات مقترحة من قاعدة البيانات:**\n" + searchResults.map((t: any) =>
+                                `🔹 **[${t.title}](/tool/${t.slug || '#'})**\n   - ${t.description.substring(0, 100)}...`
+                            ).join('\n\n');
+                        }
+                    }
                 }
             }
-        } catch (embError) {
-            console.warn("⚠️ Embedding failed (continuing without RAG):", embError);
+        } catch (e) {
+            console.warn("Embedding/Search skipped:", e);
         }
 
         // ─────────────────────────────────────────────
-        // 5. Search Database (RAG - Retrieval) - Optional
-        // ─────────────────────────────────────────────
-        let tools: any[] = [];
-        if (embedding && embedding.length > 0) {
-            try {
-                console.log("🔍 Searching database...");
-                const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-                const { data: searchResults, error: searchError } = await supabase.rpc('match_tools', {
-                    query_embedding: embedding,
-                    match_threshold: 0.5,
-                    match_count: 5
-                });
-
-                if (searchError) {
-                    console.warn("⚠️ DB Search Error (continuing without tools):", searchError.message);
-                } else {
-                    tools = searchResults || [];
-                }
-            } catch (dbError) {
-                console.warn("⚠️ DB Search failed (continuing without tools):", dbError);
-            }
-        } else {
-            console.log("⏩ Skipping DB search (no embedding available)");
-        }
-        console.log(`✅ Found ${tools?.length || 0} relevant tools.`);
-
-        // ─────────────────────────────────────────────
-        // 6. Build Context (RAG - Augmentation)
-        // ─────────────────────────────────────────────
-        interface ToolMatch {
-            title: string;
-            pricing_type: string;
-            description: string;
-            category?: string;
-            slug?: string;
-        }
-
-        let contextText = "لم يتم العثور على أدوات محددة في قاعدة البيانات لهذا السؤال.";
-
-        if (tools && tools.length > 0) {
-            contextText = tools.map((t: ToolMatch) =>
-                `📌 **${t.title}**
-   - الوصف: ${t.description}
-   - التسعير: ${t.pricing_type}
-   - التصنيف: ${t.category || 'عام'}
-   - الرابط: /tool/${t.slug || t.title.toLowerCase().replace(/\s+/g, '-')}`
-            ).join('\n\n');
-        }
-
-        // ─────────────────────────────────────────────
-        // 7. Build System Prompt (RAG - Generation)
+        // 5. Generate Response (Gemini 1.5 Flash)
         // ─────────────────────────────────────────────
         const systemPrompt = `
-أنت "مساعد نبض AI" 🤖، خبير ذكاء اصطناعي ودود ومحترف.
-مهمتك هي مساعدة المستخدمين في العثور على أفضل أدوات الذكاء الاصطناعي المناسبة لاحتياجاتهم.
+${currentPersona}
 
-═══════════════════════════════════════════════════════
-📚 معلومات من قاعدة بيانات "نبض":
-═══════════════════════════════════════════════════════
-${contextText}
-═══════════════════════════════════════════════════════
+مهمتك هي مساعدة المستخدم بالعربية.
+${contextText ? `\nاستخدم المعلومات التالية عن الأدوات المتوفرة في إجابتك:\n${contextText}` : ''}
 
-📋 تعليمات هامة:
-1. تحدث باللغة العربية دائماً بنبرة ودية ومفيدة.
-2. إذا وجدت أدوات في السياق أعلاه، رشحها للمستخدم واشرح لماذا هي مناسبة لطلبه.
-3. استخدم الإيموجي باعتدال لجعل الرد أكثر حيوية.
-4. إذا لم تجد أدوات مناسبة، اعتذر بلطف واقترح كلمات بحث بديلة.
-5. اجعل إجابتك مختصرة (3-5 جمل) ومركزة على الفائدة.
-6. لا تخترع أدوات غير موجودة في السياق.
-7. إذا سأل المستخدم سؤالاً عاماً غير متعلق بالأدوات، أجب بإيجاز ثم وجهه للبحث في الموقع.
-
-سؤال المستخدم: ${query}
+تعليمات:
+1. كن مفيداً ومختصراً.
+2. إذا وجدت أدوات مقترحة أعلاه، رشحها للمستخدم.
+3. تحدث كنماذج ذكاء اصطناعي ودود.
 `;
-
-        // ─────────────────────────────────────────────
-        // 8. Generate Response (RAG - Generation)
-        // ─────────────────────────────────────────────
-        console.log("🤖 Asking Gemini...");
-
-        // Build conversation history for context
-        const conversationHistory = history.slice(-4).map((msg: { role: string; content: string }) => ({
-            role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.content }]
-        }));
 
         const chatRes = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
@@ -233,51 +185,30 @@ ${contextText}
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [
-                        ...conversationHistory,
-                        {
-                            role: 'user',
-                            parts: [{ text: systemPrompt }]
-                        }
+                        ...history.slice(-4).map((msg: any) => ({
+                            role: msg.role === 'user' ? 'user' : 'model',
+                            parts: [{ text: msg.content }]
+                        })),
+                        { role: 'user', parts: [{ text: query }] }
                     ],
-                    generationConfig: {
-                        temperature: 0.7,
-                        topK: 40,
-                        topP: 0.95,
-                        maxOutputTokens: 500,
-                    },
-                    safetySettings: [
-                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-                    ]
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: { maxOutputTokens: 800 }
                 })
             }
         );
 
         if (!chatRes.ok) {
-            const errText = await chatRes.text();
-            console.error("🔴 Chat API Error:", errText);
-            throw new Error(`Gemini Chat Failed: ${errText}`);
+            throw new Error(`Gemini API Error: ${chatRes.statusText}`);
         }
 
         const chatData = await chatRes.json();
-        const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "عذراً، واجهت مشكلة في التفكير. حاول مرة أخرى! 🔄";
+        const reply = chatData.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أستطع توليد رد.";
 
-        console.log("✅ Reply generated successfully.");
-
-        // ─────────────────────────────────────────────
-        // 9. Return Response
-        // ─────────────────────────────────────────────
         return new Response(JSON.stringify({
             reply,
             answer: reply,
-            toolsFound: tools?.length || 0,
-            rateLimit: {
-                remaining: rateLimit.remaining,
-                resetIn: Math.ceil(rateLimit.resetIn / 1000)
-            }
+            toolsFound,
+            rateLimit: { remaining: rateLimit.remaining, resetIn: Math.ceil(rateLimit.resetIn / 1000) }
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
