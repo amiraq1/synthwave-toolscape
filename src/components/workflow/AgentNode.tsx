@@ -52,10 +52,9 @@ const AgentNode = memo(({ data, id }: NodeProps<AgentNodeData>) => {
                 return;
             }
 
-            const { data: response, error } = await supabase.functions.invoke('agent-brain', {
+            const { data: response, error } = await supabase.functions.invoke('chat', {
                 body: {
-                    query: prompt,
-                    agentSlug: selectedAgent
+                    query: prompt
                 },
                 headers: {
                     Authorization: `Bearer ${session.access_token}`

@@ -200,10 +200,9 @@ const WorkflowContent = () => {
                 // تحديث حالة العقدة
                 updateNodeData(agentNode.id, { label: 'جاري المعالجة...' });
 
-                const { data: response, error } = await supabase.functions.invoke('agent-brain', {
+                const { data: response, error } = await supabase.functions.invoke('chat', {
                     body: {
-                        query: `${prompt}\n\nالسياق: ${currentResult}`,
-                        agentSlug
+                        query: `${prompt}\n\nالسياق: ${currentResult}`
                     },
                     headers: {
                         Authorization: `Bearer ${session.access_token}`
