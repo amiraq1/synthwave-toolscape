@@ -13,7 +13,7 @@ const AINode = ({ data }: any) => {
         setLoading(true);
         try {
             // 1. نرسل طلب للوكيل الذكي الذي بنيناه سابقاً
-            const { data: response, error } = await supabase.functions.invoke('chat-agent', {
+            const { data: response, error } = await supabase.functions.invoke('chat', {
                 body: { query: `قم بتنفيذ هذه المهمة باختصار: ${data.label}` } // نرسل اسم العقدة كمهمة
             });
 

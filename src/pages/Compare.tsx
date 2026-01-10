@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import { useCompare } from "@/context/CompareContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
-import { Check, X, Loader2, ExternalLink, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
+import { X, Check, ArrowRight, ExternalLink, Plus, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 
 const ComparePage = () => {
     const { selectedTools, removeFromCompare } = useCompare();
     const [tools, setTools] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchTools = async () => {
             if (selectedTools.length === 0) {
                 setTools([]);
                 setLoading(false);
                 return;
             }
 
+            setLoading(true);
+            // جلب بيانات الأدوات المحددة فقط
             const { data } = await supabase
                 .from("tools")
                 .select("*")
@@ -30,145 +30,139 @@ const ComparePage = () => {
             if (data) setTools(data);
             setLoading(false);
         };
-        fetchData();
+
+        fetchTools();
     }, [selectedTools]);
 
-    if (loading) return (
-        <div className="flex justify-center p-20">
-            <Loader2 className="animate-spin text-neon-purple" />
-        </div>
-    );
+    // تجميع كل الميزات الفريدة من جميع الأدوات لإنشاء جدول المقارنة
+    const allFeatures = Array.from(new Set(tools.flatMap(t => t.features || [])));
 
-    if (tools.length === 0) return (
-        <div className="min-h-screen flex flex-col items-center justify-center text-center p-4" dir={isAr ? "rtl" : "ltr"}>
-            <Scale className="w-16 h-16 text-gray-600 mb-4" />
-            <h2 className="text-2xl font-bold mb-2 text-white">
-                {isAr ? "لم تختر أي أدوات للمقارنة" : "No tools selected for comparison"}
-            </h2>
-            <p className="text-gray-400 mb-6">
-                {isAr
-                    ? "اضغط على أيقونة الميزان ⚖️ في بطاقات الأدوات لإضافتها هنا."
-                    : "Click the scale icon ⚖️ on tool cards to add them here."
-                }
-            </p>
-            <Link to="/">
-                <Button>{isAr ? "تصفح الأدوات" : "Browse Tools"}</Button>
-            </Link>
-        </div>
-    );
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a]"><Loader2 className="w-10 h-10 animate-spin text-neon-purple" /></div>;
+
+    if (tools.length === 0) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1a] p-4 text-center">
+                <h1 className="text-3xl font-bold text-white mb-4">لا توجد أدوات للمقارنة</h1>
+                <p className="text-gray-400 mb-8 max-w-md">قم بإضافة أدوات من الصفحة الرئيسية لتبدأ المقارنة بينهم واكتشاف الأفضل لاحتياجاتك.</p>
+                <Link to="/">
+                    <Button className="bg-neon-purple hover:bg-neon-purple/80 px-8 py-6 text-lg rounded-xl">
+                        تصفح الأدوات <ArrowRight className="w-5 h-5 mr-2" />
+                    </Button>
+                </Link>
+            </div>
+        );
+    }
 
     return (
-        <div className="container mx-auto px-4 py-12 min-h-screen" dir={isAr ? "rtl" : "ltr"}>
-            <h1 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3">
-                <Scale className="text-neon-purple" />
-                {isAr ? "مقارنة الأدوات" : "Compare Tools"}
-            </h1>
+        <div className="min-h-screen bg-[#0f0f1a] pt-24 pb-20 px-4 md:px-8 font-cairo">
+            <Helmet>
+                <title>مقارنة الأدوات | نبض AI</title>
+            </Helmet>
 
-            <div className="overflow-x-auto pb-10">
-                <table className={`w-full min-w-[800px] border-collapse ${isAr ? 'text-right' : 'text-left'}`}>
-                    <thead>
-                        <tr>
-                            <th className="p-4 w-1/4"></th>
-                            {tools.map(tool => {
-                                const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-                                return (
-                                    <th key={tool.id} className="p-4 w-1/4 min-w-[220px] bg-white/5 border border-white/10 rounded-t-xl relative align-top">
-                                        <button
-                                            onClick={() => removeFromCompare(tool.id)}
-                                            className="absolute top-2 left-2 text-gray-500 hover:text-red-500 p-1 bg-black/20 rounded-full"
-                                            title={isAr ? "إزالة" : "Remove"}
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
+            <div className="max-w-7xl mx-auto">
+                <div className="flex items-center justify-between mb-8">
+                    <h1 className="text-3xl font-bold text-white">مقارنة المواصفات</h1>
+                    <Link to="/">
+                        <Button variant="outline" className="border-white/10 hover:bg-white/5 text-gray-300">
+                            <Plus className="w-4 h-4 ml-2" /> إضافة أداة
+                        </Button>
+                    </Link>
+                </div>
 
-                                        <div className="mt-4 text-center">
-                                            <div className="w-16 h-16 mx-auto rounded-xl overflow-hidden mb-3 border border-white/10">
-                                                <ImageWithFallback
-                                                    src={tool.image_url}
-                                                    alt={displayTitle}
-                                                    className="w-full h-full object-cover"
-                                                    width={100}
-                                                />
-                                            </div>
-                                            <h3 className="text-xl font-bold text-white mb-1">{displayTitle}</h3>
-                                            <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded-full">{tool.category}</span>
-                                        </div>
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    </thead>
-                    <tbody className="text-gray-300">
-                        {/* Pricing Type */}
-                        <tr className="border-b border-white/5 hover:bg-white/5">
-                            <td className="p-4 font-bold text-white bg-white/5">
-                                {isAr ? "نوع السعر" : "Pricing"}
-                            </td>
+                {/* الحاوية القابلة للتمرير */}
+                <div className="overflow-x-auto pb-4 custom-scrollbar">
+                    <div className="min-w-[800px] bg-white/5 rounded-3xl border border-white/10 overflow-hidden">
+
+                        {/* 1. الصف الرأسي (الهيدر) - الصور والأسماء */}
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10">
+                            <div className="p-6 bg-white/[0.02] flex items-center text-gray-400 font-bold border-l border-white/10">
+                                وجه المقارنة
+                            </div>
                             {tools.map(tool => (
-                                <td key={tool.id} className="p-4 text-center">
-                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${tool.pricing_type === 'مجاني' ? 'bg-green-500/10 text-green-400' :
-                                        tool.pricing_type === 'مدفوع' ? 'bg-orange-500/10 text-orange-400' : 'bg-blue-500/10 text-blue-400'
+                                <div key={tool.id} className="relative p-6 flex flex-col items-center text-center border-l border-white/10 last:border-0 bg-white/[0.02]">
+                                    <button
+                                        onClick={() => removeFromCompare(tool.id)}
+                                        className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-red-500/20 text-gray-500 hover:text-red-400 transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden mb-4 border border-white/10 shadow-lg">
+                                        <ImageWithFallback src={tool.image_url} alt={tool.title} width={100} />
+                                    </div>
+
+                                    <h3 className="font-bold text-white text-lg mb-1">{tool.title}</h3>
+                                    <span className="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">{tool.category}</span>
+
+                                    <div className="mt-4 flex gap-2 w-full">
+                                        <Link to={`/tool/${tool.id}`} className="flex-1">
+                                            <Button size="sm" variant="outline" className="w-full text-xs border-white/10">التفاصيل</Button>
+                                        </Link>
+                                        <a href={tool.url} target="_blank" className="flex-1">
+                                            <Button size="sm" className="w-full text-xs bg-neon-purple hover:bg-neon-purple/80">زيارة</Button>
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* 2. صف السعر */}
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors">
+                            <div className="p-4 px-6 text-gray-300 font-bold border-l border-white/10 flex items-center">
+                                💵 التكلفة
+                            </div>
+                            {tools.map(tool => (
+                                <div key={tool.id} className="p-4 px-6 flex items-center justify-center border-l border-white/10 last:border-0">
+                                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${tool.pricing_type === 'Free' ? 'bg-green-500/20 text-green-400' :
+                                            tool.pricing_type === 'Freemium' ? 'bg-blue-500/20 text-blue-400' :
+                                                'bg-orange-500/20 text-orange-400'
                                         }`}>
-                                        {tool.pricing_type}
+                                        {tool.pricing_type === 'Free' ? 'مجاني' :
+                                            tool.pricing_type === 'Freemium' ? 'مجاني / مدفوع' : 'مدفوع'}
                                     </span>
-                                </td>
+                                </div>
                             ))}
-                        </tr>
+                        </div>
 
-                        {/* Description */}
-                        <tr className="border-b border-white/5 hover:bg-white/5">
-                            <td className="p-4 font-bold text-white bg-white/5 align-top">
-                                {isAr ? "الوصف" : "Description"}
-                            </td>
-                            {tools.map(tool => {
-                                const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
-                                return (
-                                    <td key={tool.id} className="p-4 text-sm leading-relaxed align-top">
-                                        {displayDescription}
-                                    </td>
-                                );
-                            })}
-                        </tr>
+                        {/* 3. صفوف المميزات (Dynamic Matrix) */}
+                        {allFeatures.map((feature: string, idx) => (
+                            <div key={idx} className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors">
+                                <div className="p-4 px-6 text-gray-400 text-sm border-l border-white/10 flex items-center">
+                                    {feature}
+                                </div>
+                                {tools.map(tool => {
+                                    const hasFeature = tool.features?.includes(feature);
+                                    return (
+                                        <div key={tool.id} className="p-4 flex items-center justify-center border-l border-white/10 last:border-0">
+                                            {hasFeature ? (
+                                                <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                                                    <Check className="w-5 h-5 text-green-500" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                                                    <span className="text-gray-600 text-lg">-</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ))}
 
-                        {/* Features */}
-                        <tr className="border-b border-white/5 hover:bg-white/5">
-                            <td className="p-4 font-bold text-white bg-white/5 align-top">
-                                {isAr ? "المميزات" : "Features"}
-                            </td>
+                        {/* 4. صف الوصف */}
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))]">
+                            <div className="p-4 px-6 text-gray-300 font-bold border-l border-white/10 flex items-center">
+                                📝 نبذة
+                            </div>
                             {tools.map(tool => (
-                                <td key={tool.id} className="p-4 align-top">
-                                    <ul className="space-y-2 text-sm">
-                                        {tool.features?.map((feat: string, i: number) => (
-                                            <li key={i} className="flex items-start gap-2">
-                                                <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                                <span>{feat}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </td>
+                                <div key={tool.id} className="p-6 text-sm text-gray-400 leading-relaxed text-center border-l border-white/10 last:border-0">
+                                    {tool.description}
+                                </div>
                             ))}
-                        </tr>
+                        </div>
 
-                        {/* Actions */}
-                        <tr>
-                            <td className="p-4 bg-transparent"></td>
-                            {tools.map(tool => (
-                                <td key={tool.id} className="p-4 text-center">
-                                    <Link to={`/tool/${tool.id}`}>
-                                        <Button variant="outline" className="w-full mb-2 border-white/10 hover:bg-white/5">
-                                            {isAr ? "التفاصيل" : "Details"}
-                                        </Button>
-                                    </Link>
-                                    <a href={tool.url} target="_blank" rel="noreferrer">
-                                        <Button className="w-full bg-neon-purple hover:bg-neon-purple/80">
-                                            {isAr ? "زيارة الموقع" : "Visit Site"} <ExternalLink className="w-3 h-3 mr-2" />
-                                        </Button>
-                                    </a>
-                                </td>
-                            ))}
-                        </tr>
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
         </div>
     );

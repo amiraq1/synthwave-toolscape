@@ -173,7 +173,7 @@ export const useChat = () => {
         });
 
         // استدعاء الـ API
-        const fetchPromise = supabase.functions.invoke('chat-agent', {
+        const fetchPromise = supabase.functions.invoke('chat', {
             body: { query, history },
             headers: {
                 Authorization: `Bearer ${accessToken}`

@@ -97,7 +97,7 @@ const Workflow = () => {
             }
 
             // 4. استدعاء الوكيل الذكي (Backend) مع token المصادقة
-            const { data: response, error } = await supabase.functions.invoke('chat-agent', {
+            const { data: response, error } = await supabase.functions.invoke('chat', {
                 body: { query: userPrompt },
                 headers: {
                     Authorization: `Bearer ${session.access_token}`
