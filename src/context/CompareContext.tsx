@@ -7,6 +7,7 @@ interface CompareContextType {
     addToCompare: (id: string) => void;
     removeFromCompare: (id: string) => void;
     clearCompare: () => void;
+    setCompareList: (ids: string[]) => void;
 }
 
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
@@ -43,10 +44,19 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
         setSelectedTools(selectedTools.filter((itemId) => itemId !== id));
     };
 
+    const setCompareList = (ids: string[]) => {
+        // التحقق من الحد الأقصى
+        if (ids.length > 3) {
+            setSelectedTools(ids.slice(0, 3));
+        } else {
+            setSelectedTools(ids);
+        }
+    };
+
     const clearCompare = () => setSelectedTools([]);
 
     return (
-        <CompareContext.Provider value={{ selectedTools, addToCompare, removeFromCompare, clearCompare }}>
+        <CompareContext.Provider value={{ selectedTools, addToCompare, removeFromCompare, clearCompare, setCompareList }}>
             {children}
         </CompareContext.Provider>
     );

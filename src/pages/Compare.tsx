@@ -3,14 +3,39 @@ import { useCompare } from "@/context/CompareContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { X, Check, ArrowRight, ExternalLink, Plus, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 
 const ComparePage = () => {
-    const { selectedTools, removeFromCompare } = useCompare();
+    const { selectedTools, removeFromCompare, setCompareList } = useCompare();
     const [tools, setTools] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // 1. مزامنة الرابط مع السياق عند التحميل لأول مرة
+    useEffect(() => {
+        const idsParam = searchParams.get('ids');
+        if (idsParam) {
+            const ids = idsParam.split(',').filter(id => id.length > 0);
+            if (ids.length > 0) {
+                // تجنب التحديث إذا كانت القائمة هي نفسها بالفعل (لمنع حلقات لا نهائية)
+                const isSame = ids.length === selectedTools.length && ids.every(id => selectedTools.includes(id));
+                if (!isSame) {
+                    setCompareList(ids);
+                }
+            }
+        }
+    }, []); // تشغيل مرة واحدة عند التحميل
+
+    // 2. تحديث الرابط عند تغير الأدوات المحددة
+    useEffect(() => {
+        if (selectedTools.length > 0) {
+            setSearchParams({ ids: selectedTools.join(',') }, { replace: true });
+        } else {
+            setSearchParams({}, { replace: true });
+        }
+    }, [selectedTools, setSearchParams]);
 
     useEffect(() => {
         const fetchTools = async () => {
@@ -21,14 +46,19 @@ const ComparePage = () => {
             }
 
             setLoading(true);
-            // جلب بيانات الأدوات المحددة فقط
-            const { data } = await supabase
-                .from("tools")
-                .select("*")
-                .in("id", selectedTools);
+            try {
+                // جلب بيانات الأدوات المحددة فقط
+                const { data } = await supabase
+                    .from("tools")
+                    .select("*")
+                    .in("id", selectedTools);
 
-            if (data) setTools(data);
-            setLoading(false);
+                if (data) setTools(data);
+            } catch (error) {
+                console.error("Error fetching tools:", error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchTools();
@@ -114,8 +144,8 @@ const ComparePage = () => {
                             {tools.map(tool => (
                                 <div key={tool.id} className="p-4 px-6 flex items-center justify-center border-l border-white/10 last:border-0">
                                     <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${tool.pricing_type === 'Free' ? 'bg-green-500/20 text-green-400' :
-                                            tool.pricing_type === 'Freemium' ? 'bg-blue-500/20 text-blue-400' :
-                                                'bg-orange-500/20 text-orange-400'
+                                        tool.pricing_type === 'Freemium' ? 'bg-blue-500/20 text-blue-400' :
+                                            'bg-orange-500/20 text-orange-400'
                                         }`}>
                                         {tool.pricing_type === 'Free' ? 'مجاني' :
                                             tool.pricing_type === 'Freemium' ? 'مجاني / مدفوع' : 'مدفوع'}
