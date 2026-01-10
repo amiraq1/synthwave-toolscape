@@ -55,7 +55,7 @@ USING (
   auth.uid() = user_id 
   OR EXISTS (
     SELECT 1 FROM public.profiles 
-    WHERE id = auth.uid() AND is_admin = true
+    WHERE id = auth.uid() AND role = 'admin'
   )
 );
 

@@ -1,6 +1,8 @@
 -- Create function to fetch public reviews with reviewer name and avatar
 -- Uses SECURITY DEFINER so callers can read through complex RLS safely
 
+DROP FUNCTION IF EXISTS public.get_public_reviews(BIGINT);
+
 CREATE OR REPLACE FUNCTION public.get_public_reviews(tool_id_input BIGINT)
 RETURNS TABLE (
   id uuid,

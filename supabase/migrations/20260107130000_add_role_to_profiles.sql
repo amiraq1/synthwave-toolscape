@@ -10,6 +10,7 @@ WHERE public.profiles.id = auth.users.id
 AND auth.users.email = 'amaralmdarking27@gmail.com';
 
 -- 3. Update security policies (allow admins to update roles)
+DROP POLICY IF EXISTS "Admins can update roles" ON public.profiles;
 CREATE POLICY "Admins can update roles" 
 ON public.profiles 
 FOR UPDATE 
