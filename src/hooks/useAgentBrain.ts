@@ -196,8 +196,8 @@ export const useAgentBrain = (initialAgentSlug: AgentSlug = 'general') => {
             setTimeout(() => reject(new Error('timeout')), REQUEST_TIMEOUT);
         });
 
-        const fetchPromise = supabase.functions.invoke('agent-brain', {
-            body: { query, history, agentSlug },
+        const fetchPromise = supabase.functions.invoke('chat', {
+            body: { query, history }, // chat function currently handles query and history
             headers: { Authorization: `Bearer ${accessToken}` }
         });
 
