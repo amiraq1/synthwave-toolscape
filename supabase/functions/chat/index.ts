@@ -41,47 +41,42 @@ serve(async (req: Request) => {
 
     try {
         // ─────────────────────────────────────────────
-        // 1. Authentication Check
+        // 1. Authentication & User Identification (Optional)
         // ─────────────────────────────────────────────
         const authHeader = req.headers.get('Authorization');
-        if (!authHeader?.startsWith('Bearer ')) {
-            return new Response(
-                JSON.stringify({ error: 'يجب تسجيل الدخول لاستخدام نبض AI' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
-
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
         const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
 
         if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing!");
 
-        // ─────────────────────────────────────────────
-        // 2. Verify User & Rate Limit
-        // ─────────────────────────────────────────────
-        const authSupabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
-            global: { headers: { Authorization: authHeader } }
-        });
+        let userId = 'anonymous';
 
-        const token = authHeader.replace('Bearer ', '');
-        const { data: { user }, error: authError } = await authSupabase.auth.getUser(token);
-
-        if (authError || !user) {
-            console.error("🔴 Auth error:", authError?.message);
-            return new Response(
-                JSON.stringify({ error: 'جلسة غير صالحة، يرجى تسجيل الدخول مجدداً' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
+        // محاولة التحقق من المستخدم (إذا وجد الترويسة)
+        if (authHeader && authHeader.startsWith('Bearer ') && !authHeader.includes('null')) {
+            try {
+                const authSupabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+                    global: { headers: { Authorization: authHeader } }
+                });
+                const token = authHeader.replace('Bearer ', '');
+                const { data: { user } } = await authSupabase.auth.getUser(token);
+                if (user) {
+                    userId = user.id;
+                    console.log("✅ Authenticated user:", userId);
+                }
+            } catch (e) {
+                console.warn("⚠️ Auth check failed, proceeding as anonymous:", e);
+            }
+        } else {
+            console.log("👤 Proceeding as anonymous user");
         }
 
-        const userId = user.id;
-        console.log("✅ Authenticated user:", userId);
-
-        // Rate limiting check
+        // ─────────────────────────────────────────────
+        // 2. Rate Limit (Per User or Global for Anon)
+        // ─────────────────────────────────────────────
         const rateLimit = checkRateLimit(userId);
         if (!rateLimit.allowed) {
-            console.warn(`⚠️ Rate limit exceeded for user: ${userId}`);
+            console.warn(`⚠️ Rate limit exceeded for: ${userId}`);
             return new Response(
                 JSON.stringify({
                     error: 'لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار قليلاً.',
@@ -97,7 +92,7 @@ serve(async (req: Request) => {
                 }
             );
         }
-        console.log(`📊 Rate limit: ${rateLimit.remaining} requests remaining`);
+        console.log(`📊 Rate limit for ${userId}: ${rateLimit.remaining} remaining`);
 
         // ─────────────────────────────────────────────
         // 3. Parse Request & Identify Agent
@@ -213,11 +208,15 @@ ${contextText ? `\nاستخدم المعلومات التالية عن الأد�
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error: unknown) {
-        const errMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error("🔥 FATAL ERROR:", errMessage);
-        return new Response(JSON.stringify({ error: errMessage }), {
-            status: 500,
+    } catch (error: any) {
+        console.error("🔥 FATAL ERROR:", error.message || error);
+
+        // إرجاع تفاصيل الخطأ للمتصفح للمساعدة في التشخيص
+        return new Response(JSON.stringify({
+            error: error.message || 'Unknown error occurred',
+            details: error.stack || String(error)
+        }), {
+            status: 400, // نستخدم 400 بدلاً من 500 لنرى محتوى الرد في المتصفح
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
     }
