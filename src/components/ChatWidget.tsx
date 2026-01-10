@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useChat, ChatMessage, ChatError, RetryState } from '@/hooks/useChat';
+import { useAgentBrain, AgentMessage, AgentError, ToolExecution, AgentSlug } from '@/hooks/useAgentBrain';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
     MessageCircle, X, Send, Bot, User, Loader2, Sparkles,
     Trash2, Volume2, VolumeX, Minimize2, Maximize2,
     ChevronDown, Copy, Check, ExternalLink, Keyboard,
-    RefreshCw, XCircle, Clock, Wifi, WifiOff, AlertTriangle
+    RefreshCw, XCircle, Clock, Wifi, WifiOff, AlertTriangle,
+    Wrench, Search, GitCompare, Info, Star, Zap, Users, ChevronLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -59,25 +60,6 @@ const saveSettings = (settings: ChatSettings) => {
     }
 };
 
-const loadStoredMessages = (): ChatMessage[] => {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        return stored ? JSON.parse(stored) : [];
-    } catch {
-        return [];
-    }
-};
-
-const saveMessages = (messages: ChatMessage[]) => {
-    try {
-        // Keep only the most recent messages
-        const toStore = messages.slice(-MAX_STORED_MESSAGES);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
-    } catch (e) {
-        console.warn('Failed to save chat history:', e);
-    }
-};
-
 // Extract tool mentions from text for linking
 const extractToolSlug = (text: string): ToolCard | null => {
     const match = text.match(/\*\*([^*]+)\*\*/);
@@ -110,9 +92,68 @@ const TypingIndicator = () => (
     </div>
 );
 
+// Tool Execution Badge Component
+const getToolIcon = (toolName: string) => {
+    switch (toolName) {
+        case 'search_tools': return <Search className="w-3 h-3" />;
+        case 'compare_tools': return <GitCompare className="w-3 h-3" />;
+        case 'get_tool_details': return <Info className="w-3 h-3" />;
+        case 'search_by_category': return <Star className="w-3 h-3" />;
+        case 'get_popular_tools': return <Zap className="w-3 h-3" />;
+        default: return <Wrench className="w-3 h-3" />;
+    }
+};
+
+const getToolLabel = (toolName: string) => {
+    const labels: Record<string, string> = {
+        'search_tools': 'بحث دلالي',
+        'compare_tools': 'مقارنة',
+        'get_tool_details': 'تفاصيل',
+        'search_by_category': 'حسب الفئة',
+        'get_popular_tools': 'الأشهر'
+    };
+    return labels[toolName] || toolName;
+};
+
+interface ToolExecutionBadgeProps {
+    tools: ToolExecution[];
+}
+
+const ToolExecutionBadge = ({ tools }: ToolExecutionBadgeProps) => {
+    if (!tools || tools.length === 0) return null;
+
+    return (
+        <div className="flex flex-wrap gap-1.5 mt-2 pt-2 border-t border-white/5">
+            <span className="text-[10px] text-muted-foreground/60 w-full mb-1 flex items-center gap-1">
+                <Wrench className="w-3 h-3" />
+                أدوات مُنفذة:
+            </span>
+            {tools.map((tool, idx) => (
+                <span
+                    key={idx}
+                    className={cn(
+                        "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors",
+                        tool.success
+                            ? "bg-green-500/10 border-green-500/20 text-green-400"
+                            : "bg-red-500/10 border-red-500/20 text-red-400"
+                    )}
+                >
+                    {getToolIcon(tool.name)}
+                    <span>{getToolLabel(tool.name)}</span>
+                    {tool.itemsFound > 0 && (
+                        <span className="bg-white/10 px-1 rounded text-white/70">
+                            {tool.itemsFound}
+                        </span>
+                    )}
+                </span>
+            ))}
+        </div>
+    );
+};
+
 // Message bubble component
 interface MessageBubbleProps {
-    msg: ChatMessage;
+    msg: AgentMessage;
     onCopy: (text: string) => void;
     copiedIndex: number | null;
     index: number;
@@ -126,13 +167,15 @@ const formatResponseTime = (ms: number): string => {
 
 const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBubbleProps) => {
     const isUser = msg.role === 'user';
-    const toolCard = !isUser ? extractToolSlug(msg.content) : null;
+    const isAgent = msg.role === 'agent';
+    const toolCard = isAgent ? extractToolSlug(msg.content) : null;
 
     return (
         <div
             className={cn(
                 "flex gap-3 max-w-[90%] group animate-slideInUp",
                 isUser ? "mr-auto flex-row-reverse" : "ml-auto",
+                isAgent && msg.toolsExecuted?.length ? "max-w-[95%]" : "",
                 msg.status === 'error' && "opacity-60"
             )}
             style={{ animationDelay: '0.05s' }}
@@ -144,7 +187,9 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
                     ? msg.status === 'error'
                         ? "bg-red-500/20 border-red-500/30"
                         : "bg-white/10 border-white/20"
-                    : "bg-gradient-to-br from-neon-purple to-blue-600 border-white/20 shadow-lg"
+                    : msg.toolsExecuted?.length
+                        ? "bg-gradient-to-br from-neon-cyan to-blue-600 border-white/20 shadow-lg shadow-neon-cyan/20"
+                        : "bg-gradient-to-br from-neon-purple to-blue-600 border-white/20 shadow-lg"
             )}>
                 {isUser
                     ? msg.status === 'sending'
@@ -197,11 +242,21 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
                             </ReactMarkdown>
                         </div>
 
+                        {/* Tools Executed Badge */}
+                        {msg.toolsExecuted && msg.toolsExecuted.length > 0 && (
+                            <ToolExecutionBadge tools={msg.toolsExecuted} />
+                        )}
+
                         {/* Response Time Badge */}
-                        {msg.responseTime && (
+                        {msg.executionTime && (
                             <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground/60">
                                 <Clock className="w-3 h-3" />
-                                <span>{formatResponseTime(msg.responseTime)}</span>
+                                <span>{formatResponseTime(msg.executionTime)}</span>
+                                {msg.toolsExecuted?.length && (
+                                    <span className="text-neon-cyan/60 mr-2">
+                                        • {msg.toolsExecuted.length} أداة
+                                    </span>
+                                )}
                             </div>
                         )}
 
@@ -238,16 +293,17 @@ const MessageBubble = ({ msg, onCopy, copiedIndex, index, navigate }: MessageBub
 
 // Error display component with retry support
 interface ErrorDisplayProps {
-    error: ChatError;
+    error: AgentError;
     onRetry?: () => void;
     canRetry?: boolean;
 }
 
-const getErrorIcon = (type: ChatError['type']) => {
+const getErrorIcon = (type: AgentError['type']) => {
     switch (type) {
         case 'network': return <WifiOff className="w-4 h-4 text-red-400" />;
         case 'auth': return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
         case 'timeout': return <Clock className="w-4 h-4 text-orange-400" />;
+        case 'rateLimit': return <Clock className="w-4 h-4 text-yellow-400" />;
         default: return <Bot className="w-4 h-4 text-red-400" />;
     }
 };
@@ -274,6 +330,7 @@ const ErrorDisplay = ({ error, onRetry, canRetry }: ErrorDisplayProps) => (
                 {error.type === 'timeout' && '⏱️ '}
                 {error.type === 'auth' && '🔐 '}
                 {error.type === 'server' && '🖥️ '}
+                {error.type === 'rateLimit' && '⏳ '}
                 {error.type === 'unknown' && '⚠️ '}
                 خطأ
             </p>
@@ -302,34 +359,25 @@ const ErrorDisplay = ({ error, onRetry, canRetry }: ErrorDisplayProps) => (
     </div>
 );
 
-// Retry indicator component
-interface RetryIndicatorProps {
-    retryState: RetryState;
-    onCancel: () => void;
-}
-
-const RetryIndicator = ({ retryState, onCancel }: RetryIndicatorProps) => (
-    <div className="flex gap-3 ml-auto max-w-[80%] animate-fadeIn" role="status">
-        <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0 border border-orange-500/30 mt-1">
-            <RefreshCw className="w-4 h-4 text-orange-400 animate-spin" />
+// Thinking Indicator - عندما يفكر الوكيل
+const ThinkingIndicator = () => (
+    <div className="flex gap-3 ml-auto max-w-[80%] animate-fadeIn" role="status" aria-label="الوكيل يفكر...">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-cyan to-blue-600 flex items-center justify-center shrink-0 border border-white/20 shadow-lg shadow-neon-cyan/20 mt-1">
+            <Wrench className="w-4 h-4 text-white animate-pulse" />
         </div>
-        <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl rounded-tr-none px-4 py-3 flex items-center gap-3">
-            <div>
-                <p className="text-xs text-orange-400 font-medium">جاري إعادة المحاولة...</p>
-                <p className="text-[10px] text-orange-300/70 mt-0.5">
-                    المحاولة {retryState.attempt} من {retryState.maxAttempts}
-                </p>
-            </div>
-            <button
-                onClick={onCancel}
-                className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
-                aria-label="إلغاء"
-            >
-                <XCircle className="w-4 h-4 text-orange-300" />
-            </button>
+        <div className="bg-card/60 rounded-2xl rounded-tr-none px-4 py-3 flex items-center gap-2 border border-neon-cyan/20 backdrop-blur-sm">
+            <span className="text-xs text-neon-cyan ml-2">ينفذ الأدوات...</span>
+            <span className="flex gap-1">
+                <span className="w-2 h-2 bg-neon-cyan/60 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 bg-neon-cyan/60 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 bg-neon-cyan/60 rounded-full animate-bounce" />
+            </span>
         </div>
     </div>
 );
+
+// Retry indicator removed - useAgentBrain handles retry internally
+
 
 // Welcome screen when chat is empty
 interface WelcomeScreenProps {
@@ -373,6 +421,81 @@ const WelcomeScreen = ({ onSuggestionClick }: WelcomeScreenProps) => (
     </div>
 );
 
+// Agent Selector Component
+interface AgentSelectorProps {
+    currentAgent: AgentSlug;
+    availableAgents: { slug: AgentSlug; name: string; emoji: string; description: string }[];
+    onSelectAgent: (slug: AgentSlug) => void;
+    isOpen: boolean;
+    onToggle: () => void;
+}
+
+const AgentSelector = ({ currentAgent, availableAgents, onSelectAgent, isOpen, onToggle }: AgentSelectorProps) => {
+    const current = availableAgents.find(a => a.slug === currentAgent);
+
+    return (
+        <div className="relative">
+            {/* Current Agent Button */}
+            <button
+                onClick={onToggle}
+                className={cn(
+                    "flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-xs",
+                    "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+                )}
+            >
+                <span className="text-base">{current?.emoji}</span>
+                <span className="text-white/80 font-medium">{current?.name}</span>
+                <ChevronDown className={cn(
+                    "w-3 h-3 text-white/50 transition-transform",
+                    isOpen && "rotate-180"
+                )} />
+            </button>
+
+            {/* Dropdown */}
+            {isOpen && (
+                <div className="absolute top-full right-0 mt-2 w-64 bg-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-fadeIn z-50">
+                    <div className="p-2 border-b border-white/5">
+                        <p className="text-[10px] text-muted-foreground px-2">اختر وكيلاً متخصصاً</p>
+                    </div>
+                    <div className="p-1">
+                        {availableAgents.map((agent) => (
+                            <button
+                                key={agent.slug}
+                                onClick={() => {
+                                    onSelectAgent(agent.slug);
+                                    onToggle();
+                                }}
+                                className={cn(
+                                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-right",
+                                    agent.slug === currentAgent
+                                        ? "bg-neon-purple/20 border border-neon-purple/30"
+                                        : "hover:bg-white/5"
+                                )}
+                            >
+                                <span className="text-xl">{agent.emoji}</span>
+                                <div className="flex-1 text-right">
+                                    <p className={cn(
+                                        "text-sm font-medium",
+                                        agent.slug === currentAgent ? "text-neon-purple" : "text-white"
+                                    )}>
+                                        {agent.name}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground">
+                                        {agent.description}
+                                    </p>
+                                </div>
+                                {agent.slug === currentAgent && (
+                                    <Check className="w-4 h-4 text-neon-purple" />
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Component
 // ─────────────────────────────────────────────────────────────────────────────
@@ -386,27 +509,17 @@ const ChatWidget = () => {
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isAgentSelectorOpen, setIsAgentSelectorOpen] = useState(false);
 
-    const { messages, sendMessage, isLoading, clearChat, error, setMessages, retryState, cancelRequest, retryLastMessage } = useChat();
+    const {
+        messages, sendMessage, isLoading, isThinking, clearChat, error,
+        setMessages, cancelRequest, retryLastMessage,
+        currentAgent, switchAgent, availableAgents, quickSuggestions
+    } = useAgentBrain();
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // ─────────────────────────────────────────────
-    // Load stored messages on mount
-    // ─────────────────────────────────────────────
-    useEffect(() => {
-        const stored = loadStoredMessages();
-        if (stored.length > 0) {
-            setMessages(stored);
-        }
-    }, [setMessages]);
-
-    // Save messages when they change
-    useEffect(() => {
-        if (messages.length > 0) {
-            saveMessages(messages);
-        }
-    }, [messages]);
+    // Note: useAgentBrain handles message persistence internally
 
     // Save settings when they change
     useEffect(() => {
@@ -458,7 +571,7 @@ const ChatWidget = () => {
     useEffect(() => {
         if (!isOpen && messages.length > 0) {
             const lastMessage = messages[messages.length - 1];
-            if (lastMessage.role === 'model') {
+            if (lastMessage.role === 'agent') {
                 setUnreadCount(prev => prev + 1);
             }
         }
@@ -575,6 +688,14 @@ const ChatWidget = () => {
                                     مساعدك الذكي • {hasMessages ? `${messages.length} رسالة` : 'جاهز للمساعدة'}
                                 </p>
                             </div>
+                            {/* Agent Selector */}
+                            <AgentSelector
+                                currentAgent={currentAgent}
+                                availableAgents={availableAgents}
+                                onSelectAgent={switchAgent}
+                                isOpen={isAgentSelectorOpen}
+                                onToggle={() => setIsAgentSelectorOpen(!isAgentSelectorOpen)}
+                            />
                         </div>
 
                         {/* Header Actions */}
@@ -651,14 +772,9 @@ const ChatWidget = () => {
                                     />
                                 ))}
 
-                                {isLoading && !retryState.isRetrying && <TypingIndicator />}
+                                {isLoading && !isThinking && <TypingIndicator />}
 
-                                {retryState.isRetrying && (
-                                    <RetryIndicator
-                                        retryState={retryState}
-                                        onCancel={cancelRequest}
-                                    />
-                                )}
+                                {isThinking && <ThinkingIndicator />}
 
                                 {error && !isLoading && (
                                     <ErrorDisplay
