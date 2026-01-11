@@ -5,7 +5,15 @@
             "destination": "https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/sitemap"
         },
         {
-            "source": "/((?!assets/|.*\\..*).*)",
+            "source": "/robots.txt",
+            "destination": "/robots.txt"
+        },
+        {
+            "source": "/assets/(.*)",
+            "destination": "/assets/$1"
+        },
+        {
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ],
