@@ -1,4 +1,4 @@
-import { MessageSquare, Mail, FileText, Database, Zap } from "lucide-react";
+import { MessageSquare, Mail, FileText, Database, Zap, Sparkles } from "lucide-react";
 
 export default function Sidebar() {
     // دالة تُنفذ عند بدء سحب عنصر
@@ -58,6 +58,17 @@ export default function Sidebar() {
                     >
                         <Zap className="w-4 h-4 text-pink-400" />
                         <span className="text-sm text-gray-200">مستشار تصميم</span>
+                    </div>
+
+                    {/* وكيل مستشار الأدوات */}
+                    <div
+                        className="bg-[#0f0f1a] p-3 rounded-lg border border-neon-purple/50 cursor-grab hover:bg-white/5 transition-colors flex items-center gap-3 mb-2"
+                        onDragStart={(event) => onDragStart(event, 'default', '🎯 مستشار الأدوات', 'tool-advisor')}
+                        draggable
+                    >
+                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <span className="text-sm text-gray-200">مستشار الأدوات</span>
+                        <span className="text-[10px] bg-neon-purple/20 text-neon-purple px-1.5 rounded border border-neon-purple/30">جديد</span>
                     </div>
 
                     {/* وكيل عام */}
