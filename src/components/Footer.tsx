@@ -82,11 +82,7 @@ const Footer = () => {
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <Link to="/workflow" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                    المصنع (Beta)
-                  </Link>
-                </li>
+
               </ul>
             </nav>
           </div>
