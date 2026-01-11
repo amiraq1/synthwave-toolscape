@@ -102,21 +102,34 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
     recordClick(String(tool.id));
   };
 
-
-  // Google Favicon API - reliable and fast
-  const getFaviconUrl = (url: string): string | null => {
+  /**
+   * جلب أيقونة الأداة بجودة عالية
+   * الأولوية: 1. Clearbit Logo API (HD) → 2. Google Favicon (128px)
+   */
+  const getToolIconUrl = (url: string): { primary: string | null; fallback: string | null } => {
     try {
-      if (!url) return null;
-      const hostname = new URL(url).hostname;
-      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
+      if (!url) return { primary: null, fallback: null };
+      const hostname = new URL(url).hostname.replace('www.', '');
+
+      // Clearbit Logo API - جودة عالية (HD logos للشركات الكبرى)
+      const clearbitUrl = `https://logo.clearbit.com/${hostname}`;
+
+      // Google Favicon API - fallback موثوق
+      const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=256`;
+
+      return {
+        primary: clearbitUrl,
+        fallback: googleFaviconUrl
+      };
     } catch {
-      return null;
+      return { primary: null, fallback: null };
     }
   };
 
-  // Image priority logic - Original image or Favicon fallback
+  // Image priority logic
   const showOriginalImage = tool.image_url && !imageError;
-  const faviconUrl = !showOriginalImage ? getFaviconUrl(tool.url) : null;
+  const iconUrls = !showOriginalImage ? getToolIconUrl(tool.url) : { primary: null, fallback: null };
+  const [iconError, setIconError] = useState(false);
 
   return (
     <div
@@ -184,10 +197,19 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     width={100}
                     className="w-full h-full p-1.5 object-contain"
                   />
-                ) : faviconUrl ? (
-                  /* Priority 2: Google Favicon */
+                ) : iconUrls.primary && !iconError ? (
+                  /* Priority 2: Clearbit HD Logo */
                   <img
-                    src={faviconUrl}
+                    src={iconUrls.primary}
+                    alt={displayTitle}
+                    className="w-10 h-10 object-contain rounded-lg"
+                    loading="lazy"
+                    onError={() => setIconError(true)}
+                  />
+                ) : iconUrls.fallback ? (
+                  /* Priority 3: Google Favicon (256px) */
+                  <img
+                    src={iconUrls.fallback}
                     alt={displayTitle}
                     className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
                     loading="lazy"
@@ -201,7 +223,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                 {/* Fallback: First Letter or Category Icon */}
                 <div className={cn(
                   "fallback-icon flex items-center justify-center w-full h-full",
-                  (showOriginalImage || faviconUrl) ? "hidden" : "flex"
+                  (showOriginalImage || (iconUrls.primary && !iconError) || iconUrls.fallback) ? "hidden" : "flex"
                 )}>
                   {tool.title ? (
                     <span className="text-xl font-bold text-neon-purple">
