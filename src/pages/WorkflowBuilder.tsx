@@ -130,11 +130,10 @@ const FlowArea = () => {
                     // 🤖 هذه عقدة وكيل ذكي! لنتصل بالسيرفر
                     toast.loading(`الوكيل "${node.data.label}" يفكر...`);
 
-                    const { data, error } = await supabase.functions.invoke('chat', {
+                    const { data, error } = await supabase.functions.invoke('chat-agent', {
                         body: {
-                            message: currentData, // نمرر مخرجات الخطوة السابقة كمدخلات
+                            query: currentData, // نمرر مخرجات الخطوة السابقة كمدخلات
                             agentSlug: node.data.slug,
-                            history: []
                         }
                     });
 
