@@ -2,9 +2,12 @@ import { MessageSquare, Mail, FileText, Database, Zap } from "lucide-react";
 
 export default function Sidebar() {
     // دالة تُنفذ عند بدء سحب عنصر
-    const onDragStart = (event: React.DragEvent, nodeType: string, label: string) => {
+    const onDragStart = (event: React.DragEvent, nodeType: string, label: string, agentSlug?: string) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.setData('application/label', label);
+        if (agentSlug) {
+            event.dataTransfer.setData('application/slug', agentSlug);
+        }
         event.dataTransfer.effectAllowed = 'move';
     };
 
@@ -36,21 +39,35 @@ export default function Sidebar() {
                 {/* قسم الوكلاء */}
                 <div>
                     <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">الوكلاء (AI Agents)</h3>
+
+                    {/* وكيل المبرمج */}
                     <div
                         className="bg-[#0f0f1a] p-3 rounded-lg border border-white/10 cursor-grab hover:bg-white/5 transition-colors flex items-center gap-3 mb-2"
-                        onDragStart={(event) => onDragStart(event, 'default', '🤖 تلخيص نص')}
+                        onDragStart={(event) => onDragStart(event, 'default', '💻 خبير الكود', 'coder')}
                         draggable
                     >
-                        <FileText className="w-4 h-4 text-blue-400" />
-                        <span className="text-sm text-gray-200">تلخيص نص</span>
+                        <Zap className="w-4 h-4 text-yellow-400" />
+                        <span className="text-sm text-gray-200">خبير برمجة</span>
                     </div>
+
+                    {/* وكيل المصمم */}
                     <div
                         className="bg-[#0f0f1a] p-3 rounded-lg border border-white/10 cursor-grab hover:bg-white/5 transition-colors flex items-center gap-3 mb-2"
-                        onDragStart={(event) => onDragStart(event, 'default', '💬 دردشة ذكية')}
+                        onDragStart={(event) => onDragStart(event, 'default', '🎨 مستشار تصميم', 'designer')}
                         draggable
                     >
-                        <MessageSquare className="w-4 h-4 text-green-400" />
-                        <span className="text-sm text-gray-200">دردشة ذكية</span>
+                        <Zap className="w-4 h-4 text-pink-400" />
+                        <span className="text-sm text-gray-200">مستشار تصميم</span>
+                    </div>
+
+                    {/* وكيل عام */}
+                    <div
+                        className="bg-[#0f0f1a] p-3 rounded-lg border border-white/10 cursor-grab hover:bg-white/5 transition-colors flex items-center gap-3 mb-2"
+                        onDragStart={(event) => onDragStart(event, 'default', '🤖 مساعد عام', 'general')}
+                        draggable
+                    >
+                        <MessageSquare className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm text-gray-200">مساعد عام</span>
                     </div>
                 </div>
 

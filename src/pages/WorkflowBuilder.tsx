@@ -51,6 +51,7 @@ const FlowArea = () => {
 
             const type = event.dataTransfer.getData('application/reactflow');
             const label = event.dataTransfer.getData('application/label');
+            const slug = event.dataTransfer.getData('application/slug'); // استلام معرف الوكيل
 
             // التحقق من صحة البيانات
             if (typeof type === 'undefined' || !type) {
@@ -68,7 +69,7 @@ const FlowArea = () => {
                 id: `${type}-${Date.now()}`, // ID فريد
                 type,
                 position,
-                data: { label: label, description: 'اسحب لتوصيل العقدة بغيرها' }, // بيانات إضافية
+                data: { label: label, description: 'اسحب لتوصيل العقدة بغيرها', slug: slug || null }, // حفظ الـ slug
             };
 
             setNodes((nds) => nds.concat(newNode));
