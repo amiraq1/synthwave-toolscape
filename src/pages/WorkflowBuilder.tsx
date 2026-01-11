@@ -28,6 +28,21 @@ const nodeTypes = {
     // يمكننا الاحتفاظ بالأنواع القديمة للتوافق إذا لزم الأمر، لكننا سنعتمد على 'custom'
 };
 
+// إعدادات الخطوط لتكون واضحة وسميكة
+const defaultEdgeOptions = {
+    animated: true,
+    type: 'smoothstep',
+    style: {
+        stroke: '#7c3aed',
+        strokeWidth: 3,
+        filter: 'drop-shadow(0 0 3px #7c3aed)',
+    },
+    markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#7c3aed',
+    },
+};
+
 // مكون داخلي للتعامل مع الـ ReactFlow Hook
 const FlowArea = () => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -64,20 +79,7 @@ const FlowArea = () => {
         toast.success("تم تحديث إعدادات العقدة");
     }, [setNodes, setEditingNode]);
 
-    // إعدادات الخطوط لتكون واضحة وسميكة
-    const defaultEdgeOptions = {
-        animated: true,
-        type: 'smoothstep',
-        style: {
-            stroke: '#7c3aed',
-            strokeWidth: 3,
-            filter: 'drop-shadow(0 0 3px #7c3aed)',
-        },
-        markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: '#7c3aed',
-        },
-    };
+
 
     const onConnect = useCallback(
         (params: Edge | Connection) => setEdges((eds) => addEdge({
