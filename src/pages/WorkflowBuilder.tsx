@@ -16,6 +16,15 @@ import { Button } from "@/components/ui/button";
 import { Play, Save } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Sidebar from "@/components/workflow/Sidebar";
+import CustomNode from "@/components/workflow/CustomNode";
+
+// تعريف أنواع العقد المخصصة
+const nodeTypes = {
+    input: CustomNode,
+    default: CustomNode,
+    output: CustomNode,
+    // يمكن إضافة أنواع أخرى هنا
+};
 
 // مكون داخلي للتعامل مع الـ ReactFlow Hook
 const FlowArea = () => {
@@ -29,8 +38,8 @@ const FlowArea = () => {
         (params: Edge | Connection) => setEdges((eds) => addEdge({
             ...params,
             animated: true,
-            style: { stroke: '#fff' },
-            markerEnd: { type: MarkerType.ArrowClosed, color: '#fff' }
+            style: { stroke: '#7c3aed', strokeWidth: 2 }, // تحسين شكل الخط
+            markerEnd: { type: MarkerType.ArrowClosed, color: '#7c3aed' }
         }, eds)),
         [setEdges]
     );
@@ -54,21 +63,12 @@ const FlowArea = () => {
                 y: event.clientY,
             });
 
-            // إنشاء العقدة الجديدة
+            // إنشاء العقدة الجديدة باستخدام التصميم المخصص
             const newNode = {
                 id: `${type}-${Date.now()}`, // ID فريد
                 type,
                 position,
-                data: { label: label },
-                style: {
-                    background: '#1a1a2e',
-                    color: '#fff',
-                    border: type === 'input' ? '1px solid #7c3aed' : type === 'output' ? '1px solid #22c55e' : '1px solid #fff',
-                    borderRadius: '10px',
-                    padding: '10px',
-                    minWidth: '150px',
-                    textAlign: 'center' as const
-                },
+                data: { label: label, description: 'اسحب لتوصيل العقدة بغيرها' }, // بيانات إضافية
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -124,6 +124,7 @@ const FlowArea = () => {
                     onInit={setReactFlowInstance}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
+                    nodeTypes={nodeTypes} // تسجيل العقد المخصصة
                     fitView
                     className="bg-[#0f0f1a]"
                 >
@@ -133,8 +134,8 @@ const FlowArea = () => {
                         style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)' }}
                         nodeColor={(n) => {
                             if (n.type === 'input') return '#7c3aed';
-                            if (n.type === 'output') return '#22c55e';
-                            return '#fff';
+                            if (n.type === 'output') return '#f97316';
+                            return '#3b82f6';
                         }}
                     />
                 </ReactFlow>
