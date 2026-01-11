@@ -1,4 +1,4 @@
-import { MessageSquare, Mail, FileText, Database, Zap, Sparkles, Bot } from "lucide-react";
+import { MessageSquare, Mail, FileText, Database, Zap, Sparkles, Bot, Brain } from "lucide-react";
 
 export default function Sidebar() {
     // دالة تُنفذ عند بدء سحب عنصر
@@ -47,6 +47,22 @@ export default function Sidebar() {
                 {/* 2. الوكلاء (Agents) */}
                 <div>
                     <h3 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider px-1">فريقي الذكي</h3>
+
+                    {/* UltraThink (الجديد) */}
+                    <div
+                        className="group bg-[#0f0f1a] p-3 rounded-xl border border-red-500/50 cursor-grab hover:border-red-500 hover:bg-[#1a1a2e] transition-all flex items-center gap-3 mb-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20"
+                        onDragStart={(event) => onDragStart(event, 'custom', '🧠 UltraThink', 'ultrathink')}
+                        draggable
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                            <Brain className="w-5 h-5 text-red-500 animate-pulse" />
+                        </div>
+                        <div>
+                            <span className="block text-sm font-bold text-gray-200 group-hover:text-white">UltraThink</span>
+                            <span className="block text-[10px] text-gray-500">منطق واستنتاج عميق</span>
+                        </div>
+                        <span className="mr-auto text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/30">PRO</span>
+                    </div>
 
                     {/* مستشار الأدوات (الجديد) */}
                     <div
