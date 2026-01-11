@@ -13,12 +13,14 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Button } from "@/components/ui/button";
-import { Play, Save } from "lucide-react";
+import { Play, Save, Database, X } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Sidebar from "@/components/workflow/Sidebar";
 import CustomNode from "@/components/workflow/CustomNode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import NodeSettings from "@/components/workflow/NodeSettings";
+import { Node } from "reactflow";
 
 // تعريف أنواع العقد المخصصة
 const nodeTypes = {
@@ -33,6 +35,34 @@ const FlowArea = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     const [isRunning, setIsRunning] = useState(false);
+    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+    const [logs, setLogs] = useState<string[]>([]); // سجلات التنفيذ
+
+    const addLog = (message: string) => {
+        setLogs(prev => [...prev, `> ${new Date().toLocaleTimeString().split(' ')[0]} ${message}`]);
+    };
+
+    const handleSave = () => {
+        const workflowOpt = { nodes, edges };
+        console.log("Saving:", workflowOpt);
+        // هنا يمكن ربط Supabase لحفظ البيانات في جدول workflows
+        toast.success("تم حفظ مخطط سير العمل (محلياً حالياً)");
+    };
+
+    const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+        setSelectedNode(node);
+    }, []);
+
+    const onNodeUpdate = useCallback((nodeId: string, newData: any) => {
+        setNodes((nds) => nds.map((node) => {
+            if (node.id === nodeId) {
+                return { ...node, data: { ...newData } };
+            }
+            return node;
+        }));
+        setSelectedNode(null); // إغلاق اللوحة
+        toast.success("تم تحديث إعدادات العقدة");
+    }, [setNodes]);
 
     const onConnect = useCallback(
         (params: Edge | Connection) => setEdges((eds) => addEdge({
@@ -94,15 +124,34 @@ const FlowArea = () => {
             return;
         }
         setIsRunning(true);
+        setLogs([]); // تصفية السجلات القديمة
+        addLog("🚀 تهيئة بيئة التشغيل...");
         toast.info("جاري بدء تشغيل السلسلة...");
 
         try {
+            // محاكاة بيانات الإيميل الوارد
+            let context: any = {
+                subject: "استفسار بخصوص الطلب #992",
+                from: "client@example.com",
+                body: "مرحباً، لم يصلني الطلب حتى الآن. متى موعد التسليم المتوقع؟"
+            };
             // أ) البحث عن عقدة البداية (Trigger)
             let currentData = "أريد كود React لعمل زر يتحول للون الأحمر عند الضغط عليه";
+            addLog("📦 تحميل سياق التنفيذ (Context)...");
+
+            let currentOutput = "";
 
             // ب) ترتيب العقد بناءً على الروابط (Edges)
             const sortedNodes = [];
-            let currentNode = nodes.find(n => n.type === 'input'); // البداية
+            addLog("🔄 تحليل مسار سير العمل (Path Analysis)...");
+            // نبحث عن عقدة البداية (trigger) أو أول عقدة input
+            let currentNode = nodes.find(n => n.data.slug === 'trigger' || n.type === 'input');
+
+            // إذا لم نجد trigger صريح، نأخذ أول عقدة ليس لها مدخلات (source فقط)
+            if (!currentNode) {
+                const targetHandleIds = new Set(edges.map(e => e.target));
+                currentNode = nodes.find(n => !targetHandleIds.has(n.id));
+            }
 
             while (currentNode) {
                 sortedNodes.push(currentNode);
@@ -112,49 +161,78 @@ const FlowArea = () => {
             }
 
             if (sortedNodes.length === 0) {
-                toast.warning("لم يتم العثور على مسار متصل يبدأ من المحفز (Trigger).");
+                toast.warning("لم يتم العثور على مسار متصل.");
                 setIsRunning(false);
                 return;
             }
 
-            // ج) تنفيذ الحلقة
             for (const node of sortedNodes) {
-                // تمييز العقدة الحالية بصرياً
-                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, selected: true } : { ...n, selected: false }));
+                // تحديث حالة العقدة لـ running
+                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, selected: true, data: { ...n.data, status: 'running' } } : { ...n, selected: false }));
+                await new Promise(r => setTimeout(r, 800)); // محاكاة وقت المعالجة وتأثير بصري
 
-                await new Promise(r => setTimeout(r, 600)); // تأثير بصري
+                // 1. إذا كان وكيل (Agent)
+                if (node.data.slug && node.data.slug !== 'trigger' && node.data.slug !== 'action' && node.type !== 'output') {
 
-                if (node.type === 'input') {
-                    console.log("Start Input:", currentData);
-                    toast.success("تم تفعيل المحفز: إيميل جديد");
-                }
+                    addLog(`🤖 تشغيل الوكيل: ${node.data.label}`);
 
-                else if (node.data.slug) {
-                    // 🤖 هذه عقدة وكيل ذكي! لنتصل بالسيرفر
-                    toast.loading(`الوكيل "${node.data.label}" يفكر...`);
+                    // استبدال المتغيرات في الـ Prompt
+                    let prompt = node.data.customPrompt || "";
+                    if (prompt) {
+                        addLog(`📝 معالجة القوالب والمتغيرات للنص...`);
+                        prompt = prompt.replace("{{body}}", context.body || "")
+                            .replace("{{subject}}", context.subject || "")
+                            .replace("{{from}}", context.from || "");
+                    }
+
+                    // إذا لم يكتب المستخدم برومبت، نستخدم ال output السابق أو body
+                    const queryToSend = prompt || context.agent_output || context.body;
+
+                    toast.loading(`الوكيل "${node.data.label}" يعالج الطلب...`);
+                    addLog(`📡 الاتصال بخادم Gemini AI...`);
 
                     const { data, error } = await supabase.functions.invoke('chat-agent', {
-                        body: {
-                            query: currentData, // نمرر مخرجات الخطوة السابقة كمدخلات
-                            agentSlug: node.data.slug,
-                        }
+                        body: { query: queryToSend, agentSlug: node.data.slug }
                     });
 
                     if (error) {
+                        addLog(`❌ خطأ في الاتصال: ${error.message}`);
                         const errorMessage = await error.context?.json().then((e: any) => e.error).catch(() => error.message);
                         throw new Error(errorMessage || "فشل الاتصال بالوكيل");
                     }
 
-                    currentData = data.reply || data.generatedText || JSON.stringify(data);
+                    currentOutput = data.reply;
+                    addLog(`✅ تم استلام الرد من الوكيل.`);
+
+                    // تحديث سياق النتائج والـ output للعرض في البطاقة
+                    context = { ...context, agent_output: currentOutput };
+
+                    // تحديث العقدة بالنتيجة (للعرض)
+                    setNodes(nds => nds.map(n => n.id === node.id ? { ...n, data: { ...n.data, output: currentOutput } } : n));
                     toast.dismiss();
-                    toast.success(`تمت المعالجة بواسطة ${node.data.label}`);
+                    toast.success(`الوكيل ${node.data.label} أكمل المهمة`);
                 }
 
-                else if (node.type === 'output') {
-                    // النهاية: عرض النتيجة
-                    toast.success("تم الحفظ بنجاح!");
-                    alert(`🎉 النتيجة النهائية:\n\n${currentData}`);
+                // 2. إذا كان إجراء (Send Email / Action) أو Output node
+                else if (node.data.slug === 'action' || node.type === 'output') {
+                    addLog(`⚡ تنفيذ الإجراء: ${node.data.label}`);
+                    const to = node.data.to ? node.data.to.replace("{{from}}", context.from) : context.from;
+                    const body = node.data.body ? node.data.body.replace("{{agent_output}}", context.agent_output) : currentOutput;
+
+                    // محاكاة الإرسال
+                    addLog(`📧 إرسال بريد إلكتروني إلى: ${to}`);
+                    toast.success(`تم تنفيذ الإجراء: إرسال إلى ${to}`);
+                    alert(`📧 محاكاة إرسال إيميل:\n\nإلى: ${to}\nالمحتوى:\n${body}`);
                 }
+
+                // 3. المحفز (Trigger)
+                else if (node.data.slug === 'trigger' || node.type === 'input') {
+                    addLog(`🔔 استلام حدث خارجي (Triggered)`);
+                    toast.success("تم استلام محفز جديد: إيميل وارد");
+                }
+
+                // تحديث حالة العقدة لـ completed
+                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, data: { ...n.data, status: 'completed' } } : n));
             }
 
         } catch (error: any) {
@@ -162,7 +240,8 @@ const FlowArea = () => {
             toast.error(`حدث خطأ: ${error.message}`);
         } finally {
             setIsRunning(false);
-            setNodes(nds => nds.map(n => ({ ...n, selected: false }))); // إزالة التحديد
+            // إبقاء الحالة completed ظاهرة للمستخدم ولا نعيد تعيينها فوراً
+            setNodes(nds => nds.map(n => ({ ...n, selected: false })));
         }
     };
 
@@ -171,12 +250,25 @@ const FlowArea = () => {
             {/* القائمة الجانبية */}
             <Sidebar />
 
+            {/* 👇 لوحة الإعدادات (تظهر عند التحديد) */}
+            {selectedNode && (
+                <NodeSettings
+                    node={selectedNode}
+                    onClose={() => setSelectedNode(null)}
+                    onSave={onNodeUpdate} // مرر الدالة الجديدة
+                />
+            )}
+
             {/* مساحة العمل */}
             <div className="flex-1 flex flex-col h-full relative" ref={reactFlowWrapper}>
 
                 {/* شريط التحكم */}
                 <div className="absolute top-4 right-4 z-10 flex gap-2">
-                    <Button variant="secondary" className="bg-[#1a1a2e]/80 backdrop-blur border border-white/10 text-white hover:bg-white/10">
+                    <Button
+                        variant="secondary"
+                        onClick={handleSave}
+                        className="bg-[#1a1a2e]/80 backdrop-blur border border-white/10 text-white hover:bg-white/10"
+                    >
                         <Save className="w-4 h-4 ml-2" /> حفظ
                     </Button>
                     <Button
@@ -197,6 +289,7 @@ const FlowArea = () => {
                     onInit={setReactFlowInstance}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
+                    onNodeClick={onNodeClick} // تفعيل النقر
                     nodeTypes={nodeTypes} // تسجيل العقد المخصصة
                     fitView
                     className="bg-[#0f0f1a]"
@@ -212,6 +305,28 @@ const FlowArea = () => {
                         }}
                     />
                 </ReactFlow>
+
+                {/* سجل التحليل الذكي (UltraThink Terminal) */}
+                {logs.length > 0 && (
+                    <div className="absolute bottom-6 left-6 right-6 h-48 bg-black/90 border border-white/10 rounded-xl overflow-hidden font-mono text-sm shadow-2xl animate-in slide-in-from-bottom-10 backdrop-blur-md z-20">
+                        <div className="bg-white/5 px-4 py-2 border-b border-white/10 flex items-center justify-between">
+                            <span className="text-neon-purple font-bold flex items-center gap-2">
+                                <Database className="w-4 h-4" /> سجل العمليات (Live Logs)
+                            </span>
+                            <button onClick={() => setLogs([])} className="text-gray-500 hover:text-white"><X className="w-4 h-4" /></button>
+                        </div>
+                        <div className="p-4 h-full overflow-y-auto space-y-1 pb-10">
+                            {logs.map((log, i) => (
+                                <div key={i} className="text-gray-300 border-l-2 border-white/10 pl-2 animate-in fade-in slide-in-from-left-2">
+                                    {log}
+                                </div>
+                            ))}
+                            {isRunning && (
+                                <div className="text-neon-purple animate-pulse">_</div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
