@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import ReactFlow, {
     addEdge,
     Background,
@@ -8,48 +8,23 @@ import ReactFlow, {
     useEdgesState,
     Connection,
     Edge,
-    MarkerType
+    MarkerType,
+    ReactFlowProvider
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Button } from "@/components/ui/button";
-import { Play, Save, Plus } from "lucide-react";
+import { Play, Save } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import Sidebar from "@/components/workflow/Sidebar";
 
-// تعريف العقد الأولية (Initial Nodes)
-const initialNodes = [
-    {
-        id: '1',
-        type: 'input',
-        data: { label: '📧 محفز: إيميل جديد' },
-        position: { x: 250, y: 50 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #7c3aed', borderRadius: '10px' }
-    },
-    {
-        id: '2',
-        data: { label: '🤖 وكيل: تلخيص المحتوى' },
-        position: { x: 250, y: 150 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #fff', borderRadius: '10px' }
-    },
-    {
-        id: '3',
-        type: 'output',
-        data: { label: '💾 إجراء: حفظ في Notion' },
-        position: { x: 250, y: 250 },
-        style: { background: '#1a1a2e', color: '#fff', border: '1px solid #22c55e', borderRadius: '10px' }
-    },
-];
-
-const initialEdges = [
-    { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: '#7c3aed' } },
-    { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: '#fff' } },
-];
-
-export default function WorkflowBuilder() {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+// مكون داخلي للتعامل مع الـ ReactFlow Hook
+const FlowArea = () => {
+    const reactFlowWrapper = useRef<HTMLDivElement>(null);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     const [isRunning, setIsRunning] = useState(false);
 
-    // دالة الربط بين العقد
     const onConnect = useCallback(
         (params: Edge | Connection) => setEdges((eds) => addEdge({
             ...params,
@@ -60,35 +35,75 @@ export default function WorkflowBuilder() {
         [setEdges]
     );
 
+    // السحر هنا: دالة الإفلات (OnDrop) 🪄
+    const onDrop = useCallback(
+        (event: React.DragEvent) => {
+            event.preventDefault();
+
+            const type = event.dataTransfer.getData('application/reactflow');
+            const label = event.dataTransfer.getData('application/label');
+
+            // التحقق من صحة البيانات
+            if (typeof type === 'undefined' || !type) {
+                return;
+            }
+
+            // حساب مكان الإسقاط بالنسبة للشاشة
+            const position = reactFlowInstance.screenToFlowPosition({
+                x: event.clientX,
+                y: event.clientY,
+            });
+
+            // إنشاء العقدة الجديدة
+            const newNode = {
+                id: `${type}-${Date.now()}`, // ID فريد
+                type,
+                position,
+                data: { label: label },
+                style: {
+                    background: '#1a1a2e',
+                    color: '#fff',
+                    border: type === 'input' ? '1px solid #7c3aed' : type === 'output' ? '1px solid #22c55e' : '1px solid #fff',
+                    borderRadius: '10px',
+                    padding: '10px',
+                    minWidth: '150px',
+                    textAlign: 'center' as const
+                },
+            };
+
+            setNodes((nds) => nds.concat(newNode));
+        },
+        [reactFlowInstance, setNodes]
+    );
+
+    const onDragOver = useCallback((event: React.DragEvent) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    }, []);
+
     const handleRun = () => {
+        if (nodes.length === 0) {
+            alert("الرجاء إضافة عناصر أولاً!");
+            return;
+        }
         setIsRunning(true);
         setTimeout(() => {
             setIsRunning(false);
-            alert("تم تنفيذ سير العمل بنجاح! (محاكاة)");
-        }, 2000);
+            alert(`تم تشغيل السلسلة بنجاح! تم معالجة ${nodes.length} عقد.`);
+        }, 1500);
     };
 
     return (
-        <div className="h-screen w-full bg-[#0f0f1a] flex flex-col pt-16 font-cairo">
-            <Helmet>
-                <title>منشئ سير العمل | نبض AI</title>
-            </Helmet>
+        <div className="flex-1 flex h-full">
+            {/* القائمة الجانبية */}
+            <Sidebar />
 
-            {/* شريط الأدوات العلوي */}
-            <div className="h-16 border-b border-white/10 bg-[#1a1a2e]/50 backdrop-blur flex items-center justify-between px-6">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-xl font-bold text-white flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-neon-purple animate-pulse"></span>
-                        تصميم سير العمل
-                    </h1>
-                    <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-400">Beta v0.1</span>
-                </div>
+            {/* مساحة العمل */}
+            <div className="flex-1 flex flex-col h-full relative" ref={reactFlowWrapper}>
 
-                <div className="flex gap-3">
-                    <Button variant="outline" className="border-white/10 text-gray-300 hover:bg-white/5">
-                        <Plus className="w-4 h-4 ml-2" /> إضافة وكيل
-                    </Button>
-                    <Button variant="outline" className="border-white/10 text-gray-300 hover:bg-white/5">
+                {/* شريط التحكم */}
+                <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    <Button variant="secondary" className="bg-[#1a1a2e]/80 backdrop-blur border border-white/10 text-white hover:bg-white/10">
                         <Save className="w-4 h-4 ml-2" /> حفظ
                     </Button>
                     <Button
@@ -96,19 +111,19 @@ export default function WorkflowBuilder() {
                         className="bg-neon-purple hover:bg-neon-purple/80 text-white shadow-[0_0_15px_rgba(124,58,237,0.5)]"
                         disabled={isRunning}
                     >
-                        {isRunning ? "جاري التنفيذ..." : <>تشغيل <Play className="w-4 h-4 mr-2 fill-current" /></>}
+                        {isRunning ? "جاري المعالجة..." : <>تشغيل <Play className="w-4 h-4 mr-2 fill-current" /></>}
                     </Button>
                 </div>
-            </div>
 
-            {/* مساحة العمل (Canvas) */}
-            <div className="flex-1 relative">
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
+                    onInit={setReactFlowInstance}
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
                     fitView
                     className="bg-[#0f0f1a]"
                 >
@@ -123,17 +138,23 @@ export default function WorkflowBuilder() {
                         }}
                     />
                 </ReactFlow>
-
-                {/* قائمة جانبية عائمة (اختياري) */}
-                <div className="absolute left-4 top-4 bg-[#1a1a2e]/90 border border-white/10 p-4 rounded-xl backdrop-blur max-w-xs">
-                    <h3 className="text-sm font-bold text-gray-400 mb-2">تعليمات سريعة:</h3>
-                    <ul className="text-xs text-gray-500 space-y-1">
-                        <li>• اسحب الدوائر لربط الوكلاء.</li>
-                        <li>• استخدم زر "إضافة وكيل" للمزيد.</li>
-                        <li>• اضغط Backspace لحذف أي عنصر.</li>
-                    </ul>
-                </div>
             </div>
+        </div>
+    );
+};
+
+// المكون الرئيسي المغلف
+export default function WorkflowBuilder() {
+    return (
+        <div className="h-screen w-full bg-[#0f0f1a] flex flex-col pt-16 font-cairo overflow-hidden">
+            <Helmet>
+                <title>منشئ سير العمل | نبض AI</title>
+            </Helmet>
+
+            {/* يجب تغليف FlowArea بـ ReactFlowProvider لاستخدام useReactFlow Hook */}
+            <ReactFlowProvider>
+                <FlowArea />
+            </ReactFlowProvider>
         </div>
     );
 }
