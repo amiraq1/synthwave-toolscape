@@ -19,7 +19,7 @@ import Sidebar from "@/components/workflow/Sidebar";
 import CustomNode from "@/components/workflow/CustomNode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import NodeSettings from "@/components/workflow/NodeSettings";
+import NodeConfigDialog from "@/components/workflow/NodeConfigDialog";
 import { Node } from "reactflow";
 
 // تعريف أنواع العقد المخصصة
@@ -35,7 +35,7 @@ const FlowArea = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     const [isRunning, setIsRunning] = useState(false);
-    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+    const [editingNode, setEditingNode] = useState<Node | null>(null);
     const [logs, setLogs] = useState<string[]>([]); // سجلات التنفيذ
 
     const addLog = (message: string) => {
@@ -49,8 +49,8 @@ const FlowArea = () => {
         toast.success("تم حفظ مخطط سير العمل (محلياً حالياً)");
     };
 
-    const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-        setSelectedNode(node);
+    const onNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node) => {
+        setEditingNode(node);
     }, []);
 
     const onNodeUpdate = useCallback((nodeId: string, newData: any) => {
@@ -60,9 +60,9 @@ const FlowArea = () => {
             }
             return node;
         }));
-        setSelectedNode(null); // إغلاق اللوحة
+        setEditingNode(null); // إغلاق اللوحة
         toast.success("تم تحديث إعدادات العقدة");
-    }, [setNodes]);
+    }, [setNodes, setEditingNode]);
 
     const onConnect = useCallback(
         (params: Edge | Connection) => setEdges((eds) => addEdge({
@@ -250,14 +250,13 @@ const FlowArea = () => {
             {/* القائمة الجانبية */}
             <Sidebar />
 
-            {/* 👇 لوحة الإعدادات (تظهر عند التحديد) */}
-            {selectedNode && (
-                <NodeSettings
-                    node={selectedNode}
-                    onClose={() => setSelectedNode(null)}
-                    onSave={onNodeUpdate} // مرر الدالة الجديدة
-                />
-            )}
+            {/* 👇 نافذة الإعدادات (Modal Dialog) */}
+            <NodeConfigDialog
+                node={editingNode}
+                isOpen={!!editingNode}
+                onClose={() => setEditingNode(null)}
+                onSave={onNodeUpdate}
+            />
 
             {/* مساحة العمل */}
             <div className="flex-1 flex flex-col h-full relative" ref={reactFlowWrapper}>
@@ -289,7 +288,7 @@ const FlowArea = () => {
                     onInit={setReactFlowInstance}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
-                    onNodeClick={onNodeClick} // تفعيل النقر
+                    onNodeDoubleClick={onNodeDoubleClick} // 👈 تفعيل النقر المزدوج
                     nodeTypes={nodeTypes} // تسجيل العقد المخصصة
                     fitView
                     className="bg-[#0f0f1a]"
