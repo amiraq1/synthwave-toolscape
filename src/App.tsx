@@ -36,7 +36,6 @@ const Workflow = lazy(() => import("./pages/Workflow"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy Load Components
-const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
@@ -102,7 +101,6 @@ const AppContent = () => {
 
       {/* Floating Components */}
       <Suspense fallback={null}>
-        <ChatWidget />
         <CompareFloatingBar />
         <ScrollToTopButton />
         {isAddModalOpen && (
