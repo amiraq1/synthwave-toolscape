@@ -1,4 +1,4 @@
-import { Search, Sparkles, ArrowDown, Zap, Users, Star, Loader2 } from 'lucide-react';
+import { Search, Sparkles, ArrowDown, Zap, Users, Star, Loader2, GitBranch } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -69,13 +69,14 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
             <Sparkles className="h-5 w-5" />
             استكشف الأدوات
           </Button>
-          <Link to="/about">
+          <Link to="/workflow/new">
             <Button
               size="lg"
               variant="outline"
-              className="gap-2 px-8 py-7 text-lg font-semibold border-white/20 hover:bg-white/5 hover:border-neon-purple/50 transition-all"
+              className="gap-2 px-8 py-7 text-lg font-semibold rounded-full border-neon-purple/50 text-white hover:bg-neon-purple/10 hover:border-neon-purple transition-all group"
             >
-              تعرف على نبض
+              <GitBranch className="h-5 w-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
+              جرب صانع الوكلاء
             </Button>
           </Link>
         </div>

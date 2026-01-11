@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle, GitBranch } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
@@ -112,6 +112,16 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               {t('nav.blog')}
             </button>
+
+            {/* رابط المصنع الجديد */}
+            <Link
+              to="/workflow/new"
+              className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2"
+            >
+              <GitBranch className="w-4 h-4 text-neon-purple" />
+              <span>المصنع</span>
+              <span className="bg-neon-purple/20 text-neon-purple text-[10px] px-1.5 py-0.5 rounded border border-neon-purple/30">جديد</span>
+            </Link>
 
 
             <div className="h-6 w-px bg-border/50 mx-2" /> {/* Divider */}
