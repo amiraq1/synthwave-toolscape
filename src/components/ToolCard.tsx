@@ -111,15 +111,12 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
       if (!url) return { primary: null, fallback: null };
       const hostname = new URL(url).hostname.replace('www.', '');
 
-      // Clearbit Logo API - جودة عالية (HD logos للشركات الكبرى)
-      const clearbitUrl = `https://logo.clearbit.com/${hostname}`;
-
-      // Google Favicon API - fallback موثوق
-      const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=256`;
+      // استخدام Google Favicons كمصدر أساسي لضمان الاستقرار وعدم ظهور صور مكسورة
+      const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
 
       return {
-        primary: clearbitUrl,
-        fallback: googleFaviconUrl
+        primary: googleFaviconUrl,
+        fallback: null
       };
     } catch {
       return { primary: null, fallback: null };
