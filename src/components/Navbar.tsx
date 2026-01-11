@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle, GitBranch } from 'lucide-react';
+import { Plus, Activity, LogIn, LogOut, User, Menu, X, Settings, Shield, Heart, UserCircle, GitBranch, Bot } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -112,6 +112,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             >
               {t('nav.blog')}
             </button>
+
+            {/* رابط سوق الوكلاء */}
+            <Link to="/agents" className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2">
+              <Bot className="w-4 h-4 text-blue-400" />
+              <span>سوق الوكلاء</span>
+            </Link>
 
             {/* رابط المصنع الجديد */}
             <Link

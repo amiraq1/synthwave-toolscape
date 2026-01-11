@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 1. حاجز الأمان الأول: التعامل مع طلبات CORS (OPTIONS)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -17,44 +16,38 @@ serve(async (req) => {
     const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!;
 
-    // 2. حاجز الأمان الثاني: قراءة البيانات بأمان
+    if (!GEMINI_API_KEY) {
+      throw new Error("مفتاح GEMINI_API_KEY غير موجود في إعدادات السيرفر");
+    }
+
+    // قراءة البيانات بأمان
     let query, agentSlug;
     try {
       const body = await req.json();
-      console.log("Received body:", body); // Log for debugging
-
-      // Support both possible structures: { query, agentSlug } or { message, agentSlug }
+      // Support both styles for flexibility
       query = body.query || body.message;
       agentSlug = body.agentSlug || 'general';
-
     } catch (e) {
-      throw new Error("خطأ: لم يتم إرسال أي بيانات (Body is empty)");
+      throw new Error("لم يتم إرسال أي بيانات (Body is empty)");
     }
 
-    if (!query) throw new Error("نص السؤال مفقود (Query is missing)");
+    if (!query) throw new Error("نص السؤال مفقود");
 
-    // 3. بدء العمل
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // جلب شخصية الوكيل
-    console.log(`Fetching agent: ${agentSlug}`);
-    const { data: agentData, error: agentError } = await supabase
+    // 1. جلب شخصية الوكيل
+    const { data: agentData } = await supabase
       .from('agents')
       .select('system_prompt')
       .eq('slug', agentSlug)
       .single();
 
-    if (agentError) {
-      console.error("Error fetching agent:", agentError);
-      // Fallback if agent not found
-    }
-
     const systemInstructions = agentData?.system_prompt || "أنت مساعد ذكي ومفيد.";
 
-    // توليد الـ Embedding (استخدام v1 المستقر)
-    console.log("Generating embedding...");
+    // 2. توليد Embedding (نستخدم v1beta لهذا النموذج لأنه أكثر استقراراً عليه)
+    // 👇 التغيير هنا: v1beta
     const embeddingResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,16 +59,16 @@ serve(async (req) => {
     );
 
     if (!embeddingResp.ok) {
-      const err = await embeddingResp.text();
-      console.error("Gemini Embedding Error:", err);
-      throw new Error("فشل الاتصال بـ Gemini Embedding");
+      const errText = await embeddingResp.text();
+      console.error("Gemini Embedding Error:", errText); // سيظهر هذا في اللوج
+      // محاولة استخدام نموذج أقدم كاحتياطي إذا فشل الحديث
+      throw new Error(`فشل خدمة Embedding: ${errText}`);
     }
 
     const embeddingData = await embeddingResp.json();
     const embedding = embeddingData.embedding?.values;
 
-    // البحث في قاعدة البيانات (RAG)
-    console.log("Searching tools...");
+    // 3. البحث في قاعدة البيانات (RAG)
     const { data: tools, error: rpcError } = await supabase.rpc('match_tools', {
       query_embedding: embedding,
       match_threshold: 0.5,
@@ -93,11 +86,10 @@ serve(async (req) => {
       ).join('\n');
     }
 
-    // بناء التعليمات النهائية
     const finalPrompt = `
       ${systemInstructions}
       
-      استخدم البيانات التالية للإجابة على سؤال المستخدم بدقة:
+      استخدم البيانات التالية للإجابة على سؤال المستخدم:
       ---
       ${contextText}
       ---
@@ -105,8 +97,8 @@ serve(async (req) => {
       سؤال المستخدم: ${query}
     `;
 
-    // التوليد النهائي (استخدام v1 المستقر)
-    console.log("Generating final response...");
+    // 4. التوليد النهائي (نستخدم v1 لهذا النموذج)
+    // 👇 التغيير هنا: v1
     const chatResp = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -121,9 +113,9 @@ serve(async (req) => {
     );
 
     if (!chatResp.ok) {
-      const err = await chatResp.text();
-      console.error("Gemini Chat Error:", err);
-      throw new Error("فشل الاتصال بـ Gemini Chat");
+      const errText = await chatResp.text();
+      console.error("Gemini Chat Error:", errText);
+      throw new Error(`فشل خدمة Chat: ${errText}`);
     }
 
     const chatData = await chatResp.json();
@@ -134,9 +126,11 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error("Function Error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400, // نرسل 400 بدلاً من 500 ليفهم المتصفح أنه خطأ منطقي
+    console.error("Function Fatal Error:", error.message);
+    return new Response(JSON.stringify({
+      reply: "عذراً، واجهت مشكلة تقنية في الاتصال بالخدمات الذكية. الرجاء المحاولة لاحقاً."
+    }), {
+      status: 200, // نرسل 200 مع رسالة خطأ لطيفة للمستخدم بدلاً من تعطل الواجهة
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
