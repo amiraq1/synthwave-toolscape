@@ -101,7 +101,7 @@ const Auth = () => {
                 label: 'font-cairo',
               }
             }}
-            providers={["google", "github"]} // مزودو الخدمة
+            providers={[]} // تم تعطيل OAuth providers
             localization={{
               variables: {
                 sign_in: {
