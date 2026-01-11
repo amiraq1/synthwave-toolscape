@@ -64,12 +64,25 @@ const FlowArea = () => {
         toast.success("تم تحديث إعدادات العقدة");
     }, [setNodes, setEditingNode]);
 
+    // إعدادات الخطوط لتكون واضحة وسميكة
+    const defaultEdgeOptions = {
+        animated: true,
+        type: 'smoothstep',
+        style: {
+            stroke: '#7c3aed',
+            strokeWidth: 3,
+            filter: 'drop-shadow(0 0 3px #7c3aed)',
+        },
+        markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: '#7c3aed',
+        },
+    };
+
     const onConnect = useCallback(
         (params: Edge | Connection) => setEdges((eds) => addEdge({
             ...params,
-            animated: true,
-            style: { stroke: '#7c3aed', strokeWidth: 2 }, // تحسين شكل الخط
-            markerEnd: { type: MarkerType.ArrowClosed, color: '#7c3aed' }
+            ...defaultEdgeOptions
         }, eds)),
         [setEdges]
     );
@@ -285,6 +298,7 @@ const FlowArea = () => {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
+                    defaultEdgeOptions={defaultEdgeOptions} // 👈 تم إضافة الخيارات الافتراضية
                     onInit={setReactFlowInstance}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
