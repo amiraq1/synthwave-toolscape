@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { Bot, Mail, Database, Play, Loader2, MoreHorizontal } from "lucide-react";
+import { Bot, Mail, Database, Play, Loader2, MoreHorizontal, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const CustomNode = ({ data, selected }: NodeProps) => {
@@ -55,7 +55,9 @@ const CustomNode = ({ data, selected }: NodeProps) => {
                         <p className="text-sm font-bold leading-none">{data.label}</p>
                     </div>
                 </div>
-                <MoreHorizontal className="w-4 h-4 opacity-50 cursor-pointer hover:opacity-100" />
+                <button className="opacity-70 hover:opacity-100 hover:bg-white/20 p-1 rounded transition-all">
+                    <Settings className="w-4 h-4" />
+                </button>
             </div>
 
             {/* 3. جسم البطاقة */}
