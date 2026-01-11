@@ -32,23 +32,44 @@
   <link rel="apple-touch-icon" href="/pwa-192x192.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
-  <!-- GitHub Pages SPA redirect handler -->
+  <!-- URL Sanitizer - Runs before React to catch malformed URLs -->
   <script type="text/javascript">
-    // تنظيف الرابط النهائي من أي تكرار أو رموز /~and~/ قبل إعادة التوجيه
-    (function (l) {
-      if (l.search[1] === '/') {
-        var decoded = l.search.slice(1).split('&').map(function (s) {
+    (function() {
+      var loc = window.location;
+      var url = loc.href;
+      var search = loc.search;
+      var pathname = loc.pathname;
+      
+      // 1. التحقق من وجود URL مشوه
+      var isMalformed = 
+        url.indexOf('~and~') !== -1 ||
+        search.indexOf('/?/') !== -1 ||
+        pathname.indexOf('~and~') !== -1 ||
+        url.length > 2000 ||
+        search.length > 500;
+      
+      if (isMalformed) {
+        console.warn('🛡️ Malformed URL detected in pre-load script');
+        // تحديد الصفحة الأساسية
+        var basePath = pathname.split('?')[0].split('~')[0].replace(/\/+$/, '') || '/';
+        if (basePath.indexOf('/auth') !== -1) basePath = '/auth';
+        // إعادة التوجيه مباشرة
+        window.location.replace(basePath);
+        return;
+      }
+      
+      // 2. GitHub Pages SPA redirect handler (for clean URLs only)
+      if (search[1] === '/') {
+        var decoded = search.slice(1).split('&').map(function(s) {
           return s.replace(/~and~/g, '&');
         }).join('?');
-          // تنظيف شامل لأي رموز /~and~/ أو تكرار غير متوقع في الرابط النهائي
-          var cleanDecoded = decoded.replace(/(\/|\?)+(~and~)+(\/|\?)+/g, '');
-          // إزالة أي تكرار زائد في نهاية الرابط
-          var finalPath = (l.pathname.replace(/\/$/, '') + cleanDecoded + l.hash)
-            .replace(/(~and~)+/g, '')
-            .replace(/\/+/g, '/');
-          window.history.replaceState(null, null, finalPath);
+        var cleanDecoded = decoded.replace(/(\\/|\\?)+(~and~)+(\\/|\\?)+/g, '');
+        var finalPath = (pathname.replace(/\\/$/, '') + cleanDecoded + loc.hash)
+          .replace(/(~and~)+/g, '')
+          .replace(/\\/+/g, '/');
+        window.history.replaceState(null, null, finalPath);
       }
-    }(window.location));
+    })();
   </script>
 
   <!-- Preconnect for external resources (improves connection time) -->

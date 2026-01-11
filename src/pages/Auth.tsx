@@ -39,22 +39,50 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // دالة مخصصة للتعامل مع الأخطاء التي قد تظهر في الرابط (مثل ?error=...)
-  // ولكن بدون إعادة كتابة الرابط بشكل متكرر
+  // 2. تنظيف الروابط المشبوهة - يعمل فوراً عند تحميل المكون
   useEffect(() => {
-    // تنظيف الروابط المشبوهة أولاً
+    const currentUrl = window.location.href;
     const search = window.location.search;
-    if (search.includes('~and~') || search.length > 500) {
-      navigate('/auth', { replace: true });
+    const pathname = window.location.pathname;
+
+    // التحقق من وجود URL مشوه
+    const isMalformedUrl =
+      search.includes('~and~') ||
+      search.includes('/?/') ||
+      pathname.includes('~and~') ||
+      currentUrl.length > 2000 ||
+      search.length > 500;
+
+    if (isMalformedUrl) {
+      console.warn('🛡️ Malformed URL detected, redirecting to clean /auth');
+      // تنظيف أي بيانات مصادقة فاسدة قد تسبب المشكلة
+      try {
+        // مسح فقط البيانات المتعلقة بالمصادقة الفاسدة
+        const keysToCheck = Object.keys(localStorage).filter(
+          key => key.includes('supabase') && key.includes('auth')
+        );
+        keysToCheck.forEach(key => {
+          const value = localStorage.getItem(key);
+          if (value && (value.includes('~and~') || value.length > 10000)) {
+            localStorage.removeItem(key);
+          }
+        });
+      } catch (e) {
+        console.error('Failed to clean localStorage:', e);
+      }
+
+      // إعادة التوجيه لرابط نظيف
+      window.location.replace('/auth');
       return;
     }
 
+    // معالجة أخطاء المصادقة العادية
     const params = new URLSearchParams(location.search);
     const errorDescription = params.get("error_description");
     if (errorDescription) {
       setErrorMessage(decodeURIComponent(errorDescription));
     }
-  }, [location.search, navigate]);
+  }, [location.search]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a] px-4 py-12 font-cairo" dir="rtl">
