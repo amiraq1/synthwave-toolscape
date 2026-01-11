@@ -17,6 +17,8 @@ import { Play, Save } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Sidebar from "@/components/workflow/Sidebar";
 import CustomNode from "@/components/workflow/CustomNode";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // تعريف أنواع العقد المخصصة
 const nodeTypes = {
@@ -82,16 +84,84 @@ const FlowArea = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
-    const handleRun = () => {
+    // 2. محرك التنفيذ الحقيقي (The Execution Engine) ⚙️
+    const handleRun = async () => {
         if (nodes.length === 0) {
-            alert("الرجاء إضافة عناصر أولاً!");
+            toast.warning("الرجاء إضافة عناصر أولاً!");
             return;
         }
         setIsRunning(true);
-        setTimeout(() => {
+        toast.info("جاري بدء تشغيل السلسلة...");
+
+        try {
+            // أ) البحث عن عقدة البداية (Trigger)
+            let currentData = "أريد كود React لعمل زر يتحول للون الأحمر عند الضغط عليه";
+
+            // ب) ترتيب العقد بناءً على الروابط (Edges)
+            const sortedNodes = [];
+            let currentNode = nodes.find(n => n.type === 'input'); // البداية
+
+            while (currentNode) {
+                sortedNodes.push(currentNode);
+                const edge = edges.find(e => e.source === currentNode?.id);
+                if (!edge) break;
+                currentNode = nodes.find(n => n.id === edge.target);
+            }
+
+            if (sortedNodes.length === 0) {
+                toast.warning("لم يتم العثور على مسار متصل يبدأ من المحفز (Trigger).");
+                setIsRunning(false);
+                return;
+            }
+
+            // ج) تنفيذ الحلقة
+            for (const node of sortedNodes) {
+                // تمييز العقدة الحالية بصرياً
+                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, selected: true } : { ...n, selected: false }));
+
+                await new Promise(r => setTimeout(r, 600)); // تأثير بصري
+
+                if (node.type === 'input') {
+                    console.log("Start Input:", currentData);
+                    toast.success("تم تفعيل المحفز: إيميل جديد");
+                }
+
+                else if (node.data.slug) {
+                    // 🤖 هذه عقدة وكيل ذكي! لنتصل بالسيرفر
+                    toast.loading(`الوكيل "${node.data.label}" يفكر...`);
+
+                    const { data, error } = await supabase.functions.invoke('chat', {
+                        body: {
+                            message: currentData, // نمرر مخرجات الخطوة السابقة كمدخلات
+                            agentSlug: node.data.slug,
+                            history: []
+                        }
+                    });
+
+                    if (error) {
+                        const errorMessage = await error.context?.json().then((e: any) => e.error).catch(() => error.message);
+                        throw new Error(errorMessage || "فشل الاتصال بالوكيل");
+                    }
+
+                    currentData = data.reply || data.generatedText || JSON.stringify(data);
+                    toast.dismiss();
+                    toast.success(`تمت المعالجة بواسطة ${node.data.label}`);
+                }
+
+                else if (node.type === 'output') {
+                    // النهاية: عرض النتيجة
+                    toast.success("تم الحفظ بنجاح!");
+                    alert(`🎉 النتيجة النهائية:\n\n${currentData}`);
+                }
+            }
+
+        } catch (error: any) {
+            console.error(error);
+            toast.error(`حدث خطأ: ${error.message}`);
+        } finally {
             setIsRunning(false);
-            alert(`تم تشغيل السلسلة بنجاح! تم معالجة ${nodes.length} عقد.`);
-        }, 1500);
+            setNodes(nds => nds.map(n => ({ ...n, selected: false }))); // إزالة التحديد
+        }
     };
 
     return (
