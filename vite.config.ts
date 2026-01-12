@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 import viteCompression from "vite-plugin-compression";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -21,7 +22,15 @@ export default defineConfig(({ mode }) => ({
       threshold: 1024,
     }),
 
-    // 2. Advanced PWA Configuration
+    // 2. Bundle Visualizer
+    visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: "stats.html"
+    }) as any,
+
+    // 3. PWA Configuration
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -49,30 +58,20 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            // Cache Google Fonts (Cache First)
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] }
             }
           },
           {
-            // Cache Supabase Images (Stale While Revalidate)
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'supabase-images',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7
-              }
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 }
             }
           }
         ]
@@ -92,15 +91,42 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
+        // Smart Manual Chunking
         manualChunks(id) {
+          // 1. React Core
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
             return 'vendor-react';
           }
+
+          // 2. Backend & Logging
           if (id.includes('@supabase')) return 'vendor-supabase';
           if (id.includes('@sentry')) return 'vendor-sentry';
-          if (id.includes('@radix-ui')) return 'vendor-ui-core';
+
+          // 3. UI Libraries (Radix, Shadcn dependencies)
+          if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
+            return 'vendor-ui-core';
+          }
+
+          // 4. Icons
           if (id.includes('lucide-react')) return 'vendor-icons';
-          if (id.includes('framer-motion')) return 'vendor-motion';
+
+          // 5. Animation
+          if (id.includes('framer-motion')) return 'vendor-animation';
+
+          // 6. Data Visualization
+          if (id.includes('recharts') || id.includes('chart.js') || id.includes('d3')) {
+            return 'vendor-charts';
+          }
+
+          // 7. Forms & Validation
+          if (id.includes('zod') || id.includes('react-hook-form')) {
+            return 'vendor-forms';
+          }
+
+          // 8. Date Manipulation
+          if (id.includes('date-fns') || id.includes('dayjs') || id.includes('moment')) {
+            return 'vendor-dates';
+          }
         },
       },
     },
