@@ -4,6 +4,13 @@ import App from './App.tsx';
 import './index.css';
 import './i18n';
 // Note: HelmetProvider is already in App.tsx, no need to duplicate here
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ar';
+
+// ضبط الإعدادات العالمية للتاريخ
+dayjs.extend(relativeTime);
+dayjs.locale('ar');
 
 // دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
 // TODO: إعادة تفعيل Sentry بعد حل المشاكل
