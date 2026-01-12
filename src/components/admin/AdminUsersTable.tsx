@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Shield, ShieldCheck, ShieldX, Loader2, UserCog } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Shield, ShieldCheck, ShieldX, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -32,22 +32,30 @@ interface UserWithRole {
   role: 'admin' | 'moderator' | 'user' | null;
 }
 
+interface AdminUserRpcResponse {
+  user_id: string;
+  email: string | null;
+  display_name: string | null;
+  created_at: string;
+  role: 'admin' | 'moderator' | 'user' | null;
+}
+
 const AdminUsersTable = () => {
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [roleChangeUser, setRoleChangeUser] = useState<{user: UserWithRole; newRole: 'admin' | 'moderator' | 'user' | null} | null>(null);
+  const [roleChangeUser, setRoleChangeUser] = useState<{ user: UserWithRole; newRole: 'admin' | 'moderator' | 'user' | null } | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const { data: users, error } = await supabase.rpc('admin_get_users');
 
       if (error) throw error;
 
-      const usersWithRoles: UserWithRole[] = (users || []).map((user: any) => ({
+      const usersWithRoles: UserWithRole[] = ((users || []) as AdminUserRpcResponse[]).map((user) => ({
         id: user.user_id,
         email: user.email || null,
         display_name: user.display_name,
@@ -56,24 +64,25 @@ const AdminUsersTable = () => {
       }));
 
       setUsers(usersWithRoles);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'فشل في جلب المستخدمين';
       toast({
         title: 'خطأ',
-        description: 'فشل في جلب المستخدمين',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleRoleChange = async () => {
     if (!roleChangeUser) return;
-    
+
     const { user, newRole } = roleChangeUser;
     setIsUpdating(true);
 
@@ -84,14 +93,14 @@ const AdminUsersTable = () => {
           .from('user_roles')
           .delete()
           .eq('user_id', user.id);
-        
+
         if (error) throw error;
       } else if (user.role === null) {
         // Insert new role
         const { error } = await supabase
           .from('user_roles')
           .insert({ user_id: user.id, role: newRole });
-        
+
         if (error) throw error;
       } else {
         // Update existing role
@@ -99,7 +108,7 @@ const AdminUsersTable = () => {
           .from('user_roles')
           .update({ role: newRole })
           .eq('user_id', user.id);
-        
+
         if (error) throw error;
       }
 
@@ -107,12 +116,13 @@ const AdminUsersTable = () => {
         title: 'تم التحديث',
         description: `تم تحديث صلاحيات ${user.display_name || user.email}`,
       });
-      
+
       fetchUsers();
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'فشل في تحديث الصلاحيات';
       toast({
         title: 'خطأ',
-        description: error.message || 'فشل في تحديث الصلاحيات',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -235,9 +245,8 @@ const AdminUsersTable = () => {
             <AlertDialogDescription>
               {roleChangeUser?.newRole === null
                 ? `هل تريد إزالة جميع الصلاحيات من "${roleChangeUser?.user.display_name || roleChangeUser?.user.email}"؟`
-                : `هل تريد منح "${roleChangeUser?.user.display_name || roleChangeUser?.user.email}" صلاحية ${
-                    roleChangeUser?.newRole === 'admin' ? 'المدير' : 'المشرف'
-                  }؟`
+                : `هل تريد منح "${roleChangeUser?.user.display_name || roleChangeUser?.user.email}" صلاحية ${roleChangeUser?.newRole === 'admin' ? 'المدير' : 'المشرف'
+                }؟`
               }
             </AlertDialogDescription>
           </AlertDialogHeader>

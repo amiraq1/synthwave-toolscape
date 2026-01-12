@@ -47,6 +47,12 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     const { data: comments, isLoading } = useQuery({
         queryKey: ["post-comments", postId],
         queryFn: async () => {
+            interface CommentRow {
+                id: string;
+                content: string;
+                created_at: string;
+                user_id: string;
+            }
             const { data, error } = await supabase
                 .from("post_comments")
                 .select(`
@@ -56,11 +62,11 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
           user_id
         `)
                 .eq("post_id", postId)
-                .order("created_at", { ascending: false }) as { data: any[] | null; error: any };
+                .order("created_at", { ascending: false });
 
             if (error) throw error;
 
-            return (data || []).map((comment: any) => ({
+            return ((data || []) as CommentRow[]).map((comment) => ({
                 ...comment,
                 user: { id: comment.user_id, display_name: null, avatar_url: null }
             })) as Comment[];
@@ -77,7 +83,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                     post_id: postId,
                     user_id: user.id,
                     content,
-                } as any);
+                });
             if (error) throw error;
         },
         onSuccess: () => {
@@ -103,7 +109,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             const { error } = await supabase
                 .from("post_comments")
                 .delete()
-                .eq("id", commentId) as { error: any };
+                .eq("id", commentId);
             if (error) throw error;
         },
         onSuccess: () => {

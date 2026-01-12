@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, ThumbsUp, Filter, ArrowUpDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,11 +17,19 @@ interface ReviewsSectionProps {
   toolId: string;
 }
 
+interface ReviewData {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  profiles: { full_name: string | null; avatar_url: string | null } | null;
+}
+
 const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
   const { session } = useAuth();
   const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState(true);
 
   // 1. حالات الفلترة والفرز
@@ -29,7 +37,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
   const [filterRating, setFilterRating] = useState("all");
 
   // دالة لجلب المراجعات بناءً على الفلاتر
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setLoading(true);
     let query = supabase
       .from("reviews")
@@ -37,7 +45,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
         *,
         profiles (full_name, avatar_url)
       `)
-      .eq("tool_id", toolId as any);
+      .eq("tool_id", parseInt(toolId, 10));
 
     // تطبيق الفلترة حسب النجوم
     if (filterRating !== "all") {
@@ -60,15 +68,15 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
         break;
     }
 
-    const { data, error } = await query;
-    if (data) setReviews(data);
+    const { data } = await query;
+    if (data) setReviews(data as ReviewData[]);
     setLoading(false);
-  };
+  }, [toolId, sortBy, filterRating]);
 
   // إعادة الجلب عند تغيير الفلاتر
   useEffect(() => {
     fetchReviews();
-  }, [toolId, sortBy, filterRating]);
+  }, [fetchReviews]);
 
   // دالة وهمية للتصويت (يمكن تفعيلها لاحقاً مع الباك إند)
   const handleHelpful = (reviewId: string) => {

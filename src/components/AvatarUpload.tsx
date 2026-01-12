@@ -46,8 +46,9 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
             onUpload(data.publicUrl);
             toast.success("تم تحديث الصورة بنجاح! 📸");
 
-        } catch (error: any) {
-            toast.error("فشل الرفع: " + error.message);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
+            toast.error("فشل الرفع: " + errorMessage);
         } finally {
             setUploading(false);
         }

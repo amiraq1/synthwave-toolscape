@@ -52,8 +52,16 @@ export const useReviews = (toolId: string | number | undefined) => {
         throw error;
       }
 
+      interface ReviewRow {
+        id: string;
+        rating: number;
+        comment: string | null;
+        created_at: string;
+        tool_id: number;
+      }
+
       // Map function output to Review shape
-      return (data || []).map((r: any) => ({
+      return (data || []).map((r: ReviewRow) => ({
         id: r.id,
         tool_id: idAsNumber,
         rating: r.rating,

@@ -181,7 +181,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             onOpenChange(false);
             form.reset();
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
             toast({
                 title: 'خطأ',
                 description: error?.message || (isEditMode ? 'فشل التحديث' : 'فشل النشر'),
@@ -225,11 +225,12 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                 title: "تم الرفع بنجاح",
                 className: "bg-emerald-500/10 text-emerald-500",
             });
-        } catch (error: any) {
+        } catch (error) {
             console.error('Upload error:', error);
+            const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
             toast({
                 title: "فشل الرفع",
-                description: error.message,
+                description: errorMessage,
                 variant: "destructive",
             });
         } finally {

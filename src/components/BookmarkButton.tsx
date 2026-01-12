@@ -10,6 +10,10 @@ interface BookmarkButtonProps {
   className?: string;
 }
 
+interface BookmarkCheckResult {
+  tool_id: number | null;
+}
+
 const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
   const { session } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
@@ -27,18 +31,18 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       }
 
       try {
-        const { data, error } = await (supabase
-          .from("bookmarks" as any)
+        const { data, error } = await supabase
+          .from("bookmarks")
           .select("tool_id")
           .eq("user_id", session.user.id)
           .eq("tool_id", numericToolId)
-          .maybeSingle() as any);
+          .maybeSingle();
 
         if (error) {
           console.error("Bookmark check error:", error);
         }
 
-        if (mounted) setIsSaved(!!data);
+        if (mounted) setIsSaved(!!(data as BookmarkCheckResult | null));
       } catch (err) {
         console.error(err);
       }
@@ -67,29 +71,29 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
     setLoading(true);
     try {
       if (isSaved) {
-        const { error } = await (supabase
-          .from("bookmarks" as any)
+        const { error } = await supabase
+          .from("bookmarks")
           .delete()
           .eq("user_id", session.user.id)
-          .eq("tool_id", numericToolId) as any);
+          .eq("tool_id", numericToolId);
 
         if (error) throw error;
 
         setIsSaved(false);
         toast.success("تمت الإزالة من المفضلة");
       } else {
-        const { error } = await (supabase
-          .from("bookmarks" as any)
-          .insert({ user_id: session.user.id, tool_id: numericToolId } as any) as any);
+        const { error } = await supabase
+          .from("bookmarks")
+          .insert({ user_id: session.user.id, tool_id: numericToolId });
 
         if (error) throw error;
 
         setIsSaved(true);
         toast.success("تم الحفظ في مكتبتك 📚");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Bookmark toggle error:", err);
-      const msg = err?.message || "حدث خطأ. حاول مرة أخرى.";
+      const msg = err instanceof Error ? err.message : "حدث خطأ. حاول مرة أخرى.";
       toast.error(msg);
     } finally {
       setLoading(false);

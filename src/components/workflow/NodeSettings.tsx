@@ -6,15 +6,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { Node } from "reactflow";
+import type { WorkflowNodeData } from "@/types";
 
 interface NodeSettingsProps {
     node: Node | null;
     onClose: () => void;
-    onSave: (nodeId: string, newData: any) => void;
+    onSave: (nodeId: string, newData: WorkflowNodeData) => void;
 }
 
 export default function NodeSettings({ node, onClose, onSave }: NodeSettingsProps) {
-    const [data, setData] = useState<any>({});
+    const [data, setData] = useState<WorkflowNodeData>({ label: '' });
 
     // تحديث النموذج عند تغيير العقدة المحددة
     useEffect(() => {

@@ -3,11 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import BlogCard from "@/components/BlogCard";
 import { Loader2, BookOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { BlogPost } from "@/types";
 
 const Blog = () => {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

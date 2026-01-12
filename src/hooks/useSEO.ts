@@ -10,11 +10,25 @@ interface SEOProps {
   ogType?: string;
   canonical?: string;
   noIndex?: boolean;
+  lang?: 'ar' | 'en';
+  toolName?: string; // For dynamic OG image generation
 }
 
+// Project Reference for dynamic OG images
+const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
+const SITE_URL = "https://amiraq.org";
+
 const DEFAULT_TITLE = 'نبض - دليل أدوات الذكاء الاصطناعي';
-const DEFAULT_DESCRIPTION = 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية';
-const DEFAULT_IMAGE = 'https://lovable.dev/opengraph-image-p98pqg.png';
+const DEFAULT_DESCRIPTION = 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.';
+
+// Generate dynamic OG image URL from Supabase Edge Function
+const generateOgImage = (title?: string, category?: string): string => {
+  if (title) {
+    return `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category || 'نبض AI')}`;
+  }
+  // Fallback to a default branded image (should be uploaded to Supabase Storage)
+  return `https://${PROJECT_REF}.supabase.co/storage/v1/object/public/assets/og-nabdh-default.png`;
+};
 
 export const useSEO = ({
   title,
@@ -26,11 +40,17 @@ export const useSEO = ({
   ogType = 'website',
   canonical,
   noIndex = false,
+  lang = 'ar',
+  toolName,
 }: SEOProps = {}) => {
   useEffect(() => {
     // Set document title
-    const fullTitle = title ? `${title} | نبض` : DEFAULT_TITLE;
+    const fullTitle = title ? `${title} | نبض AI` : DEFAULT_TITLE;
     document.title = fullTitle;
+
+    // Set document language attribute
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
     // Helper to set or create meta tag
     const setMetaTag = (name: string, content: string, isProperty = false) => {
@@ -45,6 +65,22 @@ export const useSEO = ({
       meta.content = content;
     };
 
+    // Helper to set or create link tag
+    const setLinkTag = (rel: string, href: string, hreflang?: string) => {
+      const selector = hreflang
+        ? `link[rel="${rel}"][hreflang="${hreflang}"]`
+        : `link[rel="${rel}"]`;
+      let link = document.querySelector(selector) as HTMLLinkElement;
+
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = rel;
+        if (hreflang) link.hreflang = hreflang;
+        document.head.appendChild(link);
+      }
+      link.href = href;
+    };
+
     // Set description
     setMetaTag('description', description || DEFAULT_DESCRIPTION);
 
@@ -57,36 +93,44 @@ export const useSEO = ({
     if (noIndex) {
       setMetaTag('robots', 'noindex, nofollow');
     } else {
-      setMetaTag('robots', 'index, follow');
+      setMetaTag('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     }
 
+    // Determine OG image - prioritize provided, then dynamic, then default
+    const finalOgImage = ogImage || generateOgImage(toolName || title);
+
     // Open Graph tags
-    setMetaTag('og:title', ogTitle || title || DEFAULT_TITLE, true);
+    setMetaTag('og:title', ogTitle || fullTitle, true);
     setMetaTag('og:description', ogDescription || description || DEFAULT_DESCRIPTION, true);
-    setMetaTag('og:image', ogImage || DEFAULT_IMAGE, true);
+    setMetaTag('og:image', finalOgImage, true);
+    setMetaTag('og:image:width', '1200', true);
+    setMetaTag('og:image:height', '630', true);
     setMetaTag('og:type', ogType, true);
+    setMetaTag('og:site_name', 'نبض AI', true);
+    setMetaTag('og:locale', lang === 'ar' ? 'ar_SA' : 'en_US', true);
 
     // Twitter tags
     setMetaTag('twitter:card', 'summary_large_image');
-    setMetaTag('twitter:title', ogTitle || title || DEFAULT_TITLE);
+    setMetaTag('twitter:site', '@NabdAI');
+    setMetaTag('twitter:title', ogTitle || fullTitle);
     setMetaTag('twitter:description', ogDescription || description || DEFAULT_DESCRIPTION);
-    setMetaTag('twitter:image', ogImage || DEFAULT_IMAGE);
+    setMetaTag('twitter:image', finalOgImage);
 
     // Canonical URL
-    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'canonical';
-      document.head.appendChild(link);
-    }
-    // Use provided canonical or fall back to current window location (without query params for stricter SEO)
-    link.href = canonical || window.location.origin + window.location.pathname;
+    const canonicalUrl = canonical || window.location.origin + window.location.pathname;
+    setLinkTag('canonical', canonicalUrl);
+
+    // Hreflang tags for language alternatives
+    const currentPath = window.location.pathname;
+    setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'ar');
+    setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'en');
+    setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'x-default');
 
     // Cleanup function to reset to defaults when unmounting
     return () => {
       document.title = DEFAULT_TITLE;
     };
-  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex]);
+  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, lang, toolName]);
 };
 
 export default useSEO;

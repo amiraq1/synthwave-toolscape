@@ -1,17 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { type Session, type User } from "@supabase/supabase-js";
+import { type Session, type User, type AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AuthState {
     user: User | null;
     session: Session | null;
     loading: boolean;
-    signInWithGoogle: () => Promise<{ error: any }>;
-    signOut: () => Promise<{ error: any }>;
-    signIn: (email: string, password: string) => Promise<{ error: any }>;
-    signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
-    signIn: (email: string, password: string) => Promise<{ error: any }>;
-    signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
+    signInWithGoogle: () => Promise<{ error: AuthError | null }>;
+    signOut: () => Promise<{ error: AuthError | null }>;
+    signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signUp: (email: string, password: string, displayName?: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthState>({

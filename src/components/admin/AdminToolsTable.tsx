@@ -103,10 +103,11 @@ const AdminToolsTable = () => {
 
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       setEditingTool(null);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'فشل في تحديث الأداة';
       toast({
         title: 'خطأ',
-        description: error.message || 'فشل في تحديث الأداة',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -133,10 +134,11 @@ const AdminToolsTable = () => {
 
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       setDeletingTool(null);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'فشل في حذف الأداة';
       toast({
         title: 'خطأ',
-        description: error.message || 'فشل في حذف الأداة',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

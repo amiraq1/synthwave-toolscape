@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ToolCard from "@/components/ToolCard";
 import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { Tool } from "@/types";
 
 interface SimilarToolsProps {
     currentToolId: string;
@@ -10,7 +11,7 @@ interface SimilarToolsProps {
 }
 
 const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
-    const [tools, setTools] = useState<any[]>([]);
+    const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const { i18n } = useTranslation();
     const isAr = i18n.language === 'ar';

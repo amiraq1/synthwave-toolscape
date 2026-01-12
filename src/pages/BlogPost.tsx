@@ -54,9 +54,8 @@ const BlogPost = () => {
       if (data) {
         setPost(data);
 
-        // زيادة عداد المشاهدات
         try {
-          await supabase.rpc("increment_post_views" as any, { p_post_id: id });
+          await supabase.rpc("increment_post_views", { p_post_id: id });
         } catch (e) {
           console.log("Views increment skipped");
         }

@@ -3,11 +3,10 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import './i18n';
-import { HelmetProvider } from 'react-helmet-async';
-import * as Sentry from "@sentry/react";
+// Note: HelmetProvider is already in App.tsx, no need to duplicate here
 
 // دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
-// تعطيل Sentry مؤقتًا لعزل سبب الخطأ
+// TODO: إعادة تفعيل Sentry بعد حل المشاكل
 const initMonitoring = () => {
     // Sentry.init({
     //     dsn: "https://93afb9202654e4183b0876bde628d4c4@o4510224060317696.ingest.us.sentry.io/4510676177649664",
@@ -21,9 +20,9 @@ const initMonitoring = () => {
     // });
 };
 
-// استخدام requestIdleCallback لتأجيل التحميل
-if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(() => {
+// استخدام requestIdleCallback لتأجيل التحميل (متوفرة في المتصفحات الحديثة)
+if (typeof requestIdleCallback !== 'undefined') {
+    requestIdleCallback(() => {
         initMonitoring();
     });
 } else {
@@ -33,8 +32,6 @@ if ('requestIdleCallback' in window) {
 
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <HelmetProvider>
-            <App />
-        </HelmetProvider>
+        <App />
     </React.StrictMode>,
 );

@@ -6,13 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
-import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, Settings, ArrowRight, ShieldAlert } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, Settings, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Tool } from "@/types";
+
+// Type for draft tools (unpublished)
+type DraftTool = Tool & { is_published: boolean };
 
 const Admin = () => {
   useSEO({
@@ -26,11 +30,11 @@ const Admin = () => {
   const { isAdmin, loading: authLoading } = useAdminCheck();
 
   const [loading, setLoading] = useState(false);
-  const [drafts, setDrafts] = useState<any[]>([]);
+  const [drafts, setDrafts] = useState<DraftTool[]>([]);
   const [stats, setStats] = useState({ totalTools: 0, pendingDrafts: 0, totalUsers: 0 });
 
   // للتحكم في نافذة التعديل
-  const [editingTool, setEditingTool] = useState<any>(null);
+  const [editingTool, setEditingTool] = useState<DraftTool | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [formData, setFormData] = useState({ name: "", url: "", description_en: "" });
@@ -41,10 +45,10 @@ const Admin = () => {
     const { data: draftsData } = await supabase
       .from("tools")
       .select("*")
-      .order("created_at", { ascending: false }) as { data: any[] | null };
+      .order("created_at", { ascending: false });
 
     // Filter drafts (unpublished tools)
-    const filteredDrafts = (draftsData || []).filter((t: any) => t.is_published === false);
+    const filteredDrafts = (draftsData || []).filter((t) => t.is_published === false) as DraftTool[];
     setDrafts(filteredDrafts);
 
     // جلب الإحصائيات (Count)
@@ -87,8 +91,9 @@ const Admin = () => {
       toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
       setFormData({ name: "", url: "", description_en: "" });
       fetchData();
-    } catch (error: any) {
-      toast.error("خطأ: " + error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error("خطأ: " + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -103,7 +108,7 @@ const Admin = () => {
   };
 
   // 4. فتح نافذة التعديل
-  const openEdit = (tool: any) => {
+  const openEdit = (tool: DraftTool) => {
     setEditingTool(tool);
     setIsDialogOpen(true);
   };

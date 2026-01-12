@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
+import type { Tool } from "@/types";
 
 interface EditDraftDialogProps {
-    tool: any;
+    tool: Partial<Tool> | null;
     isOpen: boolean;
     onClose: () => void;
     onUpdate: () => void;

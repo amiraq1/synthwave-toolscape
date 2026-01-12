@@ -10,6 +10,10 @@ interface PostBookmarkButtonProps {
   className?: string;
 }
 
+interface PostBookmarkCheckResult {
+  post_id: string | null;
+}
+
 const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
   const { session } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
@@ -24,18 +28,18 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
       }
 
       try {
-        const { data, error } = await (supabase
-          .from("post_bookmarks" as any)
+        const { data, error } = await supabase
+          .from("post_bookmarks")
           .select("post_id")
           .eq("user_id", session.user.id)
           .eq("post_id", postId)
-          .maybeSingle() as any);
+          .maybeSingle();
 
         if (error) {
           console.error("Post bookmark check error:", error);
         }
 
-        if (mounted) setIsSaved(!!data);
+        if (mounted) setIsSaved(!!(data as PostBookmarkCheckResult | null));
       } catch (err) {
         console.error(err);
       }
@@ -59,29 +63,29 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
     setLoading(true);
     try {
       if (isSaved) {
-        const { error } = await (supabase
-          .from("post_bookmarks" as any)
+        const { error } = await supabase
+          .from("post_bookmarks")
           .delete()
           .eq("user_id", session.user.id)
-          .eq("post_id", postId) as any);
+          .eq("post_id", postId);
 
         if (error) throw error;
 
         setIsSaved(false);
         toast.success("تمت الإزالة من المفضلة");
       } else {
-        const { error } = await (supabase
-          .from("post_bookmarks" as any)
-          .insert({ user_id: session.user.id, post_id: postId } as any) as any);
+        const { error } = await supabase
+          .from("post_bookmarks")
+          .insert({ user_id: session.user.id, post_id: postId });
 
         if (error) throw error;
 
         setIsSaved(true);
         toast.success("تم الحفظ في مكتبتك 📚");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Post bookmark toggle error:", err);
-      const msg = err?.message || "حدث خطأ. حاول مرة أخرى.";
+      const msg = err instanceof Error ? err.message : "حدث خطأ. حاول مرة أخرى.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -99,9 +103,8 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
       title={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
     >
       <Bookmark
-        className={`w-5 h-5 transition-all ${
-          isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"
-        }`}
+        className={`w-5 h-5 transition-all ${isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"
+          }`}
       />
     </Button>
   );

@@ -1,20 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useCompare } from "@/context/CompareContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { X, Check, ArrowRight, ExternalLink, Plus, Loader2 } from "lucide-react";
+import { X, Check, ArrowRight, Plus, Loader2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import type { Tool } from "@/hooks/useTools";
 
 const ComparePage = () => {
     const { selectedTools, removeFromCompare, setCompareList } = useCompare();
-    const [tools, setTools] = useState<any[]>([]);
+    const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
 
+    // Ref to track if we've synced URL params on mount
+    const hasSyncedFromUrl = useRef(false);
+
     // 1. مزامنة الرابط مع السياق عند التحميل لأول مرة
     useEffect(() => {
+        if (hasSyncedFromUrl.current) return;
+
         const idsParam = searchParams.get('ids');
         if (idsParam) {
             const ids = idsParam.split(',').filter(id => id.length > 0);
@@ -26,7 +32,8 @@ const ComparePage = () => {
                 }
             }
         }
-    }, []); // تشغيل مرة واحدة عند التحميل
+        hasSyncedFromUrl.current = true;
+    }, [searchParams, selectedTools, setCompareList]);
 
     // 2. تحديث الرابط عند تغير الأدوات المحددة
     useEffect(() => {

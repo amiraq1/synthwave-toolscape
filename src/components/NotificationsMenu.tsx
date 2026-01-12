@@ -9,8 +9,16 @@ import { formatDistanceToNow } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 
+interface NotificationTool {
+    id: string | number;
+    title: string;
+    title_en?: string;
+    category: string;
+    created_at: string;
+}
+
 const NotificationsMenu = () => {
-    const [notifications, setNotifications] = useState<any[]>([]);
+    const [notifications, setNotifications] = useState<NotificationTool[]>([]);
     const [hasUnread, setHasUnread] = useState(false);
     const [open, setOpen] = useState(false);
     const { i18n } = useTranslation();

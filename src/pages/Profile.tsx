@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,24 @@ import ToolCard from "@/components/ToolCard";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
+import type { Tool } from "@/hooks/useTools";
+
+// Types for the profile page
+interface ProfileData {
+    id: string;
+    full_name: string | null;
+    avatar_url: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Review {
+    id: string;
+    rating: number;
+    comment: string;
+    created_at: string;
+    tools: { title: string } | null;
+}
 
 const Profile = () => {
     const { session, signOut } = useAuth();
@@ -18,24 +36,16 @@ const Profile = () => {
     const { t } = useTranslation();
 
     const [loading, setLoading] = useState(true);
-    const [profile, setProfile] = useState<any>(null);
-    const [bookmarks, setBookmarks] = useState<any[]>([]);
-    const [reviews, setReviews] = useState<any[]>([]);
+    const [profile, setProfile] = useState<ProfileData | null>(null);
+    const [bookmarks, setBookmarks] = useState<Tool[]>([]);
+    const [reviews, setReviews] = useState<Review[]>([]);
 
     // حالات التعديل
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
     const [updating, setUpdating] = useState(false);
 
-    useEffect(() => {
-        if (!session) {
-            if (!loading) navigate("/auth");
-            return;
-        }
-        fetchProfileData();
-    }, [session, loading]);
-
-    const fetchProfileData = async () => {
+    const fetchProfileData = useCallback(async () => {
         try {
             const userId = session?.user.id;
 
@@ -63,7 +73,9 @@ const Profile = () => {
 
             if (bookmarksData) {
                 // استخراج مصفوفة الأدوات فقط
-                const tools = bookmarksData.map((b: any) => b.tools).filter(Boolean);
+                const tools = bookmarksData
+                    .map((b) => b.tools as Tool | null)
+                    .filter((t): t is Tool => t !== null);
                 setBookmarks(tools);
             }
 
@@ -77,14 +89,22 @@ const Profile = () => {
                 .eq("user_id", userId)
                 .order("created_at", { ascending: false });
 
-            if (reviewsData) setReviews(reviewsData);
+            if (reviewsData) setReviews(reviewsData as Review[]);
 
         } catch (error) {
             console.error("Error fetching profile:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [session]);
+
+    useEffect(() => {
+        if (!session) {
+            if (!loading) navigate("/auth");
+            return;
+        }
+        fetchProfileData();
+    }, [session, loading, navigate, fetchProfileData]);
 
     const handleUpdateProfile = async () => {
         if (!session) return;

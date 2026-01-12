@@ -2,12 +2,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import type { Tool } from '@/types';
 
-interface Bookmark {
+interface BookmarkRecord {
     id: string;
     user_id: string;
     tool_id: number;
     created_at: string;
+}
+
+interface BookmarkToolId {
+    tool_id: number;
 }
 
 export const useBookmarks = () => {
@@ -18,16 +23,16 @@ export const useBookmarks = () => {
     // Fetch user's bookmarked tool IDs
     const { data: bookmarks = [], isLoading } = useQuery({
         queryKey: ['bookmarks', user?.id],
-        queryFn: async () => {
+        queryFn: async (): Promise<BookmarkToolId[]> => {
             if (!user) return [];
 
-            const { data, error } = await (supabase
-                .from('bookmarks' as any)
+            const { data, error } = await supabase
+                .from('bookmarks')
                 .select('tool_id')
-                .eq('user_id', user.id) as any);
+                .eq('user_id', user.id);
 
             if (error) throw error;
-            return (data || []) as { tool_id: number }[];
+            return (data || []) as BookmarkToolId[];
         },
         enabled: !!user,
     });
@@ -51,22 +56,22 @@ export const useBookmarks = () => {
 
             if (currentlyBookmarked) {
                 // Remove bookmark
-                const { error } = await (supabase
-                    .from('bookmarks' as any)
+                const { error } = await supabase
+                    .from('bookmarks')
                     .delete()
                     .eq('user_id', user.id)
-                    .eq('tool_id', id) as any);
+                    .eq('tool_id', id);
 
                 if (error) throw error;
-                return { action: 'removed', toolId: id };
+                return { action: 'removed' as const, toolId: id };
             } else {
                 // Add bookmark
-                const { error } = await (supabase
-                    .from('bookmarks' as any)
-                    .insert({ user_id: user.id, tool_id: id } as any) as any);
+                const { error } = await supabase
+                    .from('bookmarks')
+                    .insert({ user_id: user.id, tool_id: id });
 
                 if (error) throw error;
-                return { action: 'added', toolId: id };
+                return { action: 'added' as const, toolId: id };
             }
         },
         onSuccess: (result) => {
@@ -102,19 +107,19 @@ export const useBookmarkedTools = () => {
 
     return useQuery({
         queryKey: ['bookmarked-tools', user?.id],
-        queryFn: async () => {
+        queryFn: async (): Promise<Tool[]> => {
             if (!user) return [];
 
             // First get bookmarked tool IDs
-            const { data: bookmarks, error: bookmarksError } = await (supabase
-                .from('bookmarks' as any)
+            const { data: bookmarks, error: bookmarksError } = await supabase
+                .from('bookmarks')
                 .select('tool_id')
-                .eq('user_id', user.id) as any);
+                .eq('user_id', user.id);
 
             if (bookmarksError) throw bookmarksError;
             if (!bookmarks || bookmarks.length === 0) return [];
 
-            const toolIds = (bookmarks as { tool_id: number }[]).map((b) => b.tool_id);
+            const toolIds = (bookmarks as BookmarkToolId[]).map((b) => b.tool_id);
 
             // Then fetch full tool data
             const { data: tools, error: toolsError } = await supabase
@@ -128,7 +133,7 @@ export const useBookmarkedTools = () => {
             return (tools || []).map(tool => ({
                 ...tool,
                 id: String(tool.id),
-            }));
+            })) as Tool[];
         },
         enabled: !!user,
     });

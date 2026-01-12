@@ -9,7 +9,9 @@ import ReactFlow, {
     Connection,
     Edge,
     MarkerType,
-    ReactFlowProvider
+    ReactFlowProvider,
+    ReactFlowInstance,
+    Node
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Button } from "@/components/ui/button";
@@ -20,7 +22,7 @@ import CustomNode from "@/components/workflow/CustomNode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NodeConfigDialog from "@/components/workflow/NodeConfigDialog";
-import { Node } from "reactflow";
+import type { WorkflowNodeData } from "@/types";
 
 // تعريف أنواع العقد المخصصة
 const nodeTypes = {
@@ -48,7 +50,7 @@ const FlowArea = () => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
+    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
     const [isRunning, setIsRunning] = useState(false);
     const [editingNode, setEditingNode] = useState<Node | null>(null);
     const [logs, setLogs] = useState<string[]>([]); // سجلات التنفيذ
@@ -68,7 +70,7 @@ const FlowArea = () => {
         setEditingNode(node);
     }, []);
 
-    const onNodeUpdate = useCallback((nodeId: string, newData: any) => {
+    const onNodeUpdate = useCallback((nodeId: string, newData: WorkflowNodeData) => {
         setNodes((nds) => nds.map((node) => {
             if (node.id === nodeId) {
                 return { ...node, data: { ...newData } };
@@ -144,14 +146,14 @@ const FlowArea = () => {
         toast.info("جاري بدء تشغيل السلسلة...");
 
         try {
-            // محاكاة بيانات الإيميل الوارد
-            let context: any = {
+            const contextData = {
                 subject: "استفسار بخصوص الطلب #992",
                 from: "client@example.com",
-                body: "مرحباً، لم يصلني الطلب حتى الآن. متى موعد التسليم المتوقع؟"
+                body: "مرحباً، لم يصلني الطلب حتى الآن. متى موعد التسليم المتوقع؟",
+                agent_output: ""
             };
             // أ) البحث عن عقدة البداية (Trigger)
-            let currentData = "أريد كود React لعمل زر يتحول للون الأحمر عند الضغط عليه";
+            const currentData = "أريد كود React لعمل زر يتحول للون الأحمر عند الضغط عليه";
             addLog("📦 تحميل سياق التنفيذ (Context)...");
 
             let currentOutput = "";
@@ -191,17 +193,17 @@ const FlowArea = () => {
 
                     addLog(`🤖 تشغيل الوكيل: ${node.data.label}`);
 
-                    // استبدال المتغيرات في الـ Prompt
-                    let prompt = node.data.customPrompt || "";
+                    const prompt = nodeData.customPrompt || "";
+                    let processedPrompt = prompt;
                     if (prompt) {
                         addLog(`📝 معالجة القوالب والمتغيرات للنص...`);
-                        prompt = prompt.replace("{{body}}", context.body || "")
-                            .replace("{{subject}}", context.subject || "")
-                            .replace("{{from}}", context.from || "");
+                        processedPrompt = prompt.replace("{{body}}", contextData.body || "")
+                            .replace("{{subject}}", contextData.subject || "")
+                            .replace("{{from}}", contextData.from || "");
                     }
 
                     // إذا لم يكتب المستخدم برومبت، نستخدم ال output السابق أو body
-                    const queryToSend = prompt || context.agent_output || context.body;
+                    const queryToSend = processedPrompt || contextData.agent_output || contextData.body;
 
                     toast.loading(`الوكيل "${node.data.label}" يعالج الطلب...`);
                     addLog(`📡 الاتصال بخادم Gemini AI...`);
@@ -212,7 +214,8 @@ const FlowArea = () => {
 
                     if (error) {
                         addLog(`❌ خطأ في الاتصال: ${error.message}`);
-                        const errorMessage = await error.context?.json().then((e: any) => e.error).catch(() => error.message);
+                        const errorContext = error.context as { json?: () => Promise<{ error?: string }> } | undefined;
+                        const errorMessage = errorContext?.json ? await errorContext.json().then((e) => e.error).catch(() => error.message) : error.message;
                         throw new Error(errorMessage || "فشل الاتصال بالوكيل");
                     }
 
@@ -220,7 +223,7 @@ const FlowArea = () => {
                     addLog(`✅ تم استلام الرد من الوكيل.`);
 
                     // تحديث سياق النتائج والـ output للعرض في البطاقة
-                    context = { ...context, agent_output: currentOutput };
+                    contextData.agent_output = currentOutput;
 
                     // تحديث العقدة بالنتيجة (للعرض)
                     setNodes(nds => nds.map(n => n.id === node.id ? { ...n, data: { ...n.data, output: currentOutput } } : n));
@@ -231,8 +234,9 @@ const FlowArea = () => {
                 // 2. إذا كان إجراء (Send Email / Action) أو Output node
                 else if (node.data.slug === 'action' || node.type === 'output') {
                     addLog(`⚡ تنفيذ الإجراء: ${node.data.label}`);
-                    const to = node.data.to ? node.data.to.replace("{{from}}", context.from) : context.from;
-                    const body = node.data.body ? node.data.body.replace("{{agent_output}}", context.agent_output) : currentOutput;
+                    const nodeData = node.data as WorkflowNodeData;
+                    const to = nodeData.to ? String(nodeData.to).replace("{{from}}", contextData.from) : contextData.from;
+                    const body = nodeData.body ? String(nodeData.body).replace("{{agent_output}}", contextData.agent_output) : currentOutput;
 
                     // محاكاة الإرسال
                     addLog(`📧 إرسال بريد إلكتروني إلى: ${to}`);
@@ -250,9 +254,10 @@ const FlowArea = () => {
                 setNodes(nds => nds.map(n => n.id === node.id ? { ...n, data: { ...n.data, status: 'completed' } } : n));
             }
 
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(`حدث خطأ: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            toast.error(`حدث خطأ: ${errorMessage}`);
         } finally {
             setIsRunning(false);
             // إبقاء الحالة completed ظاهرة للمستخدم ولا نعيد تعيينها فوراً

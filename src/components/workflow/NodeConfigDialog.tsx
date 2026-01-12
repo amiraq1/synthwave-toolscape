@@ -11,17 +11,18 @@ import { Textarea } from "@/components/ui/textarea";
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
-import { Bot, Mail, Database, Save, X, Variable } from "lucide-react";
+import { Bot, Mail, Save } from "lucide-react";
+import type { WorkflowNodeData } from "@/types";
 
 interface NodeConfigDialogProps {
     node: Node | null;
     isOpen: boolean;
     onClose: () => void;
-    onSave: (nodeId: string, newData: any) => void;
+    onSave: (nodeId: string, newData: WorkflowNodeData) => void;
 }
 
 export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: NodeConfigDialogProps) {
-    const [data, setData] = useState<any>({});
+    const [data, setData] = useState<WorkflowNodeData>({ label: '' });
     const [activeTab, setActiveTab] = useState("general");
 
     // تحديث البيانات عند فتح النافذة

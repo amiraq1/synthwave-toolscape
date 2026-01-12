@@ -3,8 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 
+interface TrendingTool {
+    id: string | number;
+    title: string;
+    views_count: number | null;
+}
+
 const TrendingTools = () => {
-    const [tools, setTools] = useState<any[]>([]);
+    const [tools, setTools] = useState<TrendingTool[]>([]);
 
     useEffect(() => {
         const fetchTrending = async () => {

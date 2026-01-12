@@ -19,7 +19,7 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
 
     const subscribeMutation = useMutation({
         mutationFn: async (email: string) => {
-            const { error } = await (supabase as any)
+            const { error } = await supabase
                 .from('subscribers')
                 .insert({ email: email.toLowerCase().trim() });
 

@@ -19,7 +19,8 @@ const Auth = () => {
     if (session) {
       // التحقق مما إذا كان هناك صفحة سابقة يجب العودة إليها
       // (نستخدم state بدلاً من searchParams لتجنب تلوث الرابط)
-      const from = (location.state as any)?.from?.pathname || "/";
+      const state = location.state as { from?: { pathname: string } } | null;
+      const from = state?.from?.pathname || "/";
       navigate(from, { replace: true });
     }
   }, [session, navigate, location]);

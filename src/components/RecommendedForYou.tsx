@@ -4,10 +4,16 @@ import { useAuth } from "@/hooks/useAuth";
 import ToolCard from "@/components/ToolCard";
 import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { Tool } from "@/types";
+
+interface BookmarkWithTool {
+    tool_id: number;
+    tools: { category: string } | null;
+}
 
 const RecommendedForYou = () => {
     const { session } = useAuth();
-    const [tools, setTools] = useState<any[]>([]);
+    const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const { i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
@@ -34,8 +40,9 @@ const RecommendedForYou = () => {
             }
 
             // 2. استخراج التصنيفات التي يحبها المستخدم
-            const interestedCategories = [...new Set(bookmarks.map((b: any) => b.tools?.category))];
-            const bookmarkedIds = bookmarks.map((b: any) => b.tool_id);
+            const typedBookmarks = (bookmarks as unknown as BookmarkWithTool[]);
+            const interestedCategories = [...new Set(typedBookmarks.map((b) => b.tools?.category).filter(Boolean))] as string[];
+            const bookmarkedIds = typedBookmarks.map((b) => b.tool_id);
 
             if (interestedCategories.length === 0) {
                 setLoading(false);
