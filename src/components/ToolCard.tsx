@@ -205,6 +205,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     loading={index < 6 ? "eager" : "lazy"}
                     // @ts-ignore
                     fetchPriority={index < 6 ? "high" : "auto"}
+                    width="40"
+                    height="40"
                     onError={() => setIconError(true)}
                   />
                 ) : iconUrls.fallback ? (
@@ -216,6 +218,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     loading={index < 6 ? "eager" : "lazy"}
                     // @ts-ignore
                     fetchPriority={index < 6 ? "high" : "auto"}
+                    width="32"
+                    height="32"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       e.currentTarget.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');

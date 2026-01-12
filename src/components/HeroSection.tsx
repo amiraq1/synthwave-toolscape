@@ -37,17 +37,19 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
         backgroundSize: "32px 32px"
       }} />
 
-      {/* Hero Image - Preloaded for performance */}
-      {/* Hero Image - Preloaded for performance - Hidden on mobile to improve LCP */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none -z-20 mix-blend-overlay hidden md:block">
-        <img
-          src="/robot-placeholder.jpg"
-          alt="AI Background"
-          className="w-full h-full object-cover rounded-full blur-3xl animate-pulse-slow"
-          loading="eager"
-          // @ts-ignore - fetchPriority is a valid attribute but React types might not know it yet
-          fetchPriority="high"
-        />
+      {/* Pure CSS Background - No heavy images for maximum performance (LCP) */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        {/* Deep space gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0f0f1a] via-[#1a1a2e] to-[#0f0f1a]" />
+
+        {/* Subtle Neon Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
+
+        {/* Top Glow Effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-purple/20 blur-[120px] rounded-full opacity-50 mix-blend-screen animate-pulse-slow" />
+
+        {/* Bottom Accent Glow */}
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 blur-[100px] rounded-full opacity-30" />
       </div>
 
       {/* Trending Bar */}

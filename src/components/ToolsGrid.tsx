@@ -4,6 +4,7 @@ import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ToolCardSkeleton } from '@/components/skeletons/ToolCardSkeleton';
 
 interface ToolsGridProps {
   tools: Tool[];
@@ -58,13 +59,10 @@ const ToolsGrid = ({
   // Loading State
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20 min-h-[400px]" dir={isAr ? "rtl" : "ltr"}>
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
-          <span className="text-muted-foreground animate-pulse">
-            {isAr ? "جاري تحميل الأدوات..." : "Loading tools..."}
-          </span>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8" dir={isAr ? "rtl" : "ltr"}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <ToolCardSkeleton key={i} />
+        ))}
       </div>
     );
   }
