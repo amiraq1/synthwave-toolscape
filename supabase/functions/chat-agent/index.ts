@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+interface MatchedTool {
+  title: string;
+  description: string;
+  pricing_type: string;
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -81,7 +87,7 @@ serve(async (req) => {
 
     let contextText = "لم يتم العثور على أدوات محددة.";
     if (tools && tools.length > 0) {
-      contextText = tools.map((t: any) =>
+      contextText = (tools as MatchedTool[]).map((t) =>
         `- ${t.title}: ${t.description} (${t.pricing_type})`
       ).join('\n');
     }
@@ -125,8 +131,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
-  } catch (error: any) {
-    console.error("Function Fatal Error:", error.message);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Function Fatal Error:", errorMessage);
     return new Response(JSON.stringify({
       reply: "عذراً، واجهت مشكلة تقنية في الاتصال بالخدمات الذكية. الرجاء المحاولة لاحقاً."
     }), {

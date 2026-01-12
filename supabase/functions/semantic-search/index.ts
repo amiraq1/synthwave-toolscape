@@ -107,15 +107,16 @@ serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error: any) {
-        console.error("Function Error:", error.message);
-        const isClientError = error.message.startsWith("ERR_INVALID");
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'ERR_UNKNOWN';
+        console.error("Function Error:", errorMessage);
+        const isClientError = errorMessage.startsWith("ERR_INVALID");
 
         return new Response(
             JSON.stringify({
                 error: true,
-                code: error.message.split(':')[0] || "ERR_UNKNOWN",
-                message: isClientError ? error.message.split(':')[1] || error.message : "حدث خطأ غير متوقع، يرجى المحاولة لاحقاً."
+                code: errorMessage.split(':')[0] || "ERR_UNKNOWN",
+                message: isClientError ? errorMessage.split(':')[1] || errorMessage : "حدث خطأ غير متوقع، يرجى المحاولة لاحقاً."
             }),
             {
                 status: isClientError ? 400 : 500,
