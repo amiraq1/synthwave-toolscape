@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { ar } from "date-fns/locale";
+import dayjs from "dayjs";
+import 'dayjs/locale/ar';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -226,7 +226,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                                 {comment.user?.display_name || "مستخدم"}
                                             </span>
                                             <span className="text-xs text-gray-500">
-                                                {format(new Date(comment.created_at), "d MMMM yyyy - HH:mm", { locale: ar })}
+                                                {dayjs(comment.created_at).locale('ar').format("D MMMM YYYY - HH:mm")}
                                             </span>
                                         </div>
                                         {user?.id === comment.user_id && (

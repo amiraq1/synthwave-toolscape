@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
-import { format } from "date-fns";
-import { ar } from "date-fns/locale";
+import dayjs from "dayjs";
+import 'dayjs/locale/ar';
+dayjs.locale('ar');
 
 interface BlogPost {
     id: string;
@@ -42,7 +43,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{format(new Date(post.created_at), "d MMMM yyyy", { locale: ar })}</span>
+                        <span>{dayjs(post.created_at).locale('ar').format("D MMMM YYYY")}</span>
                     </div>
                     {post.reading_time && (
                         <div className="flex items-center gap-1">

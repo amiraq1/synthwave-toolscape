@@ -1,7 +1,10 @@
 import { useMemo, useRef, useEffect } from 'react';
-import { format, isValid } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ar';
 import ToolCard from './ToolCard';
+
+// Configure dayjs locale
+dayjs.locale('ar');
 import type { Tool } from '@/hooks/useTools';
 import { CalendarDays, Loader2 } from 'lucide-react';
 
@@ -24,9 +27,9 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
             let groupKey = "أدوات مميزة";
 
             if (dateStr) {
-                const date = new Date(dateStr);
-                if (isValid(date)) {
-                    groupKey = format(date, 'MMMM yyyy', { locale: ar });
+                const date = dayjs(dateStr);
+                if (date.isValid()) {
+                    groupKey = date.format('MMMM YYYY');
                 }
             }
 

@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
-import { ar, enUS } from "date-fns/locale";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import 'dayjs/locale/ar';
+import 'dayjs/locale/en';
 import { useTranslation } from "react-i18next";
+
+dayjs.extend(relativeTime);
 
 interface NotificationTool {
     id: string | number;
@@ -101,10 +105,7 @@ const NotificationsMenu = () => {
                                         <div className="flex justify-between items-start">
                                             <span className="font-semibold text-sm text-neon-purple">{displayTitle}</span>
                                             <span className="text-[10px] text-gray-500">
-                                                {formatDistanceToNow(new Date(tool.created_at), {
-                                                    addSuffix: true,
-                                                    locale: isAr ? ar : enUS
-                                                })}
+                                                {dayjs(tool.created_at).locale(isAr ? 'ar' : 'en').fromNow()}
                                             </span>
                                         </div>
                                         <span className="text-xs text-gray-400">

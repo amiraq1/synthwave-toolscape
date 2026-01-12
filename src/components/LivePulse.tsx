@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, Zap } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ar } from "date-fns/locale";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import 'dayjs/locale/ar';
+
+dayjs.extend(relativeTime);
+dayjs.locale('ar');
 
 interface Activity {
     type: "review" | "new_tool";
@@ -82,7 +86,7 @@ const LivePulse = () => {
                                 {item.icon}
                                 <span>{item.text}</span>
                                 <span className="text-gray-500 text-[10px]">
-                                    ({formatDistanceToNow(new Date(item.time), { addSuffix: true, locale: ar })})
+                                    ({dayjs(item.time).locale('ar').fromNow()})
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-gray-700 ml-4" />
                             </div>

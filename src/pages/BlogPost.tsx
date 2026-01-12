@@ -4,9 +4,12 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ArrowRight, Calendar, Clock, User, Share2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { ar, enUS } from "date-fns/locale";
+import dayjs from "dayjs";
+import 'dayjs/locale/ar';
 import { Loader2 } from "lucide-react";
+
+// Configure locale globally (safe to call multiple times)
+dayjs.locale('ar');
 import PostBookmarkButton from "@/components/PostBookmarkButton";
 import CommentsSection from "@/components/CommentsSection";
 import { useToast } from "@/hooks/use-toast";
@@ -201,7 +204,7 @@ const BlogPost = () => {
                 <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 sm:px-3 rounded-full backdrop-blur-md">
                   <Calendar className="w-3.5 h-3.5 text-neon-purple" />
                   <span>
-                    {format(new Date(post.created_at), "d MMMM yyyy", { locale: isAr ? ar : enUS })}
+                    {dayjs(post.created_at).locale(isAr ? 'ar' : 'en').format("D MMMM YYYY")}
                   </span>
                 </div>
 
