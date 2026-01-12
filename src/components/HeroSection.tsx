@@ -38,7 +38,8 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
       }} />
 
       {/* Hero Image - Preloaded for performance */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none -z-20 mix-blend-overlay">
+      {/* Hero Image - Preloaded for performance - Hidden on mobile to improve LCP */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none -z-20 mix-blend-overlay hidden md:block">
         <img
           src="/robot-placeholder.jpg"
           alt="AI Background"

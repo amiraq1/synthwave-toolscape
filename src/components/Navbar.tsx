@@ -85,9 +85,9 @@ const Navbar = () => {
             </Button>
 
             {/* نسخة الموبايل (أيقونة فقط) */}
-            <Button size="icon" variant="ghost" className="sm:hidden text-neon-purple" asChild>
+            <Button size="icon" variant="ghost" className="sm:hidden text-neon-purple" asChild aria-label="أضف أداة">
               <Link to="/submit-tool">
-                <Plus className="w-5 h-5" />
+                <Plus className="w-5 h-5" aria-hidden="true" />
               </Link>
             </Button>
 

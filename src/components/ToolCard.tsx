@@ -148,6 +148,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               : "bg-black/40 text-gray-300 hover:bg-neon-purple hover:text-white"
           )}
           title={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
+          aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
         >
           <Scale className="w-4 h-4" />
         </button>
@@ -174,7 +175,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
       </div>
 
       {/* 2. المحتوى */}
-      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full">
+      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={`View details for ${displayTitle}`}>
         <div className="p-6 flex flex-col h-full">
 
           {/* العنوان والأيقونة */}
@@ -193,6 +194,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     alt={displayTitle}
                     width={100}
                     className="w-full h-full p-1.5 object-contain"
+                    priority={index < 6}
                   />
                 ) : iconUrls.primary && !iconError ? (
                   /* Priority 2: Clearbit HD Logo */
@@ -200,7 +202,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     src={iconUrls.primary}
                     alt={displayTitle}
                     className="w-10 h-10 object-contain rounded-lg"
-                    loading="lazy"
+                    loading={index < 6 ? "eager" : "lazy"}
+                    // @ts-ignore
+                    fetchPriority={index < 6 ? "high" : "auto"}
                     onError={() => setIconError(true)}
                   />
                 ) : iconUrls.fallback ? (
@@ -209,7 +213,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     src={iconUrls.fallback}
                     alt={displayTitle}
                     className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
-                    loading="lazy"
+                    loading={index < 6 ? "eager" : "lazy"}
+                    // @ts-ignore
+                    fetchPriority={index < 6 ? "high" : "auto"}
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       e.currentTarget.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
@@ -271,16 +277,20 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
           {/* الفوتر: زر التفاصيل */}
           <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
-            <span className="flex items-center gap-1">
-              <Zap className="w-3 h-3 text-neon-purple" />
+            <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
+              <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
               AI Powered
             </span>
-            <span
-              className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer"
-              onClick={handleExternalClick}
+            <a
+              href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`visit ${displayTitle}`}
             >
-              {t('tools.visit')} <ExternalLink className="w-3 h-3" />
-            </span>
+              {t('tools.visit')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+            </a>
           </div>
         </div>
       </Link>

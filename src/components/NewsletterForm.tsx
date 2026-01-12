@@ -83,6 +83,7 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
                 <Button
                     type="submit"
                     disabled={subscribeMutation.isPending || isSuccess}
+                    aria-label={isSuccess ? "تم الاشتراك" : "اشتراك في النشرة البريدية"}
                     className={cn(
                         "h-10 px-4",
                         isSuccess
@@ -91,11 +92,11 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
                     )}
                 >
                     {subscribeMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     ) : isSuccess ? (
-                        <Check className="w-4 h-4" />
+                        <Check className="w-4 h-4" aria-hidden="true" />
                     ) : (
-                        <Mail className="w-4 h-4" />
+                        <Mail className="w-4 h-4" aria-hidden="true" />
                     )}
                 </Button>
             </form>
