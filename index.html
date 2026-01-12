@@ -58,16 +58,22 @@
         return;
       }
 
-      // 2. GitHub Pages SPA redirect handler (for clean URLs only)
+      // 2. GitHub Pages SPA redirect handler (Corrected & Safe)
       if (search[1] === '/') {
-        var decoded = search.slice(1).split('&').map(function (s) {
-          return s.replace(/~and~/g, '&');
-        }).join('?');
-        var cleanDecoded = decoded.replace(/(\\/ |\\?) + (~and~) +(\\/|\\?)+/g, '');
-        var finalPath = (pathname.replace(/\\/$ /, '') + cleanDecoded + loc.hash)
-          .replace(/(~and~)+/g, '')
-          .replace(/\\/ + /g, '/');
-        window.history.replaceState(null, null, finalPath);
+        try {
+          var decoded = search.slice(1).split('&').map(function (s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+
+          // Use the decoded path directly, removing any potential artifacts safely
+          var cleanDecoded = decoded;
+
+          window.history.replaceState(null, null,
+            pathname.slice(0, -1) + cleanDecoded + loc.hash
+          );
+        } catch (e) {
+          console.error('SPA Redirect Error:', e);
+        }
       }
     })();
   </script>

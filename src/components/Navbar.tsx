@@ -59,8 +59,8 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isActive(link.path)
-                    ? "text-white bg-white/10"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? "text-white bg-white/10"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
                   }`}
               >
                 <link.icon className="w-4 h-4" />
@@ -107,7 +107,12 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                     <Avatar className="h-9 w-9 border border-white/10">
-                      <AvatarImage src={session.user.user_metadata.avatar_url} />
+                      <AvatarImage
+                        src={session.user.user_metadata.avatar_url}
+                        // @ts-ignore
+                        loading="eager"
+                        fetchPriority="high"
+                      />
                       <AvatarFallback className="bg-neon-purple text-white">
                         {session.user.email?.charAt(0).toUpperCase()}
                       </AvatarFallback>
@@ -167,8 +172,8 @@ const Navbar = () => {
                         to={link.path}
                         onClick={() => setIsOpen(false)}
                         className={`px-4 py-3 rounded-xl text-base font-medium transition-all flex items-center gap-3 ${isActive(link.path)
-                            ? "bg-neon-purple text-white shadow-lg shadow-neon-purple/20"
-                            : "text-gray-400 hover:bg-white/5 hover:text-white"
+                          ? "bg-neon-purple text-white shadow-lg shadow-neon-purple/20"
+                          : "text-gray-400 hover:bg-white/5 hover:text-white"
                           }`}
                       >
                         <link.icon className="w-5 h-5" />

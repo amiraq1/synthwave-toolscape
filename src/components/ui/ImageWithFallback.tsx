@@ -7,9 +7,10 @@ interface ImageWithFallbackProps {
     alt: string;
     className?: string;
     width?: number; // عرض الصورة للتحسين
+    priority?: boolean;
 }
 
-const ImageWithFallback = ({ src, alt, className = "", width = 400 }: ImageWithFallbackProps) => {
+const ImageWithFallback = ({ src, alt, className = "", width = 400, priority = false }: ImageWithFallbackProps) => {
     const [error, setError] = useState(false);
 
     // إذا لم يكن هناك رابط، أو حدث خطأ في التحميل، اعرض البديل
@@ -28,8 +29,10 @@ const ImageWithFallback = ({ src, alt, className = "", width = 400 }: ImageWithF
             src={optimizeImage(src, width)}
             alt={alt}
             className={className}
-            onError={() => setError(true)} // عند حدوث خطأ، قم بتغيير الحالة لعرض البديل
-            loading="lazy"
+            onError={() => setError(true)}
+            loading={priority ? "eager" : "lazy"}
+            // @ts-ignore
+            fetchPriority={priority ? "high" : "auto"}
         />
     );
 };
