@@ -37,6 +37,18 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
         backgroundSize: "32px 32px"
       }} />
 
+      {/* Hero Image - Preloaded for performance */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-20 pointer-events-none -z-20 mix-blend-overlay">
+        <img
+          src="/robot-placeholder.jpg"
+          alt="AI Background"
+          className="w-full h-full object-cover rounded-full blur-3xl animate-pulse-slow"
+          loading="eager"
+          // @ts-ignore - fetchPriority is a valid attribute but React types might not know it yet
+          fetchPriority="high"
+        />
+      </div>
+
       {/* Trending Bar */}
       <div className="max-w-7xl mx-auto mb-12">
         <TrendingTools />

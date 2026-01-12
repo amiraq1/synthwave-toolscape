@@ -34,20 +34,20 @@
 
   <!-- URL Sanitizer - Runs before React to catch malformed URLs -->
   <script type="text/javascript">
-    (function() {
+    (function () {
       var loc = window.location;
       var url = loc.href;
       var search = loc.search;
       var pathname = loc.pathname;
-      
+
       // 1. التحقق من وجود URL مشوه
-      var isMalformed = 
+      var isMalformed =
         url.indexOf('~and~') !== -1 ||
         search.indexOf('/?/') !== -1 ||
         pathname.indexOf('~and~') !== -1 ||
         url.length > 2000 ||
         search.length > 500;
-      
+
       if (isMalformed) {
         console.warn('🛡️ Malformed URL detected in pre-load script');
         // تحديد الصفحة الأساسية
@@ -57,16 +57,16 @@
         window.location.replace(basePath);
         return;
       }
-      
+
       // 2. GitHub Pages SPA redirect handler (for clean URLs only)
       if (search[1] === '/') {
-        var decoded = search.slice(1).split('&').map(function(s) {
+        var decoded = search.slice(1).split('&').map(function (s) {
           return s.replace(/~and~/g, '&');
         }).join('?');
-        var cleanDecoded = decoded.replace(/(\\/|\\?)+(~and~)+(\\/|\\?)+/g, '');
-        var finalPath = (pathname.replace(/\\/$/, '') + cleanDecoded + loc.hash)
+        var cleanDecoded = decoded.replace(/(\\/ |\\?) + (~and~) +(\\/|\\?)+/g, '');
+        var finalPath = (pathname.replace(/\\/$ /, '') + cleanDecoded + loc.hash)
           .replace(/(~and~)+/g, '')
-          .replace(/\\/+/g, '/');
+          .replace(/\\/ + /g, '/');
         window.history.replaceState(null, null, finalPath);
       }
     })();
@@ -79,7 +79,8 @@
   <!-- Load IBM Plex Sans Arabic for blog content -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap"
     rel="stylesheet" media="print" onload="this.media='all'">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"
+    crossorigin>
 
   <link rel="dns-prefetch" href="https://iazvsdwkbfzjhscyfvec.supabase.co" />
   <link rel="preconnect" href="https://iazvsdwkbfzjhscyfvec.supabase.co" />
@@ -90,7 +91,8 @@
   <meta property="og:description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://amiraq.org/" />
-  <meta property="og:image" content="https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
+  <meta property="og:image"
+    content="https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="نبض - دليل أدوات الذكاء الاصطناعي" />
@@ -100,227 +102,45 @@
   <meta name="twitter:site" content="@NabdAI" />
   <meta name="twitter:title" content="نبض - دليل أدوات الذكاء الاصطناعي" />
   <meta name="twitter:description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
-  <meta name="twitter:image" content="https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
+  <meta name="twitter:image"
+    content="https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
+
+  <link rel="preload" as="image" href="/robot-placeholder.jpg" />
 
   <!-- Critical CSS - Inline for instant rendering -->
   <style>
-    /* App Shell Critical CSS */
-    .initial-shell {
-      min-height: 100vh;
-      background: hsl(250 24% 9%);
-      color: hsl(210 40% 98%);
-      font-family: 'Cairo', system-ui, sans-serif;
+    /* CSS مضمن (Inline) للسرعة القصوى */
+    .app-loader {
       display: flex;
       flex-direction: column;
-    }
-
-    .initial-shell * {
-      box-sizing: border-box;
-    }
-
-    /* Navbar */
-    .shell-nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: hsla(250, 24%, 15%, 0.3);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid hsla(250, 20%, 25%, 0.5);
-      padding: 12px 16px;
-    }
-
-    .shell-nav-content {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #0f0f1a;
+      color: white;
+      font-family: sans-serif;
     }
 
-    .shell-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .shell-logo-icon {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, hsl(263 70% 58%) 0%, hsl(217 91% 60%) 100%);
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(124, 58, 237, 0.3);
       border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
+      border-top-color: #7c3aed;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
     }
 
-    .shell-logo-text {
-      font-size: 1.5rem;
-      font-weight: 800;
-      background: linear-gradient(90deg, hsl(263 70% 58%), hsl(217 91% 60%), hsl(186 100% 50%));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .loader-logo {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
 
-    /* Main Content */
-    .shell-main {
-      flex: 1;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 24px 16px;
-      width: 100%;
-    }
-
-    /* Hero */
-    .shell-hero {
-      text-align: center;
-      padding: 48px 16px;
-      position: relative;
-    }
-
-    .shell-hero-title {
-      font-size: clamp(1.875rem, 5vw, 4.5rem);
-      font-weight: 800;
-      line-height: 1.2;
-      margin: 0 0 16px 0;
-      background: linear-gradient(90deg, hsl(263 70% 58%), hsl(217 91% 60%), hsl(186 100% 50%));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .shell-hero-subtitle {
-      font-size: clamp(1rem, 2.5vw, 1.5rem);
-      color: hsl(215 20% 65%);
-      max-width: 42rem;
-      margin: 0 auto 32px;
-    }
-
-    .shell-search {
-      max-width: 42rem;
-      margin: 0 auto;
-      background: hsla(250, 24%, 12%, 0.4);
-      border: 1px solid hsla(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 8px;
-      box-shadow: 0 0 20px hsla(263, 70%, 58%, 0.1);
-    }
-
-    .shell-search-input {
-      width: 100%;
-      height: 48px;
-      border-radius: 12px;
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      background: linear-gradient(90deg, hsl(250 20% 18%) 25%, hsl(250 20% 22%) 50%, hsl(250 20% 18%) 75%);
-      background-size: 200% 100%;
-    }
-
-    /* Grid Section */
-    .shell-grid-section {
-      background: hsla(250, 24%, 12%, 0.3);
-      border: 1px solid hsla(250, 20%, 20%, 0.5);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 24px;
-    }
-
-    .shell-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-    }
-
-    .shell-card {
-      background: hsla(250, 24%, 12%, 0.4);
-      border: 1px solid hsla(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .shell-card-header {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .shell-card-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, hsla(263, 70%, 58%, 0.2) 0%, hsla(217, 91%, 60%, 0.2) 100%);
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      background-size: 200% 100%;
-    }
-
-    .shell-card-title {
-      flex: 1;
-    }
-
-    .shell-card-title>div:first-child {
-      height: 20px;
-      width: 75%;
-      background: hsl(250 20% 18%);
-      border-radius: 4px;
-      margin-bottom: 8px;
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      background-size: 200% 100%;
-    }
-
-    .shell-card-title>div:last-child {
-      height: 12px;
-      width: 40%;
-      background: hsl(250 20% 15%);
-      border-radius: 4px;
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      background-size: 200% 100%;
-    }
-
-    .shell-card-desc>div {
-      height: 14px;
-      background: hsl(250 20% 15%);
-      border-radius: 4px;
-      margin-bottom: 8px;
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      background-size: 200% 100%;
-    }
-
-    .shell-card-desc>div:last-child {
-      width: 60%;
-    }
-
-    /* Animations */
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
-
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    @keyframes skeleton-pulse {
-      0% {
-        background-position: 200% 0;
-      }
-
-      100% {
-        background-position: -200% 0;
-      }
-    }
-
-    /* Screen Reader Only */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
     }
   </style>
 </head>
@@ -329,81 +149,9 @@
   <noscript>تحتاج لتفعيل JavaScript لتشغيل الموقع.</noscript>
 
   <div id="root">
-    <!-- Initial Shell Content - Critical for Lighthouse & SEO -->
-    <div class="initial-shell" dir="rtl" aria-busy="true" aria-label="جاري تحميل نبض AI">
-      <!-- Navbar -->
-      <nav class="shell-nav" aria-label="شريط التنقل">
-        <div class="shell-nav-content">
-          <div class="shell-logo">
-            <div class="shell-logo-icon" aria-hidden="true"></div>
-            <span class="shell-logo-text">نبض AI</span>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Main Content -->
-      <main class="shell-main">
-        <!-- Hero Section -->
-        <section class="shell-hero" aria-label="مقدمة الموقع">
-          <h1 class="shell-hero-title">نبض.. دليلك الذكي لأدوات المستقبل</h1>
-          <p class="shell-hero-subtitle">
-            اكتشف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك
-          </p>
-          <div class="shell-search" role="search" aria-label="البحث عن الأدوات">
-            <div class="shell-search-input" aria-label="جاري تحميل حقل البحث"></div>
-            <span class="sr-only">جاري تحميل خاصية البحث عن أدوات الذكاء الاصطناعي</span>
-          </div>
-        </section>
-
-        <!-- Tools Grid Section -->
-        <section class="shell-grid-section" aria-label="أدوات الذكاء الاصطناعي">
-          <h2 class="sr-only">قائمة أدوات الذكاء الاصطناعي</h2>
-          <div class="shell-grid" role="list" aria-label="جاري تحميل الأدوات">
-            <!-- Card 1 -->
-            <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
-              <div class="shell-card-header">
-                <div class="shell-card-icon" aria-hidden="true"></div>
-                <div class="shell-card-title">
-                  <div aria-hidden="true"></div>
-                  <div aria-hidden="true"></div>
-                </div>
-              </div>
-              <div class="shell-card-desc" aria-hidden="true">
-                <div></div>
-                <div></div>
-              </div>
-            </article>
-            <!-- Card 2 -->
-            <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
-              <div class="shell-card-header">
-                <div class="shell-card-icon" aria-hidden="true"></div>
-                <div class="shell-card-title">
-                  <div aria-hidden="true"></div>
-                  <div aria-hidden="true"></div>
-                </div>
-              </div>
-              <div class="shell-card-desc" aria-hidden="true">
-                <div></div>
-                <div></div>
-              </div>
-            </article>
-            <!-- Card 3 -->
-            <article class="shell-card" role="listitem" aria-label="جاري تحميل الأداة">
-              <div class="shell-card-header">
-                <div class="shell-card-icon" aria-hidden="true"></div>
-                <div class="shell-card-title">
-                  <div aria-hidden="true"></div>
-                  <div aria-hidden="true"></div>
-                </div>
-              </div>
-              <div class="shell-card-desc" aria-hidden="true">
-                <div></div>
-                <div></div>
-              </div>
-            </article>
-          </div>
-        </section>
-      </main>
+    <div class="app-loader">
+      <div class="loader-spinner"></div>
+      <div class="loader-logo">نبض AI</div>
     </div>
   </div>
   <script type="module" src="/src/main.tsx"></script>
