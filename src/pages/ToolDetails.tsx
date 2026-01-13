@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useClickTracking } from '@/hooks/useClickTracking';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,14 @@ const ToolDetails = () => {
 
   const { data: tool, isLoading, error } = useTool(id);
   const { recordClick } = useClickTracking();
+  const { addToRecent } = useRecentlyViewed();
+
+  // تسجيل المشاهدة عند تحميل الأداة
+  useEffect(() => {
+    if (tool?.id) {
+      addToRecent(String(tool.id));
+    }
+  }, [tool?.id, addToRecent]);
 
   const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
   const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;

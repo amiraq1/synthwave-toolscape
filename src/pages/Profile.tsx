@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Heart, MessageSquare, Settings, LogOut } from "lucide-react";
+import { Loader2, Heart, MessageSquare, Settings, LogOut, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,14 +12,15 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
+import UserStatsCards from "@/components/profile/UserStatsCards";
+import RecentlyViewedTools from "@/components/profile/RecentlyViewedTools";
 
 // Types for the profile page
 interface ProfileData {
     id: string;
-    full_name: string | null;
+    display_name: string | null;
     avatar_url: string | null;
     created_at: string;
-    updated_at: string;
 }
 
 interface Review {
@@ -45,6 +46,30 @@ const Profile = () => {
     const [avatarUrl, setAvatarUrl] = useState("");
     const [updating, setUpdating] = useState(false);
 
+    // حساب الإحصائيات
+    const userStats = useMemo(() => {
+        const averageRating = reviews.length > 0
+            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+            : 0;
+
+        const joinDate = profile?.created_at ? new Date(profile.created_at) : new Date();
+        const joinedDaysAgo = Math.floor((Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        // حساب مستوى النشاط
+        const totalActivity = bookmarks.length + reviews.length;
+        let activityLevel: 'very_active' | 'active' | 'inactive' = 'inactive';
+        if (totalActivity >= 10) activityLevel = 'very_active';
+        else if (totalActivity >= 3) activityLevel = 'active';
+
+        return {
+            bookmarksCount: bookmarks.length,
+            reviewsCount: reviews.length,
+            averageRating,
+            joinedDaysAgo,
+            activityLevel
+        };
+    }, [bookmarks, reviews, profile]);
+
     const fetchProfileData = useCallback(async () => {
         try {
             const userId = session?.user.id;
@@ -58,7 +83,7 @@ const Profile = () => {
 
             if (profileData) {
                 setProfile(profileData);
-                setFullName(profileData.full_name || "");
+                setFullName(profileData.display_name || "");
                 setAvatarUrl(profileData.avatar_url || "");
             }
 
@@ -72,9 +97,17 @@ const Profile = () => {
                 .eq("user_id", userId);
 
             if (bookmarksData) {
-                // استخراج مصفوفة الأدوات فقط
+                // استخراج مصفوفة الأدوات مع تحويل id
                 const tools = bookmarksData
-                    .map((b) => b.tools as Tool | null)
+                    .map((b) => {
+                        const tool = b.tools;
+                        if (!tool) return null;
+                        return {
+                            ...tool,
+                            id: String(tool.id),
+                            features: tool.features || [],
+                        } as Tool;
+                    })
                     .filter((t): t is Tool => t !== null);
                 setBookmarks(tools);
             }
@@ -113,9 +146,8 @@ const Profile = () => {
         const { error } = await supabase
             .from("profiles")
             .update({
-                full_name: fullName,
+                display_name: fullName,
                 avatar_url: avatarUrl,
-                updated_at: new Date().toISOString(),
             })
             .eq("id", session.user.id);
 
@@ -123,12 +155,16 @@ const Profile = () => {
             toast.error("فشل تحديث البيانات");
         } else {
             toast.success("تم تحديث البروفايل بنجاح ✅");
-            setProfile({ ...profile, full_name: fullName, avatar_url: avatarUrl });
+            setProfile(prev => prev ? { ...prev, display_name: fullName, avatar_url: avatarUrl } : null);
         }
         setUpdating(false);
     };
 
-    if (loading) return <div className="flex justify-center mt-20"><Loader2 className="animate-spin text-neon-purple w-12 h-12" /></div>;
+    if (loading) return (
+        <div className="flex justify-center mt-20">
+            <Loader2 className="animate-spin text-neon-purple w-12 h-12" />
+        </div>
+    );
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -143,13 +179,13 @@ const Profile = () => {
                         {profile?.avatar_url ? (
                             <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                            <span className="text-3xl font-bold text-white">{profile?.full_name?.[0] || session?.user.email?.[0]?.toUpperCase()}</span>
+                            <span className="text-3xl font-bold text-white">{profile?.display_name?.[0] || session?.user.email?.[0]?.toUpperCase()}</span>
                         )}
                     </div>
                 </div>
 
                 <div className="flex-1 text-center md:text-right">
-                    <h1 className="text-3xl font-bold text-white mb-2">{profile?.full_name || t('profile.title')}</h1>
+                    <h1 className="text-3xl font-bold text-white mb-2">{profile?.display_name || t('profile.title')}</h1>
                     <p className="text-gray-400">{session?.user.email}</p>
                     <div className="flex justify-center md:justify-start gap-4 mt-4 text-sm text-gray-500">
                         <span className="flex items-center gap-1"><Heart className="w-4 h-4 text-red-400" /> {bookmarks.length} {t('profile.library')}</span>
@@ -162,10 +198,16 @@ const Profile = () => {
                 </Button>
             </div>
 
+            {/* بطاقات الإحصائيات */}
+            <UserStatsCards stats={userStats} />
+
             {/* التبويبات والمحتوى */}
             <Tabs defaultValue="bookmarks" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 mb-8">
+                <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8">
                     <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple">{t('profile.library')}</TabsTrigger>
+                    <TabsTrigger value="recent" className="data-[state=active]:bg-neon-purple gap-2">
+                        <Clock className="w-4 h-4" /> الأخيرة
+                    </TabsTrigger>
                     <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple">{t('profile.reviews')}</TabsTrigger>
                     <TabsTrigger value="settings" className="data-[state=active]:bg-neon-purple">{t('profile.settings')}</TabsTrigger>
                 </TabsList>
@@ -187,7 +229,12 @@ const Profile = () => {
                     )}
                 </TabsContent>
 
-                {/* 2. تبويب المراجعات */}
+                {/* 2. تبويب الأدوات المشاهدة مؤخراً */}
+                <TabsContent value="recent" className="animate-in fade-in">
+                    <RecentlyViewedTools />
+                </TabsContent>
+
+                {/* 3. تبويب المراجعات */}
                 <TabsContent value="reviews" className="animate-in fade-in">
                     <div className="space-y-4">
                         {reviews.length > 0 ? (
@@ -213,7 +260,7 @@ const Profile = () => {
                     </div>
                 </TabsContent>
 
-                {/* 3. تبويب الإعدادات */}
+                {/* 4. تبويب الإعدادات */}
                 <TabsContent value="settings" className="animate-in fade-in">
                     <div className="bg-white/5 p-8 rounded-2xl border border-white/10 max-w-2xl mx-auto">
                         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
