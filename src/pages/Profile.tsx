@@ -40,11 +40,12 @@ const Profile = () => {
     const queryClient = useQueryClient();
 
     // 1. Fetch Profile
-    const { data: profile, isLoading: profileLoading } = useQuery({
+    const { data: profile, isLoading: profileLoading, isError } = useQuery({
         queryKey: ['profile', session?.user.id],
         queryFn: async () => {
             if (!session?.user.id) throw new Error("No session");
-            const { data, error } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+            // Use maybeSingle() instead of single() to handle cases where profile row doesn't exist yet
+            const { data, error } = await supabase.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
             if (error) throw error;
             return data as ProfileData;
         },
@@ -159,6 +160,18 @@ const Profile = () => {
     if (authLoading || profileLoading) return (
         <div className="flex justify-center mt-20">
             <Loader2 className="animate-spin text-neon-purple w-12 h-12" />
+        </div>
+    );
+
+    if (isError) return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md">
+                <h2 className="text-xl font-bold text-red-400 mb-2">عذراً، حدث خطأ ما</h2>
+                <p className="text-gray-400 mb-6">لم نتمكن من تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400">
+                    تحديث الصفحة
+                </Button>
+            </div>
         </div>
     );
 
