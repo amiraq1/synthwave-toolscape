@@ -195,6 +195,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     width={100}
                     className="w-full h-full p-1.5 object-contain"
                     priority={index < 6}
+                    aspectRatio="square"
                   />
                 ) : iconUrls.primary && !iconError ? (
                   /* Priority 2: Clearbit HD Logo */
