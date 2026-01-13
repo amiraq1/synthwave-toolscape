@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -36,16 +37,94 @@ const Profile = () => {
     const { session, signOut } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const queryClient = useQueryClient();
 
-    const [loading, setLoading] = useState(true);
-    const [profile, setProfile] = useState<ProfileData | null>(null);
-    const [bookmarks, setBookmarks] = useState<Tool[]>([]);
-    const [reviews, setReviews] = useState<Review[]>([]);
+    // 1. Fetch Profile
+    const { data: profile, isLoading: profileLoading } = useQuery({
+        queryKey: ['profile', session?.user.id],
+        queryFn: async () => {
+            if (!session?.user.id) throw new Error("No session");
+            const { data, error } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+            if (error) throw error;
+            return data as ProfileData;
+        },
+        enabled: !!session?.user.id,
+    });
 
-    // حالات التعديل
+    // 2. Fetch Bookmarks
+    const { data: bookmarks = [] } = useQuery({
+        queryKey: ['profile_bookmarks', session?.user.id],
+        queryFn: async () => {
+            if (!session?.user.id) return [];
+            const { data } = await supabase.from("bookmarks").select(`tool_id, tools (*)`).eq("user_id", session.user.id);
+
+            return (data || [])
+                .map((b) => b.tools ? ({ ...b.tools, id: String(b.tools.id), features: b.tools.features || [] } as Tool) : null)
+                .filter((t): t is Tool => t !== null);
+        },
+        enabled: !!session?.user.id,
+    });
+
+    // 3. Fetch Reviews
+    const { data: reviews = [] } = useQuery({
+        queryKey: ['profile_reviews', session?.user.id],
+        queryFn: async () => {
+            if (!session?.user.id) return [];
+            const { data } = await supabase.from("reviews").select(`*, tools (title)`).eq("user_id", session.user.id).order("created_at", { ascending: false });
+            return data as Review[];
+        },
+        enabled: !!session?.user.id,
+    });
+
+    // Local state for form inputs
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
-    const [updating, setUpdating] = useState(false);
+
+    // Sync form with fetched data
+    useEffect(() => {
+        if (profile) {
+            setFullName(profile.display_name || "");
+            setAvatarUrl(profile.avatar_url || "");
+        }
+    }, [profile]);
+
+    // 4. Optimistic Profile Update Mutation
+    const updateProfileMutation = useMutation({
+        mutationFn: async (updates: { display_name: string; avatar_url: string }) => {
+            if (!session?.user.id) throw new Error("No session");
+            const { error } = await supabase.from("profiles").update(updates).eq("id", session.user.id);
+            if (error) throw error;
+            return updates;
+        },
+        onMutate: async (newProfile) => {
+            await queryClient.cancelQueries({ queryKey: ['profile', session?.user.id] });
+            const previousProfile = queryClient.getQueryData(['profile', session?.user.id]);
+
+            queryClient.setQueryData(['profile', session?.user.id], (old: any) => ({
+                ...old,
+                ...newProfile
+            }));
+
+            return { previousProfile };
+        },
+        onError: (err, newProfile, context: any) => {
+            if (context?.previousProfile) {
+                queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
+            }
+            toast.error("فشل تحديث البيانات، تمت استعادة البيانات السابقة.");
+        },
+        onSuccess: () => {
+            toast.success("تم تحديث البروفايل بنجاح ✅");
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
+        }
+    });
+
+    const handleUpdateProfile = () => {
+        if (!session) return;
+        updateProfileMutation.mutate({ display_name: fullName, avatar_url: avatarUrl });
+    };
 
     // حساب الإحصائيات
     const userStats = useMemo(() => {
@@ -56,7 +135,6 @@ const Profile = () => {
         const joinDate = profile?.created_at ? new Date(profile.created_at) : new Date();
         const joinedDaysAgo = Math.floor((Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
 
-        // حساب مستوى النشاط
         const totalActivity = bookmarks.length + reviews.length;
         let activityLevel: 'very_active' | 'active' | 'inactive' = 'inactive';
         if (totalActivity >= 10) activityLevel = 'very_active';
@@ -71,97 +149,14 @@ const Profile = () => {
         };
     }, [bookmarks, reviews, profile]);
 
-    const fetchProfileData = useCallback(async () => {
-        try {
-            const userId = session?.user.id;
-
-            // 1. جلب بيانات البروفايل
-            const { data: profileData } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", userId)
-                .single();
-
-            if (profileData) {
-                setProfile(profileData);
-                setFullName(profileData.display_name || "");
-                setAvatarUrl(profileData.avatar_url || "");
-            }
-
-            // 2. جلب المفضلة (مع بيانات الأدوات)
-            const { data: bookmarksData } = await supabase
-                .from("bookmarks")
-                .select(`
-          tool_id,
-          tools (*)
-        `)
-                .eq("user_id", userId);
-
-            if (bookmarksData) {
-                // استخراج مصفوفة الأدوات مع تحويل id
-                const tools = bookmarksData
-                    .map((b) => {
-                        const tool = b.tools;
-                        if (!tool) return null;
-                        return {
-                            ...tool,
-                            id: String(tool.id),
-                            features: tool.features || [],
-                        } as Tool;
-                    })
-                    .filter((t): t is Tool => t !== null);
-                setBookmarks(tools);
-            }
-
-            // 3. جلب مراجعات المستخدم
-            const { data: reviewsData } = await supabase
-                .from("reviews")
-                .select(`
-          *,
-          tools (title)
-        `)
-                .eq("user_id", userId)
-                .order("created_at", { ascending: false });
-
-            if (reviewsData) setReviews(reviewsData as Review[]);
-
-        } catch (error) {
-            console.error("Error fetching profile:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [session]);
-
+    // Redirect if not logged in
     useEffect(() => {
-        if (!session) {
-            if (!loading) navigate("/auth");
-            return;
+        if (!session && !profileLoading) {
+            navigate("/auth");
         }
-        fetchProfileData();
-    }, [session, loading, navigate, fetchProfileData]);
+    }, [session, profileLoading, navigate]);
 
-    const handleUpdateProfile = async () => {
-        if (!session) return;
-        setUpdating(true);
-
-        const { error } = await supabase
-            .from("profiles")
-            .update({
-                display_name: fullName,
-                avatar_url: avatarUrl,
-            })
-            .eq("id", session.user.id);
-
-        if (error) {
-            toast.error("فشل تحديث البيانات");
-        } else {
-            toast.success("تم تحديث البروفايل بنجاح ✅");
-            setProfile(prev => prev ? { ...prev, display_name: fullName, avatar_url: avatarUrl } : null);
-        }
-        setUpdating(false);
-    };
-
-    if (loading) return (
+    if (profileLoading) return (
         <div className="flex justify-center mt-20">
             <Loader2 className="animate-spin text-neon-purple w-12 h-12" />
         </div>
@@ -291,10 +286,10 @@ const Profile = () => {
 
                             <Button
                                 onClick={handleUpdateProfile}
-                                disabled={updating}
+                                disabled={updateProfileMutation.isPending}
                                 className="w-full bg-neon-purple hover:bg-neon-purple/80 mt-4"
                             >
-                                {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : t('profile.save')}
+                                {updateProfileMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : t('profile.save')}
                             </Button>
                         </div>
                     </div>

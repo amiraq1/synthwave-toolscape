@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
-import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, Settings, ShieldAlert } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
@@ -32,70 +33,55 @@ const Admin = () => {
   const { isAdmin, loading: authLoading } = useAdminCheck();
 
   const [loading, setLoading] = useState(false);
-  const [drafts, setDrafts] = useState<DraftTool[]>([]);
-  const [allTools, setAllTools] = useState<Tool[]>([]); // New state for charts
-  const [stats, setStats] = useState({ totalTools: 0, pendingDrafts: 0, totalUsers: 0 });
 
-  // للتحكم في نافذة التعديل
+  // UI Local State
   const [editingTool, setEditingTool] = useState<DraftTool | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const [formData, setFormData] = useState({ name: "", url: "", description_en: "" });
 
-  // 1. جلب البيانات والإحصائيات
-  const fetchData = async () => {
-    // جلب كل الأدوات
-    const { data: toolsData } = await supabase
-      .from("tools")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (toolsData) {
-      // تحويل البيانات للتوافق مع نوع Tool
-      const mappedTools = toolsData.map(t => ({
+  // 1. Fetch All Tools utilizing React Query
+  const { data: tools = [], refetch: refetchTools } = useQuery({
+    queryKey: ['admin_tools'],
+    queryFn: async () => {
+      const { data } = await supabase.from("tools").select("*").order("created_at", { ascending: false });
+      if (!data) return [];
+      return data.map(t => ({
         ...t,
         id: String(t.id),
         features: t.features || []
-      })) as unknown as Tool[]; // Force casting after transformation
+      })) as unknown as Tool[];
+    },
+    enabled: isAdmin
+  });
 
-      setAllTools(mappedTools);
+  // 2. Fetch Users utilizing React Query
+  const { data: usersCount = 0 } = useQuery({
+    queryKey: ['admin_users_count'],
+    queryFn: async () => {
+      // We use head: true to get count only, much lighter
+      const { count, error } = await supabase.from("profiles").select("*", { count: 'exact', head: true });
+      if (error) return 0;
+      return count || 0;
+    },
+    enabled: isAdmin
+  });
 
-      // Filter drafts (unpublished tools)
-      // Note: Check 'is_published' correctly. If it's not in Tool type explicitly, we cast.
-      const filteredDrafts = mappedTools.filter((t: any) => t.is_published === false) as DraftTool[];
-      setDrafts(filteredDrafts);
-
-      setStats(prev => ({
-        ...prev,
-        totalTools: toolsData.length || 0,
-        pendingDrafts: filteredDrafts.length
-      }));
-    }
-
-    // Note: Profiles access might be restricted by RLS.
-    const { count: usersCount, error: usersError } = await supabase.from("profiles").select("*", { count: 'exact', head: true });
-
-    setStats(prev => ({
-      ...prev,
-      totalUsers: usersError ? 0 : (usersCount || 0)
-    }));
+  // Derived Stats
+  const drafts = tools.filter(t => (t as any).is_published === false) as DraftTool[];
+  const stats = {
+    totalTools: tools.length,
+    pendingDrafts: drafts.length,
+    totalUsers: usersCount
   };
 
-  useEffect(() => {
-    if (isAdmin) {
-      fetchData();
-    }
-  }, [isAdmin]);
-
-  // Auth Check Effect
+  // Auth Check
   useEffect(() => {
     if (!authLoading && !isAdmin) {
-      // Allow time to see "Not Authorized" before redirect or just stay there
+      // Optional: Redirect or Show Unauthorized
     }
   }, [isAdmin, authLoading]);
 
-
-  // 2. التوليد الآلي
+  // Actions
   const handleAutoDraft = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -104,7 +90,7 @@ const Admin = () => {
       if (error) throw error;
       toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
       setFormData({ name: "", url: "", description_en: "" });
-      fetchData();
+      refetchTools();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast.error("خطأ: " + errorMessage);
@@ -113,15 +99,13 @@ const Admin = () => {
     }
   };
 
-  // 3. حذف المسودة
   const deleteDraft = async (id: string) => {
     if (!confirm("حذف نهائي؟")) return;
     await supabase.from("tools").delete().eq("id", Number(id));
     toast.success("تم الحذف");
-    fetchData();
+    refetchTools();
   };
 
-  // 4. فتح نافذة التعديل
   const openEdit = (tool: DraftTool) => {
     setEditingTool(tool);
     setIsDialogOpen(true);
@@ -182,7 +166,7 @@ const Admin = () => {
             <CardContent className="p-6 flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm mb-1">المستخدمين</p>
-                <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers || '-'}</h3>
+                <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers}</h3>
               </div>
               <Users className="w-8 h-8 text-purple-500/50" />
             </CardContent>
@@ -190,7 +174,7 @@ const Admin = () => {
         </div>
 
         {/* 📈 الرسوم البيانية */}
-        <AdminCharts tools={allTools} />
+        <AdminCharts tools={tools} />
 
         {/* نظام التبويبات */}
         <Tabs defaultValue="tools" className="w-full">
@@ -287,6 +271,15 @@ const Admin = () => {
                 ))}
               </div>
             </div>
+
+            {/* 🛠️ جدول كل الأدوات */}
+            <div className="mt-8">
+              <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
+                <Database className="w-5 h-5" /> كل الأدوات ({tools.length})
+              </h2>
+              <AdminToolsTable tools={tools} onUpdate={() => refetchTools()} />
+            </div>
+
           </TabsContent>
 
           <TabsContent value="users">
@@ -306,7 +299,7 @@ const Admin = () => {
             isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
             tool={editingTool}
-            onUpdate={fetchData}
+            onUpdate={() => refetchTools()}
           />
         )}
       </div>
