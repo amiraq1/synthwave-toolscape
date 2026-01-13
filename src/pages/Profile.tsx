@@ -34,7 +34,7 @@ interface Review {
 }
 
 const Profile = () => {
-    const { session, signOut } = useAuth();
+    const { session, signOut, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
@@ -151,12 +151,12 @@ const Profile = () => {
 
     // Redirect if not logged in
     useEffect(() => {
-        if (!session && !profileLoading) {
+        if (!authLoading && !session) {
             navigate("/auth");
         }
-    }, [session, profileLoading, navigate]);
+    }, [session, authLoading, navigate]);
 
-    if (profileLoading) return (
+    if (authLoading || profileLoading) return (
         <div className="flex justify-center mt-20">
             <Loader2 className="animate-spin text-neon-purple w-12 h-12" />
         </div>
