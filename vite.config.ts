@@ -93,14 +93,11 @@ export default defineConfig(({ mode }) => ({
       output: {
         // Smart Manual Chunking
         manualChunks(id) {
-          // 1. React Core
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-            return 'vendor-react';
+          // Simplified chunking to avoid initialization order issues
+          if (id.includes('node_modules')) {
+            if (id.includes('@sentry')) return 'vendor-sentry';
+            // Keep other specific chunks if needed, but let core react/supabase stay together or follow default splitting
           }
-
-          // 2. Backend & Logging
-          if (id.includes('@supabase')) return 'vendor-supabase';
-          if (id.includes('@sentry')) return 'vendor-sentry';
 
           // 3. UI Libraries (Radix, Shadcn dependencies)
           if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
