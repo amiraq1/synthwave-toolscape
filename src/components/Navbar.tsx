@@ -129,8 +129,10 @@ const Navbar = () => {
                       </p>
                     </div>
                   </div>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
-                    <User className="mr-2 h-4 w-4" /> الملف الشخصي
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                    <Link to="/profile">
+                      <User className="mr-2 h-4 w-4" /> الملف الشخصي
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer hover:bg-white/10 text-red-400" onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" /> تسجيل الخروج
@@ -198,6 +200,46 @@ const Navbar = () => {
                     </Link>
                   </div>
 
+                  {/* قسم المستخدم في قائمة الموبايل */}
+                  {session && (
+                    <div className="mt-auto pt-6 border-t border-white/10">
+                      <div className="flex items-center gap-3 px-2 mb-4">
+                        <Avatar className="h-10 w-10 border border-white/10">
+                          <AvatarImage src={session.user.user_metadata.avatar_url} />
+                          <AvatarFallback className="bg-neon-purple text-white">
+                            {session.user.email?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-white max-w-[180px] truncate">
+                            {session.user.user_metadata.full_name || "مستخدم"}
+                          </span>
+                          <span className="text-xs text-gray-400 max-w-[180px] truncate">
+                            {session.user.email}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsOpen(false)}
+                          className="px-4 py-2.5 rounded-lg bg-white/5 text-white hover:bg-neon-purple hover:text-white transition-colors flex items-center gap-3 text-sm font-medium"
+                        >
+                          <User className="w-4 h-4" /> الملف الشخصي
+                        </Link>
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                          className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-right"
+                        >
+                          <LogOut className="w-4 h-4" /> تسجيل الخروج
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
