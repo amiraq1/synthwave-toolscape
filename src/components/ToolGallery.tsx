@@ -10,7 +10,7 @@ interface ToolGalleryProps {
 const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
     // صور افتراضية للتجربة إذا لم تكن هناك صور حقيقية في قاعدة البيانات
     const displayImages = images.length > 0 ? images : [
-        "/robot-placeholder.jpg", // صورة الروبوت الافتراضية
+        "/robot-placeholder.webp", // صورة الروبوت الافتراضية (WebP للأداء)
     ];
 
     const [mainImage, setMainImage] = useState(displayImages[0]);

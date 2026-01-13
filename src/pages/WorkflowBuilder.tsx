@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import NodeConfigDialog from "@/components/workflow/NodeConfigDialog";
 import type { WorkflowNodeData } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 // تعريف أنواع العقد المخصصة
 const nodeTypes = {
@@ -30,14 +31,14 @@ const nodeTypes = {
     // يمكننا الاحتفاظ بالأنواع القديمة للتوافق إذا لزم الأمر، لكننا سنعتمد على 'custom'
 };
 
-// إعدادات الخطوط لتكون واضحة وسميكة
+// إعدادات الخطوط لتكون واضحة وسميكة مع توهج
 const defaultEdgeOptions = {
-    animated: true,
-    type: 'smoothstep',
+    animated: true, // حركة مستمرة للنقاط
+    type: 'smoothstep', // خطوط بزوايا هندسية أنيقة
     style: {
-        stroke: '#7c3aed',
-        strokeWidth: 3,
-        filter: 'drop-shadow(0 0 3px #7c3aed)',
+        stroke: '#7c3aed', // اللون البنفسجي الأساسي
+        strokeWidth: 2,
+        filter: 'drop-shadow(0 0 3px rgba(124, 58, 237, 0.5))', // توهج نيون
     },
     markerEnd: {
         type: MarkerType.ArrowClosed,
@@ -54,16 +55,63 @@ const FlowArea = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [editingNode, setEditingNode] = useState<Node | null>(null);
     const [logs, setLogs] = useState<string[]>([]); // سجلات التنفيذ
+    const { session } = useAuth(); // لجلب هوية المستخدم
+    const [workflowId, setWorkflowId] = useState<string | null>(null); // لحفظ معرف المخطط الحالي
 
     const addLog = (message: string) => {
         setLogs(prev => [...prev, `> ${new Date().toLocaleTimeString().split(' ')[0]} ${message}`]);
     };
 
-    const handleSave = () => {
-        const workflowOpt = { nodes, edges };
-        console.log("Saving:", workflowOpt);
-        // هنا يمكن ربط Supabase لحفظ البيانات في جدول workflows
-        toast.success("تم حفظ مخطط سير العمل (محلياً حالياً)");
+    const handleSave = async () => {
+        if (!session) {
+            toast.error("يجب عليك تسجيل الدخول لحفظ المخطط");
+            return;
+        }
+
+        if (nodes.length === 0) {
+            toast.warning("المخطط فارغ!");
+            return;
+        }
+
+        // تأكد من وجود instance
+        if (!reactFlowInstance) {
+            toast.error("خطأ في تهيئة مساحة العمل");
+            return;
+        }
+
+        toast.loading("جاري الحفظ...");
+
+        // تجهيز البيانات كـ JSON (تحويل لضمان توافق الأنواع)
+        const flowData = JSON.parse(JSON.stringify({
+            nodes,
+            edges,
+            viewport: reactFlowInstance.getViewport() // لحفظ مستوى التقريب (Zoom)
+        }));
+
+        try {
+            const { data, error } = await supabase
+                .from('workflows')
+                .upsert({
+                    id: workflowId || undefined, // إذا كان موجوداً نحدثه، وإلا ننشئ جديداً
+                    user_id: session.user.id,
+                    name: "سير عمل جديد", // يمكن إضافة حقل لتغيير الاسم لاحقاً
+                    definition: flowData,
+                    updated_at: new Date().toISOString()
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            setWorkflowId(String(data.id)); // حفظ المعرف للعمليات القادمة
+            toast.dismiss();
+            toast.success("تم حفظ المخطط بنجاح! ✅");
+
+        } catch (error) {
+            toast.dismiss();
+            const errorMessage = error instanceof Error ? error.message : 'خطأ غير معروف';
+            toast.error("فشل الحفظ: " + errorMessage);
+        }
     };
 
     const onNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node) => {
@@ -184,9 +232,22 @@ const FlowArea = () => {
             }
 
             for (const node of sortedNodes) {
-                // تحديث حالة العقدة لـ running
-                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, selected: true, data: { ...n.data, status: 'running' } } : { ...n, selected: false }));
+                // 1. تلوين العقدة الحالية بالأصفر (جاري العمل)
+                setNodes(nds => nds.map(n => {
+                    if (n.id === node.id) {
+                        return {
+                            ...n,
+                            data: { ...n.data, status: 'running' }, // تحديث الحالة الداخلية
+                            style: { ...n.style, border: '2px solid #fbbf24', boxShadow: '0 0 15px #fbbf24' } // توهج أصفر
+                        };
+                    }
+                    return n;
+                }));
+
                 await new Promise(r => setTimeout(r, 800)); // محاكاة وقت المعالجة وتأثير بصري
+
+                // المنطق الفعلي للعقدة (كما كان سابقاً)
+                const nodeData = node.data as WorkflowNodeData;
 
                 // 1. إذا كان وكيل (Agent)
                 if (node.data.slug && node.data.slug !== 'trigger' && node.data.slug !== 'action' && node.type !== 'output') {
@@ -234,7 +295,6 @@ const FlowArea = () => {
                 // 2. إذا كان إجراء (Send Email / Action) أو Output node
                 else if (node.data.slug === 'action' || node.type === 'output') {
                     addLog(`⚡ تنفيذ الإجراء: ${node.data.label}`);
-                    const nodeData = node.data as WorkflowNodeData;
                     const to = nodeData.to ? String(nodeData.to).replace("{{from}}", contextData.from) : contextData.from;
                     const body = nodeData.body ? String(nodeData.body).replace("{{agent_output}}", contextData.agent_output) : currentOutput;
 
@@ -250,8 +310,25 @@ const FlowArea = () => {
                     toast.success("تم استلام محفز جديد: إيميل وارد");
                 }
 
-                // تحديث حالة العقدة لـ completed
-                setNodes(nds => nds.map(n => n.id === node.id ? { ...n, data: { ...n.data, status: 'completed' } } : n));
+                // 2. تلوين العقدة بالأخضر (تم بنجاح)
+                setNodes(nds => nds.map(n => {
+                    if (n.id === node.id) {
+                        return {
+                            ...n,
+                            data: { ...n.data, status: 'completed' },
+                            style: { ...n.style, border: '2px solid #22c55e', boxShadow: '0 0 10px #22c55e' } // توهج أخضر
+                        };
+                    }
+                    return n;
+                }));
+
+                // تحريك خط الربط المتصل بهذه العقدة ليكون سريعاً جداً (تأثير تدفق البيانات)
+                setEdges(eds => eds.map(e => {
+                    if (e.source === node.id) {
+                        return { ...e, animated: true, style: { ...e.style, stroke: '#22c55e', strokeWidth: 4 } };
+                    }
+                    return e;
+                }));
             }
 
         } catch (error) {

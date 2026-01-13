@@ -178,6 +178,18 @@ export interface WorkflowNode {
 export interface WorkflowNodeData {
     label: string;
     type?: string;
+    slug?: string;
+    status?: 'idle' | 'running' | 'completed' | 'error';
+    output?: string;
+    description?: string;
+    // Agent-specific fields
+    customPrompt?: string;
+    // Trigger-specific fields  
+    provider?: string;
+    // Action-specific fields
+    to?: string;
+    body?: string;
+    // Generic config
     config?: Record<string, unknown>;
     [key: string]: unknown;
 }

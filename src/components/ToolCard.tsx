@@ -203,7 +203,6 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     alt={displayTitle}
                     className="w-10 h-10 object-contain rounded-lg"
                     loading={index < 6 ? "eager" : "lazy"}
-                    // @ts-ignore
                     fetchPriority={index < 6 ? "high" : "auto"}
                     width="40"
                     height="40"
@@ -216,7 +215,6 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     alt={displayTitle}
                     className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
                     loading={index < 6 ? "eager" : "lazy"}
-                    // @ts-ignore
                     fetchPriority={index < 6 ? "high" : "auto"}
                     width="32"
                     height="32"

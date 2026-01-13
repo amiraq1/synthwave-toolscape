@@ -109,7 +109,6 @@ const Navbar = () => {
                     <Avatar className="h-9 w-9 border border-white/10">
                       <AvatarImage
                         src={session.user.user_metadata.avatar_url}
-                        // @ts-ignore
                         loading="eager"
                         fetchPriority="high"
                       />

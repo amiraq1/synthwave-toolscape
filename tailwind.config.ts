@@ -89,6 +89,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.1)" },
+        },
         "marquee": {
           "0%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(-100%)" },
@@ -99,6 +103,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out forwards",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 8s ease-in-out infinite",
         "marquee": "marquee 25s linear infinite",
       },
     },

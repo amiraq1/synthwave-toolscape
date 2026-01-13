@@ -31,7 +31,6 @@ const ImageWithFallback = ({ src, alt, className = "", width = 400, priority = f
             className={className}
             onError={() => setError(true)}
             loading={priority ? "eager" : "lazy"}
-            // @ts-ignore
             fetchPriority={priority ? "high" : "auto"}
         />
     );
