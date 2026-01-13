@@ -12,6 +12,8 @@ import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import AdminCharts from "@/components/admin/AdminCharts";
+import AdminToolsTable from "@/components/admin/AdminToolsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Tool } from "@/types";
 
@@ -31,6 +33,7 @@ const Admin = () => {
 
   const [loading, setLoading] = useState(false);
   const [drafts, setDrafts] = useState<DraftTool[]>([]);
+  const [allTools, setAllTools] = useState<Tool[]>([]); // New state for charts
   const [stats, setStats] = useState({ totalTools: 0, pendingDrafts: 0, totalUsers: 0 });
 
   // للتحكم في نافذة التعديل
@@ -41,30 +44,41 @@ const Admin = () => {
 
   // 1. جلب البيانات والإحصائيات
   const fetchData = async () => {
-    // جلب المسودات
-    const { data: draftsData } = await supabase
+    // جلب كل الأدوات
+    const { data: toolsData } = await supabase
       .from("tools")
       .select("*")
       .order("created_at", { ascending: false });
 
-    // Filter drafts (unpublished tools)
-    const filteredDrafts = (draftsData || []).filter((t) => t.is_published === false) as DraftTool[];
-    setDrafts(filteredDrafts);
+    if (toolsData) {
+      // تحويل البيانات للتوافق مع نوع Tool
+      const mappedTools = toolsData.map(t => ({
+        ...t,
+        id: String(t.id),
+        features: t.features || []
+      })) as unknown as Tool[]; // Force casting after transformation
 
-    // جلب الإحصائيات (Count)
-    const { count: toolsCount } = await supabase.from("tools").select("*", { count: 'exact', head: true });
+      setAllTools(mappedTools);
+
+      // Filter drafts (unpublished tools)
+      // Note: Check 'is_published' correctly. If it's not in Tool type explicitly, we cast.
+      const filteredDrafts = mappedTools.filter((t: any) => t.is_published === false) as DraftTool[];
+      setDrafts(filteredDrafts);
+
+      setStats(prev => ({
+        ...prev,
+        totalTools: toolsData.length || 0,
+        pendingDrafts: filteredDrafts.length
+      }));
+    }
+
     // Note: Profiles access might be restricted by RLS.
-    // We handle the error by checking 'error' from the response instead of .catch()
     const { count: usersCount, error: usersError } = await supabase.from("profiles").select("*", { count: 'exact', head: true });
 
-    // If error (e.g. 403), default to 0
-    const finalUsersCount = usersError ? 0 : (usersCount || 0);
-
-    setStats({
-      totalTools: toolsCount || 0,
-      pendingDrafts: filteredDrafts.length,
-      totalUsers: finalUsersCount
-    });
+    setStats(prev => ({
+      ...prev,
+      totalUsers: usersError ? 0 : (usersCount || 0)
+    }));
   };
 
   useEffect(() => {
@@ -100,9 +114,9 @@ const Admin = () => {
   };
 
   // 3. حذف المسودة
-  const deleteDraft = async (id: number) => {
+  const deleteDraft = async (id: string) => {
     if (!confirm("حذف نهائي؟")) return;
-    await supabase.from("tools").delete().eq("id", id);
+    await supabase.from("tools").delete().eq("id", Number(id));
     toast.success("تم الحذف");
     fetchData();
   };
@@ -174,6 +188,9 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* 📈 الرسوم البيانية */}
+        <AdminCharts tools={allTools} />
 
         {/* نظام التبويبات */}
         <Tabs defaultValue="tools" className="w-full">

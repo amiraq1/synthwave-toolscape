@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
 import UserStatsCards from "@/components/profile/UserStatsCards";
 import RecentlyViewedTools from "@/components/profile/RecentlyViewedTools";
+import AvatarUpload from "@/components/profile/AvatarUpload";
 
 // Types for the profile page
 interface ProfileData {
@@ -277,15 +278,15 @@ const Profile = () => {
                                 />
                             </div>
 
-                            <div className="space-y-2">
-                                <Label className="text-gray-300">رابط الصورة الرمزية (Avatar URL)</Label>
-                                <Input
-                                    value={avatarUrl}
-                                    onChange={(e) => setAvatarUrl(e.target.value)}
-                                    placeholder="https://example.com/avatar.jpg"
-                                    className="bg-black/20 border-white/10 text-white"
-                                />
-                                <p className="text-xs text-gray-500">يمكنك استخدام رابط صورة من GitHub أو Google.</p>
+                            <div className="space-y-4">
+                                <Label className="text-gray-300">الصورة الرمزية</Label>
+                                {session?.user.id && (
+                                    <AvatarUpload
+                                        userId={session.user.id}
+                                        currentAvatarUrl={avatarUrl}
+                                        onUploadComplete={(url) => setAvatarUrl(url)}
+                                    />
+                                )}
                             </div>
 
                             <Button
