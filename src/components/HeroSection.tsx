@@ -26,30 +26,33 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
 
   return (
     <section className="relative py-16 sm:py-20 md:py-28 px-4 text-center overflow-hidden">
-      {/* Enhanced background effects */}
-      <div className="absolute top-10 left-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-purple/25 rounded-full blur-[120px] sm:blur-[180px] -z-10" />
-      <div className="absolute bottom-10 right-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-blue/20 rounded-full blur-[120px] sm:blur-[180px] -z-10" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[200px] -z-10" />
+      {/* Enhanced background effects with GPU acceleration */}
+      <div className="absolute top-10 left-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-purple/25 rounded-full blur-[120px] sm:blur-[150px] -z-10 gpu-accelerated animate-float" />
+      <div className="absolute bottom-10 right-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-blue/20 rounded-full blur-[120px] sm:blur-[150px] -z-10 gpu-accelerated" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[180px] -z-10 gpu-accelerated" />
 
-      {/* Grid pattern */}
-      <div className="absolute inset-0 opacity-[0.15] -z-10" style={{
-        backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)",
-        backgroundSize: "32px 32px"
+      {/* Animated Grid pattern */}
+      <div className="absolute inset-0 opacity-[0.12] -z-10" style={{
+        backgroundImage: "radial-gradient(circle at 1px 1px, rgba(139,92,246,0.3) 1px, transparent 0)",
+        backgroundSize: "40px 40px"
       }} />
 
-      {/* Pure CSS Background - No heavy images for maximum performance (LCP) */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+      {/* Pure CSS Background - Optimized for performance */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none gpu-accelerated">
         {/* Deep space gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0f0f1a] via-[#1a1a2e] to-[#0f0f1a]" />
 
         {/* Subtle Neon Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.08)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
 
-        {/* Top Glow Effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-purple/20 blur-[120px] rounded-full opacity-50 mix-blend-screen animate-pulse-slow" />
+        {/* Top Glow Effect - Animated */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-purple/15 blur-[100px] rounded-full opacity-60 mix-blend-screen animate-pulse-slow" />
 
         {/* Bottom Accent Glow */}
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 blur-[100px] rounded-full opacity-30" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 blur-[80px] rounded-full opacity-40" />
+        
+        {/* Additional cyan accent */}
+        <div className="absolute top-1/3 left-0 w-[300px] h-[300px] bg-neon-cyan/5 blur-[100px] rounded-full opacity-50" />
       </div>
 
       {/* Trending Bar */}
@@ -58,28 +61,32 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
       </div>
 
       <div className="max-w-5xl mx-auto space-y-8 sm:space-y-10">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-purple/10 border border-neon-purple/30 text-sm text-neon-purple animate-fade-in">
-          <Sparkles className="h-4 w-4" />
-          <span>أكبر دليل عربي لأدوات الذكاء الاصطناعي</span>
+        {/* Premium Animated Badge */}
+        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neon-purple/10 border border-neon-purple/40 text-sm text-neon-purple animate-fade-in backdrop-blur-sm shadow-lg shadow-neon-purple/10 hover:shadow-neon-purple/20 hover:border-neon-purple/60 transition-all duration-300 pulse-ring">
+          <Sparkles className="h-4 w-4 animate-pulse" />
+          <span className="font-medium">أكبر دليل عربي لأدوات الذكاء الاصطناعي</span>
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
+          </span>
         </div>
 
-        {/* Main headline with better typography */}
+        {/* Main headline with animated gradient */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          {t('hero.title')}
+          <span className="animated-gradient-text neon-text">{t('hero.title')}</span>
         </h1>
 
-        {/* Subheadline */}
-        <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        {/* Subheadline with better styling */}
+        <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '0.2s' }}>
           {t('hero.subtitle')}
         </p>
 
-        {/* CTA Buttons */}
+        {/* Premium CTA Buttons */}
         <div className="flex flex-wrap justify-center gap-4 pt-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <Button
             onClick={scrollToTools}
             size="lg"
-            className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 text-white gap-2 px-8 py-7 text-lg font-semibold shadow-lg shadow-neon-purple/25 hover:shadow-xl hover:shadow-neon-purple/30 transition-all"
+            className="btn-premium animated-gradient text-white gap-2 px-8 py-7 text-lg font-bold shadow-xl shadow-neon-purple/30 hover:shadow-2xl hover:shadow-neon-purple/40 transition-all duration-300 border-0 rounded-2xl"
           >
             <Sparkles className="h-5 w-5" />
             استكشف الأدوات
@@ -88,7 +95,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
             <Button
               size="lg"
               variant="outline"
-              className="gap-2 px-8 py-7 text-lg font-semibold rounded-full border-neon-purple/50 text-white hover:bg-neon-purple/10 hover:border-neon-purple transition-all group"
+              className="btn-premium gap-2 px-8 py-7 text-lg font-bold rounded-2xl border-2 border-neon-purple/50 text-white hover:bg-neon-purple/15 hover:border-neon-purple transition-all duration-300 group backdrop-blur-sm"
             >
               <GitBranch className="h-5 w-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
               جرب صانع الوكلاء

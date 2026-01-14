@@ -38,17 +38,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-[#0f0f1a]/80 backdrop-blur-xl border-b border-white/5 font-cairo">
+    <nav className="fixed top-0 w-full z-50 glass-pro font-cairo transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* 1. الشعار (دائماً ظاهر) */}
           <div className="flex-shrink-0 flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-neon-purple rounded-lg flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 animated-gradient rounded-xl flex items-center justify-center shadow-lg shadow-neon-purple/20 group-hover:shadow-neon-purple/40 transition-all duration-300 group-hover:scale-110">
                 <span className="text-white font-bold text-lg">⚡</span>
               </div>
-              <span className="text-xl font-bold text-white hidden sm:block">نبض AI</span>
+              <span className="text-xl font-bold text-white hidden sm:block group-hover:text-neon-purple transition-colors duration-300">نبض AI</span>
             </Link>
           </div>
 
