@@ -130,7 +130,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
 
   return (
     <div
-      className="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neon-purple/50 hover:shadow-[0_0_25px_rgba(124,58,237,0.15)] hover:-translate-y-1 flex flex-col h-full"
+      className="group relative bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-neon-purple/50 flex flex-col h-full gradient-border premium-glow card-spotlight gpu-accelerated"
       onMouseEnter={handleMouseEnter}
       style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
     >

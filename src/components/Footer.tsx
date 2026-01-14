@@ -23,15 +23,21 @@ const Footer = () => {
   };
 
   return (
-    <footer className="mt-12 sm:mt-20 py-8 sm:py-12 border-t border-border/50 glass" dir="rtl">
+    <footer className="mt-12 sm:mt-20 py-8 sm:py-12 border-t border-white/10 glass-pro relative overflow-hidden" dir="rtl">
+      {/* Background Glow */}
+      <div className="absolute top-0 left-1/4 w-[400px] h-[200px] bg-neon-purple/5 blur-[100px] rounded-full -z-10" />
+      <div className="absolute bottom-0 right-1/4 w-[300px] h-[150px] bg-neon-blue/5 blur-[80px] rounded-full -z-10" />
+
       <div className="container mx-auto max-w-7xl px-4">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
           <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <Activity className="h-6 w-6 text-neon-purple" />
-              <span className="font-bold text-xl gradient-text">نبض</span>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 animated-gradient rounded-lg flex items-center justify-center shadow-lg shadow-neon-purple/20">
+                <Activity className="h-5 w-5 text-white" />
+              </div>
+              <span className="font-bold text-xl animated-gradient-text">نبض</span>
               <span className="text-foreground/80 text-xl" lang="en">AI</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
@@ -41,28 +47,28 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               <a
                 href="mailto:contact@amiraq.org"
-                className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-neon-purple/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-neon-purple/20 group border border-white/5 hover:border-neon-purple/30"
                 aria-label="أرسل لنا بريدًا إلكترونيًا"
               >
-                <Mail className="h-4 w-4 text-muted-foreground" />
+                <Mail className="h-4 w-4 text-muted-foreground group-hover:text-neon-purple transition-colors" />
               </a>
               <a
                 href="https://twitter.com/NabdAI"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-neon-blue/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-neon-blue/20 group border border-white/5 hover:border-neon-blue/30"
                 aria-label="تابعنا على تويتر"
               >
-                <Twitter className="h-4 w-4 text-muted-foreground" />
+                <Twitter className="h-4 w-4 text-muted-foreground group-hover:text-neon-blue transition-colors" />
               </a>
               <a
                 href="https://github.com/amiraq1"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-card hover:bg-neon-purple/20 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group border border-white/5 hover:border-white/20"
                 aria-label="رابط المستودع على جيت هب"
               >
-                <Github className="h-4 w-4 text-muted-foreground" />
+                <Github className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors" />
               </a>
             </div>
           </div>
