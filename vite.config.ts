@@ -110,7 +110,20 @@ export default defineConfig(({ mode }) => ({
     target: "esnext",
     cssCodeSplit: true,
     chunkSizeWarningLimit: 600,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      },
+    },
     rollupOptions: {
+      treeshake: {
+        moduleSideEffects: 'no-external',
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false
+      },
       output: {
         // Smart Manual Chunking
         manualChunks(id) {
@@ -118,7 +131,14 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules')) {
             if (id.includes('@supabase')) return 'vendor-supabase';
             if (id.includes('@sentry')) return 'vendor-sentry';
-            // Keep other specific chunks if needed, but let core react/supabase stay together or follow default splitting
+
+            // React core - keep together to avoid initialization issues
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+              return 'vendor-react';
+            }
+
+            // React Router
+            if (id.includes('react-router')) return 'vendor-router';
           }
 
           // 3. UI Libraries (Radix, Shadcn dependencies)
@@ -126,13 +146,13 @@ export default defineConfig(({ mode }) => ({
             return 'vendor-ui-core';
           }
 
-          // 4. Icons
+          // 4. Icons - split into separate chunk for better caching
           if (id.includes('lucide-react')) return 'vendor-icons';
 
           // 5. Animation
           if (id.includes('framer-motion')) return 'vendor-animation';
 
-          // 6. Data Visualization
+          // 6. Data Visualization - lazy loaded
           if (id.includes('recharts') || id.includes('chart.js') || id.includes('d3')) {
             return 'vendor-charts';
           }
@@ -146,6 +166,12 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('date-fns') || id.includes('dayjs') || id.includes('moment')) {
             return 'vendor-dates';
           }
+
+          // 9. i18n
+          if (id.includes('i18next')) return 'vendor-i18n';
+
+          // 10. Query
+          if (id.includes('@tanstack')) return 'vendor-query';
         },
       },
     },
