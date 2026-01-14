@@ -12,6 +12,27 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
+    {
+      name: 'defer-css',
+      apply: 'build',
+      transformIndexHtml(html) {
+        return html.replace(
+          /<link\s+rel="stylesheet"([^>]*?)>/g,
+          (match, attrs) => {
+            const hrefMatch = attrs.match(/href="([^"]+)"/);
+            if (!hrefMatch) return match;
+
+            const href = hrefMatch[1];
+            const crossoriginMatch = attrs.match(/\scrossorigin(?:="[^"]*")?/);
+            const crossorigin = crossoriginMatch ? crossoriginMatch[0] : '';
+            const preloadTag = `<link rel="preload" as="style" href="${href}"${crossorigin} onload="this.onload=null;this.rel='stylesheet'">`;
+            const noscriptTag = `<noscript><link rel="stylesheet" href="${href}"${crossorigin}></noscript>`;
+
+            return `${preloadTag}\n${noscriptTag}`;
+          },
+        );
+      },
+    },
     react(),
     mode === 'development' && componentTagger(),
 
