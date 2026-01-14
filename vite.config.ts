@@ -119,11 +119,6 @@ export default defineConfig(({ mode }) => ({
       },
     },
     rollupOptions: {
-      treeshake: {
-        moduleSideEffects: 'no-external',
-        propertyReadSideEffects: false,
-        tryCatchDeoptimization: false
-      },
       output: {
         // Smart Manual Chunking
         manualChunks(id) {
