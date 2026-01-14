@@ -147,10 +147,8 @@ export default defineConfig(({ mode }) => ({
           // 5. Animation
           if (id.includes('framer-motion')) return 'vendor-animation';
 
-          // 6. Data Visualization - lazy loaded
-          if (id.includes('recharts') || id.includes('chart.js') || id.includes('d3')) {
-            return 'vendor-charts';
-          }
+          // 6. Data Visualization - removed from chunking to fix initialization order
+          // recharts depends on react and d3, separating it causes initialization issues
 
           // 7. Forms & Validation
           if (id.includes('zod') || id.includes('react-hook-form')) {
