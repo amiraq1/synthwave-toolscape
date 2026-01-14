@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => ({
     // 3. PWA Configuration
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null, // Prevent render-blocking - we manually register SW after page load
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
         name: 'نبض AI',

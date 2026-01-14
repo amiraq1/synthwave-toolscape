@@ -42,3 +42,30 @@ createRoot(document.getElementById('root')!).render(
         <App />
     </React.StrictMode>,
 );
+
+// تسجيل Service Worker يدويًا بعد تحميل الصفحة (لتجنب حظر العرض)
+const registerServiceWorker = async () => {
+    if ('serviceWorker' in navigator) {
+        try {
+            const { registerSW } = await import('virtual:pwa-register');
+            registerSW({
+                immediate: false,
+                onRegistered(r) {
+                    console.log('SW registered:', r);
+                },
+                onRegisterError(error) {
+                    console.error('SW registration error:', error);
+                }
+            });
+        } catch (error) {
+            console.error('Failed to register SW:', error);
+        }
+    }
+};
+
+// تأجيل تسجيل SW حتى يصبح المتصفح غير مشغول
+if (typeof requestIdleCallback !== 'undefined') {
+    requestIdleCallback(() => registerServiceWorker());
+} else {
+    setTimeout(registerServiceWorker, 2000);
+}
