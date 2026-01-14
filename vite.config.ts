@@ -47,7 +47,6 @@ export default defineConfig(({ mode }) => ({
     visualizer({
       open: true,
       gzipSize: true,
-      brotliSize: true,
       filename: "stats.html"
     }) as any,
 
@@ -110,13 +109,14 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: "esnext",
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         // Smart Manual Chunking
         manualChunks(id) {
           // Simplified chunking to avoid initialization order issues
           if (id.includes('node_modules')) {
+            if (id.includes('@supabase')) return 'vendor-supabase';
             if (id.includes('@sentry')) return 'vendor-sentry';
             // Keep other specific chunks if needed, but let core react/supabase stay together or follow default splitting
           }
