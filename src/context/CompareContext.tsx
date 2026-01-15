@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "react-hot-toast";
-import i18n from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 interface CompareContextType {
     selectedTools: string[];
@@ -13,7 +13,7 @@ interface CompareContextType {
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
 export const CompareProvider = ({ children }: { children: ReactNode }) => {
-    const isAr = i18n.language === 'ar';
+    const { i18n } = useTranslation();
 
     // استرجاع البيانات من LocalStorage لتبقى الاختيارات حتى بعد التحديث
     const [selectedTools, setSelectedTools] = useState<string[]>(() => {

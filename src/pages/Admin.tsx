@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,10 +13,34 @@ import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
-import AdminCharts from "@/components/admin/AdminCharts";
+// Lazy load AdminCharts because it depends on recharts (~150KB)
+const AdminCharts = lazy(() => import("@/components/admin/AdminCharts"));
 import AdminToolsTable from "@/components/admin/AdminToolsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Tool } from "@/types";
+
+// Loading skeleton for charts
+const ChartsLoadingSkeleton = () => (
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-pulse">
+    <Card className="bg-black/20 border-white/10">
+      <CardHeader>
+        <div className="h-4 w-32 bg-white/10 rounded" />
+      </CardHeader>
+      <CardContent>
+        <div className="h-[250px] w-full bg-white/5 rounded" />
+      </CardContent>
+    </Card>
+    <Card className="bg-black/20 border-white/10">
+      <CardHeader>
+        <div className="h-4 w-32 bg-white/10 rounded" />
+      </CardHeader>
+      <CardContent>
+        <div className="h-[250px] w-full bg-white/5 rounded" />
+      </CardContent>
+    </Card>
+  </div>
+);
+
 
 // Type for draft tools (unpublished)
 type DraftTool = Tool & { is_published: boolean };
@@ -173,8 +197,11 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* 📈 الرسوم البيانية */}
-        <AdminCharts tools={tools} />
+        {/* 📈 الرسوم البيانية - Lazy loaded */}
+        <Suspense fallback={<ChartsLoadingSkeleton />}>
+          <AdminCharts tools={tools} />
+        </Suspense>
+
 
         {/* نظام التبويبات */}
         <Tabs defaultValue="tools" className="w-full">

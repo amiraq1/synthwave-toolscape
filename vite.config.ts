@@ -120,51 +120,73 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       output: {
-        // Smart Manual Chunking
+        // Smart Manual Chunking - Optimized for Critical Path
         manualChunks(id) {
-          // Simplified chunking to avoid initialization order issues
           if (id.includes('node_modules')) {
-            if (id.includes('@supabase')) return 'vendor-supabase';
-            if (id.includes('@sentry')) return 'vendor-sentry';
-
-            // React core - keep together to avoid initialization issues
-            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
-              return 'vendor-react';
+            // 1. React Core - absolute minimum for app to work
+            if (id.includes('react-dom') || (id.includes('react') && !id.includes('react-router') && !id.includes('react-hook-form') && !id.includes('reactflow') && !id.includes('react-day-picker') && !id.includes('react-easy-crop') && !id.includes('react-markdown') && !id.includes('react-i18next') && !id.includes('react-helmet') && !id.includes('react-hot-toast') && !id.includes('react-resizable'))) {
+              return 'vendor-react-core';
             }
 
-            // React Router
+            // 2. React Router - needed for navigation
             if (id.includes('react-router')) return 'vendor-router';
+
+            // 3. Supabase - separate but essential
+            if (id.includes('@supabase')) return 'vendor-supabase';
+
+            // 4. Query - needed for data fetching
+            if (id.includes('@tanstack')) return 'vendor-query';
+
+            // === HEAVY LIBRARIES - LAZY LOADED ===
+
+            // 5. Charts (recharts + d3) - ONLY for Admin page (~150KB)
+            if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
+              return 'vendor-charts';
+            }
+
+            // 6. ReactFlow - ONLY for WorkflowBuilder page (~200KB)
+            if (id.includes('reactflow') || id.includes('@reactflow')) {
+              return 'vendor-flow';
+            }
+
+            // 7. Icons - frequently used but tree-shakeable
+            if (id.includes('lucide-react')) return 'vendor-icons';
+
+            // 8. UI Core (Radix) - essential for UI
+            if (id.includes('@radix-ui')) return 'vendor-radix';
+
+            // 9. UI Utils (lightweight)
+            if (id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'vendor-ui-utils';
+            }
+
+            // 10. Forms & Validation - for pages with forms
+            if (id.includes('zod') || id.includes('react-hook-form') || id.includes('@hookform')) {
+              return 'vendor-forms';
+            }
+
+            // 11. i18n - can be slightly delayed
+            if (id.includes('i18next') || id.includes('react-i18next')) return 'vendor-i18n';
+
+            // 12. Date utilities
+            if (id.includes('date-fns') || id.includes('dayjs')) return 'vendor-dates';
+
+            // 13. Markdown - for blog pages only
+            if (id.includes('react-markdown') || id.includes('remark') || id.includes('rehype')) {
+              return 'vendor-markdown';
+            }
+
+            // 14. Image cropping - for profile/admin only
+            if (id.includes('react-easy-crop')) return 'vendor-image-crop';
+
+            // 15. Sentry - monitoring, load lazily
+            if (id.includes('@sentry')) return 'vendor-sentry';
+
+            // 16. Other heavy libs
+            if (id.includes('embla-carousel')) return 'vendor-carousel';
+            if (id.includes('sonner') || id.includes('react-hot-toast')) return 'vendor-toasts';
+            if (id.includes('cmdk')) return 'vendor-cmdk';
           }
-
-          // 3. UI Libraries (Radix, Shadcn dependencies)
-          if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-            return 'vendor-ui-core';
-          }
-
-          // 4. Icons - split into separate chunk for better caching
-          if (id.includes('lucide-react')) return 'vendor-icons';
-
-          // 5. Animation
-          if (id.includes('framer-motion')) return 'vendor-animation';
-
-          // 6. Data Visualization - removed from chunking to fix initialization order
-          // recharts depends on react and d3, separating it causes initialization issues
-
-          // 7. Forms & Validation
-          if (id.includes('zod') || id.includes('react-hook-form')) {
-            return 'vendor-forms';
-          }
-
-          // 8. Date Manipulation
-          if (id.includes('date-fns') || id.includes('dayjs') || id.includes('moment')) {
-            return 'vendor-dates';
-          }
-
-          // 9. i18n
-          if (id.includes('i18next')) return 'vendor-i18n';
-
-          // 10. Query
-          if (id.includes('@tanstack')) return 'vendor-query';
         },
       },
     },
