@@ -41,12 +41,12 @@
   </style>
 
   <script type="text/javascript">
-    // SPA Redirect for static hosting
+    // SPA Redirect for static hosting (GitHub Pages / Vercel / Netlify)
+    // This script redirects 404 requests back to index.html with the original path
     (function () {
       var l = window.location;
-      var repoName = '/synthwave-toolscape'; // Adjust if project is not at root
 
-      // If we are already at root, don't loop
+      // If we are already at root, don't redirect
       if (l.pathname === '/' || l.pathname === '/index.html') return;
 
       // Preserve the path, query, and hash
@@ -54,8 +54,8 @@
       var search = l.search;
       var hash = l.hash;
 
-      // Redirect to index.html with the path as a query parameter
-      // The script in index.html will pick this up and restore the history state
+      // Redirect to root with the path encoded as a query parameter
+      // The script in index.html will restore the history state
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
         '/?' + path.slice(1).replace(/&/g, '~and~') +
