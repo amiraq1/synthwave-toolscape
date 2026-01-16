@@ -124,39 +124,23 @@ export default defineConfig(({ mode }) => ({
         // to avoid TDZ (Temporal Dead Zone) initialization errors
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // === HEAVY LIBRARIES THAT ARE LAZY LOADED ===
-            // 1. Charts (recharts + d3) - ONLY for Admin page (~400KB)
+            // 1. Charts (Admin Only - Lazy Loaded)
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
               return 'vendor-charts';
             }
 
-            // 2. ReactFlow - ONLY for WorkflowBuilder page (~90KB)
+            // 2. ReactFlow (Workflow Builder Only - Lazy Loaded)
             if (id.includes('reactflow') || id.includes('@reactflow')) {
               return 'vendor-flow';
             }
 
-            // === CRITICAL CORE LIBRARIES (Split for Parallel Loading) ===
-            // 3. React Core (~150KB)
-            if (id.includes('react/') || id.includes('react-dom/') || id.includes('active/')) {
+            // 3. React Core (Critical - Load First)
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
               return 'vendor-react';
             }
 
-            // 4. Supabase Client (~80KB) - Loaded early but separated
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-
-            // 5. UI Components (Radix, Lucide, etc) (~200KB)
-            if (id.includes('@radix-ui') || id.includes('lucide-react') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'vendor-ui';
-            }
-
-            // 6. Router & Logic (~100KB)
-            if (id.includes('react-router') || id.includes('@tanstack') || id.includes('zod') || id.includes('react-hook-form')) {
-              return 'vendor-logic';
-            }
-
-            // === ALL OTHER NODE_MODULES GO INTO vendor (Fallback) ===
+            // 4. Everything else in one big vendor chunk to ensure correct initialization order
+            // Splitting too much causes TDZ/Circular dependency issues
             return 'vendor';
           }
         },
