@@ -124,23 +124,15 @@ export default defineConfig(({ mode }) => ({
         // to avoid TDZ (Temporal Dead Zone) initialization errors
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // 1. Charts (Admin Only - Lazy Loaded)
+            // 1. Charts (recharts + d3) - ONLY for Admin page
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
               return 'vendor-charts';
             }
-
-            // 2. ReactFlow (Workflow Builder Only - Lazy Loaded)
+            // 2. ReactFlow - ONLY for WorkflowBuilder page
             if (id.includes('reactflow') || id.includes('@reactflow')) {
               return 'vendor-flow';
             }
-
-            // 3. React Core (Critical - Load First)
-            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
-              return 'vendor-react';
-            }
-
-            // 4. Everything else in one big vendor chunk to ensure correct initialization order
-            // Splitting too much causes TDZ/Circular dependency issues
+            // === ALL OTHER NODE_MODULES GO INTO vendor ===
             return 'vendor';
           }
         },
