@@ -50,7 +50,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
 
         {/* Bottom Accent Glow */}
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 blur-[80px] rounded-full opacity-40" />
-        
+
         {/* Additional cyan accent */}
         <div className="absolute top-1/3 left-0 w-[300px] h-[300px] bg-neon-cyan/5 blur-[100px] rounded-full opacity-50" />
       </div>
@@ -73,7 +73,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
 
         {/* Main headline with animated gradient */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <span className="animated-gradient-text neon-text">{t('hero.title')}</span>
+          <span className="text-white">{t('hero.title')}</span>
         </h1>
 
         {/* Subheadline with better styling */}
