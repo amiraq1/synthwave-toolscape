@@ -6,7 +6,6 @@ import { ArrowRight, ExternalLink, Loader2, Tag, Sparkles, Lightbulb, DollarSign
 import { Button } from '@/components/ui/button';
 import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
-import ReviewSection from '@/components/ReviewSection';
 import AverageRating from '@/components/AverageRating';
 import SimilarTools from '@/components/SimilarTools';
 import ToolGallery from "@/components/ToolGallery";
@@ -252,25 +251,12 @@ const ToolDetails = () => {
               </div>
             )}
 
-            {/* Reviews Section */}
-            <div className="mt-8 glass rounded-2xl p-6 md:p-8">
-              <ReviewSection toolId={tool.id} />
-            </div>
+            {/* Reviews Section Removed */}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Ad / Promo */}
-            <div className="bg-gradient-to-br from-white/5 to-white/0 p-6 rounded-2xl border border-white/10">
-              <h3 className="font-bold text-white mb-2">{isAr ? "هل جربت هذه الأداة؟" : "Have you tried this tool?"}</h3>
-              <p className="text-sm text-gray-400 mb-4">{isAr ? "شاركنا رأيك وساعد الآخرين في اتخاذ القرار." : "Share your experience and help others decide."}</p>
-              <button
-                onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg text-sm transition-colors border border-white/5"
-              >
-                {isAr ? "كتابة مراجعة" : "Write a Review"}
-              </button>
-            </div>
+            {/* Review Promo Removed */}
 
             <div className="bg-black/40 rounded-xl p-6 border border-white/5 text-center">
               <p className="text-gray-500 text-sm">{isAr ? "مساحة إعلانية" : "Ad Space"}</p>

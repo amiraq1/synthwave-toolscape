@@ -27,17 +27,7 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
  * Hook to fetch a single tool by ID
  */
 export const useTool = (id: string | undefined) => {
-  // 1. زيادة عدد المشاهدات (Side Effect)
-  useEffect(() => {
-    const incrementViews = async () => {
-      if (id) {
-        // Call atomic increment function
-        await supabase.rpc('increment_views', { tool_id_input: id });
-      }
-    };
 
-    incrementViews();
-  }, [id]);
 
   return useQuery({
     queryKey: ['tool', id],
