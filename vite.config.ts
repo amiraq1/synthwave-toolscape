@@ -125,22 +125,38 @@ export default defineConfig(({ mode }) => ({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             // === HEAVY LIBRARIES THAT ARE LAZY LOADED ===
-            // These are safe to separate because they're only imported dynamically
-
             // 1. Charts (recharts + d3) - ONLY for Admin page (~400KB)
-            // AdminCharts is lazy loaded with React.lazy()
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
               return 'vendor-charts';
             }
 
             // 2. ReactFlow - ONLY for WorkflowBuilder page (~90KB)
-            // WorkflowBuilder is lazy loaded with React.lazy()
             if (id.includes('reactflow') || id.includes('@reactflow')) {
               return 'vendor-flow';
             }
 
+            // === CRITICAL CORE LIBRARIES (Split for Parallel Loading) ===
+            // 3. React Core (~150KB)
+            if (id.includes('react/') || id.includes('react-dom/') || id.includes('active/')) {
+              return 'vendor-react';
+            }
+
+            // 4. Supabase Client (~80KB) - Loaded early but separated
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+
+            // 5. UI Components (Radix, Lucide, etc) (~200KB)
+            if (id.includes('@radix-ui') || id.includes('lucide-react') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'vendor-ui';
+            }
+
+            // 6. Router & Logic (~100KB)
+            if (id.includes('react-router') || id.includes('@tanstack') || id.includes('zod') || id.includes('react-hook-form')) {
+              return 'vendor-logic';
+            }
+
             // === ALL OTHER NODE_MODULES GO INTO vendor ===
-            // This ensures proper initialization order
             return 'vendor';
           }
         },
