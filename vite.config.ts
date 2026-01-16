@@ -156,7 +156,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-logic';
             }
 
-            // === ALL OTHER NODE_MODULES GO INTO vendor ===
+            // === ALL OTHER NODE_MODULES GO INTO vendor (Fallback) ===
             return 'vendor';
           }
         },
