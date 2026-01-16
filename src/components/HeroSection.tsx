@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import TrendingTools from "@/components/TrendingTools";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 
 interface HeroSectionProps {
@@ -55,10 +54,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
         <div className="absolute top-1/3 left-0 w-[300px] h-[300px] bg-neon-cyan/5 blur-[100px] rounded-full opacity-50" />
       </div>
 
-      {/* Trending Bar */}
-      <div className="max-w-7xl mx-auto mb-12">
-        <TrendingTools />
-      </div>
+      {/* Trending Bar removed */}
 
       <div className="max-w-5xl mx-auto space-y-8 sm:space-y-10">
         {/* Premium Animated Badge */}
