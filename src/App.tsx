@@ -18,8 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 // Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
-const Auth = lazy(() => import("./pages/Auth"));
-const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+// Auth pages removed
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -78,8 +77,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/tools" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
+          {/* Auth routes removed */}
           <Route path="/tool/:id" element={<ToolDetails />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/install" element={<Install />} />

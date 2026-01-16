@@ -1,7 +1,6 @@
 // Preload functions for lazy-loaded routes
 const preloadFunctions = {
   toolDetails: () => import("@/pages/ToolDetails"),
-  auth: () => import("@/pages/Auth"),
   settings: () => import("@/pages/Settings"),
   admin: () => import("@/pages/Admin"),
   install: () => import("@/pages/Install"),
@@ -15,7 +14,7 @@ const preloadedRoutes = new Set<RouteKey>();
 
 export const preloadRoute = (route: RouteKey) => {
   if (preloadedRoutes.has(route)) return;
-  
+
   preloadedRoutes.add(route);
   preloadFunctions[route]();
 };

@@ -139,13 +139,7 @@ const Navbar = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button variant="secondary" size="sm" className="bg-white/10 hover:bg-white/20 text-white border-0">
-                  دخول
-                </Button>
-              </Link>
-            )}
+            ) : null}
 
             {/* 4. زر القائمة للموبايل (Hamburger) */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
