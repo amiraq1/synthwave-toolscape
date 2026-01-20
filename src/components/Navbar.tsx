@@ -16,7 +16,11 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-const Navbar = () => {
+interface NavbarProps {
+  onAddClick: () => void;
+}
+
+const Navbar = ({ onAddClick }: NavbarProps) => {
   const { session, signOut } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false); // حالة القائمة الجانبية للموبايل
@@ -78,17 +82,23 @@ const Navbar = () => {
           <div className="flex items-center gap-2 sm:gap-4">
 
             {/* زر إضافة أداة (يظهر كأيقونة في الموبايل) */}
-            <Button size="sm" className="hidden sm:flex bg-neon-purple hover:bg-neon-purple/80 text-white border-0" asChild>
-              <Link to="/submit-tool">
-                <Plus className="w-4 h-4 ml-2" /> أضف أداة
-              </Link>
+            <Button
+              size="sm"
+              className="hidden sm:flex bg-neon-purple hover:bg-neon-purple/80 text-white border-0"
+              onClick={onAddClick}
+            >
+              <Plus className="w-4 h-4 ml-2" /> أضف أداة
             </Button>
 
             {/* نسخة الموبايل (أيقونة فقط) */}
-            <Button size="icon" variant="ghost" className="sm:hidden text-neon-purple" asChild aria-label="أضف أداة">
-              <Link to="/submit-tool">
-                <Plus className="w-5 h-5" aria-hidden="true" />
-              </Link>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="sm:hidden text-neon-purple"
+              onClick={onAddClick}
+              aria-label="أضف أداة"
+            >
+              <Plus className="w-5 h-5" aria-hidden="true" />
             </Button>
 
             {/* الإشعارات والمفضلة واللغة (مخفية في الموبايل الصغير جداً) */}
