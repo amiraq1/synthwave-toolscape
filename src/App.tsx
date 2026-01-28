@@ -16,7 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 // Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
-// Auth pages removed
+const Auth = lazy(() => import("./pages/Auth"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -67,12 +67,12 @@ const AppContent = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
-      <Navbar />
+      <Navbar onAddClick={handleAddClick} />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/tools" element={<Index />} />
-          {/* Auth routes removed */}
+          <Route path="/auth" element={<Auth />} />
           <Route path="/tool/:id" element={<ToolDetails />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/install" element={<Install />} />

@@ -149,7 +149,14 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="sm" className="hidden sm:flex text-gray-300 hover:text-white hover:bg-white/10 gap-2">
+                  <User className="w-4 h-4" />
+                  تسجيل الدخول
+                </Button>
+              </Link>
+            )}
 
             {/* 4. زر القائمة للموبايل (Hamburger) */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -249,9 +256,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             </Sheet>
 
           </div>
-        </div>
-      </div>
-    </nav>
+        </div >
+      </div >
+    </nav >
   );
 };
 
