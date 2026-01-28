@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -67,6 +67,8 @@ const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
 
                 {/* نافذة التكبير (Modal) */}
                 <DialogContent className="max-w-4xl bg-black/90 border-white/10 p-1">
+                    <DialogTitle className="sr-only">معرض صور {title}</DialogTitle>
+                    <DialogDescription className="sr-only">عرض مكبر للصورة المختارة من معرض الأداة</DialogDescription>
                     <img
                         src={mainImage}
                         alt={title}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   Menu, Home, Wrench, Info, HelpCircle,
   BookOpen, Globe, Plus, Heart,
@@ -166,6 +166,10 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="bg-[#1a1a2e] border-l border-white/10 text-white w-[300px] sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle className="sr-only">قائمة التنقل</SheetTitle>
+                  <SheetDescription className="sr-only">روابط التنقل للوصول السريع للأدوات والصفحات</SheetDescription>
+                </SheetHeader>
 
                 <div className="flex flex-col gap-6 mt-8">
                   {/* الشعار في القائمة */}

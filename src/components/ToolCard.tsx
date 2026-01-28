@@ -204,7 +204,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     alt={displayTitle}
                     className="w-10 h-10 object-contain rounded-lg"
                     loading={index < 6 ? "eager" : "lazy"}
-                    fetchPriority={index < 6 ? "high" : "auto"}
+                    // @ts-expect-error fetchpriority is a valid attribute but not yet in React types
+                    fetchpriority={index < 6 ? "high" : "auto"}
                     width="40"
                     height="40"
                     onError={() => setIconError(true)}
@@ -216,7 +217,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     alt={displayTitle}
                     className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
                     loading={index < 6 ? "eager" : "lazy"}
-                    fetchPriority={index < 6 ? "high" : "auto"}
+                    // @ts-expect-error fetchpriority is a valid attribute but not yet in React types
+                    fetchpriority={index < 6 ? "high" : "auto"}
                     width="32"
                     height="32"
                     onError={(e) => {
@@ -284,16 +286,28 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
               AI Powered
             </span>
-            <a
-              href={tool.url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <div
+              role="button"
+              tabIndex={0}
               className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open(tool.url, '_blank', 'noopener,noreferrer');
+                recordClick(String(tool.id));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.open(tool.url, '_blank', 'noopener,noreferrer');
+                  recordClick(String(tool.id));
+                }
+              }}
               aria-label={`visit ${displayTitle}`}
             >
               {t('tools.visit')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-            </a>
+            </div>
           </div>
         </div>
       </Link>

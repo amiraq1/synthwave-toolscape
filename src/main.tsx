@@ -3,22 +3,14 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// تأجيل تحميل i18n وdayjs - ليس ضروري للعرض الأولي
-const loadI18nAndDate = async () => {
-    // تحميل i18n
-    await import('./i18n');
+import './i18n';
+// إعداد dayjs
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ar';
 
-    // تحميل dayjs وإعداداته
-    const dayjs = (await import('dayjs')).default;
-    const relativeTime = (await import('dayjs/plugin/relativeTime')).default;
-    await import('dayjs/locale/ar');
-
-    dayjs.extend(relativeTime);
-    dayjs.locale('ar');
-};
-
-// تحميل الترجمات فوراً لكن بشكل غير متزامن
-loadI18nAndDate();
+dayjs.extend(relativeTime);
+dayjs.locale('ar');
 
 // دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
 // TODO: إعادة تفعيل Sentry بعد حل المشاكل

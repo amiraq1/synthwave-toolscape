@@ -92,7 +92,8 @@ const ImageWithFallback = ({
                 onError={handleError}
                 loading={priority ? "eager" : "lazy"}
                 decoding={priority ? "sync" : "async"}
-                fetchPriority={priority ? "high" : "auto"}
+                // @ts-expect-error fetchpriority is a valid attribute but not yet in React types
+                fetchpriority={priority ? "high" : "auto"}
             />
         </div>
     );
