@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescri
 import {
   Menu, Home, Wrench, Info, HelpCircle,
   BookOpen, Globe, Plus, Heart,
-  Bot, GitBranch, LogOut, User
+  Bot, GitBranch, LogOut, User, LayoutDashboard
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -142,6 +142,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
                     <Link to="/profile">
                       <User className="mr-2 h-4 w-4" /> الملف الشخصي
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                    <Link to="/admin">
+                      <LayoutDashboard className="mr-2 h-4 w-4 text-neon-cyan" /> لوحة التحكم
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer hover:bg-white/10 text-red-400" onClick={handleLogout}>
