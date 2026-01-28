@@ -16,6 +16,7 @@ import AdminUsersTable from "@/components/admin/AdminUsersTable";
 // Lazy load AdminCharts because it depends on recharts (~150KB)
 const AdminCharts = lazy(() => import("@/components/admin/AdminCharts"));
 import AdminToolsTable from "@/components/admin/AdminToolsTable";
+import AnalyticsWidget from "@/components/admin/AnalyticsWidget";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Tool } from "@/types";
 
@@ -167,6 +168,10 @@ const Admin = () => {
         <h1 className="text-3xl font-bold mb-6">لوحة القيادة 🚀</h1>
 
         {/* 📊 شريط الإحصائيات */}
+        <div className="grid grid-cols-1 gap-6 mb-6">
+          <AnalyticsWidget />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
             <CardContent className="p-6 flex items-center justify-between">

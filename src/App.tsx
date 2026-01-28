@@ -1,8 +1,8 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import { Toaster as Sonner, toast } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "@/context/AuthContext";
 import { CompareProvider } from "@/context/CompareContext";
@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
+import { initGA, logPageView } from "@/lib/analytics";
 
 
 // Lazy Load Pages
@@ -51,9 +52,18 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   const { user } = useAuth();
-
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Initialize GA and track page views
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  useEffect(() => {
+    logPageView(location.pathname + location.search);
+  }, [location]);
 
   const handleAddClick = () => {
     if (!user) {
