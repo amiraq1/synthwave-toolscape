@@ -1,7 +1,5 @@
 import { Suspense, lazy, useState } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster as HotToaster } from "react-hot-toast";
+import { Toaster as Sonner, toast } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
@@ -13,7 +11,7 @@ import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+
 
 // Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
@@ -53,18 +51,15 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+
   const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleAddClick = () => {
     if (!user) {
-      toast({
-        title: "يجب تسجيل الدخول للمشاركة",
+      toast.error("يجب تسجيل الدخول للمشاركة", {
         description: "سجل دخولك لإضافة أداة جديدة",
-        variant: "destructive",
       });
-      navigate("/auth");
       return;
     }
     setIsAddModalOpen(true);
@@ -118,42 +113,7 @@ const App = () => (
       <AuthProvider>
         <CompareProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <HotToaster
-              position="top-right"
-              reverseOrder={false}
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: '#1a1a2e',
-                  color: '#fff',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  direction: 'rtl',
-                },
-                success: {
-                  style: {
-                    background: '#065f46',
-                    border: '1px solid #10b981',
-                  },
-                  iconTheme: {
-                    primary: '#10b981',
-                    secondary: '#fff',
-                  },
-                },
-                error: {
-                  style: {
-                    background: '#7f1d1d',
-                    border: '1px solid #ef4444',
-                  },
-                  iconTheme: {
-                    primary: '#ef4444',
-                    secondary: '#fff',
-                  },
-                },
-              }}
-            />
+            <Sonner position="top-center" richColors theme="system" closeButton />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <AppContent />
