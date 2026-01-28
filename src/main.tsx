@@ -58,15 +58,15 @@ const registerServiceWorker = async () => {
             const { registerSW } = await import('virtual:pwa-register');
             registerSW({
                 immediate: false,
-                onRegistered(r) {
-                    console.log('SW registered:', r);
+                onRegistered() {
+                    // Service Worker registered successfully
                 },
-                onRegisterError(error) {
-                    console.error('SW registration error:', error);
+                onRegisterError() {
+                    // Service Worker registration failed - non-critical
                 }
             });
-        } catch (error) {
-            console.error('Failed to register SW:', error);
+        } catch {
+            // Failed to register SW - non-critical, app works without it
         }
     }
 };

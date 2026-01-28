@@ -72,7 +72,7 @@ const AppContent = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
-      <Navbar onAddClick={handleAddClick} />
+      <Navbar />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Index />} />

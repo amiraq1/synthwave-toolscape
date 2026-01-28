@@ -1,6 +1,5 @@
-import { Search, Sparkles, ArrowDown, Zap, Users, Star, Loader2, GitBranch } from 'lucide-react';
+import { Sparkles, ArrowDown, Zap, Users, Star, GitBranch } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import SearchAutocomplete from "@/components/SearchAutocomplete";

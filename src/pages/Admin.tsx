@@ -91,7 +91,7 @@ const Admin = () => {
   });
 
   // Derived Stats
-  const drafts = tools.filter(t => (t as any).is_published === false) as DraftTool[];
+  const drafts = tools.filter(t => t.is_published === false) as DraftTool[];
   const stats = {
     totalTools: tools.length,
     pendingDrafts: drafts.length,
