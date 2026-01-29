@@ -39,7 +39,15 @@ interface AddToolModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
+const categories = [
+  'توليد نصوص',
+  'توليد صور وفيديو',
+  'مساعدات إنتاجية',
+  'صناعة محتوى',
+  'تطوير وبرمجة',
+  'تعليم وبحث',
+  'أخرى'
+];
 const pricingTypes = ['مجاني', 'مدفوع'];
 
 const formSchema = z.object({
@@ -130,6 +138,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         category: values.category,
         pricing_type: values.pricing_type,
         features: cleanFeatures.length > 0 ? cleanFeatures : null,
+        is_published: false, // الأدوات المقترحة تحتاج لموافقة أولاً
         screenshots: cleanScreenshots.length > 0 ? cleanScreenshots : [],
       }]);
       if (error) throw error;
