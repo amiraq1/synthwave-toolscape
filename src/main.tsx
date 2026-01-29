@@ -1,10 +1,9 @@
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-
 import './i18n';
-// إعداد dayjs
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ar';
@@ -12,58 +11,80 @@ import 'dayjs/locale/ar';
 dayjs.extend(relativeTime);
 dayjs.locale('ar');
 
-// دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
-// TODO: إعادة تفعيل Sentry بعد حل المشاكل
+// Simple Error Boundary
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
+    constructor(props: { children: React.ReactNode }) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error: Error) {
+        return { hasError: true, error };
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{ padding: 20, color: 'white', background: '#333', height: '100vh', direction: 'ltr' }}>
+                    <h1>Something went wrong.</h1>
+                    <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.toString()}</pre>
+                    <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.stack}</pre>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
 const initMonitoring = () => {
-    // Sentry.init({
-    //     dsn: "https://93afb9202654e4183b0876bde628d4c4@o4510224060317696.ingest.us.sentry.io/4510676177649664",
-    //     integrations: [
-    //         Sentry.browserTracingIntegration(),
-    //         Sentry.replayIntegration(),
-    //     ],
-    //     tracesSampleRate: 1.0,
-    //     replaysSessionSampleRate: 0.1,
-    //     replaysOnErrorSampleRate: 1.0,
-    // });
+    // Sentry placeholder
 };
 
-// استخدام requestIdleCallback لتأجيل التحميل (متوفرة في المتصفحات الحديثة)
 if (typeof requestIdleCallback !== 'undefined') {
     requestIdleCallback(() => {
         initMonitoring();
     });
 } else {
-    // للمتصفحات القديمة: انتظر 3 ثواني ثم شغل المراقبة
     setTimeout(initMonitoring, 3000);
 }
 
+// Global error handler for uncaught promises (outside React)
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled Rejection:', event.reason);
+    // Optionally create a visible element if React is dead
+    const errorDiv = document.createElement('div');
+    errorDiv.style.position = 'fixed';
+    errorDiv.style.top = '0';
+    errorDiv.style.left = '0';
+    errorDiv.style.width = '100%';
+    errorDiv.style.background = 'red';
+    errorDiv.style.color = 'white';
+    errorDiv.style.zIndex = '9999';
+    errorDiv.innerText = 'Unhandled Rejection: ' + event.reason;
+    document.body.appendChild(errorDiv);
+});
+
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <App />
+        <ErrorBoundary>
+            <App />
+        </ErrorBoundary>
     </React.StrictMode>,
 );
 
-// تسجيل Service Worker يدويًا بعد تحميل الصفحة (لتجنب حظر العرض)
 const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
         try {
             const { registerSW } = await import('virtual:pwa-register');
             registerSW({
                 immediate: false,
-                onRegistered() {
-                    // Service Worker registered successfully
-                },
-                onRegisterError() {
-                    // Service Worker registration failed - non-critical
-                }
+                onRegistered() { },
+                onRegisterError() { }
             });
-        } catch {
-            // Failed to register SW - non-critical, app works without it
-        }
+        } catch { }
     }
 };
 
-// تأجيل تسجيل SW حتى يصبح المتصفح غير مشغول
 if (typeof requestIdleCallback !== 'undefined') {
     requestIdleCallback(() => registerServiceWorker());
 } else {
