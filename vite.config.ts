@@ -120,37 +120,7 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       output: {
-        // Simplified Manual Chunking - Only separate truly lazy-loaded heavy libraries
-        // to avoid TDZ (Temporal Dead Zone) initialization errors
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            // 1. Core React
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-              return 'vendor-react';
-            }
-            // 2. Charts (recharts + d3) - ONLY for Admin page
-            if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
-              return 'vendor-charts';
-            }
-            // 3. ReactFlow - ONLY for WorkflowBuilder page
-            if (id.includes('reactflow') || id.includes('@reactflow')) {
-              return 'vendor-flow';
-            }
-            // 4. UI Components (Radix, Lucide)
-            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
-            // 5. Data Fetching & State
-            if (id.includes('@tanstack') || id.includes('zustand') || id.includes('zod')) {
-              return 'vendor-data';
-            }
-            // === ALL OTHER NODE_MODULES GO INTO vendor ===
-            return 'vendor';
-          }
-        },
+        manualChunks: undefined
       },
     },
   },
