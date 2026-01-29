@@ -32,6 +32,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setUser(session?.user ?? null);
+        }).catch((error) => {
+            console.error("Auth session error:", error);
+        }).finally(() => {
             setLoading(false);
         });
 
