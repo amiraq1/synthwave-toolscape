@@ -7,6 +7,7 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import RecommendedForYou from "@/components/RecommendedForYou";
+import FeaturedShortlist from "@/components/FeaturedShortlist";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
@@ -200,6 +201,9 @@ const Index = () => {
             </div>
           )}
         </div>
+
+        {/* Shortlists Section - New Feature */}
+        <FeaturedShortlist />
 
         {/* Recommended For You */}
         <RecommendedForYou />
