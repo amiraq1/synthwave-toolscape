@@ -38,6 +38,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 
 const initMonitoring = () => {
     // Sentry placeholder
+    // Sentry.init({...})
 };
 
 if (typeof requestIdleCallback !== 'undefined') {
