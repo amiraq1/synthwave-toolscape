@@ -58,21 +58,35 @@ const CategoryFilters = ({
     <div className="space-y-4 py-6 sm:py-8 px-4" dir={i18n.dir()}>
       {/* Category Tabs */}
       <nav aria-label="تصفية حسب الفئات" className="flex flex-wrap justify-center gap-2 sm:gap-3">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => onCategoryChange(category)}
-            aria-pressed={activeCategory === category}
-            className={cn(
-              "min-h-[44px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 touch-manipulation",
-              activeCategory === category
-                ? "bg-gradient-to-r from-neon-purple to-neon-blue text-primary-foreground shadow-lg glow-purple"
-                : "glass text-muted-foreground hover:text-foreground hover:border-neon-purple/50"
-            )}
-          >
-            {category}
-          </button>
-        ))}
+        {categories.map((category) => {
+          // Simple Icon mapping based on category name
+          let icon = null;
+          if (category === 'الكل') icon = <span className="text-lg">🌍</span>;
+          if (category.includes('نصوص')) icon = <span className="text-lg">📝</span>;
+          if (category.includes('صور')) icon = <span className="text-lg">🎨</span>;
+          if (category.includes('برمجة')) icon = <span className="text-lg">💻</span>;
+          if (category.includes('إنتاجية')) icon = <span className="text-lg">🚀</span>;
+          if (category.includes('محتوى')) icon = <span className="text-lg">📹</span>;
+          if (category.includes('تعليم')) icon = <span className="text-lg">🎓</span>;
+          if (category.includes('أخرى')) icon = <span className="text-lg">💡</span>;
+
+          return (
+            <button
+              key={category}
+              onClick={() => onCategoryChange(category)}
+              aria-pressed={activeCategory === category}
+              className={cn(
+                "min-h-[44px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 touch-manipulation flex items-center gap-2",
+                activeCategory === category
+                  ? "bg-gradient-to-r from-neon-purple to-neon-blue text-primary-foreground shadow-lg glow-purple scale-105"
+                  : "glass text-muted-foreground hover:text-foreground hover:border-neon-purple/50 active:scale-95"
+              )}
+            >
+              {icon}
+              {category}
+            </button>
+          )
+        })}
       </nav>
 
       {/* Advanced Filters Row */}

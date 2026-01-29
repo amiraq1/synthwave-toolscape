@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
+export type Category = 'الكل' | 'توليد نصوص' | 'توليد صور وفيديو' | 'مساعدات إنتاجية' | 'صناعة محتوى' | 'تطوير وبرمجة' | 'تعليم وبحث' | 'أخرى';
 
 export interface Tool {
   id: string;
@@ -41,7 +41,16 @@ export interface Tool {
   views_count?: number;
 }
 
-export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
+export const categories: Category[] = [
+  'الكل',
+  'توليد نصوص',
+  'توليد صور وفيديو',
+  'مساعدات إنتاجية',
+  'صناعة محتوى',
+  'تطوير وبرمجة',
+  'تعليم وبحث',
+  'أخرى'
+];
 
 // تعريف أنواع المدخلات للبحث
 interface UseToolsParams {
@@ -118,7 +127,23 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
       }
 
       if (category && category !== "الكل") {
-        query = query.eq("category", category);
+        // Smart Mapping: Map new UI categories to existing DB tags using partial match
+        if (category === 'توليد نصوص') {
+          query = query.ilike('category', '%نصوص%');
+        } else if (category === 'توليد صور وفيديو') {
+          query = query.or('category.ilike.%صور%,category.ilike.%فيديو%');
+        } else if (category === 'مساعدات إنتاجية') {
+          query = query.ilike('category', '%إنتاجية%');
+        } else if (category === 'صناعة محتوى') {
+          query = query.or('category.ilike.%محتوى%,category.ilike.%تسويق%');
+        } else if (category === 'تطوير وبرمجة') {
+          query = query.ilike('category', '%برمجة%');
+        } else if (category === 'تعليم وبحث') {
+          query = query.or('category.ilike.%تعليم%,category.ilike.%دراسة%,category.ilike.%طلاب%');
+        } else {
+          // Fallback for direct match or 'أخرى'
+          query = query.eq("category", category);
+        }
       }
 
       const { data, error } = await query;
