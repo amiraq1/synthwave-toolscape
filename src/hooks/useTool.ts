@@ -10,7 +10,7 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
   const { data, error } = await supabase
     .from('tools')
     .select('*')
-    .eq('id', parseInt(id))
+    .eq('id', id)
     .maybeSingle();
 
   if (error) throw error;

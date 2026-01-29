@@ -97,7 +97,7 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase as any).rpc('find_similar_tools', {
-                tool_id: typeof toolId === 'string' ? parseInt(toolId, 10) : toolId,
+                tool_id: toolId,
                 limit_count: limit,
             });
 

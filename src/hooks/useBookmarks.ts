@@ -7,12 +7,12 @@ import type { Tool } from '@/types';
 interface BookmarkRecord {
     id: string;
     user_id: string;
-    tool_id: number;
+    tool_id: string;
     created_at: string;
 }
 
 interface BookmarkToolId {
-    tool_id: number;
+    tool_id: string;
 }
 
 export const useBookmarks = () => {
@@ -42,7 +42,7 @@ export const useBookmarks = () => {
 
     // Check if a tool is bookmarked
     const isBookmarked = (toolId: number | string) => {
-        const id = typeof toolId === 'string' ? parseInt(toolId, 10) : toolId;
+        const id = String(toolId);
         return bookmarkedToolIds.includes(id);
     };
 
@@ -51,7 +51,7 @@ export const useBookmarks = () => {
         mutationFn: async (toolId: number | string) => {
             if (!user) throw new Error('User not authenticated');
 
-            const id = typeof toolId === 'string' ? parseInt(toolId, 10) : toolId;
+            const id = String(toolId);
             const currentlyBookmarked = isBookmarked(id);
 
             if (currentlyBookmarked) {

@@ -45,7 +45,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
         *,
         profiles (full_name, avatar_url)
       `)
-      .eq("tool_id", parseInt(toolId, 10));
+      .eq("tool_id", toolId);
 
     // تطبيق الفلترة حسب النجوم
     if (filterRating !== "all") {
