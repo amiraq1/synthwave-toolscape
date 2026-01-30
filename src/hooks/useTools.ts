@@ -146,14 +146,21 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
         }
       }
 
-      const { data, error } = await query;
+      try {
+        const { data, error } = await query;
 
-      if (error) {
-        console.error("Error fetching tools:", error);
-        throw error;
+        if (error) {
+          console.error("Error fetching tools:", error);
+          // Return empty array instead of throwing to prevent infinite loading
+          return [];
+        }
+
+        return data || [];
+      } catch (err) {
+        console.error("Exception while fetching tools:", err);
+        // Return empty array on any error to prevent the app from hanging
+        return [];
       }
-
-      return data;
     },
 
     initialPageParam: 0,

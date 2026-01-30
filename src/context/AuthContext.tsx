@@ -28,14 +28,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let mounted = true;
+
         // 1. Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
+            if (mounted) {
+                setSession(session);
+                setUser(session?.user ?? null);
+            }
         }).catch((error) => {
             console.error("Auth session error:", error);
+            if (mounted) {
+                console.warn("Failed to get session, continuing without authentication");
+            }
         }).finally(() => {
-            setLoading(false);
+            if (mounted) {
+                setLoading(false);
+            }
         });
 
         // 2. Listen for changes
@@ -47,7 +56,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setLoading(false);
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
     }, []);
 
     const signInWithGoogle = async () => {
