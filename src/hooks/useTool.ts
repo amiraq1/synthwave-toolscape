@@ -1,17 +1,29 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { localTools } from '@/data/localTools';
 import type { Tool } from './useTools';
 
 /**
  * Fetch tool by ID - shared function for both query and prefetch
  */
 export const fetchToolById = async (id: string): Promise<Tool> => {
+  const toolId = String(id);
   const { data, error } = await supabase
     .from('tools')
     .select('*')
-    .eq('id', id)
+    .eq('id', toolId)
     .maybeSingle();
+
+  if (error || !data) {
+    const localTool = localTools.find((tool) => String(tool.id) === toolId);
+    if (localTool) {
+      return {
+        ...localTool,
+        id: String(localTool.id),
+      } as Tool;
+    }
+  }
 
   if (error) throw error;
   if (!data) throw new Error('Tool not found');

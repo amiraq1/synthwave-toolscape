@@ -6,7 +6,7 @@ export const localTools = [
     "description": "أداة رائدة لإنشاء صور فنية مذهلة باستخدام الذكاء الاصطناعي.",
     "category": "صور",
     "url": "https://midjourney.com",
-    "image_url": "https://cdn.simpleicons.org/midjourney/white",
+    "image_url": "https://cdn.simpleicons.org/midjourney",
     "pricing_type": "مدفوع",
     "is_featured": true,
     "is_published": true,

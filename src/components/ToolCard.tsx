@@ -28,6 +28,7 @@ import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
 import { useTranslation } from 'react-i18next';
+import { isValidImageUrl } from '@/utils/imageUrl';
 
 interface ToolCardProps {
   tool: Tool;
@@ -124,7 +125,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   };
 
   // Image priority logic
-  const showOriginalImage = tool.image_url && !imageError;
+  const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
+  const showOriginalImage = !!validImageUrl && !imageError;
   const iconUrls = !showOriginalImage ? getToolIconUrl(tool.url) : { primary: null, fallback: null };
   const [iconError, setIconError] = useState(false);
 
@@ -190,7 +192,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                 {/* Priority 1: Manual image_url */}
                 {showOriginalImage ? (
                   <ImageWithFallback
-                    src={tool.image_url}
+                    src={validImageUrl ?? undefined}
                     alt={displayTitle}
                     width={100}
                     className="w-full h-full p-1.5 object-contain"

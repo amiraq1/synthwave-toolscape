@@ -72,7 +72,7 @@ export const tools: Tool[] = [
     category: 'صور',
     pricing_type: 'مدفوع',
     url: 'https://midjourney.com',
-    image_url: 'https://cdn.simpleicons.org/midjourney/white',
+    image_url: 'https://cdn.simpleicons.org/midjourney',
     average_rating: 4.8,
     reviews_count: 3200,
   },

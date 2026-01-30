@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -188,8 +189,8 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                     <p className="text-gray-400 mb-3">
                         يجب تسجيل الدخول لإضافة تعليق
                     </p>
-                    <Button variant="outline" className="border-neon-purple/50 hover:bg-neon-purple/10">
-                        <a href="/auth">تسجيل الدخول</a>
+                    <Button asChild variant="outline" className="border-neon-purple/50 hover:bg-neon-purple/10">
+                        <Link to="/auth">تسجيل الدخول</Link>
                     </Button>
                 </div>
             )}

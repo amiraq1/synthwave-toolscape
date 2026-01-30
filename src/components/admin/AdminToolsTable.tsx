@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
+import { getValidImageUrl } from "@/utils/imageUrl";
 
 interface AdminToolsTableProps {
   tools: Tool[];
@@ -109,13 +110,15 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
           </TableHeader>
           <TableBody>
             {filteredTools.length > 0 ? (
-              filteredTools.map((tool) => (
+              filteredTools.map((tool) => {
+                const imageUrl = getValidImageUrl(tool.image_url);
+                return (
                 <TableRow key={tool.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
-                      {tool.image_url && (
+                      {imageUrl && (
                         <img
-                          src={tool.image_url}
+                          src={imageUrl}
                           alt={tool.title}
                           className="w-10 h-10 rounded-lg object-cover bg-white/5"
                         />
@@ -177,7 +180,8 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">

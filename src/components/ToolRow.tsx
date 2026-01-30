@@ -7,6 +7,7 @@ import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { isValidImageUrl } from '@/utils/imageUrl';
 
 interface ToolRowProps {
     tool: Tool;
@@ -92,7 +93,8 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         : '';
 
     // Determine which icon layer to show
-    const hasValidImage = tool.image_url && !imageError;
+    const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
+    const hasValidImage = !!validImageUrl && !imageError;
     const hasValidFavicon = faviconUrl && !faviconError;
     const showCategoryIcon = !hasValidImage && !hasValidFavicon;
 
@@ -134,7 +136,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             >
                 {hasValidImage ? (
                     <img
-                        src={tool.image_url!}
+                        src={validImageUrl!}
                         alt=""
                         width={48}
                         height={48}

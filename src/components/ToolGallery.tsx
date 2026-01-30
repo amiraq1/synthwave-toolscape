@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isValidImageUrl } from "@/utils/imageUrl";
 
 interface ToolGalleryProps {
     title: string;
@@ -16,8 +17,10 @@ interface ToolGalleryProps {
  * ✅ Progressive image loading
  */
 const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
+    const validImages = images.filter(isValidImageUrl);
+
     // صور افتراضية للتجربة إذا لم تكن هناك صور حقيقية في قاعدة البيانات
-    const displayImages = images.length > 0 ? images : [
+    const displayImages = validImages.length > 0 ? validImages : [
         "/robot-placeholder.webp", // صورة الروبوت الافتراضية (WebP للأداء)
     ];
 

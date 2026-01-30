@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getValidImageUrl } from '@/utils/imageUrl';
 
 const FeaturedShortlist = () => {
     const { data } = useTools({ searchQuery: '', category: 'الكل' });
@@ -36,7 +37,9 @@ const FeaturedShortlist = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredTools.map((tool: Tool) => (
+                {featuredTools.map((tool: Tool) => {
+                    const coverImage = getValidImageUrl(tool.image_url) ?? '/placeholder.svg';
+                    return (
                     <Card
                         key={tool.id}
                         className="group relative overflow-hidden border-white/5 bg-card/40 backdrop-blur-sm hover:border-neon-purple/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
@@ -48,7 +51,7 @@ const FeaturedShortlist = () => {
                         {/* Background Image */}
                         <div className="h-48 w-full overflow-hidden">
                             <img
-                                src={tool.image_url || '/placeholder.svg'}
+                                src={coverImage}
                                 alt={tool.title}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                             />
@@ -67,7 +70,8 @@ const FeaturedShortlist = () => {
                             <p className="text-xs text-gray-300 line-clamp-2 mb-2 opacity-90">{tool.description}</p>
                         </CardContent>
                     </Card>
-                ))}
+                    );
+                })}
             </div>
 
             <div className="mt-8 text-center sm:hidden">

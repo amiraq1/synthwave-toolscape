@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { ImageOff } from "lucide-react";
 import { optimizeImage } from "@/utils/imageOptimizer";
+import { isValidImageUrl } from "@/utils/imageUrl";
 import { cn } from "@/lib/utils";
 
 interface ImageWithFallbackProps {
@@ -50,8 +51,10 @@ const ImageWithFallback = ({
         auto: ""
     };
 
+    const safeSrc = isValidImageUrl(src) ? src : undefined;
+
     // إذا لم يكن هناك رابط، أو حدث خطأ في التحميل، اعرض البديل
-    if (!src || error) {
+    if (!safeSrc || error) {
         return (
             <div className={cn(
                 "flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10",
@@ -81,7 +84,7 @@ const ImageWithFallback = ({
 
             {/* الصورة الفعلية */}
             <img
-                src={optimizeImage(src, width)}
+                src={optimizeImage(safeSrc, width)}
                 alt={alt}
                 className={cn(
                     "transition-opacity duration-300",

@@ -2,7 +2,7 @@
 -- Run this in your Supabase Dashboard -> SQL Editor
 
 UPDATE public.tools
-SET image_url = 'https://cdn.simpleicons.org/midjourney/white'
+SET image_url = 'https://cdn.simpleicons.org/midjourney'
 WHERE title = 'Midjourney' OR url = 'https://midjourney.com';
 
 -- Verify the change

@@ -32,7 +32,7 @@ INSERT INTO public.tools (
     'أداة رائدة لإنشاء صور فنية مذهلة باستخدام الذكاء الاصطناعي.',
     'صناعة محتوى',
     'https://midjourney.com',
-    'https://cdn.simpleicons.org/midjourney/white',
+    'https://cdn.simpleicons.org/midjourney',
     'Paid',
     true,
     true,

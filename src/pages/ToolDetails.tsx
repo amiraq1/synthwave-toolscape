@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { isValidImageUrl } from '@/utils/imageUrl';
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +40,7 @@ const ToolDetails = () => {
 
   const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
   const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
+  const safeImageUrl = tool && isValidImageUrl(tool.image_url) ? tool.image_url : undefined;
 
   useSEO({
     title: displayTitle,
@@ -46,7 +48,7 @@ const ToolDetails = () => {
     keywords: tool ? `${displayTitle}، ${tool.category}، ذكاء اصطناعي، أدوات AI` : undefined,
     ogTitle: displayTitle,
     ogDescription: displayDescription,
-    ogImage: tool?.image_url || undefined,
+    ogImage: safeImageUrl,
     ogType: 'article',
   });
 
@@ -55,7 +57,7 @@ const ToolDetails = () => {
     name: displayTitle || tool.title,
     description: displayDescription || tool.description,
     url: tool.url,
-    image: tool.image_url || undefined,
+    image: safeImageUrl,
     category: tool.category,
     pricingType: tool.pricing_type,
     rating: tool.average_rating,
@@ -142,7 +144,7 @@ const ToolDetails = () => {
 
           {/* Right: Gallery */}
           <div>
-            <ToolGallery title={displayTitle || ""} images={tool.image_url ? [tool.image_url] : []} />
+            <ToolGallery title={displayTitle || ""} images={safeImageUrl ? [safeImageUrl] : []} />
           </div>
 
           {/* Left: Info & Quick Summary */}
