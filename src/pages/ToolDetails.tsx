@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
-import { isValidImageUrl } from '@/utils/imageUrl';
+import { getToolImageUrl } from '@/utils/imageUrl';
 import { getSupabaseFunctionsBaseUrl } from '@/utils/supabaseUrl';
 
 const ToolDetails = () => {
@@ -41,7 +41,7 @@ const ToolDetails = () => {
 
   const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
   const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
-  const safeImageUrl = tool && isValidImageUrl(tool.image_url) ? tool.image_url : undefined;
+  const safeImageUrl = tool ? (getToolImageUrl(tool.image_url, tool.url) ?? undefined) : undefined;
 
   useSEO({
     title: displayTitle,

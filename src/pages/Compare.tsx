@@ -6,6 +6,7 @@ import { X, Check, ArrowRight, Plus, Loader2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import { getToolImageUrl } from "@/utils/imageUrl";
 import type { Tool } from "@/hooks/useTools";
 
 const ComparePage = () => {
@@ -125,7 +126,7 @@ const ComparePage = () => {
                                     </button>
 
                                     <div className="w-20 h-20 rounded-2xl overflow-hidden mb-4 border border-white/10 shadow-lg">
-                                        <ImageWithFallback src={tool.image_url} alt={tool.title} width={100} />
+                                        <ImageWithFallback src={getToolImageUrl(tool.image_url, tool.url)} alt={tool.title} width={100} />
                                     </div>
 
                                     <h3 className="font-bold text-white text-lg mb-1">{tool.title}</h3>

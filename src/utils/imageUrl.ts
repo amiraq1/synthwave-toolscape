@@ -16,3 +16,21 @@ export const isValidImageUrl = (value?: string | null): value is string => {
 export const getValidImageUrl = (value?: string | null): string | null => {
   return isValidImageUrl(value) ? value.trim() : null;
 };
+
+export const getFaviconUrl = (toolUrl?: string | null): string | null => {
+  if (!toolUrl) return null;
+  try {
+    const parsed = new URL(toolUrl);
+    const hostname = parsed.hostname.replace(/^www\./, "");
+    if (!hostname) return null;
+    return `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(hostname)}`;
+  } catch {
+    return null;
+  }
+};
+
+export const getToolImageUrl = (imageUrl?: string | null, toolUrl?: string | null): string | null => {
+  const valid = getValidImageUrl(imageUrl);
+  if (valid) return valid;
+  return getFaviconUrl(toolUrl);
+};

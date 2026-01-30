@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getValidImageUrl } from '@/utils/imageUrl';
+import { getToolImageUrl, getValidImageUrl } from '@/utils/imageUrl';
 
 const FeaturedShortlist = () => {
     const { data } = useTools({ searchQuery: '', category: 'الكل' });
@@ -38,7 +38,8 @@ const FeaturedShortlist = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {featuredTools.map((tool: Tool) => {
-                    const coverImage = getValidImageUrl(tool.image_url) ?? '/placeholder.svg';
+                    const hasCustomImage = !!getValidImageUrl(tool.image_url);
+                    const coverImage = getToolImageUrl(tool.image_url, tool.url) ?? '/placeholder.svg';
                     return (
                     <Card
                         key={tool.id}
@@ -53,7 +54,7 @@ const FeaturedShortlist = () => {
                             <img
                                 src={coverImage}
                                 alt={tool.title}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                className={`w-full h-full transition-transform duration-500 group-hover:scale-110 ${hasCustomImage ? "object-cover" : "object-contain"} bg-black/20`}
                             />
                         </div>
 
