@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   // رابط مشروعك (تأكد من المعرف)
-  const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
+  const PROJECT_REF = "jjsnjbyfpboersvrmxqb";
   const ogImageUrl = `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent("نبض AI")}&category=${encodeURIComponent("دليلك الذكي لأدوات المستقبل")}`;
 
   // Initial SEO - we override title/description with Helmet below for stronger control
