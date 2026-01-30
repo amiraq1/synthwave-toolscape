@@ -710,26 +710,6 @@ export const localTools = [
     "supports_arabic": true
   },
   {
-    "id": "142",
-    "title": "Rytr",
-    "description": "مساعد كتابة ذكي يدعم اللغة العربية بشكل جيد جداً وبأسعار مجانية.",
-    "category": "نصوص",
-    "url": "https://rytr.me",
-    "image_url": "",
-    "pricing_type": "Freemium",
-    "is_featured": false,
-    "is_published": true,
-    "created_at": "2026-01-06 19:28:01.632599+00",
-    "features": [
-      "writing assistant",
-      "arabic support",
-      "blogging"
-    ],
-    "screenshots": [],
-    "is_sponsored": false,
-    "supports_arabic": true
-  },
-  {
     "id": "143",
     "title": "Simplified",
     "description": "منصة متكاملة للتصميم، الكتابة، وجدولة المنشورات في مكان واحد.",
@@ -1090,26 +1070,6 @@ export const localTools = [
     "supports_arabic": false
   },
   {
-    "id": "161",
-    "title": "Tome",
-    "description": "إنشاء قصص وعروض تقديمية تفاعلية بذكاء اصطناعي سردي مميز.",
-    "category": "إنتاجية",
-    "url": "https://tome.app",
-    "image_url": "",
-    "pricing_type": "Freemium",
-    "is_featured": false,
-    "is_published": true,
-    "created_at": "2026-01-06 19:28:08.846258+00",
-    "features": [
-      "storytelling",
-      "presentations",
-      "interactive"
-    ],
-    "screenshots": [],
-    "is_sponsored": false,
-    "supports_arabic": false
-  },
-  {
     "id": "162",
     "title": "Taskade",
     "description": "منصة لإدارة المهام مدمجة مع وكلاء ذكاء اصطناعي لتنظيم العمل الجماعي.",
@@ -1244,26 +1204,6 @@ export const localTools = [
       "directory",
       "news",
       "discovery"
-    ],
-    "screenshots": [],
-    "is_sponsored": false,
-    "supports_arabic": false
-  },
-  {
-    "id": "169",
-    "title": "Aesthete",
-    "description": "أداة لاكتشاف وتنسيق الألوان والخطوط بناءً على ذوقك الفني.",
-    "category": "صور",
-    "url": "https://aesthete.ai",
-    "image_url": "",
-    "pricing_type": "مجاني",
-    "is_featured": false,
-    "is_published": true,
-    "created_at": "2026-01-06 19:28:11.859581+00",
-    "features": [
-      "colors",
-      "fonts",
-      "design"
     ],
     "screenshots": [],
     "is_sponsored": false,
