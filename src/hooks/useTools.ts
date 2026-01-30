@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { localTools } from "@/data/localTools";
 
 export type Category = 'الكل' | 'توليد نصوص' | 'توليد صور وفيديو' | 'مساعدات إنتاجية' | 'صناعة محتوى' | 'تطوير وبرمجة' | 'تعليم وبحث' | 'أخرى';
 
@@ -85,82 +86,61 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
     queryKey: ["tools", selectedPersona, searchQuery, category],
 
     queryFn: async ({ pageParam = 0 }) => {
-      const itemsPerPage = 12; // تم زيادة العدد لعرض المزيد من الأدوات دفعة واحدة
+      const itemsPerPage = 12;
       const from = (pageParam as number);
-      const to = from + itemsPerPage - 1;
+      const to = from + itemsPerPage;
 
-      // بناء الاستعلام الأساسي
-      let query = supabase
-        .from("tools")
-        .select("*")
-        .eq("is_published", true)
-        .order("is_featured", { ascending: false }) // Featured first (logic from existing code)
-        .order("created_at", { ascending: false }) // الأحدث أولاً
-        .range(from, to);
+      // START LOCAL FILTERING LOGIC
+      let filteredTools = localTools.filter(t => t.is_published);
 
-      // تطبيق الفلاتر (Dynamic Filtering)
+      // 1. Search Filter
       if (searchQuery.trim()) {
-        const sanitized = searchQuery
-          .trim()
-          .slice(0, 100)
-          .replace(/\\/g, "\\\\")
-          .replace(/%/g, "\\%")
-          .replace(/_/g, "\\_");
-
-        // نستخدم البحث في العنوان أو الوصف
-        query = query.or(`title.ilike.%${sanitized}%,description.ilike.%${sanitized}%`);
+        const q = searchQuery.toLowerCase().trim();
+        filteredTools = filteredTools.filter(t =>
+          t.title.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q)
+        );
       }
 
+      // 2. Persona Filter
       if (selectedPersona && selectedPersona !== "all") {
-        // البحث عن الشخصية داخل مصفوفة الفئات (أو عمود مخصص إذا وجد)
-        // هنا نفترض أن الفئات تحتوي على كلمات مثل "design", "coding"
-        // لكن بما أن الـ logic الحالي يعتمد على category واحدة لكل tool، سنحاول محاكاة ذلك
-        // أو استخدام المنطق القديم إذا كان هناك Secondary Categories أو منطق Persona
-        // *تنبيه*: تم نقل هذا المنطق من personaFilter.ts client-side filtering إلى هنا server-side filtering
-        // هذا قد يحتاج لتعديل إذا كانت الـ database لا تدعم فلترة الـ persona بشكل مباشر
-        // سأستخدم ilike على الـ category بشكل تقريبي كما طلب المستخدم
-
-        if (selectedPersona === "design") query = query.ilike("category", "%صور%"); // Translate conceptual persona to existing Arabic category
-        else if (selectedPersona === "dev") query = query.ilike("category", "%برمجة%");
-        else if (selectedPersona === "content") query = query.ilike("category", "%نصوص%");
-        else if (selectedPersona === "student") query = query.ilike("category", "%دراسة%"); // Or "student" if you have English tags
+        filteredTools = filteredTools.filter(t => {
+          const cat = t.category; // Removed .toLowerCase() as category might be Arabic
+          if (selectedPersona === "design") return cat.includes("صور");
+          if (selectedPersona === "dev") return cat.includes("برمجة");
+          if (selectedPersona === "content") return cat.includes("نصوص");
+          if (selectedPersona === "student") return cat.includes("دراسة");
+          return true;
+        });
       }
 
+      // 3. Category Filter
       if (category && category !== "الكل") {
-        // Smart Mapping: Map new UI categories to existing DB tags using partial match
-        if (category === 'توليد نصوص') {
-          query = query.ilike('category', '%نصوص%');
-        } else if (category === 'توليد صور وفيديو') {
-          query = query.or('category.ilike.%صور%,category.ilike.%فيديو%');
-        } else if (category === 'مساعدات إنتاجية') {
-          query = query.ilike('category', '%إنتاجية%');
-        } else if (category === 'صناعة محتوى') {
-          query = query.or('category.ilike.%محتوى%,category.ilike.%تسويق%');
-        } else if (category === 'تطوير وبرمجة') {
-          query = query.ilike('category', '%برمجة%');
-        } else if (category === 'تعليم وبحث') {
-          query = query.or('category.ilike.%تعليم%,category.ilike.%دراسة%,category.ilike.%طلاب%');
-        } else {
-          // Fallback for direct match or 'أخرى'
-          query = query.eq("category", category);
-        }
+        filteredTools = filteredTools.filter(t => {
+          const cat = t.category;
+          if (category === 'توليد نصوص') return cat.includes('نصوص');
+          if (category === 'توليد صور وفيديو') return cat.includes('صور') || cat.includes('فيديو');
+          if (category === 'مساعدات إنتاجية') return cat.includes('إنتاجية');
+          if (category === 'صناعة محتوى') return cat.includes('محتوى') || cat.includes('تسويق');
+          if (category === 'تطوير وبرمجة') return cat.includes('برمجة');
+          if (category === 'تعليم وبحث') return cat.includes('تعليم') || cat.includes('دراسة') || cat.includes('طلاب');
+          return cat === category;
+        });
       }
 
-      try {
-        const { data, error } = await query;
+      // Sorting: Featured first, then by Creation Date (Mocked logic since specific dates might be uniform in CSV)
+      filteredTools.sort((a, b) => {
+        if (a.is_featured === b.is_featured) return 0;
+        return a.is_featured ? -1 : 1;
+      });
 
-        if (error) {
-          console.error("Error fetching tools:", error);
-          // Return empty array instead of throwing to prevent infinite loading
-          return [];
-        }
+      // Pagination
+      const result = filteredTools.slice(from, to);
 
-        return data || [];
-      } catch (err) {
-        console.error("Exception while fetching tools:", err);
-        // Return empty array on any error to prevent the app from hanging
-        return [];
-      }
+      // Simulate network delay for better UX (optional)
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      return result;
     },
 
     initialPageParam: 0,
