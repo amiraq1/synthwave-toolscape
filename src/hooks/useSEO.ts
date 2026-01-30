@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getSupabaseFunctionsBaseUrl, getSupabaseStorageBaseUrl } from '@/utils/supabaseUrl';
 
 interface SEOProps {
   title?: string;
@@ -14,20 +15,23 @@ interface SEOProps {
   toolName?: string; // For dynamic OG image generation
 }
 
-// Project Reference for dynamic OG images
-const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
 const SITE_URL = "https://amiraq.org";
+const FUNCTIONS_BASE_URL = getSupabaseFunctionsBaseUrl();
+const STORAGE_BASE_URL = getSupabaseStorageBaseUrl();
 
 const DEFAULT_TITLE = 'نبض - دليل أدوات الذكاء الاصطناعي';
 const DEFAULT_DESCRIPTION = 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.';
 
 // Generate dynamic OG image URL from Supabase Edge Function
 const generateOgImage = (title?: string, category?: string): string => {
+  if (!FUNCTIONS_BASE_URL) return "/placeholder.svg";
   if (title) {
-    return `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category || 'نبض AI')}`;
+    return `${FUNCTIONS_BASE_URL}/og-image?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category || 'نبض AI')}`;
   }
   // Fallback to a default branded image (should be uploaded to Supabase Storage)
-  return `https://${PROJECT_REF}.supabase.co/storage/v1/object/public/assets/og-nabdh-default.png`;
+  return STORAGE_BASE_URL
+    ? `${STORAGE_BASE_URL}/object/public/assets/og-nabdh-default.png`
+    : "/placeholder.svg";
 };
 
 export const useSEO = ({

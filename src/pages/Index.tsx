@@ -14,11 +14,14 @@ import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
 import { Sparkles, Loader2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
 const Index = () => {
   // رابط مشروعك (تأكد من المعرف)
-  const PROJECT_REF = "jjsnjbyfpboersvrmxqb";
-  const ogImageUrl = `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent("نبض AI")}&category=${encodeURIComponent("دليلك الذكي لأدوات المستقبل")}`;
+  const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
+  const ogImageUrl = functionsBaseUrl
+    ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent("\u0646\u0628\u0636 AI")}&category=${encodeURIComponent("\u062f\u0644\u064a\u0644\u0643 \u0627\u0644\u0630\u0643\u064a \u0644\u0623\u062f\u0648\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u0642\u0628\u0644")}`
+    : "";
 
   // Initial SEO - we override title/description with Helmet below for stronger control
   useSEO({

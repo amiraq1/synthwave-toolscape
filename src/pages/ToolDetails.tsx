@@ -20,6 +20,7 @@ import {
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { isValidImageUrl } from '@/utils/imageUrl';
+import { getSupabaseFunctionsBaseUrl } from '@/utils/supabaseUrl';
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,8 +98,10 @@ const ToolDetails = () => {
 
 
 
-  const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
-  const ogImageUrl = tool ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle || "")}&category=${encodeURIComponent(tool.category)}` : "";
+  const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
+  const ogImageUrl = tool && functionsBaseUrl
+    ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent(displayTitle || "")}&category=${encodeURIComponent(tool.category)}`
+    : "";
 
   return (
     <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>

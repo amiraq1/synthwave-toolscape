@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
+import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
 interface Post {
   id: string;
@@ -140,8 +141,10 @@ const BlogPost = () => {
   }
 
   // Generate OG Image URL
-  const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
-  const ogImageUrl = post ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle)}&category=${encodeURIComponent(isAr ? "مدونة نبض AI" : "Pulse AI Blog")}` : "";
+  const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
+  const ogImageUrl = post && functionsBaseUrl
+    ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent(displayTitle)}&category=${encodeURIComponent(isAr ? "مدونة نبض AI" : "Pulse AI Blog")}`
+    : "";
 
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={isAr ? "rtl" : "ltr"}>
