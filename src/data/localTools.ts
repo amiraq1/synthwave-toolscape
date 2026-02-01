@@ -2024,5 +2024,25 @@ export const localTools = [
     "screenshots": [],
     "is_sponsored": false,
     "supports_arabic": false
+  },
+  {
+    "id": "212",
+    "title": "AI-Architect",
+    "description": "مشروع مفتوح المصدر يساعد على تخطيط بنية الأنظمة وتوثيقها باستخدام الذكاء الاصطناعي.",
+    "category": "برمجة",
+    "url": "https://github.com/amiraq1/AI-Architect",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-10 06:50:00.000000+00",
+    "features": [
+      "architecture",
+      "documentation",
+      "planning"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
   }
 ] as const;
