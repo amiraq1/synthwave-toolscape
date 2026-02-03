@@ -14,9 +14,9 @@ export const optimizeImage = (url: string | undefined, width = 800): string => {
 
     // 2. تحسين صور Supabase Storage
     if (url.includes("supabase.co/storage")) {
-        // Supabase يدعم التحويل إذا كانت ميزة Image Transformation مفعلة (في الباقة Pro)
-        // أو يمكننا فقط إضافة معامل لتجنب الكاش القديم
-        return `${url}?width=${width}&format=webp`;
+        // تم إزالة معاملات التحويل (width/format) لأنها تتطلب باقة Pro في Supabase
+        // وتسبب خطأ 404 إذا لم تكن مفعلة.
+        return url;
     }
 
     // 3. باقي الروابط تعود كما هي
