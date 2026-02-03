@@ -156,9 +156,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button variant="ghost" size="sm" className="hidden sm:flex text-gray-300 hover:text-white hover:bg-white/10 gap-2">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10 gap-2">
                   <User className="w-4 h-4" />
-                  تسجيل الدخول
+                  <span className="hidden xs:inline">تسجيل الدخول</span>
                 </Button>
               </Link>
             )}
@@ -176,7 +176,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   <SheetDescription className="sr-only">روابط التنقل للوصول السريع للأدوات والصفحات</SheetDescription>
                 </SheetHeader>
 
-                <div className="flex flex-col gap-6 mt-8">
+                <div className="flex flex-col gap-6 mt-8 h-full">
                   {/* الشعار في القائمة */}
                   <div className="flex items-center gap-2 mb-4 px-2">
                     <div className="w-8 h-8 bg-neon-purple rounded-lg flex items-center justify-center">
@@ -221,45 +221,62 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   </div>
 
                   {/* قسم المستخدم في قائمة الموبايل */}
-                  {session && (
-                    <div className="mt-auto pt-6 border-t border-white/10">
-                      <div className="flex items-center gap-3 px-2 mb-4">
-                        <Avatar className="h-10 w-10 border border-white/10">
-                          <AvatarImage src={session.user.user_metadata.avatar_url} />
-                          <AvatarFallback className="bg-neon-purple text-white">
-                            {session.user.email?.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-white max-w-[180px] truncate">
-                            {session.user.user_metadata.full_name || "مستخدم"}
-                          </span>
-                          <span className="text-xs text-gray-400 max-w-[180px] truncate">
-                            {session.user.email}
-                          </span>
+                  <div className="mt-auto pb-10 pt-6 border-t border-white/10">
+                    {session ? (
+                      <>
+                        <div className="flex items-center gap-3 px-2 mb-4">
+                          <Avatar className="h-10 w-10 border border-white/10">
+                            <AvatarImage src={session.user.user_metadata.avatar_url} />
+                            <AvatarFallback className="bg-neon-purple text-white">
+                              {session.user.email?.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-white max-w-[180px] truncate">
+                              {session.user.user_metadata.full_name || "مستخدم"}
+                            </span>
+                            <span className="text-xs text-gray-400 max-w-[180px] truncate">
+                              {session.user.email}
+                            </span>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-col gap-2">
-                        <Link
-                          to="/profile"
-                          onClick={() => setIsOpen(false)}
-                          className="px-4 py-2.5 rounded-lg bg-white/5 text-white hover:bg-neon-purple hover:text-white transition-colors flex items-center gap-3 text-sm font-medium"
-                        >
-                          <User className="w-4 h-4" /> الملف الشخصي
-                        </Link>
-                        <button
-                          onClick={() => {
-                            handleLogout();
-                            setIsOpen(false);
-                          }}
-                          className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-right"
-                        >
-                          <LogOut className="w-4 h-4" /> تسجيل الخروج
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                        <div className="flex flex-col gap-2">
+                          <Link
+                            to="/profile"
+                            onClick={() => setIsOpen(false)}
+                            className="px-4 py-2.5 rounded-lg bg-white/5 text-white hover:bg-neon-purple hover:text-white transition-colors flex items-center gap-3 text-sm font-medium"
+                          >
+                            <User className="w-4 h-4" /> الملف الشخصي
+                          </Link>
+                          <Link
+                            to="/admin"
+                            onClick={() => setIsOpen(false)}
+                            className="px-4 py-2.5 rounded-lg bg-white/5 text-neon-cyan hover:bg-neon-cyan hover:text-black transition-colors flex items-center gap-3 text-sm font-medium"
+                          >
+                            <LayoutDashboard className="w-4 h-4" /> لوحة التحكم
+                          </Link>
+                          <button
+                            onClick={() => {
+                              handleLogout();
+                              setIsOpen(false);
+                            }}
+                            className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-right"
+                          >
+                            <LogOut className="w-4 h-4" /> تسجيل الخروج
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <Link
+                        to="/auth"
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-3 rounded-xl bg-neon-purple text-white text-center font-bold shadow-lg shadow-neon-purple/20 flex items-center justify-center gap-2"
+                      >
+                        <User className="w-5 h-5" /> تسجيل الدخول
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
