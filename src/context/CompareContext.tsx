@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
 interface CompareContextType {
@@ -29,15 +29,23 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
         const currentIsAr = i18n.language === 'ar';
 
         if (selectedTools.includes(id)) {
-            toast.error(currentIsAr ? "هذه الأداة موجودة في القائمة بالفعل" : "This tool is already in the list");
+            toast({
+                title: currentIsAr ? "هذه الأداة موجودة في القائمة بالفعل" : "This tool is already in the list",
+                variant: "destructive",
+            });
             return;
         }
         if (selectedTools.length >= 3) {
-            toast.error(currentIsAr ? "يمكنك مقارنة 3 أدوات كحد أقصى" : "You can compare up to 3 tools max");
+            toast({
+                title: currentIsAr ? "يمكنك مقارنة 3 أدوات كحد أقصى" : "You can compare up to 3 tools max",
+                variant: "destructive",
+            });
             return;
         }
         setSelectedTools([...selectedTools, id]);
-        toast.success(currentIsAr ? "تمت الإضافة للمقارنة ⚖️" : "Added to compare ⚖️");
+        toast({
+            title: currentIsAr ? "تمت الإضافة للمقارنة ⚖️" : "Added to compare ⚖️",
+        });
     };
 
     const removeFromCompare = (id: string) => {

@@ -1,5 +1,6 @@
 import { Suspense, lazy, useState, useEffect } from "react";
-import { Toaster as Sonner, toast } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/hooks/use-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
@@ -18,6 +19,7 @@ import { initGA, logPageView } from "@/lib/analytics";
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -67,8 +69,10 @@ const AppContent = () => {
 
   const handleAddClick = () => {
     if (!user) {
-      toast.error("يجب تسجيل الدخول للمشاركة", {
+      toast({
+        title: "يجب تسجيل الدخول للمشاركة",
         description: "سجل دخولك لإضافة أداة جديدة",
+        variant: "destructive",
       });
       return;
     }
@@ -83,6 +87,7 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/tools" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/tool/:id" element={<ToolDetails />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/install" element={<Install />} />
@@ -123,7 +128,7 @@ const App = () => (
       <AuthProvider>
         <CompareProvider>
           <TooltipProvider>
-            <Sonner position="top-center" richColors theme="system" closeButton />
+            <Toaster />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <AppContent />

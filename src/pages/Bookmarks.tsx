@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Loader2, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import ToolCard from '@/components/ToolCard';
 import { useBookmarkedTools } from '@/hooks/useBookmarks';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,7 +16,6 @@ const Bookmarks = () => {
     if (!user) {
         return (
             <div className="min-h-screen bg-background flex flex-col" dir="rtl">
-                <Navbar onAddClick={() => { }} />
                 <main className="flex-1 container mx-auto max-w-7xl px-4 py-20 flex flex-col items-center justify-center">
                     <div className="text-center space-y-4">
                         <div className="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -36,15 +33,12 @@ const Bookmarks = () => {
                         </Button>
                     </div>
                 </main>
-                <Footer />
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-background flex flex-col" dir="rtl">
-            <Navbar onAddClick={() => { }} />
-
             <main className="flex-1 container mx-auto max-w-7xl px-4 py-8">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
@@ -109,7 +103,6 @@ const Bookmarks = () => {
                 )}
             </main>
 
-            <Footer />
         </div>
     );
 };

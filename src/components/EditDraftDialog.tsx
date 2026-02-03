@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 import type { Tool } from "@/types";
 
 interface EditDraftDialogProps {
@@ -54,9 +54,13 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
             .eq("id", tool.id);
 
         if (error) {
-            toast.error("فشل التحديث: " + error.message);
+            toast({
+                title: "فشل التحديث",
+                description: error.message,
+                variant: "destructive",
+            });
         } else {
-            toast.success("تم التعديل والنشر بنجاح! 🚀");
+            toast({ title: "تم التعديل والنشر بنجاح! 🚀" });
             onUpdate();
             onClose();
         }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { User, Upload, Loader2 } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface AvatarUploadProps {
     uid: string;
@@ -44,11 +44,15 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
 
             setAvatarUrl(data.publicUrl);
             onUpload(data.publicUrl);
-            toast.success("تم تحديث الصورة بنجاح! 📸");
+            toast({ title: "تم تحديث الصورة بنجاح! 📸" });
 
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
-            toast.error("فشل الرفع: " + errorMessage);
+            toast({
+                title: "فشل الرفع",
+                description: errorMessage,
+                variant: "destructive",
+            });
         } finally {
             setUploading(false);
         }

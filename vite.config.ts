@@ -6,122 +6,126 @@ import { VitePWA } from "vite-plugin-pwa";
 import viteCompression from "vite-plugin-compression";
 import { visualizer } from "rollup-plugin-visualizer";
 
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [
-    {
-      name: 'defer-css',
-      apply: 'build',
-      transformIndexHtml(html: string) {
-        return html.replace(
-          /<link\s+rel="stylesheet"([^>]*?)>/g,
-          (match: string, attrs: string) => {
-            const hrefMatch = attrs.match(/href="([^"]+)"/);
-            if (!hrefMatch) return match;
+export default defineConfig(({ mode }) => {
+  const isAnalyze = mode === "analyze";
 
-            const href = hrefMatch[1];
-            const crossoriginMatch = attrs.match(/\scrossorigin(?:="[^"]*")?/);
-            const crossorigin = crossoriginMatch ? crossoriginMatch[0] : '';
-            const preloadTag = `<link rel="preload" as="style" href="${href}"${crossorigin} onload="this.onload=null;this.rel='stylesheet'">`;
-            const noscriptTag = `<noscript><link rel="stylesheet" href="${href}"${crossorigin}></noscript>`;
-
-            return `${preloadTag}\n${noscriptTag}`;
-          },
-        );
-      },
+  return {
+    server: {
+      host: "::",
+      port: 8080,
     },
-    react(),
-    mode === 'development' && componentTagger(),
+    plugins: [
+      {
+        name: 'defer-css',
+        apply: 'build',
+        transformIndexHtml(html: string) {
+          return html.replace(
+            /<link\s+rel="stylesheet"([^>]*?)>/g,
+            (match: string, attrs: string) => {
+              const hrefMatch = attrs.match(/href="([^"]+)"/);
+              if (!hrefMatch) return match;
 
-    // 1. Brotli Compression
-    viteCompression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
-      threshold: 1024,
-    }),
+              const href = hrefMatch[1];
+              const crossoriginMatch = attrs.match(/\scrossorigin(?:="[^"]*")?/);
+              const crossorigin = crossoriginMatch ? crossoriginMatch[0] : '';
+              const preloadTag = `<link rel="preload" as="style" href="${href}"${crossorigin} onload="this.onload=null;this.rel='stylesheet'">`;
+              const noscriptTag = `<noscript><link rel="stylesheet" href="${href}"${crossorigin}></noscript>`;
 
-    // 2. Bundle Visualizer
-    visualizer({
-      open: true,
-      gzipSize: true,
-      filename: "stats.html"
-    }) as any,
-
-    // 3. PWA Configuration
-    VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: null, // Prevent render-blocking - we manually register SW after page load
-      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
-      manifest: {
-        name: 'نبض AI',
-        short_name: 'Nabdh AI',
-        description: 'دليلك الشامل لأدوات الذكاء الاصطناعي',
-        theme_color: '#0f0f1a',
-        background_color: '#0f0f1a',
-        display: 'standalone',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
+              return `${preloadTag}\n${noscriptTag}`;
+            },
+          );
+        },
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] }
+      react(),
+      mode === 'development' && componentTagger(),
+
+      // 1. Brotli Compression
+      viteCompression({
+        algorithm: 'brotliCompress',
+        ext: '.br',
+        threshold: 1024,
+      }),
+
+      // 2. Bundle Visualizer (only when mode=analyze)
+      isAnalyze && visualizer({
+        open: true,
+        gzipSize: true,
+        filename: "stats.html"
+      }) as any,
+
+      // 3. PWA Configuration
+      VitePWA({
+        registerType: 'autoUpdate',
+        injectRegister: null, // Prevent render-blocking - we manually register SW after page load
+        includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+        manifest: {
+          name: 'نبض AI',
+          short_name: 'Nabdh AI',
+          description: 'دليلك الشامل لأدوات الذكاء الاصطناعي',
+          theme_color: '#0f0f1a',
+          background_color: '#0f0f1a',
+          display: 'standalone',
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
             }
-          },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'supabase-images',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 }
+          ]
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-cache',
+                expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+                cacheableResponse: { statuses: [0, 200] }
+              }
+            },
+            {
+              urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'supabase-images',
+                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 }
+              }
             }
-          }
-        ]
-      }
-    })
-  ].filter(Boolean),
+          ]
+        }
+      })
+    ].filter(Boolean),
 
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-
-  build: {
-    target: "esnext",
-    cssCodeSplit: true,
-    chunkSizeWarningLimit: 600,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-    rollupOptions: {
-      output: {
-        manualChunks: undefined
+
+    build: {
+      target: "esnext",
+      cssCodeSplit: true,
+      chunkSizeWarningLimit: 600,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: undefined
+        },
       },
     },
-  },
-}));
+  };
+});

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, ThumbsUp, Filter, ArrowUpDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -80,7 +80,9 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
 
   // دالة وهمية للتصويت (يمكن تفعيلها لاحقاً مع الباك إند)
   const handleHelpful = (reviewId: string) => {
-    toast.success(isAr ? "شكراً على تصويتك! 👍" : "Thanks for voting! 👍");
+    toast({
+      title: isAr ? "شكراً على تصويتك! 👍" : "Thanks for voting! 👍",
+    });
   };
 
   return (

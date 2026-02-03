@@ -84,8 +84,12 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: "ar", // اللغة الافتراضية
-        fallbackLng: "en",
+        fallbackLng: "ar",
+        supportedLngs: ["ar", "en"],
+        detection: {
+            order: ["localStorage"],
+            caches: ["localStorage"],
+        },
         interpolation: {
             escapeValue: false
         }

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
 import { getToolImageUrl } from "@/utils/imageUrl";
@@ -45,9 +45,12 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from('tools').delete().eq('id', Number(id));
 
     if (error) {
-      toast.error("فشل الحذف");
+      toast({
+        title: "فشل الحذف",
+        variant: "destructive",
+      });
     } else {
-      toast.success("تم الحذف بنجاح");
+      toast({ title: "تم الحذف بنجاح" });
       onUpdate();
     }
   };
@@ -59,9 +62,14 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast({
+        title: "حدث خطأ",
+        variant: "destructive",
+      });
     } else {
-      toast.success(tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة");
+      toast({
+        title: tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة",
+      });
       onUpdate();
     }
   };
@@ -74,9 +82,14 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast({
+        title: "حدث خطأ",
+        variant: "destructive",
+      });
     } else {
-      toast.success(tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة");
+      toast({
+        title: tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة",
+      });
       onUpdate();
     }
   };

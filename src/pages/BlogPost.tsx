@@ -13,8 +13,6 @@ dayjs.locale('ar');
 import PostBookmarkButton from "@/components/PostBookmarkButton";
 import CommentsSection from "@/components/CommentsSection";
 import { useToast } from "@/hooks/use-toast";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
@@ -97,7 +95,6 @@ const BlogPost = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col" dir={isAr ? "rtl" : "ltr"}>
-        <Navbar />
         <div className="flex-1 flex justify-center items-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="w-10 h-10 animate-spin text-neon-purple" />
@@ -106,7 +103,6 @@ const BlogPost = () => {
             </span>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -114,7 +110,6 @@ const BlogPost = () => {
   if (!post) {
     return (
       <div className="min-h-screen bg-background flex flex-col" dir={isAr ? "rtl" : "ltr"}>
-        <Navbar />
         <div className="flex-1 flex flex-col justify-center items-center text-center py-20 px-4">
           <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mb-6 text-4xl">
             📄
@@ -135,7 +130,6 @@ const BlogPost = () => {
             </Button>
           </Link>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -167,8 +161,6 @@ const BlogPost = () => {
         <meta name="twitter:description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
         <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
-      <Navbar />
-
       <main className="flex-1">
         {/* 1. صورة الغلاف والعنوان (Hero Section) */}
         <div className="relative h-[300px] sm:h-[400px] md:h-[450px] w-full">
@@ -288,7 +280,6 @@ const BlogPost = () => {
         </article>
       </main>
 
-      <Footer />
     </div>
   );
 };

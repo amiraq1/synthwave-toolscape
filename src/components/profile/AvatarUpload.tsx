@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Camera, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface AvatarUploadProps {
@@ -25,12 +25,18 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
 
         // التحقق من نوع الملف وحجمه
         if (!file.type.startsWith("image/")) {
-            toast.error("يرجى اختيار ملف صورة صالح");
+            toast({
+                title: "يرجى اختيار ملف صورة صالح",
+                variant: "destructive",
+            });
             return;
         }
 
         if (file.size > 2 * 1024 * 1024) { // 2MB limit
-            toast.error("حجم الصورة يجب أن يكون أقل من 2 ميجابايت");
+            toast({
+                title: "حجم الصورة يجب أن يكون أقل من 2 ميجابايت",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -68,11 +74,15 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
                 if (fileInputRef.current) {
                     fileInputRef.current.value = "";
                 }
-                toast.success("تم رفع الصورة بنجاح");
+                toast({ title: "تم رفع الصورة بنجاح" });
             }
         } catch (error: any) {
             console.error("Error uploading avatar:", error);
-            toast.error("فشل رفع الصورة: " + error.message);
+            toast({
+                title: "فشل رفع الصورة",
+                description: error.message,
+                variant: "destructive",
+            });
         } finally {
             setUploading(false);
         }
