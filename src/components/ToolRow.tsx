@@ -1,5 +1,5 @@
 
-import { memo, useState, useMemo, KeyboardEvent } from 'react';
+import { memo, useState, KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, ChevronLeft, Type, Image as ImageIcon, Video, Code, Zap, Sparkles, LucideIcon, ChevronRight } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
@@ -8,6 +8,7 @@ import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { isValidImageUrl } from '@/utils/imageUrl';
+import { useFavicon } from '@/hooks/useFavicon';
 
 interface ToolRowProps {
     tool: Tool;
@@ -32,15 +33,6 @@ const categoryIcons: Record<string, LucideIcon> = {
     'الكل': Sparkles,
 };
 
-// Helper to extract hostname from URL
-const getHostname = (url: string): string | null => {
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return null;
-    }
-};
-
 /**
  * ToolRow - مكون عرض أداة بشكل صف (List View)
  * 
@@ -56,8 +48,9 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const prefetchTool = usePrefetchTool();
     const [imageError, setImageError] = useState(false);
     const [faviconError, setFaviconError] = useState(false);
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
+    const faviconSrc = useFavicon(tool.url);
 
     // Category styling
     const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
@@ -66,12 +59,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     // Content Display
     const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
     const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
-
-    // Memoize favicon URL
-    const faviconUrl = useMemo(() => {
-        const hostname = getHostname(tool.url);
-        return hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=128` : null;
-    }, [tool.url]);
 
     const handleClick = () => {
         navigate(`/tool/${tool.id}`);
@@ -95,7 +82,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     // Determine which icon layer to show
     const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
     const hasValidImage = !!validImageUrl && !imageError;
-    const hasValidFavicon = faviconUrl && !faviconError;
+    const hasValidFavicon = !!faviconSrc && !faviconError;
     const showCategoryIcon = !hasValidImage && !hasValidFavicon;
 
     const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -147,7 +134,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                     />
                 ) : hasValidFavicon ? (
                     <img
-                        src={faviconUrl!}
+                        src={faviconSrc!}
                         alt=""
                         width={32}
                         height={32}
