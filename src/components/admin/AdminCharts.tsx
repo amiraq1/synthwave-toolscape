@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 
+// تعريف واجهة البيانات
 interface Tool {
     category: string;
     created_at?: string;
@@ -24,32 +25,36 @@ interface AdminChartsProps {
     tools: Tool[];
 }
 
+// ألوان المخطط الدائري
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a0c4ff', '#bdb2ff'];
 
 const AdminCharts = ({ tools }: AdminChartsProps) => {
 
-    // 1. Prepare data for Category Distribution (Pie Chart)
+    // 1. معالجة بيانات توزيع التصنيفات (Pie Chart)
+    // نأخذ أعلى 8 تصنيفات لعدم ازدحام الرسم
     const categoryData = useMemo(() => {
         const counts: Record<string, number> = {};
         tools.forEach(tool => {
+            // إذا لم يوجد تصنيف، نضعه تحت "Other"
             const cat = tool.category || 'Other';
             counts[cat] = (counts[cat] || 0) + 1;
         });
 
         return Object.entries(counts)
             .map(([name, value]) => ({ name, value }))
-            .sort((a, b) => b.value - a.value)
-            .slice(0, 8); // Top 8 categories
+            .sort((a, b) => b.value - a.value) // الترتيب من الأكثر للأقل
+            .slice(0, 8); // الاكتفاء بأعلى 8
     }, [tools]);
 
-    // 2. Prepare data for Monthly Growth (Bar Chart) - Last 6 months
+    // 2. معالجة بيانات النمو الشهري (Bar Chart) - آخر 6 أشهر
     const growthData = useMemo(() => {
         const months: Record<string, number> = {};
         const today = new Date();
 
-        // Initialize last 6 months with 0
+        // تهيئة الأشهر الستة الماضية بالقيمة 0 لضمان ظهورها حتى لو لم تكن هناك بيانات
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            // استخدام اسم الشهر بالإنجليزي للمطابقة مع البيانات، ويمكن تعريبه في العرض
             const key = d.toLocaleString('en-US', { month: 'short' });
             months[key] = 0;
         }
@@ -57,13 +62,13 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
         tools.forEach(tool => {
             if (tool.created_at) {
                 const date = new Date(tool.created_at);
-                // Check if within last 6 months
+                // التحقق مما إذا كان التاريخ ضمن آخر 6 أشهر تقريباً
                 const diffTime = Math.abs(today.getTime() - date.getTime());
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                if (diffDays <= 180) { // Approx 6 months
+                if (diffDays <= 180) {
                     const key = date.toLocaleString('en-US', { month: 'short' });
-                    if (months.hasOwnProperty(key)) {
+                    if (Object.prototype.hasOwnProperty.call(months, key)) {
                         months[key]++;
                     }
                 }
@@ -75,8 +80,9 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Category Distribution */}
-            <Card className="bg-black/20 border-white/10">
+
+            {/* القسم الأول: توزيع التصنيفات (دائري) */}
+            <Card className="bg-black/20 border-white/10 overflow-hidden">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
                         <PieChartIcon className="w-4 h-4 text-neon-purple" />
@@ -91,7 +97,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     data={categoryData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={50}
+                                    innerRadius={50} // تصميم الدونات (Donut Chart)
                                     outerRadius={80}
                                     fill="#8884d8"
                                     paddingAngle={2}
@@ -102,7 +108,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1a1a2e', borderColor: '#333', color: '#fff' }}
+                                    contentStyle={{ backgroundColor: '#1a1a2e', borderColor: '#333', color: '#fff', borderRadius: '8px' }}
                                     itemStyle={{ color: '#fff' }}
                                 />
                                 <Legend layout="vertical" verticalAlign="middle" align="right" />
@@ -112,12 +118,12 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 </CardContent>
             </Card>
 
-            {/* Monthly Growth */}
-            <Card className="bg-black/20 border-white/10">
+            {/* القسم الثاني: النمو الشهري (أعمدة) */}
+            <Card className="bg-black/20 border-white/10 overflow-hidden">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
-                        <BarChart3 className="w-4 h-4 text-blue-400" />
-                        النمو الشهري
+                        <BarChart3 className="w-4 h-4 text-neon-blue" />
+                        الأدوات المضافة شهرياً
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -125,18 +131,20 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={growthData}>
                                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                                <XAxis dataKey="name" stroke="#666" />
-                                <YAxis stroke="#666" />
+                                <XAxis dataKey="name" stroke="#666" fontSize={10} />
+                                <YAxis stroke="#666" fontSize={10} />
                                 <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{ backgroundColor: '#1a1a2e', borderColor: '#333', color: '#fff' }}
+                                    contentStyle={{ backgroundColor: '#1a1a2e', borderColor: '#333', color: '#fff', borderRadius: '8px' }}
+                                    cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                                    itemStyle={{ color: '#82ca9d' }}
                                 />
-                                <Bar dataKey="count" fill="#7c3aed" radius={[4, 4, 0, 0]} name="الأدوات" />
+                                <Bar dataKey="count" name="عدد الأدوات" fill="#82ca9d" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </CardContent>
             </Card>
+
         </div>
     );
 };

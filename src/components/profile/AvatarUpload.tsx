@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Camera, Loader2, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Camera, Loader2, X, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,23 +9,28 @@ interface AvatarUploadProps {
     currentAvatarUrl: string | null;
     onUploadComplete: (url: string) => void;
     userId: string;
+    className?: string; // لإتاحة تخصيص الكلاسات الخارجية
 }
 
-const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUploadProps) => {
+const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }: AvatarUploadProps) => {
     const [uploading, setUploading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (!event.target.files || event.target.files.length === 0) {
-            return;
-        }
+    // تنظيف روابط المعاينة لتجنب تسرب الذاكرة
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
-        const file = event.target.files[0];
-
+    const processFile = (file: File) => {
         // التحقق من نوع الملف وحجمه
         if (!file.type.startsWith("image/")) {
-            toast.error("يرجى اختيار ملف صورة صالح");
+            toast.error("يرجى اختيار ملف صورة صالح (JPG, PNG)");
             return;
         }
 
@@ -39,25 +44,55 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
         setPreviewUrl(objectUrl);
     };
 
+    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            processFile(event.target.files[0]);
+        }
+    };
+
+    // معالجة السحب والإفلات
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            // تحديث الـ input يدوياً ليتوافق مع الرفع
+            if (fileInputRef.current) {
+                fileInputRef.current.files = e.dataTransfer.files;
+            }
+            processFile(e.dataTransfer.files[0]);
+        }
+    };
+
     const handleUpload = async () => {
         if (!fileInputRef.current?.files?.[0]) return;
 
         setUploading(true);
         const file = fileInputRef.current.files[0];
         const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}-${Math.random()}.${fileExt}`;
+        // استخدام Timestamp لضمان عدم تكرار الاسم وتجاوز الكاش
+        const fileName = `${userId}-${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
 
         try {
-            // رفع الصورة إلى Supabase Storage bucket 'avatars'
-            // ملاحظة: تأكد من وجود bucket باسم 'avatars' في Supabase
+            // رفع الصورة
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false // نفضل إنشاء ملف جديد لتجنب مشاكل الكاش
+                });
 
-            if (uploadError) {
-                throw uploadError;
-            }
+            if (uploadError) throw uploadError;
 
             // الحصول على الرابط العام
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
@@ -65,15 +100,13 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
             if (data) {
                 onUploadComplete(data.publicUrl);
                 setPreviewUrl(null);
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = "";
-                }
-                toast.success("تم رفع الصورة بنجاح");
+                if (fileInputRef.current) fileInputRef.current.value = "";
+                toast.success("تم تحديث الصورة الشخصية بنجاح");
             }
         } catch (error: any) {
             console.error("Error uploading avatar:", error);
             toast.error("فشل رفع الصورة", {
-                description: error.message,
+                description: error.message || "تأكد من إعدادات التخزين في Supabase",
             });
         } finally {
             setUploading(false);
@@ -88,42 +121,60 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
     };
 
     return (
-        <div className="flex flex-col items-center gap-4">
-            <div className="relative group">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 bg-black/40">
+        <div className={cn("flex flex-col items-center gap-6", className)}>
+            <div
+                className={cn(
+                    "relative group cursor-pointer transition-all duration-300",
+                    isDragging ? "scale-105" : ""
+                )}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+            >
+                {/* إطار الصورة */}
+                <div className={cn(
+                    "w-36 h-36 rounded-full overflow-hidden border-4 bg-black/40 shadow-xl transition-all",
+                    isDragging ? "border-neon-purple shadow-neon-purple/20" : "border-white/10 hover:border-white/20"
+                )}>
                     {previewUrl ? (
-                        <img src={previewUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                     ) : currentAvatarUrl ? (
-                        <img src={currentAvatarUrl} alt="Current Avatar" className="w-full h-full object-cover" />
+                        <img src={currentAvatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <Camera className="w-10 h-10" />
+                        <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-muted/20">
+                            <UploadCloud className="w-10 h-10 mb-2 opacity-50" />
                         </div>
                     )}
 
                     {/* طبقة التحميل */}
                     {uploading && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
-                            <Loader2 className="w-8 h-8 text-neon-purple animate-spin" />
+                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-20 backdrop-blur-sm">
+                            <Loader2 className="w-10 h-10 text-neon-purple animate-spin" />
+                        </div>
+                    )}
+
+                    {/* طبقة السحب والإفلات */}
+                    {isDragging && !uploading && (
+                        <div className="absolute inset-0 bg-neon-purple/20 flex items-center justify-center z-10 border-4 border-dashed border-neon-purple rounded-full">
+                            <span className="text-white font-bold text-sm drop-shadow-md">أفلت الصورة هنا</span>
                         </div>
                     )}
                 </div>
 
-                {/* زر اختيار ملف مخفي */}
                 <input
                     type="file"
                     ref={fileInputRef}
                     onChange={handleFileSelect}
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     className="hidden"
                     disabled={uploading}
                 />
 
-                {/* زر تغيير الصورة */}
+                {/* زر الكاميرا العائم */}
                 {!previewUrl && !uploading && (
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="absolute bottom-0 right-0 p-2 bg-neon-purple rounded-full text-white shadow-lg hover:bg-neon-purple/80 transition-colors"
+                        className="absolute bottom-1 right-1 p-2.5 bg-neon-purple rounded-full text-white shadow-lg hover:bg-neon-purple/90 hover:scale-110 transition-all border-4 border-background"
                         title="تغيير الصورة"
                     >
                         <Camera className="w-5 h-5" />
@@ -131,29 +182,33 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
                 )}
             </div>
 
-            {/* أزرار الإجراءات عند تحديد صورة */}
-            {previewUrl && !uploading && (
-                <div className="flex gap-2 animate-in fade-in slide-in-from-top-2">
+            {/* أزرار الإجراءات */}
+            {previewUrl && !uploading ? (
+                <div className="flex gap-3 animate-in fade-in slide-in-from-top-2">
                     <Button
                         size="sm"
                         onClick={handleUpload}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-green-600 hover:bg-green-700 min-w-[100px]"
                     >
-                        حفظ الصورة
+                        حفظ التغيير
                     </Button>
                     <Button
                         size="sm"
-                        variant="destructive"
+                        variant="outline"
                         onClick={cancelPreview}
+                        className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                     >
-                        <X className="w-4 h-4" />
+                        <X className="w-4 h-4 mr-1" /> إلغاء
                     </Button>
                 </div>
+            ) : (
+                <div className="text-center space-y-1">
+                    <p className="text-sm font-medium text-gray-300">الصورة الشخصية</p>
+                    <p className="text-xs text-gray-500">
+                        {isDragging ? "أفلت الصورة لرفعها" : "اضغط على الأيقونة لتغيير الصورة"}
+                    </p>
+                </div>
             )}
-
-            <p className="text-xs text-gray-500 text-center max-w-[200px]">
-                الصيغ المدعومة: JPG, PNG. الحد الأقصى: 2MB.
-            </p>
         </div>
     );
 };

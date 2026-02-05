@@ -1,5 +1,10 @@
 {
-    "deno.enable": true,
-    "deno.lint": true,
-    "deno.unstable": true
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxFactory": "React.createElement",
+        "jsxFragmentFactory": "React.Fragment"
+    },
+    "imports": {
+        "shared/": "./_shared/"
+    }
 }

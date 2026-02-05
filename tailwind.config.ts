@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -14,7 +19,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        cairo: ['Cairo', 'sans-serif'],
+        cairo: ['Cairo', 'sans-serif'], // ✅ الخط العربي الأساسي
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,7 +65,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom AI theme colors
+        // 🎨 ألوان الهوية البصرية (AI Neon Theme)
         "neon-purple": "hsl(var(--neon-purple))",
         "neon-blue": "hsl(var(--neon-blue))",
         "neon-cyan": "hsl(var(--neon-cyan))",
@@ -72,6 +77,7 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // ✨ تأثيرات حركية مخصصة
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -86,8 +92,8 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "glow-pulse": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+          "0%, 100%": { opacity: "1", filter: "brightness(1.2)" },
+          "50%": { opacity: "0.7", filter: "brightness(1)" },
         },
         "pulse-slow": {
           "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
@@ -126,7 +132,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out forwards",
-        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "pulse-slow": "pulse-slow 6s ease-in-out infinite",
         "marquee": "marquee 25s linear infinite",
         "float": "float 4s ease-in-out infinite",
@@ -138,5 +144,8 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")], // eslint-disable-line @typescript-eslint/no-require-imports
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"), // ✅ تمت الإضافة: ضروري لتنسيق المقالات
+  ],
 } satisfies Config;

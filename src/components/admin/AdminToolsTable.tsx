@@ -5,7 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Edit, Trash2, Search, Eye, ExternalLink, MoreHorizontal, CheckCircle, XCircle, Sparkles
+  Edit, Trash2, Search, ExternalLink, MoreHorizontal, CheckCircle, XCircle, Sparkles
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,6 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -31,6 +41,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   // Filter tools based on search
   const filteredTools = tools.filter(tool =>
@@ -39,10 +50,10 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
     tool.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذه الأداة نهائياً؟")) return;
+  const confirmDelete = async () => {
+    if (!deleteId) return;
 
-    const { error } = await supabase.from('tools').delete().eq('id', Number(id));
+    const { error } = await supabase.from('tools').delete().eq('id', deleteId);
 
     if (error) {
       toast.error("فشل الحذف");
@@ -50,6 +61,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       toast.success("تم الحذف بنجاح");
       onUpdate();
     }
+    setDeleteId(null);
   };
 
   const toggleFeatured = async (tool: Tool) => {
@@ -173,7 +185,10 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleDelete(tool.id)} className="text-red-600 focus:text-red-600">
+                          <DropdownMenuItem
+                            onClick={() => setDeleteId(Number(tool.id))}
+                            className="text-red-600 focus:text-red-600"
+                          >
                             <Trash2 className="mr-2 h-4 w-4" /> حذف
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -197,12 +212,30 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
         يتم عرض {filteredTools.length} أداة من أصل {tools.length}
       </div>
 
+      {/* نافذة تأكيد الحذف */}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>هل أنت متأكد تماماً؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيتم حذف هذه الأداة بشكل نهائي ولا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              تأكيد الحذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Dialog for editing */}
       {editingTool && (
         <EditDraftDialog
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
-          tool={editingTool} // We cast because EditDraftDialog expects Tool but might have subtle checking
+          tool={editingTool}
           onUpdate={onUpdate}
         />
       )}

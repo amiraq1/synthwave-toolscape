@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, Download, Smartphone, CheckCircle, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+
+// Interface is globally defined in vite-env.d.ts
+
 
 const Install = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -42,11 +41,11 @@ const Install = () => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       setIsInstalled(true);
     }
-    
+
     setDeferredPrompt(null);
   };
 
@@ -91,7 +90,7 @@ const Install = () => {
                 <Smartphone className="h-6 w-6" />
                 <span className="text-xl font-semibold">ثبت التطبيق على جهازك</span>
               </div>
-              
+
               <div className="space-y-4 text-right">
                 <p className="text-muted-foreground">
                   لتثبيت التطبيق على iPhone أو iPad:
@@ -126,7 +125,7 @@ const Install = () => {
                 <Download className="h-6 w-6" />
                 <span className="text-xl font-semibold">ثبت التطبيق</span>
               </div>
-              
+
               <p className="text-muted-foreground">
                 ثبت نبض AI على جهازك للوصول السريع والعمل بدون إنترنت
               </p>
@@ -139,7 +138,7 @@ const Install = () => {
                   <Download className="h-5 w-5" />
                   تثبيت التطبيق
                 </Button>
-                
+
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
@@ -155,7 +154,7 @@ const Install = () => {
                 <Smartphone className="h-6 w-6" />
                 <span className="text-xl font-semibold">تصفح الآن</span>
               </div>
-              
+
               <p className="text-muted-foreground">
                 يمكنك تثبيت التطبيق من قائمة المتصفح أو استخدامه مباشرة
               </p>

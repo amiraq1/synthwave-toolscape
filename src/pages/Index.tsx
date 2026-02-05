@@ -7,7 +7,7 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import RecommendedForYou from "@/components/RecommendedForYou";
-import FeaturedShortlist from "@/components/FeaturedShortlist";
+// تم حذف استيراد FeaturedShortlist من هنا
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
@@ -23,7 +23,7 @@ const Index = () => {
     ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent("\u0646\u0628\u0636 AI")}&category=${encodeURIComponent("\u062f\u0644\u064a\u0644\u0643 \u0627\u0644\u0630\u0643\u064a \u0644\u0623\u062f\u0648\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u0642\u0628\u0644")}`
     : "";
 
-  // Initial SEO - we override title/description with Helmet below for stronger control
+  // Initial SEO
   useSEO({
     title: "الرئيسية",
     description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية.",
@@ -34,12 +34,10 @@ const Index = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
 
-  // دالة لإعادة كل شيء للوضع الافتراضي
   const clearFilters = () => {
     setSelectedPersona("all");
   };
 
-  // ... (Hooks calls)
   const {
     data,
     isLoading,
@@ -71,7 +69,6 @@ const Index = () => {
     PERSONAS.forEach((persona) => {
       if (persona.id === 'all') return;
 
-      // نعد كم أداة تطابق تصنيفات هذه الوظيفة
       const matchCount = tools.filter((t) =>
         persona.categories.some((cat) =>
           t.category?.toLowerCase().includes(cat.toLowerCase())
@@ -157,8 +154,6 @@ const Index = () => {
         تخطّي إلى المحتوى
       </a>
 
-      {/* Navbar Removed - Handled in App.tsx */}
-
       {/* شريط النبض المباشر */}
       <LivePulse />
 
@@ -205,8 +200,7 @@ const Index = () => {
           )}
         </div>
 
-        {/* Shortlists Section - New Feature */}
-        <FeaturedShortlist />
+        {/* 🔥 تم حذف قسم FeaturedShortlist من هنا */}
 
         {/* Recommended For You */}
         <RecommendedForYou />
@@ -288,8 +282,6 @@ const Index = () => {
         {/* مساحة تنفّس أسفل الشبكة على الموبايل */}
         <div className="h-6 sm:h-8" />
       </main>
-
-      {/* Footer Removed - Handled in App.tsx */}
 
     </div>
   );

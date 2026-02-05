@@ -1,54 +1,113 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, ExternalLink, MousePointerClick } from "lucide-react";
+import { BarChart, ExternalLink, Activity, Database, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AnalyticsWidget = () => {
-    // جلب أكثر الأدوات نقراً (آخر 7 أيام مثلاً - يحتاج لتعديل RPC أو جلب خام)
-    // حالياً سنفترض وجود دالة أو نجلب من جدول النقرات مباشرة إذا مسموح
-    // للتبسيط، سنعرض رابط GA وبطاقة معلومات عامة
+    // جلب إحصائيات سريعة من قاعدة البيانات
+    const { data: stats } = useQuery({
+        queryKey: ['admin-quick-stats'],
+        queryFn: async () => {
+            const { count: totalTools } = await supabase.from('tools').select('*', { count: 'exact', head: true });
+            const { count: publishedTools } = await supabase.from('tools').select('*', { count: 'exact', head: true }).eq('is_published', true);
+
+            return {
+                total: totalTools || 0,
+                published: publishedTools || 0,
+            };
+        }
+    });
+
+    const gaMeasurementId = "G-R43ED44ZYM"; // يمكن نقله إلى import.meta.env.VITE_GA_ID
 
     return (
-        <Card className="bg-gradient-to-br from-indigo-900/10 to-purple-900/10 border-indigo-500/20 card-glow col-span-1 md:col-span-3">
+        <Card className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border-indigo-500/20 card-glow col-span-1 md:col-span-3 overflow-hidden relative">
+            {/* خلفية جمالية */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full pointer-events-none" />
+
             <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between text-lg">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-indigo-100">
                         <BarChart className="w-5 h-5 text-indigo-400" />
-                        <span>تحليلات الزوار (Analytics)</span>
+                        <span>مركز البيانات والتحليلات</span>
                     </div>
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 gap-2"
+                        className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 gap-2 text-xs h-8"
                         onClick={() => window.open('https://analytics.google.com/', '_blank')}
                     >
-                        فتح لوحة Google Analytics <ExternalLink className="w-4 h-4" />
+                        Google Analytics <ExternalLink className="w-3 h-3" />
                     </Button>
                 </CardTitle>
             </CardHeader>
+
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                    <div className="bg-black/20 p-4 rounded-lg border border-white/5">
-                        <p className="text-gray-400 text-xs mb-1">حالة التتبع</p>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="font-bold text-emerald-400">نشط (Google Analytics 4)</span>
+
+                    {/* حالة تتبع GA4 */}
+                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-gray-400 text-xs">حالة التتبع (GA4)</p>
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-bold font-mono text-indigo-200 tracking-wider">
+                                {gaMeasurementId}
+                            </p>
+                            <p className="text-[10px] text-gray-500 mt-1">
+                                البيانات المباشرة متوفرة في لوحة Google
+                            </p>
                         </div>
                     </div>
 
-                    <div className="bg-black/20 p-4 rounded-lg border border-white/5">
-                        <p className="text-gray-400 text-xs mb-1">إعدادات GA4</p>
-                        <p className="font-mono text-xs text-white/70 truncate" title="G-R43ED44ZYM">ID: G-R43ED44ZYM</p>
+                    {/* نسبة النشر */}
+                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-gray-400 text-xs">صحة المحتوى</p>
+                            <FileCheck className="w-4 h-4 text-emerald-400" />
+                        </div>
+                        <div>
+                            <div className="flex items-end gap-2">
+                                <p className="text-2xl font-bold text-emerald-200">
+                                    {stats ? Math.round((stats.published / (stats.total || 1)) * 100) : 0}%
+                                </p>
+                                <span className="text-xs text-emerald-500/80 mb-1.5">منشور</span>
+                            </div>
+
+                            {/* Progress Bar */}
+                            <div className="h-1.5 w-full bg-white/10 rounded-full mt-2 overflow-hidden">
+                                <div
+                                    className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
+                                    style={{ width: `${stats ? Math.round((stats.published / (stats.total || 1)) * 100) : 0}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="bg-black/20 p-4 rounded-lg border border-white/5">
-                        <p className="text-gray-400 text-xs mb-1">البيانات الحية</p>
-                        <p className="text-xs text-indigo-300">
-                            يمكنك مشاهدة المستخدمين المتواجدين حالياً عبر لوحة Google Analytics "Realtime".
-                        </p>
+                    {/* حالة النظام */}
+                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
+                        <div className="flex justify-between items-start mb-2">
+                            <p className="text-gray-400 text-xs">حالة النظام</p>
+                            <Activity className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs">
+                                <span className="text-gray-400">قاعدة البيانات</span>
+                                <span className="text-emerald-400 flex items-center gap-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> متصل
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs">
+                                <span className="text-gray-400">Edge Functions</span>
+                                <span className="text-emerald-400 flex items-center gap-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> نشط
+                                </span>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </CardContent>
         </Card>

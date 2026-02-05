@@ -14,3 +14,19 @@ declare module 'virtual:pwa-register' {
     export function registerSW(options?: RegisterSWOptions): (reloadPage?: boolean) => Promise<void>;
 }
 
+// تعريف حدث تثبيت PWA
+interface BeforeInstallPromptEvent extends Event {
+    readonly platforms: string[];
+    readonly userChoice: Promise<{
+        outcome: 'accepted' | 'dismissed';
+        platform: string;
+    }>;
+    prompt(): Promise<void>;
+}
+
+// إضافة الحدث إلى النافذة (Window)
+declare global {
+    interface WindowEventMap {
+        'beforeinstallprompt': BeforeInstallPromptEvent;
+    }
+}

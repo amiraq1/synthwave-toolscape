@@ -15,6 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { initGA, logPageView } from "@/lib/analytics";
 import { PwaUpdateToast } from "@/components/pwa-update-toast";
 import Index from "./pages/Index"; // Eager load Home for better LCP
+import ScrollToTopButton from "@/components/ScrollToTopButton"; // Eager load for UI responsiveness
 
 
 // Lazy Load Pages
@@ -41,7 +42,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // Lazy Load Components
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
-const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
+// ScrollToTopButton moved to eager import
 
 const queryClient = new QueryClient({
   defaultOptions: {

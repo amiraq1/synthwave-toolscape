@@ -1,77 +1,45 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Tool } from '@/hooks/useTools';
+import { useState, useEffect, useCallback } from "react";
 
-const STORAGE_KEY = 'recently_viewed_tools';
-const MAX_ITEMS = 10;
+const STORAGE_KEY = "recently_viewed_tools";
 
-interface RecentlyViewedItem {
-    toolId: string;
-    viewedAt: number;
-}
-
-/**
- * هوك لإدارة الأدوات المشاهدة مؤخراً
- * يستخدم localStorage للتخزين المحلي
- */
 export const useRecentlyViewed = () => {
     const [recentIds, setRecentIds] = useState<string[]>([]);
+    const [hasRecent, setHasRecent] = useState(false);
 
-    // تحميل البيانات من localStorage عند البداية
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                const items: RecentlyViewedItem[] = JSON.parse(stored);
-                // ترتيب حسب الأحدث وأخذ الـ IDs فقط
-                const sortedIds = items
-                    .sort((a, b) => b.viewedAt - a.viewedAt)
-                    .slice(0, MAX_ITEMS)
-                    .map(item => item.toolId);
-                setRecentIds(sortedIds);
+        // Load from local storage
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    setRecentIds(parsed);
+                    setHasRecent(parsed.length > 0);
+                }
+            } catch (e) {
+                console.error("Failed to parse recently viewed tools", e);
             }
-        } catch (error) {
-            console.error('Error loading recently viewed:', error);
         }
     }, []);
 
-    // إضافة أداة للقائمة
-    const addToRecent = useCallback((toolId: string) => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            let items: RecentlyViewedItem[] = stored ? JSON.parse(stored) : [];
+    const addToRecent = useCallback((id: string) => {
+        setRecentIds((prev) => {
+            // Remove if exists to move to top
+            const filtered = prev.filter((item) => item !== id);
+            // Add to front, limit to 20 items
+            const updated = [id, ...filtered].slice(0, 20);
 
-            // إزالة إذا موجود مسبقاً
-            items = items.filter(item => item.toolId !== toolId);
-
-            // إضافة في البداية
-            items.unshift({ toolId, viewedAt: Date.now() });
-
-            // الاحتفاظ بآخر 10 فقط
-            items = items.slice(0, MAX_ITEMS);
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-            setRecentIds(items.map(item => item.toolId));
-        } catch (error) {
-            console.error('Error adding to recently viewed:', error);
-        }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+            setHasRecent(true);
+            return updated;
+        });
     }, []);
 
-    // مسح السجل
     const clearRecent = useCallback(() => {
-        try {
-            localStorage.removeItem(STORAGE_KEY);
-            setRecentIds([]);
-        } catch (error) {
-            console.error('Error clearing recently viewed:', error);
-        }
+        setRecentIds([]);
+        setHasRecent(false);
+        localStorage.removeItem(STORAGE_KEY);
     }, []);
 
-    return {
-        recentIds,
-        addToRecent,
-        clearRecent,
-        hasRecent: recentIds.length > 0
-    };
+    return { recentIds, addToRecent, clearRecent, hasRecent };
 };
-
-export default useRecentlyViewed;
