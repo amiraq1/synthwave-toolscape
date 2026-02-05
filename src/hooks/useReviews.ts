@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface Review {
   id: string;
@@ -145,7 +145,6 @@ export const useUserReview = (toolId: string | number | undefined, userId?: stri
 // Add or Update a review (Upsert)
 export const useAddReview = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -186,10 +185,8 @@ export const useAddReview = () => {
       return data;
     },
     onSuccess: (_, variables) => {
-      toast({
-        title: '✅ تم حفظ تقييمك',
+      toast.success('✅ تم حفظ تقييمك', {
         description: 'شكراً لمشاركتك رأيك!',
-        className: 'bg-emerald-500/10 text-emerald-500',
       });
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['reviews', variables.toolId] });
@@ -198,10 +195,8 @@ export const useAddReview = () => {
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
     onError: (error: Error) => {
-      toast({
-        title: 'خطأ',
+      toast.error('خطأ', {
         description: error?.message || 'فشل في حفظ التقييم',
-        variant: 'destructive',
       });
     },
   });
@@ -209,7 +204,6 @@ export const useAddReview = () => {
 
 // Delete a review
 export const useDeleteReview = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -223,20 +217,15 @@ export const useDeleteReview = () => {
       return { reviewId, toolId };
     },
     onSuccess: (variables) => {
-      toast({
-        title: '🗑️ تم حذف التقييم',
-        className: 'bg-red-500/10 text-red-500',
-      });
+      toast.success('🗑️ تم حذف التقييم');
       queryClient.invalidateQueries({ queryKey: ['reviews', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['review-stats', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['user-review', variables.toolId] });
       queryClient.invalidateQueries({ queryKey: ['tool-ratings'] });
     },
     onError: (error: Error) => {
-      toast({
-        title: 'خطأ',
+      toast.error('خطأ', {
         description: error?.message || 'فشل في حذف التقييم',
-        variant: 'destructive',
       });
     },
   });

@@ -1,6 +1,6 @@
 import { Suspense, lazy, useState, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { toast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
@@ -13,6 +13,7 @@ import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import { initGA, logPageView } from "@/lib/analytics";
+import { PwaUpdateToast } from "@/components/pwa-update-toast";
 
 
 // Lazy Load Pages
@@ -69,10 +70,8 @@ const AppContent = () => {
 
   const handleAddClick = () => {
     if (!user) {
-      toast({
-        title: "يجب تسجيل الدخول للمشاركة",
+      toast.error("يجب تسجيل الدخول للمشاركة", {
         description: "سجل دخولك لإضافة أداة جديدة",
-        variant: "destructive",
       });
       return;
     }
@@ -129,6 +128,7 @@ const App = () => (
         <CompareProvider>
           <TooltipProvider>
             <Toaster />
+            <PwaUpdateToast />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <AppContent />

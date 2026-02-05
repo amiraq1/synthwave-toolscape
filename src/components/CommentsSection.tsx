@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 import dayjs from "dayjs";
 import 'dayjs/locale/ar';
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,6 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     const [newComment, setNewComment] = useState("");
     const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
     const { user } = useAuth();
-    const { toast } = useToast();
     const queryClient = useQueryClient();
 
     // جلب التعليقات
@@ -90,16 +89,11 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
         onSuccess: () => {
             setNewComment("");
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
-            toast({
-                title: "✅ تم إضافة التعليق",
-                className: "bg-green-500/10 text-green-500",
-            });
+            toast.success("✅ تم إضافة التعليق");
         },
         onError: () => {
-            toast({
-                title: "خطأ",
+            toast.error("خطأ", {
                 description: "فشل في إضافة التعليق",
-                variant: "destructive",
             });
         },
     });
@@ -116,16 +110,11 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
         onSuccess: () => {
             setCommentToDelete(null);
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
-            toast({
-                title: "🗑️ تم حذف التعليق",
-                className: "bg-red-500/10 text-red-500",
-            });
+            toast.success("🗑️ تم حذف التعليق");
         },
         onError: () => {
-            toast({
-                title: "خطأ",
+            toast.error("خطأ", {
                 description: "فشل في حذف التعليق",
-                variant: "destructive",
             });
         },
     });

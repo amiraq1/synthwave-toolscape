@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, ThumbsUp, Filter, ArrowUpDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -39,13 +39,14 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
   // دالة لجلب المراجعات بناءً على الفلاتر
   const fetchReviews = useCallback(async () => {
     setLoading(true);
+    const numericToolId = typeof toolId === 'string' ? parseInt(toolId, 10) : toolId;
     let query = supabase
       .from("reviews")
       .select(`
         *,
-        profiles (full_name, avatar_url)
+        profiles:user_id (full_name, avatar_url)
       `)
-      .eq("tool_id", toolId);
+      .eq("tool_id", numericToolId);
 
     // تطبيق الفلترة حسب النجوم
     if (filterRating !== "all") {
@@ -69,7 +70,17 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
     }
 
     const { data } = await query;
-    if (data) setReviews(data as ReviewData[]);
+    if (data) {
+      // Transform data to match ReviewData interface
+      const reviews = data.map((item: any) => ({
+        id: item.id,
+        rating: item.rating,
+        comment: item.comment,
+        created_at: item.created_at,
+        profiles: item.profiles || null,
+      }));
+      setReviews(reviews);
+    }
     setLoading(false);
   }, [toolId, sortBy, filterRating]);
 
@@ -80,9 +91,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
 
   // دالة وهمية للتصويت (يمكن تفعيلها لاحقاً مع الباك إند)
   const handleHelpful = (reviewId: string) => {
-    toast({
-      title: isAr ? "شكراً على تصويتك! 👍" : "Thanks for voting! 👍",
-    });
+    toast.success(isAr ? "شكراً على تصويتك! 👍" : "Thanks for voting! 👍");
   };
 
   return (

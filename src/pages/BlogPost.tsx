@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 dayjs.locale('ar');
 import PostBookmarkButton from "@/components/PostBookmarkButton";
 import CommentsSection from "@/components/CommentsSection";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
@@ -35,7 +35,6 @@ const BlogPost = () => {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
@@ -83,10 +82,7 @@ const BlogPost = () => {
       }
     } else {
       await navigator.clipboard.writeText(url);
-      toast({
-        title: isAr ? "✅ تم نسخ الرابط" : "✅ Link copied",
-        className: "bg-green-500/10 text-green-500",
-      });
+      toast.success(isAr ? "✅ تم نسخ الرابط" : "✅ Link copied");
     }
   };
 

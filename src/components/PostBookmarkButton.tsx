@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface PostBookmarkButtonProps {
   postId: string;
@@ -56,10 +56,7 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
     e.stopPropagation();
 
     if (!session) {
-      toast({
-        title: "سجل دخولك لحفظ المقالات 🔐",
-        variant: "destructive",
-      });
+      toast.error("سجل دخولك لحفظ المقالات 🔐");
       return;
     }
 
@@ -75,7 +72,7 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
         if (error) throw error;
 
         setIsSaved(false);
-        toast({ title: "تمت الإزالة من المفضلة" });
+        toast("تمت الإزالة من المفضلة");
       } else {
         const { error } = await supabase
           .from("post_bookmarks")
@@ -84,15 +81,13 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
         if (error) throw error;
 
         setIsSaved(true);
-        toast({ title: "تم الحفظ في مكتبتك 📚" });
+        toast.success("تم الحفظ في مكتبتك 📚");
       }
     } catch (err) {
       console.error("Post bookmark toggle error:", err);
       const msg = err instanceof Error ? err.message : "حدث خطأ. حاول مرة أخرى.";
-      toast({
-        title: "حدث خطأ ما",
+      toast.error("حدث خطأ ما", {
         description: msg,
-        variant: "destructive",
       });
     } finally {
       setLoading(false);

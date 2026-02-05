@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { Loader2, Mail, Lock, CircuitBoard, Sparkles, ArrowRight } from "lucide-react";
 
@@ -32,19 +32,17 @@ const Auth = () => {
             if (isLogin) {
                 const { error } = await signIn(formData.email, formData.password);
                 if (error) throw error;
-                toast({ title: "تم تسجيل الدخول بنجاح!" });
+                toast.success("تم تسجيل الدخول بنجاح!");
                 navigate(from);
             } else {
                 const { error } = await signUp(formData.email, formData.password, formData.fullName);
                 if (error) throw error;
-                toast({ title: "تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني." });
+                toast.success("تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني.");
                 if (!error) setIsLogin(true);
             }
         } catch (error: any) {
-            toast({
-                title: "حدث خطأ ما",
+            toast.error("حدث خطأ ما", {
                 description: error.message,
-                variant: "destructive",
             });
         } finally {
             setLoading(false);
@@ -58,10 +56,8 @@ const Auth = () => {
             if (error) throw error;
             // Google redirect happens automatically
         } catch (error: any) {
-            toast({
-                title: "حدث خطأ ما",
+            toast.error("حدث خطأ ما", {
                 description: error.message,
-                variant: "destructive",
             });
             setLoading(false);
         }

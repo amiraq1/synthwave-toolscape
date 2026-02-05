@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Mail, Sparkles, Check } from 'lucide-react';
@@ -15,7 +15,6 @@ interface NewsletterFormProps {
 const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps) => {
     const [email, setEmail] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
-    const { toast } = useToast();
 
     const subscribeMutation = useMutation({
         mutationFn: async (email: string) => {
@@ -34,19 +33,15 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
         onSuccess: () => {
             setIsSuccess(true);
             setEmail('');
-            toast({
-                title: '🎉 تم الاشتراك بنجاح!',
+            toast.success('🎉 تم الاشتراك بنجاح!', {
                 description: 'ستصلك آخر أخبار أدوات الذكاء الاصطناعي',
-                className: 'bg-emerald-500/10 text-emerald-500',
             });
             // Reset success state after 5 seconds
             setTimeout(() => setIsSuccess(false), 5000);
         },
         onError: (error: Error) => {
-            toast({
-                title: 'خطأ',
+            toast.error('خطأ', {
                 description: error.message || 'فشل في الاشتراك',
-                variant: 'destructive',
             });
         },
     });
@@ -58,10 +53,8 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            toast({
-                title: 'خطأ',
+            toast.error('خطأ', {
                 description: 'البريد الإلكتروني غير صحيح',
-                variant: 'destructive',
             });
             return;
         }

@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 
 interface UserWithRole {
@@ -42,7 +42,6 @@ interface AdminUserRpcResponse {
 
 const AdminUsersTable = () => {
   const { user: currentUser } = useAuth();
-  const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [roleChangeUser, setRoleChangeUser] = useState<{ user: UserWithRole; newRole: 'admin' | 'moderator' | 'user' | null } | null>(null);
@@ -66,15 +65,13 @@ const AdminUsersTable = () => {
       setUsers(usersWithRoles);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'فشل في جلب المستخدمين';
-      toast({
-        title: 'خطأ',
+      toast.error('خطأ', {
         description: errorMessage,
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -112,18 +109,15 @@ const AdminUsersTable = () => {
         if (error) throw error;
       }
 
-      toast({
-        title: 'تم التحديث',
+      toast.success('تم التحديث', {
         description: `تم تحديث صلاحيات ${user.display_name || user.email}`,
       });
 
       fetchUsers();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'فشل في تحديث الصلاحيات';
-      toast({
-        title: 'خطأ',
+      toast.error('خطأ', {
         description: errorMessage,
-        variant: 'destructive',
       });
     } finally {
       setIsUpdating(false);

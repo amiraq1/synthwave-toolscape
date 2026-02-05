@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
     Dialog,
@@ -69,7 +69,6 @@ const generateSlug = (title: string): string => {
 };
 
 const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
-    const { toast } = useToast();
     const { user } = useAuth();
     const queryClient = useQueryClient();
     const [imagePreview, setImagePreview] = useState<string>('');
@@ -173,19 +172,14 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             }
         },
         onSuccess: () => {
-            toast({
-                title: isEditMode ? '✅ تم التحديث' : '🎉 تم النشر',
-                className: "bg-emerald-500/10 text-emerald-500"
-            });
+            toast.success(isEditMode ? '✅ تم التحديث' : '🎉 تم النشر');
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             onOpenChange(false);
             form.reset();
         },
         onError: (error: Error) => {
-            toast({
-                title: 'خطأ',
+            toast.error('خطأ', {
                 description: error?.message || (isEditMode ? 'فشل التحديث' : 'فشل النشر'),
-                variant: 'destructive'
             });
         },
     });
@@ -221,17 +215,12 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             setImagePreview(publicUrl);
             setImageError(false);
 
-            toast({
-                title: "تم الرفع بنجاح",
-                className: "bg-emerald-500/10 text-emerald-500",
-            });
+            toast.success("تم الرفع بنجاح");
         } catch (error) {
             console.error('Upload error:', error);
             const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
-            toast({
-                title: "فشل الرفع",
+            toast.error("فشل الرفع", {
                 description: errorMessage,
-                variant: "destructive",
             });
         } finally {
             setIsUploading(false);

@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useSEO } from '@/hooks/useSEO';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const Contact = () => {
-    const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formData, setFormData] = useState({
@@ -33,8 +32,7 @@ const Contact = () => {
 
         setIsSubmitting(false);
         setIsSubmitted(true);
-        toast({
-            title: 'تم إرسال رسالتك',
+        toast.success('تم إرسال رسالتك', {
             description: 'شكراً لتواصلك معنا. سنرد عليك في أقرب وقت.',
         });
     };

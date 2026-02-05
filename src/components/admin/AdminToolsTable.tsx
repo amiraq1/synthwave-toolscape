@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
 import { getToolImageUrl } from "@/utils/imageUrl";
@@ -45,12 +45,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from('tools').delete().eq('id', Number(id));
 
     if (error) {
-      toast({
-        title: "فشل الحذف",
-        variant: "destructive",
-      });
+      toast.error("فشل الحذف");
     } else {
-      toast({ title: "تم الحذف بنجاح" });
+      toast.success("تم الحذف بنجاح");
       onUpdate();
     }
   };
@@ -62,14 +59,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast({
-        title: "حدث خطأ",
-        variant: "destructive",
-      });
+      toast.error("حدث خطأ");
     } else {
-      toast({
-        title: tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة",
-      });
+      toast.success(tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة");
       onUpdate();
     }
   };
@@ -82,14 +74,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast({
-        title: "حدث خطأ",
-        variant: "destructive",
-      });
+      toast.error("حدث خطأ");
     } else {
-      toast({
-        title: tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة",
-      });
+      toast.success(tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة");
       onUpdate();
     }
   };
@@ -126,73 +113,73 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
               filteredTools.map((tool) => {
                 const imageUrl = getToolImageUrl(tool.image_url, tool.url);
                 return (
-                <TableRow key={tool.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      {imageUrl && (
-                        <img
-                          src={imageUrl}
-                          alt={tool.title}
-                          className="w-10 h-10 rounded-lg object-cover bg-white/5"
-                        />
-                      )}
-                      <div>
-                        <div className="font-bold">{tool.title}</div>
-                        <div className="text-xs text-gray-400 truncate max-w-[200px]">
-                          {tool.description}
+                  <TableRow key={tool.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-3">
+                        {imageUrl && (
+                          <img
+                            src={imageUrl}
+                            alt={tool.title}
+                            className="w-10 h-10 rounded-lg object-cover bg-white/5"
+                          />
+                        )}
+                        <div>
+                          <div className="font-bold">{tool.title}</div>
+                          <div className="text-xs text-gray-400 truncate max-w-[200px]">
+                            {tool.description}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1">
-                      <Badge variant={tool.is_published ? "default" : "secondary"} className={tool.is_published ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"}>
-                        {tool.is_published ? "منشور" : "مسودة"}
-                      </Badge>
-                      {tool.is_featured && (
-                        <Badge variant="outline" className="border-purple-500/50 text-purple-400">
-                          ⭐ مميز
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <Badge variant={tool.is_published ? "default" : "secondary"} className={tool.is_published ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"}>
+                          {tool.is_published ? "منشور" : "مسودة"}
                         </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{tool.category}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>إجراءات</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleEdit(tool)}>
-                          <Edit className="mr-2 h-4 w-4" /> تعديل
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => togglePublished(tool)}>
-                          {tool.is_published ? (
-                            <><XCircle className="mr-2 h-4 w-4" /> إخفاء</>
-                          ) : (
-                            <><CheckCircle className="mr-2 h-4 w-4" /> نشر</>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
-                          <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" /> زيارة الموقع
-                          </a>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleDelete(tool.id)} className="text-red-600 focus:text-red-600">
-                          <Trash2 className="mr-2 h-4 w-4" /> حذف
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                        {tool.is_featured && (
+                          <Badge variant="outline" className="border-purple-500/50 text-purple-400">
+                            ⭐ مميز
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{tool.category}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>إجراءات</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => handleEdit(tool)}>
+                            <Edit className="mr-2 h-4 w-4" /> تعديل
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => togglePublished(tool)}>
+                            {tool.is_published ? (
+                              <><XCircle className="mr-2 h-4 w-4" /> إخفاء</>
+                            ) : (
+                              <><CheckCircle className="mr-2 h-4 w-4" /> نشر</>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
+                            <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <a href={tool.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="mr-2 h-4 w-4" /> زيارة الموقع
+                            </a>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleDelete(tool.id)} className="text-red-600 focus:text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" /> حذف
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
                 );
               })
             ) : (

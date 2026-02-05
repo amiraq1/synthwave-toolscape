@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
@@ -113,15 +113,13 @@ const Admin = () => {
     try {
       const { error } = await supabase.functions.invoke("auto-draft", { body: formData });
       if (error) throw error;
-      toast({ title: `تم توليد مسودة لـ ${formData.name} بنجاح!` });
+      toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
       setFormData({ name: "", url: "", description_en: "" });
       refetchTools();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      toast({
-        title: "خطأ",
+      toast.error("خطأ", {
         description: errorMessage,
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -131,7 +129,7 @@ const Admin = () => {
   const deleteDraft = async (id: string) => {
     if (!confirm("حذف نهائي؟")) return;
     await supabase.from("tools").delete().eq("id", Number(id));
-    toast({ title: "تم الحذف" });
+    toast.success("تم الحذف");
     refetchTools();
   };
 

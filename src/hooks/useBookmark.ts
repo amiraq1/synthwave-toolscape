@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const BOOKMARK_QUERY_KEY = "bookmarkStatus";
 
@@ -69,10 +69,7 @@ export const useBookmark = (toolId: number) => {
             if (context?.previousIsSaved !== undefined) {
                 queryClient.setQueryData([BOOKMARK_QUERY_KEY, toolId, session?.user.id], context.previousIsSaved);
             }
-            toast({
-                title: "فشل تحديث المفضلة",
-                variant: "destructive",
-            });
+            toast.error("فشل تحديث المفضلة");
         },
         // Always refetch after error or success to ensure sync
         onSettled: () => {
@@ -84,17 +81,14 @@ export const useBookmark = (toolId: number) => {
 
     const toggleBookmark = () => {
         if (!session) {
-            toast({
-                title: "سجل دخولك لحفظ الأدوات 🔐",
-                variant: "destructive",
-            });
+            toast.error("سجل دخولك لحفظ الأدوات 🔐");
             return;
         }
         const newState = !isSaved;
 
         // Show Optimistic Toast
-        if (newState) toast({ title: "تم الحفظ في مكتبتك 📚" });
-        else toast({ title: "تمت الإزالة من المفضلة" });
+        if (newState) toast.success("تم الحفظ في مكتبتك 📚");
+        else toast("تمت الإزالة من المفضلة");
 
         // Execute Mutation
         mutation.mutate(newState);

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import AvatarUpload from "@/components/AvatarUpload";
 import { Loader2, Save } from "lucide-react";
 
@@ -52,13 +52,11 @@ const Settings = () => {
       .eq("id", session.user.id);
 
     if (error) {
-      toast({
-        title: "فشل التحديث",
+      toast.error("فشل التحديث", {
         description: error.message,
-        variant: "destructive",
       });
     } else {
-      toast({ title: "تم حفظ البيانات! ✅" });
+      toast.success("تم حفظ البيانات! ✅");
     }
     setUpdating(false);
   };

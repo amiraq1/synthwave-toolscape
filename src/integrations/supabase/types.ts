@@ -112,6 +112,7 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          excerpt: string | null
           id: string
           image_url: string | null
           is_published: boolean
@@ -121,6 +122,7 @@ export type Database = {
           author_id: string
           content: string
           created_at?: string
+          excerpt?: string | null
           id?: string
           image_url?: string | null
           is_published?: boolean
@@ -130,6 +132,7 @@ export type Database = {
           author_id?: string
           content?: string
           created_at?: string
+          excerpt?: string | null
           id?: string
           image_url?: string | null
           is_published?: boolean
@@ -227,6 +230,7 @@ export type Database = {
           id: number
           image_url: string | null
           is_featured: boolean
+          is_published: boolean
           pricing_type: string
           screenshots: string[] | null
           title: string
@@ -240,6 +244,7 @@ export type Database = {
           id?: number
           image_url?: string | null
           is_featured?: boolean
+          is_published?: boolean
           pricing_type?: string
           screenshots?: string[] | null
           title: string
@@ -253,10 +258,29 @@ export type Database = {
           id?: number
           image_url?: string | null
           is_featured?: boolean
+          is_published?: boolean
           pricing_type?: string
           screenshots?: string[] | null
           title?: string
           url?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          id: string
+          email: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          created_at?: string
         }
         Relationships: []
       }

@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -64,7 +64,6 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -105,7 +104,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     const currentDesc = form.getValues('description');
 
     if (!currentTitle.trim() || !currentDesc.trim()) {
-      toast({ title: 'تنبيه', description: 'أدخل الاسم والوصف أولاً', variant: 'destructive' });
+      toast.error('تنبيه', { description: 'أدخل الاسم والوصف أولاً' });
       return;
     }
 
@@ -117,10 +116,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
       if (data?.enhancedDescription) {
         form.setValue('description', data.enhancedDescription, { shouldValidate: true });
-        toast({ title: '✨ تم التحسين' });
+        toast.success('✨ تم التحسين');
       }
     } catch (error) {
-      toast({ title: 'خطأ', description: 'فشل التحسين', variant: 'destructive' });
+      toast.error('خطأ', { description: 'فشل التحسين' });
     } finally {
       setIsEnhancing(false);
     }
@@ -144,11 +143,11 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: '🎉 تم الإضافة بنجاح', className: "bg-emerald-500/10 text-emerald-500" });
+      toast.success('🎉 تم الإضافة بنجاح');
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       onOpenChange(false);
     },
-    onError: () => toast({ title: 'خطأ', description: 'فشل الحفظ', variant: 'destructive' }),
+    onError: () => toast.error('خطأ', { description: 'فشل الحفظ' }),
   });
 
   // Auth Guard

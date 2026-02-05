@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import type { Tool } from "@/types";
 
 interface EditDraftDialogProps {
@@ -54,13 +54,11 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
             .eq("id", tool.id);
 
         if (error) {
-            toast({
-                title: "فشل التحديث",
+            toast.error("فشل التحديث", {
                 description: error.message,
-                variant: "destructive",
             });
         } else {
-            toast({ title: "تم التعديل والنشر بنجاح! 🚀" });
+            toast.success("تم التعديل والنشر بنجاح! 🚀");
             onUpdate();
             onClose();
         }

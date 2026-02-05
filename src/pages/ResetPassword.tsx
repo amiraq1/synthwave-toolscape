@@ -4,7 +4,7 @@ import { Activity, Lock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
@@ -42,7 +42,6 @@ const ResetPassword = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const params = useMemo(() => parseAuthParams(), []);
 
@@ -55,10 +54,8 @@ const ResetPassword = () => {
         if (params.code) {
           const { error } = await supabase.auth.exchangeCodeForSession(params.code);
           if (error) {
-            toast({
-              title: "رابط غير صالح",
+            toast.error("رابط غير صالح", {
               description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
-              variant: "destructive",
             });
             navigate("/auth", { replace: true });
             return;
@@ -69,10 +66,8 @@ const ResetPassword = () => {
         // لكن نتأكد أن عندنا session فعلاً
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
-          toast({
-            title: "رابط غير صالح",
+          toast.error("رابط غير صالح", {
             description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
-            variant: "destructive",
           });
           navigate("/auth", { replace: true });
           return;
@@ -90,7 +85,7 @@ const ResetPassword = () => {
     return () => {
       cancelled = true;
     };
-  }, [navigate, toast, params.code]);
+  }, [navigate, params.code]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,20 +94,16 @@ const ResetPassword = () => {
     try {
       const validation = passwordSchema.safeParse({ password, confirmPassword });
       if (!validation.success) {
-        toast({
-          title: "خطأ في البيانات",
+        toast.error("خطأ في البيانات", {
           description: validation.error.errors[0].message,
-          variant: "destructive",
         });
         return;
       }
 
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) {
-        toast({
-          title: "انتهت صلاحية الرابط",
+        toast.error("انتهت صلاحية الرابط", {
           description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
-          variant: "destructive",
         });
         navigate("/auth", { replace: true });
         return;
@@ -121,17 +112,14 @@ const ResetPassword = () => {
       const { error } = await supabase.auth.updateUser({ password });
 
       if (error) {
-        toast({
-          title: "خطأ",
+        toast.error("خطأ", {
           description: "حدث خطأ أثناء تغيير كلمة المرور",
-          variant: "destructive",
         });
         return;
       }
 
       setIsSuccess(true);
-      toast({
-        title: "تم بنجاح!",
+      toast.success("تم بنجاح!", {
         description: "تم تغيير كلمة المرور بنجاح",
       });
     } finally {

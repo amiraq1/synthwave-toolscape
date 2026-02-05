@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta name="msvalidate.01" content="474F2AE0302E7CE5EE69EE39E6337EDD" />
 
   <!-- Viewport: أفضل للموبايل + Safe Area -->
@@ -81,10 +82,14 @@
   <!-- Preconnect for external resources (improves connection time) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  
+
   <!-- Preload Google Fonts CSS for faster LCP -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" />
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap"
+    crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap"
+    crossorigin />
 
   <link rel="dns-prefetch" href="%VITE_SUPABASE_URL%" />
   <link rel="preconnect" href="%VITE_SUPABASE_URL%" />
@@ -148,6 +153,22 @@
       }
     }
   </style>
+
+  <!-- Structured Data (JSON-LD) for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "نبض AI",
+    "url": "https://amiraq.org/",
+    "description": "دليل أدوات الذكاء الاصطناعي العربية والعالمية",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://amiraq.org/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 </head>
 
 <body>

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ToolCard from "@/components/ToolCard";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
@@ -112,13 +112,10 @@ const Profile = () => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }
-            toast({
-                title: "فشل تحديث البيانات، تمت استعادة البيانات السابقة.",
-                variant: "destructive",
-            });
+            toast.error("فشل تحديث البيانات، تمت استعادة البيانات السابقة.");
         },
         onSuccess: () => {
-            toast({ title: "تم تحديث البروفايل بنجاح ✅" });
+            toast.success("تم تحديث البروفايل بنجاح ✅");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
