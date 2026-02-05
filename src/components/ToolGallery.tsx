@@ -21,7 +21,7 @@ const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
 
     // صور افتراضية للتجربة إذا لم تكن هناك صور حقيقية في قاعدة البيانات
     const displayImages = validImages.length > 0 ? validImages : [
-        "/robot-placeholder.webp", // صورة الروبوت الافتراضية (WebP للأداء)
+        `https://placehold.co/1200x800/0f0f1a/6b7280?text=${encodeURIComponent(title)}`,
     ];
 
     const [mainImage, setMainImage] = useState(displayImages[0]);

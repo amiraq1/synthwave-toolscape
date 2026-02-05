@@ -14,7 +14,7 @@ const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_ID;
 export const initGA = () => {
     // لا تقم بالتهيئة إذا لم يكن المعرف موجوداً (مثلاً في بيئة التطوير المحلية)
     if (!GA_MEASUREMENT_ID) {
-        console.log('Google Analytics: ID missing, skipping initialization');
+        // console.log('Google Analytics: ID missing, skipping initialization');
         return;
     }
 

@@ -42,7 +42,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // Lazy Load Components
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
-const ChatWidget = lazy(() => import("@/components/ChatWidget"));
+const ChatBot = lazy(() => import("@/components/ChatBot")); // Replaced ChatWidget
 // ScrollToTopButton moved to eager import
 
 const queryClient = new QueryClient({
@@ -119,7 +119,7 @@ const AppContent = () => {
         {isAddModalOpen && (
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         )}
-        <ChatWidget />
+        <ChatBot />
       </Suspense>
     </div>
   );
