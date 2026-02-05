@@ -73,7 +73,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
           </span>
-          <span className="text-xs font-mono text-slate-300 tracking-wider">SYSTEM ONLINE: NABD INTELLIGENCE v4.0</span>
+          <span className="text-xs font-mono text-slate-300 tracking-wider">نظام نبض الذكي v4.0: متصل</span>
         </div>
 
         {/* Typography: The Statement */}
@@ -128,23 +128,23 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionPr
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 pt-12 border-t border-white/5 w-full max-w-3xl">
           <div className="flex flex-col items-center space-y-2 group cursor-default">
             <Cpu className="w-6 h-6 text-slate-600 group-hover:text-neon-purple transition-colors" />
-            <span className="text-2xl font-bold text-white font-mono">500+</span>
-            <span className="text-xs text-slate-500 uppercase tracking-widest">Tools</span>
+            <span className="text-2xl font-bold text-white font-mono">+500</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest font-cairo">أداة ذكية</span>
           </div>
           <div className="flex flex-col items-center space-y-2 group cursor-default">
             <Globe className="w-6 h-6 text-slate-600 group-hover:text-neon-cyan transition-colors" />
             <span className="text-2xl font-bold text-white font-mono">AR/EN</span>
-            <span className="text-xs text-slate-500 uppercase tracking-widest">Support</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest font-cairo">دعم ثنائي اللغة</span>
           </div>
           <div className="flex flex-col items-center space-y-2 group cursor-default">
             <Zap className="w-6 h-6 text-slate-600 group-hover:text-yellow-400 transition-colors" />
-            <span className="text-2xl font-bold text-white font-mono">FAST</span>
-            <span className="text-xs text-slate-500 uppercase tracking-widest">Performance</span>
+            <span className="text-2xl font-bold text-white font-mono">سريع</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest font-cairo">أداء فوري</span>
           </div>
           <div className="flex flex-col items-center space-y-2 group cursor-default">
             <Sparkles className="w-6 h-6 text-slate-600 group-hover:text-pink-400 transition-colors" />
-            <span className="text-2xl font-bold text-white font-mono">FREE</span>
-            <span className="text-xs text-slate-500 uppercase tracking-widest">Access</span>
+            <span className="text-2xl font-bold text-white font-mono">مجاني</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest font-cairo">وصول كامل</span>
           </div>
         </div>
 
