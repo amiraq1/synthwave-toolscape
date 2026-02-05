@@ -1,76 +1,27 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 
 <head>
-  <meta charset="UTF-8" />
-  <title>نبض - جاري التحويل...</title>
-
-  <!-- Critical CSS for Loader -->
-  <style>
-    .app-loader {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #0f0f1a;
-      color: white;
-      font-family: sans-serif;
-    }
-
-    .loader-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(124, 58, 237, 0.3);
-      border-radius: 50%;
-      border-top-color: #7c3aed;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 20px;
-    }
-
-    .loader-logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-
+  <meta charset="utf-8">
+  <title>جارِ التوجيه...</title>
   <script type="text/javascript">
-    // SPA Redirect for static hosting (GitHub Pages / Vercel / Netlify)
-    // This script redirects 404 requests back to index.html with the original path
-    (function () {
-      var l = window.location;
+    // Single Page Apps for GitHub Pages
+    // هذا السكربت يأخذ المسار الحالي ويعيد توجيهه إلى الصفحة الرئيسية
+    // مع حفظ المسار كـ Query String ليعالجه React Router لاحقاً
+    var pathSegmentsToKeep = 0;
 
-      // If we are already at root, don't redirect
-      if (l.pathname === '/' || l.pathname === '/index.html') return;
-
-      // Preserve the path, query, and hash
-      var path = l.pathname;
-      var search = l.search;
-      var hash = l.hash;
-
-      // Redirect to root with the path encoded as a query parameter
-      // The script in index.html will restore the history state
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        '/?' + path.slice(1).replace(/&/g, '~and~') +
-        (search ? '&' + search.slice(1).replace(/&/g, '~and~') : '') +
-        hash
-      );
-    })();
+    var l = window.location;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.hash
+    );
   </script>
 </head>
 
 <body>
-  <div class="app-loader">
-    <div class="loader-spinner"></div>
-    <div class="loader-logo">جاري التحويل...</div>
-  </div>
 </body>
 
 </html>

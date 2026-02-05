@@ -128,11 +128,11 @@ const Footer = () => {
             {t('footer.rights')}
           </p>
           <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
-            <Link to="/about" className="hover:text-neon-purple transition-colors">
-              حول
+            <Link to="/about" className="hover:text-neon-purple transition-colors p-2 -m-2 block">
+              من نحن
             </Link>
             <span>•</span>
-            <Link to="/contact" className="hover:text-neon-purple transition-colors">
+            <Link to="/contact" className="hover:text-neon-purple transition-colors p-2 -m-2 block">
               اتصل بنا
             </Link>
           </div>

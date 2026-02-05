@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import dayjs from "dayjs";
 import 'dayjs/locale/ar';
 dayjs.locale('ar');
@@ -28,13 +29,16 @@ const BlogCard = ({ post }: BlogCardProps) => {
 
             {/* صورة المقال (اختياري) */}
             {post.image_url && (
-                <div className="h-48 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-                    <img
-                        src={post.image_url}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
+                <div className="w-full overflow-hidden rounded-md bg-muted">
+                    <AspectRatio ratio={16 / 9}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
+                        <img
+                            src={post.image_url}
+                            alt={post.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy"
+                        />
+                    </AspectRatio>
                 </div>
             )}
 

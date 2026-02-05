@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Star, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getToolImageUrl, getValidImageUrl } from '@/utils/imageUrl';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const FeaturedShortlist = () => {
     const { data } = useTools({ searchQuery: '', category: 'الكل' });
@@ -37,40 +38,48 @@ const FeaturedShortlist = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredTools.map((tool: Tool) => {
+                {featuredTools.map((tool: Tool, index: number) => {
                     const hasCustomImage = !!getValidImageUrl(tool.image_url);
                     const coverImage = getToolImageUrl(tool.image_url, tool.url) ?? '/placeholder.svg';
+                    const isAboveFold = index < 2; // أول صورتين مهمتين للـ LCP
                     return (
-                    <Card
-                        key={tool.id}
-                        className="group relative overflow-hidden border-white/5 bg-card/40 backdrop-blur-sm hover:border-neon-purple/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
-                        onClick={() => navigate(`/tool/${tool.id}`)}
-                    >
-                        {/* Image Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                        <Card
+                            key={tool.id}
+                            className="group relative overflow-hidden border-white/5 bg-card/40 backdrop-blur-sm hover:border-neon-purple/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+                            onClick={() => navigate(`/tool/${tool.id}`)}
+                        >
+                            {/* Image Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
 
-                        {/* Background Image */}
-                        <div className="h-48 w-full overflow-hidden">
-                            <img
-                                src={coverImage}
-                                alt={tool.title}
-                                className={`w-full h-full transition-transform duration-500 group-hover:scale-110 ${hasCustomImage ? "object-cover" : "object-contain"} bg-black/20`}
-                            />
-                        </div>
-
-                        <CardContent className="absolute bottom-0 left-0 right-0 z-20 p-4">
-                            <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-neon-purple/20 text-neon-purple border border-neon-purple/20">
-                                    {tool.category}
-                                </span>
-                                {tool.pricing_type === 'Free' && (
-                                    <span className="text-xs font-medium text-green-400">مجاني</span>
-                                )}
+                            {/* Background Image with AspectRatio */}
+                            <div className="w-full overflow-hidden bg-muted">
+                                <AspectRatio ratio={4 / 3}>
+                                    <img
+                                        src={coverImage}
+                                        alt={tool.title}
+                                        className={`w-full h-full transition-transform duration-500 group-hover:scale-110 ${hasCustomImage ? "object-cover" : "object-contain"} bg-black/20`}
+                                        loading={isAboveFold ? "eager" : "lazy"}
+                                        // @ts-expect-error fetchpriority is valid but not in React types
+                                        fetchpriority={isAboveFold ? "high" : "auto"}
+                                        width={400}
+                                        height={300}
+                                    />
+                                </AspectRatio>
                             </div>
-                            <h3 className="font-bold text-lg text-white mb-1 line-clamp-1">{tool.title}</h3>
-                            <p className="text-xs text-gray-300 line-clamp-2 mb-2 opacity-90">{tool.description}</p>
-                        </CardContent>
-                    </Card>
+
+                            <CardContent className="absolute bottom-0 left-0 right-0 z-20 p-4">
+                                <div className="flex items-center justify-between mb-1">
+                                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-neon-purple/20 text-neon-purple border border-neon-purple/20">
+                                        {tool.category}
+                                    </span>
+                                    {tool.pricing_type === 'Free' && (
+                                        <span className="text-xs font-medium text-green-400">مجاني</span>
+                                    )}
+                                </div>
+                                <h3 className="font-bold text-lg text-white mb-1 line-clamp-1">{tool.title}</h3>
+                                <p className="text-xs text-gray-300 line-clamp-2 mb-2 opacity-90">{tool.description}</p>
+                            </CardContent>
+                        </Card>
                     );
                 })}
             </div>

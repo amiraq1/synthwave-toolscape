@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
   Menu, Home, Wrench, Info, HelpCircle,
-  BookOpen, Globe, Plus, Heart,
+  BookOpen, Globe, Plus, Heart, Search,
   Bot, GitBranch, LogOut, User, LayoutDashboard
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -103,6 +103,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
             {/* الإشعارات والمفضلة واللغة (مخفية في الموبايل الصغير جداً) */}
             <div className="hidden sm:flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="بحث في الموقع">
+                <Search className="w-5 h-5" />
+              </Button>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="المفضلة">
                 <Heart className="w-5 h-5" />
               </Button>

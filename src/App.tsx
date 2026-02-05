@@ -14,10 +14,11 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import { initGA, logPageView } from "@/lib/analytics";
 import { PwaUpdateToast } from "@/components/pwa-update-toast";
+import Index from "./pages/Index"; // Eager load Home for better LCP
 
 
 // Lazy Load Pages
-const Index = lazy(() => import("./pages/Index"));
+// const Index = lazy(() => import("./pages/Index")); // Moved to eager load
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
