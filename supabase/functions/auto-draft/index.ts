@@ -25,7 +25,7 @@ const corsHeaders = {
 // نستخدم نموذج flash 1.5 للسرعة والتوفير
 const GEMINI_MODEL = 'gemini-1.5-flash';
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   // 1. معالجة طلبات CORS (ضروري للمتصفح)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 

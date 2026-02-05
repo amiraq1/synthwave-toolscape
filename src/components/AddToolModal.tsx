@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles, LogIn, Plus, X, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Sparkles, LogIn, Plus, X, Link as LinkIcon, Image as ImageIcon, Wand2 } from 'lucide-react';
 
 interface AddToolModalProps {
   open: boolean;
@@ -48,7 +48,7 @@ const categories = [
   'تعليم وبحث',
   'أخرى'
 ];
-const pricingTypes = ['مجاني', 'مدفوع'];
+const pricingTypes = ['مجاني', 'مدفوع', 'تجربة مجانية'];
 
 const formSchema = z.object({
   title: z.string().min(2, 'الاسم قصير جداً'),
@@ -67,6 +67,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   const form = useForm<FormValues>({
@@ -83,7 +84,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     },
   });
 
-  const { fields: featureFields, append: appendFeature, remove: removeFeature } = useFieldArray({
+  const { fields: featureFields, append: appendFeature, remove: removeFeature, replace: replaceFeatures } = useFieldArray({
     control: form.control,
     name: "features",
   });
@@ -99,12 +100,55 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     }
   }, [open, form]);
 
+  // 1. Auto-Fill with AI
+  const autoFillFromUrl = async () => {
+    const url = form.getValues('url');
+    const name = form.getValues('title');
+
+    if (!url || !name) {
+      toast.error('المعلومات ناقصة', { description: 'يرجى إدخال اسم الأداة ورابطها أولاً' });
+      return;
+    }
+
+    setIsAutoFilling(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('auto-draft', {
+        body: { name, url }
+      });
+
+      if (error) throw error;
+
+      if (data?.tool) {
+        // تحديث الحقول بالبيانات المقترحة
+        form.setValue('title', data.tool.title);
+        form.setValue('description', data.tool.description);
+        form.setValue('category', data.tool.category || 'أخرى');
+        form.setValue('pricing_type', data.tool.pricing_type || 'مجاني');
+
+        // تحديث المميزات
+        if (data.tool.features && Array.isArray(data.tool.features)) {
+          // استبدال المميزات الحالية بالمقترحة
+          const newFeatures = data.tool.features.map((f: string) => ({ value: f }));
+          replaceFeatures(newFeatures);
+        }
+
+        toast.success('تم جلب البيانات بنجاح! 🪄');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error('فشل التعبئة التلقائية', { description: 'تأكد من الرابط أو حاول يدوياً' });
+    } finally {
+      setIsAutoFilling(false);
+    }
+  };
+
+  // 2. Enhance Description (Old function, kept for manual edits)
   const enhanceDescription = async () => {
     const currentTitle = form.getValues('title');
     const currentDesc = form.getValues('description');
 
     if (!currentTitle.trim() || !currentDesc.trim()) {
-      toast.error('تنبيه', { description: 'أدخل الاسم والوصف أولاً' });
+      toast.error('أدخل الاسم والوصف أولاً');
       return;
     }
 
@@ -119,7 +163,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         toast.success('✨ تم التحسين');
       }
     } catch (error) {
-      toast.error('خطأ', { description: 'فشل التحسين' });
+      toast.error('فشل التحسين');
     } finally {
       setIsEnhancing(false);
     }
@@ -137,7 +181,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         category: values.category,
         pricing_type: values.pricing_type,
         features: cleanFeatures.length > 0 ? cleanFeatures : null,
-        is_published: false, // الأدوات المقترحة تحتاج لموافقة أولاً
+        is_published: false,
         screenshots: cleanScreenshots.length > 0 ? cleanScreenshots : [],
       }]);
       if (error) throw error;
@@ -150,7 +194,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     onError: () => toast.error('خطأ', { description: 'فشل الحفظ' }),
   });
 
-  // Auth Guard
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -170,64 +213,71 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
 
-        {/* Fixed Header */}
         <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-bold">إضافة أداة جديدة</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
-            شاركنا أدوات ذكاء اصطناعي مفيدة.
+            أدخل الاسم والرابط، ثم استخدم "تعبئة ذكية" لجلب البيانات تلقائياً.
           </DialogDescription>
         </DialogHeader>
 
-        {/* Scrollable Form Body - Using native scroll for keyboard accessibility */}
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           <Form {...form}>
             <form id="add-tool-form" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4 pb-4">
 
-              {/* Basic Info Group */}
-              <div className="space-y-3 bg-muted/10 p-3 rounded-lg border border-white/5">
-                <FormField control={form.control} name="title" render={({ field }) => (
+              {/* URL & Auto-fill Section */}
+              <div className="bg-neon-purple/5 p-3 rounded-lg border border-neon-purple/10 space-y-3">
+                <div className="flex gap-2 items-end">
+                  <FormField control={form.control} name="title" render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-xs">اسم الأداة (انجليزي)</FormLabel>
+                      <FormControl><Input placeholder="مثال: ChatGPT" {...field} className="h-9 bg-background/50" /></FormControl>
+                    </FormItem>
+                  )} />
+
+                  <Button
+                    type="button"
+                    onClick={autoFillFromUrl}
+                    disabled={isAutoFilling}
+                    size="sm"
+                    className="bg-neon-purple hover:bg-neon-purple/90 text-white h-9 px-3 gap-2 min-w-[120px]"
+                  >
+                    {isAutoFilling ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Wand2 className="w-4 h-4" /> تعبئة ذكية</>}
+                  </Button>
+                </div>
+
+                <FormField control={form.control} name="url" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">اسم الأداة</FormLabel>
-                    <FormControl><Input placeholder="مثال: ChatGPT" {...field} className="h-8 bg-background/50" /></FormControl>
-                    <FormMessage className="text-[10px]" />
+                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> رابط الموقع</FormLabel>
+                    <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-9 bg-background/50" /></FormControl>
                   </FormItem>
                 )} />
+              </div>
 
+              {/* Details Section */}
+              <div className="space-y-3 bg-muted/10 p-3 rounded-lg border border-white/5">
                 <div className="grid grid-cols-2 gap-3">
                   <FormField control={form.control} name="category" render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs">التصنيف</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue placeholder="اختر" /></SelectTrigger></FormControl>
                         <SelectContent>{categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                       </Select>
-                      <FormMessage className="text-[10px]" />
                     </FormItem>
                   )} />
 
                   <FormField control={form.control} name="pricing_type" render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs">السعر</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue /></SelectTrigger></FormControl>
                         <SelectContent>{pricingTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                       </Select>
                     </FormItem>
                   )} />
                 </div>
-              </div>
-
-              {/* Links Group */}
-              <div className="space-y-3 bg-muted/10 p-3 rounded-lg border border-white/5">
-                <FormField control={form.control} name="url" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> رابط الموقع</FormLabel>
-                    <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )} />
 
                 <FormField control={form.control} name="image_url" render={({ field }) => (
                   <FormItem>
@@ -251,10 +301,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                 </FormItem>
               )} />
 
-              {/* Dynamic Features - Compact */}
+              {/* Features */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <FormLabel className="text-xs text-muted-foreground">المميزات (اختياري)</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">المميزات</FormLabel>
                   <Button type="button" variant="ghost" size="sm" onClick={() => appendFeature({ value: '' })} className="h-6 w-6 p-0"><Plus className="w-4 h-4" /></Button>
                 </div>
                 {featureFields.map((field, index) => (
@@ -271,7 +321,6 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
           </Form>
         </div>
 
-        {/* Fixed Footer */}
         <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">إلغاء</Button>
           <Button type="submit" form="add-tool-form" disabled={mutation.isPending} className="flex-1 h-9 bg-primary hover:bg-primary/90">

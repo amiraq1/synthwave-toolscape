@@ -1,4 +1,8 @@
 {
-    "css.lint.unknownAtRules": "ignore",
-    "github.copilot.chat.promptFiles.validation.enabled": false
+    "deno.enable": true,
+    "deno.unstable": true,
+    "deno.enablePaths": [
+        "supabase/functions"
+    ],
+    "deno.lint": true
 }

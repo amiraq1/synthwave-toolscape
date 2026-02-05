@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 interface MatchedTool {
   title: string;
@@ -12,7 +12,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -30,7 +30,6 @@ serve(async (req) => {
     let query, agentSlug;
     try {
       const body = await req.json();
-      // Support both styles for flexibility
       query = body.query || body.message;
       agentSlug = body.agentSlug || 'general';
     } catch (e) {
@@ -50,8 +49,7 @@ serve(async (req) => {
 
     const systemInstructions = agentData?.system_prompt || "أنت مساعد ذكي ومفيد.";
 
-    // 2. توليد Embedding (نستخدم v1beta لهذا النموذج لأنه أكثر استقراراً عليه)
-    // 👇 التغيير هنا: v1beta
+    // 2. توليد Embedding
     const embeddingResp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
       {
@@ -66,8 +64,7 @@ serve(async (req) => {
 
     if (!embeddingResp.ok) {
       const errText = await embeddingResp.text();
-      console.error("Gemini Embedding Error:", errText); // سيظهر هذا في اللوج
-      // محاولة استخدام نموذج أقدم كاحتياطي إذا فشل الحديث
+      console.error("Gemini Embedding Error:", errText);
       throw new Error(`فشل خدمة Embedding: ${errText}`);
     }
 
@@ -103,8 +100,7 @@ serve(async (req) => {
       سؤال المستخدم: ${query}
     `;
 
-    // 4. التوليد النهائي (نستخدم v1 لهذا النموذج)
-    // 👇 التغيير هنا: v1
+    // 4. التوليد النهائي
     const chatResp = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -137,7 +133,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       reply: "عذراً، واجهت مشكلة تقنية في الاتصال بالخدمات الذكية. الرجاء المحاولة لاحقاً."
     }), {
-      status: 200, // نرسل 200 مع رسالة خطأ لطيفة للمستخدم بدلاً من تعطل الواجهة
+      status: 200, // نرسل 200 لتجنب انهيار الواجهة، والتعامل مع الرسالة كنص
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
