@@ -1,7 +1,6 @@
-import { Sparkles, ArrowDown, Zap, Users, Star, GitBranch } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
+import { ArrowRight, Sparkles, Command, Cpu, Globe, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 
 interface HeroSectionProps {
@@ -11,130 +10,144 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionProps) => {
-  const { t } = useTranslation();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToTools = () => {
-    const toolsSection = document.getElementById('tools-heading');
-    toolsSection?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+      const x = (e.clientX - left) / width;
+      const y = (e.clientY - top) / height;
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+      containerRef.current.style.setProperty('--mouse-x', `${x}`);
+      containerRef.current.style.setProperty('--mouse-y', `${y}`);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <section className="relative py-16 sm:py-20 md:py-28 px-4 text-center overflow-hidden">
-      {/* Enhanced background effects with GPU acceleration */}
-      <div className="absolute top-10 left-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-purple/25 rounded-full blur-[120px] sm:blur-[150px] -z-10 gpu-accelerated animate-float" />
-      <div className="absolute bottom-10 right-1/4 w-72 sm:w-[500px] h-72 sm:h-[500px] bg-neon-blue/20 rounded-full blur-[120px] sm:blur-[150px] -z-10 gpu-accelerated" style={{ animationDelay: '2s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[180px] -z-10 gpu-accelerated" />
+    <section
+      ref={containerRef}
+      className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden px-4 md:px-6 pt-20 pb-32 w-full"
+      style={{
+        '--mouse-x': '0.5',
+        '--mouse-y': '0.5',
+      } as React.CSSProperties}
+    >
+      {/* 
+        =============================================
+        DYNAMIC ATMOSPHERE LAYER 
+        ============================================= 
+      */}
+      <div className="absolute inset-0 bg-[#0f0f1a] -z-20" />
 
-      {/* Animated Grid pattern */}
-      <div className="absolute inset-0 opacity-[0.12] -z-10" style={{
-        backgroundImage: "radial-gradient(circle at 1px 1px, rgba(139,92,246,0.3) 1px, transparent 0)",
-        backgroundSize: "40px 40px"
-      }} />
+      {/* Dynamic Grid */}
+      <div
+        className="absolute inset-0 -z-10 opacity-20"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(124, 58, 237, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(124, 58, 237, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '4rem 4rem',
+          maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)'
+        }}
+      />
 
-      {/* Pure CSS Background - Optimized for performance */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none gpu-accelerated">
-        {/* Deep space gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0f0f1a] via-[#1a1a2e] to-[#0f0f1a]" />
+      {/* Aurora Borealis Effects */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100vw] h-[50vh] bg-gradient-to-b from-neon-purple/20 via-transparent to-transparent blur-[120px] pointer-events-none mix-blend-screen" />
+      <div className="absolute bottom-0 right-0 w-[60vw] h-[60vw] bg-neon-blue/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen animate-pulse-slow" />
 
-        {/* Subtle Neon Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.08)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
+      {/* 
+        =============================================
+        CONTENT CORE 
+        ============================================= 
+      */}
+      <div className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center space-y-12">
 
-        {/* Top Glow Effect - Animated */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-purple/15 blur-[100px] rounded-full opacity-60 mix-blend-screen animate-pulse-slow" />
-
-        {/* Bottom Accent Glow */}
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-blue/10 blur-[80px] rounded-full opacity-40" />
-
-        {/* Additional cyan accent */}
-        <div className="absolute top-1/3 left-0 w-[300px] h-[300px] bg-neon-cyan/5 blur-[100px] rounded-full opacity-50" />
-      </div>
-
-      {/* Trending Bar removed */}
-
-      <div className="max-w-5xl mx-auto space-y-8 sm:space-y-10">
-        {/* Premium Animated Badge */}
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neon-purple/10 border border-neon-purple/40 text-sm text-neon-purple animate-fade-in backdrop-blur-sm shadow-lg shadow-neon-purple/10 hover:shadow-neon-purple/20 hover:border-neon-purple/60 transition-all duration-300 pulse-ring">
-          <Sparkles className="h-4 w-4 animate-pulse" />
-          <span className="font-medium">أكبر دليل عربي لأدوات الذكاء الاصطناعي</span>
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
+        {/* Badge: System Status */}
+        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md animate-fade-in">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
           </span>
+          <span className="text-xs font-mono text-slate-300 tracking-wider">SYSTEM ONLINE: NABD INTELLIGENCE v4.0</span>
         </div>
 
-        {/* Main headline with animated gradient */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <span className="text-white">{t('hero.title')}</span>
-        </h1>
-
-        {/* Subheadline with better styling */}
-        <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          {t('hero.subtitle')}
-        </p>
-
-        {/* Premium CTA Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 pt-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <Button
-            onClick={scrollToTools}
-            size="lg"
-            className="btn-premium animated-gradient text-white gap-2 px-8 py-7 text-lg font-bold shadow-xl shadow-neon-purple/30 hover:shadow-2xl hover:shadow-neon-purple/40 transition-all duration-300 border-0 rounded-2xl"
-          >
-            <Sparkles className="h-5 w-5" />
-            استكشف الأدوات
-          </Button>
-          <Link to="/workflow/new">
-            <Button
-              size="lg"
-              variant="outline"
-              className="btn-premium gap-2 px-8 py-7 text-lg font-bold rounded-2xl border-2 border-neon-purple/50 text-white hover:bg-neon-purple/15 hover:border-neon-purple transition-all duration-300 group backdrop-blur-sm"
-            >
-              <GitBranch className="h-5 w-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
-              جرب صانع الوكلاء
-            </Button>
-          </Link>
-        </div>
-
-        {/* Stats row */}
-        <div className="flex flex-wrap justify-center gap-6 sm:gap-10 pt-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Zap className="h-5 w-5 text-neon-purple" />
-            <span className="text-sm sm:text-base">+100 أداة</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Users className="h-5 w-5 text-neon-blue" />
-            <span className="text-sm sm:text-base">+1000 مستخدم</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Star className="h-5 w-5 text-neon-cyan" />
-            <span className="text-sm sm:text-base">تحديث يومي</span>
-          </div>
-        </div>
-
-        <div className="relative max-w-2xl mx-auto mt-8 sm:mt-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <SearchAutocomplete
-            value={searchQuery}
-            onChange={onSearchChange}
-            onSearch={onSearchChange}
-            className="glass-card rounded-2xl p-2 glow-purple transition-all duration-500 hover:scale-[1.02] z-20"
-            inputClassName="bg-transparent border-none focus:ring-0 focus:bg-transparent shadow-none text-base sm:text-lg py-4 sm:py-6"
-          />
-          <p className="text-sm text-muted-foreground/60 mt-4">
-            نصوص • صور • فيديو • برمجة • إنتاجية • دراسة
+        {/* Typography: The Statement */}
+        <div className="space-y-6 max-w-4xl mx-auto">
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 leading-[0.9] select-none">
+            FUTURE <br className="md:hidden" /> IS <span className="text-neon-purple">NOW</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
+            محرك البحث العربي الأول لأدوات الذكاء الاصطناعي.
+            <span className="block mt-2 text-slate-500 text-lg">اكتشف، قارن، وابنِ المستقبل.</span>
           </p>
         </div>
 
-        {/* Scroll Indicator */}
-        <button
-          onClick={scrollToTools}
-          className="mx-auto mt-8 flex flex-col items-center gap-2 text-muted-foreground/40 hover:text-neon-purple transition-colors"
-          aria-label="انتقل لقسم الأدوات"
-        >
-          <ArrowDown className="h-6 w-6 animate-bounce" />
-        </button>
+        {/* Input: The Command Center */}
+        <div className="w-full max-w-2xl relative group transform transition-all duration-500 hover:scale-[1.01]">
+          {/* Glow Effect behind input */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-purple rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-500 animate-gradient-x" />
+
+          <div className="relative bg-[#0f0f1a]/80 backdrop-blur-xl rounded-2xl border border-white/10 p-2 flex items-center shadow-2xl">
+            <div className="pl-4 pr-3 text-slate-400">
+              <Command className="w-6 h-6" />
+            </div>
+
+            <SearchAutocomplete
+              value={searchQuery}
+              onChange={onSearchChange}
+              onSearch={onSearchChange}
+              className="flex-1 bg-transparent border-none shadow-none text-lg text-white placeholder:text-slate-500 focus:ring-0 px-0 py-4 h-auto"
+              inputClassName="bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:text-slate-500 h-12"
+              placeholder="ابحث عن أداة (مثلاً: ChatGPT, كتابة محتوى...)"
+            />
+
+            <Button
+              size="icon"
+              className="h-12 w-12 rounded-xl bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg shadow-neon-purple/20 transition-all hover:scale-105"
+            >
+              <ArrowRight className="w-6 h-6 rotate-180" />
+            </Button>
+          </div>
+
+          {/* Quick Tags underneath */}
+          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-slate-500 font-mono">
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Coding</span>
+            <span className="text-slate-700">•</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Design</span>
+            <span className="text-slate-700">•</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Productivity</span>
+          </div>
+        </div>
+
+        {/* Status Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 pt-12 border-t border-white/5 w-full max-w-3xl">
+          <div className="flex flex-col items-center space-y-2 group cursor-default">
+            <Cpu className="w-6 h-6 text-slate-600 group-hover:text-neon-purple transition-colors" />
+            <span className="text-2xl font-bold text-white font-mono">500+</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest">Tools</span>
+          </div>
+          <div className="flex flex-col items-center space-y-2 group cursor-default">
+            <Globe className="w-6 h-6 text-slate-600 group-hover:text-neon-cyan transition-colors" />
+            <span className="text-2xl font-bold text-white font-mono">AR/EN</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest">Support</span>
+          </div>
+          <div className="flex flex-col items-center space-y-2 group cursor-default">
+            <Zap className="w-6 h-6 text-slate-600 group-hover:text-yellow-400 transition-colors" />
+            <span className="text-2xl font-bold text-white font-mono">FAST</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest">Performance</span>
+          </div>
+          <div className="flex flex-col items-center space-y-2 group cursor-default">
+            <Sparkles className="w-6 h-6 text-slate-600 group-hover:text-pink-400 transition-colors" />
+            <span className="text-2xl font-bold text-white font-mono">FREE</span>
+            <span className="text-xs text-slate-500 uppercase tracking-widest">Access</span>
+          </div>
+        </div>
+
       </div>
     </section>
   );

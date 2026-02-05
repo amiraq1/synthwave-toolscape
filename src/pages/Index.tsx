@@ -1,29 +1,27 @@
 import { useState, useMemo } from "react";
 import { Helmet } from 'react-helmet-async';
 import HeroSection from "@/components/HeroSection";
+import TrendingTools from "@/components/TrendingTools";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
 import ToolsTimeline from "@/components/ToolsTimeline";
 import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import RecommendedForYou from "@/components/RecommendedForYou";
-// تم حذف استيراد FeaturedShortlist من هنا
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
-import { Sparkles, Loader2, X } from "lucide-react";
+import { Sparkles, Loader2, X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
 const Index = () => {
-  // رابط مشروعك (تأكد من المعرف)
   const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
   const ogImageUrl = functionsBaseUrl
     ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent("\u0646\u0628\u0636 AI")}&category=${encodeURIComponent("\u062f\u0644\u064a\u0644\u0643 \u0627\u0644\u0630\u0643\u064a \u0644\u0623\u062f\u0648\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u0642\u0628\u0644")}`
     : "";
 
-  // Initial SEO
   useSEO({
     title: "الرئيسية",
     description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية.",
@@ -36,6 +34,8 @@ const Index = () => {
 
   const clearFilters = () => {
     setSelectedPersona("all");
+    setActiveCategory("الكل");
+    setSearchQuery("");
   };
 
   const {
@@ -52,61 +52,43 @@ const Index = () => {
   });
 
   const tools = useMemo(() => {
-    const rawTools = data?.pages.flatMap(page => page) ?? [];
-    return rawTools;
+    return data?.pages.flatMap(page => page) ?? [];
   }, [data]);
 
-  // 🧮 حساب العدادات لكل وظيفة
   const personaCounts = useMemo(() => {
     if (!tools || tools.length === 0) return {};
-
     const counts: Record<string, number> = {};
-
-    // 1. حساب الكل
     counts["all"] = tools.length;
-
-    // 2. حساب باقي الوظائف
     PERSONAS.forEach((persona) => {
       if (persona.id === 'all') return;
-
       const matchCount = tools.filter((t) =>
         persona.categories.some((cat) =>
           t.category?.toLowerCase().includes(cat.toLowerCase())
         )
       ).length;
-
       counts[persona.id] = matchCount;
     });
-
     return counts;
   }, [tools]);
 
-  // Apply combined filters: search + persona
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
-      // 1. Search filter
       const matchesSearch = searchQuery.trim() === '' ||
         tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tool.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // 2. Persona filter
       if (selectedPersona === "all") return matchesSearch;
-
       const filtered = filterToolsByPersona([tool], selectedPersona);
-      const matchesPersona = filtered.length > 0;
-
-      return matchesSearch && matchesPersona;
+      return matchesSearch && filtered.length > 0;
     });
   }, [tools, searchQuery, selectedPersona]);
 
-  // Hybrid Search
   const {
     semanticTools,
     isSemanticLoading,
     isSemantic,
   } = useHybridSearch(searchQuery, filteredTools.length, 3);
 
-  // Determine which tools to display
   const displayTools = useMemo(() => {
     if (isSemantic && semanticTools.length > 0) {
       return semanticTools as unknown as Tool[];
@@ -114,7 +96,6 @@ const Index = () => {
     return filteredTools;
   }, [filteredTools, semanticTools, isSemantic]);
 
-  // Structured data
   const structuredDataItems = useMemo(
     () => displayTools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
     [displayTools]
@@ -127,21 +108,20 @@ const Index = () => {
     items: structuredDataItems,
   });
 
-
   return (
-    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden font-cairo text-right" dir="rtl">
-      {/* 👇 تحسينات SEO للصفحة الرئيسية */}
+    <div className="relative min-h-screen bg-[#0f0f1a] overflow-x-hidden font-cairo text-right selection:bg-neon-purple selection:text-white" dir="rtl">
+
+      {/* Avant-Garde Backgrounds */}
+      <div className="fixed -top-[20%] right-[20%] w-[60vw] h-[60vw] bg-neon-purple/5 rounded-full blur-[180px] pointer-events-none" />
+      <div className="fixed bottom-[10%] -left-[10%] w-[50vw] h-[50vw] bg-neon-blue/5 rounded-full blur-[180px] pointer-events-none" />
+
       <Helmet>
         <title>نبض AI | الدليل العربي الأول لأدوات الذكاء الاصطناعي</title>
         <meta name="description" content="اكتشف أفضل أدوات الذكاء الاصطناعي (ChatGPT, Midjourney, وغيرها) مع مراجعات عربية، مقارنات دقيقة، وفلاتر ذكية. دليلك الشامل لعام 2026." />
-
-        {/* Open Graph */}
         <meta property="og:title" content="نبض AI | اكتشف أدوات المستقبل" />
         <meta property="og:description" content="أكبر مكتبة عربية لأدوات الذكاء الاصطناعي. ابحث، قارن، واختر الأداة المناسبة لك." />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:type" content="website" />
-
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
@@ -149,28 +129,21 @@ const Index = () => {
       {/* Skip link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-background focus:px-4 focus:py-2 focus:shadow"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-background focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple"
       >
         تخطّي إلى المحتوى
       </a>
 
-      {/* شريط النبض المباشر */}
       <LivePulse />
 
       <main
         id="main-content"
         role="main"
-        className="
-          flex-1
-          w-full
-          mx-auto
-          max-w-7xl
-          px-4 sm:px-6 lg:px-8
-          py-4 sm:py-6
-        "
+        className="relative z-10 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col gap-12"
       >
-        {/* Hero */}
-        <section aria-label="مقدمة وبحث" className="mb-8 sm:mb-12">
+
+        {/* Section 1: Hero & Primary Search */}
+        <section aria-label="البحث والاستكشاف" className="flex flex-col items-center text-center space-y-8 mb-4">
           <HeroSection
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -178,86 +151,80 @@ const Index = () => {
           />
         </section>
 
-        {/* Persona Filter - أنا ... */}
-        <div className="container mx-auto px-4 relative group mb-6">
-          <PersonaFilter
-            currentPersona={selectedPersona}
-            onSelect={(id) => setSelectedPersona(id as PersonaId)}
-            counts={personaCounts}
-          />
-
-          {/* زر إعادة التعيين يظهر فقط إذا لم نكن في "الكل" */}
-          {selectedPersona !== 'all' && (
-            <div className="flex justify-center -mt-4 mb-6 animate-in fade-in slide-in-from-top-2">
-              <button
-                onClick={clearFilters}
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-400 transition-colors bg-white/5 px-4 py-1.5 rounded-full border border-white/10 hover:border-red-500/30"
-              >
-                <X className="w-3 h-3" />
-                مسح الفلتر
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* 🔥 تم حذف قسم FeaturedShortlist من هنا */}
-
-        {/* Recommended For You */}
-        <RecommendedForYou />
-
-        {/* Category Filters */}
-        <section
-          aria-labelledby="filters-heading"
-          className="
-            mb-6 sm:mb-8
-            rounded-2xl
-            border border-white/10
-            bg-card/40
-            backdrop-blur-sm
-            px-4 sm:px-6
-            py-4 sm:py-5
-            section-divider
-          "
-        >
-          <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
-          <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+        {/* Section 1.5: Trending Ticker (NEW) */}
+        <section className="-mt-8 mb-4 animate-fade-in">
+          <TrendingTools />
         </section>
 
-        {/* Tools Display */}
-        <section
-          aria-labelledby="tools-heading"
-          className="
-            rounded-2xl
-            border border-white/10
-            bg-card/30
-            backdrop-blur-sm
-            px-4 sm:px-6
-            py-5 sm:py-6
-          "
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
+        {/* Section 2: Persona Filter (Floating) */}
+        <section className="sticky top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="relative group backdrop-blur-xl bg-black/20 rounded-2xl border border-white/5 shadow-2xl shadow-black/10 transition-all duration-300 hover:bg-black/30 hover:shadow-neon-purple/10 p-2">
+            <PersonaFilter
+              currentPersona={selectedPersona}
+              onSelect={(id) => setSelectedPersona(id as PersonaId)}
+              counts={personaCounts}
+            />
 
-            {/* Semantic Search Indicator */}
+            {/* Reset Filter Button */}
+            {(selectedPersona !== 'all' || activeCategory !== 'الكل' || searchQuery) && (
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 animate-in fade-in slide-in-from-top-2">
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-red-400 bg-black/40 px-4 py-2 rounded-full border border-white/10 hover:border-red-500/30 transition-all shadow-lg hover:shadow-red-500/10"
+                >
+                  <X className="w-3 h-3" />
+                  مسح جميع الفلاتر
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Section 3: Semantic Indicators & Categories */}
+        <section className="flex flex-col gap-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-neon-purple rounded-full"></span>
+              الأدوات المتاحة
+            </h2>
+
+            {/* Semantic Search Badge */}
             {searchQuery && (
-              <div className="flex items-center gap-2">
-                {isSemanticLoading && (
-                  <Badge variant="outline" className="gap-1 text-xs border-neon-purple/30 text-neon-purple animate-pulse">
+              <div className="flex items-center gap-2 animate-in fade-in zoom-in-95">
+                {isSemanticLoading ? (
+                  <Badge variant="outline" className="gap-2 border-neon-purple/30 text-neon-purple bg-neon-purple/5 px-3 py-1.5">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    بحث ذكي...
+                    جاري التحليل الذكي...
                   </Badge>
-                )}
-                {isSemantic && !isSemanticLoading && (
-                  <Badge className="gap-1.5 text-xs bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 text-neon-purple border border-neon-purple/30">
+                ) : isSemantic ? (
+                  <Badge className="gap-1.5 bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 text-neon-purple border-neon-purple/30 px-3 py-1.5">
                     <Sparkles className="w-3 h-3" />
-                    نتائج بحث ذكية 🤖
+                    نتائج بحث ذكية
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-white/5 text-slate-400 gap-2">
+                    <Search className="w-3 h-3" />
+                    نتائج مباشرة
                   </Badge>
                 )}
               </div>
             )}
           </div>
 
-          {/* Logic: Show Timeline by default, Grid when searching/filtering */}
+          <div className="bg-card/20 backdrop-blur-sm border border-white/5 rounded-2xl p-2 sm:p-4 hover:border-white/10 transition-colors">
+            <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+          </div>
+        </section>
+
+        {/* Section 4: Recommended (Only on default view) */}
+        {!searchQuery && activeCategory === 'الكل' && selectedPersona === 'all' && (
+          <section className="animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <RecommendedForYou />
+          </section>
+        )}
+
+        {/* Section 5: Main Grid/Timeline */}
+        <section className="min-h-[50vh]">
           {(!searchQuery && activeCategory === 'الكل') ? (
             <ToolsTimeline
               tools={displayTools || []}
@@ -277,12 +244,21 @@ const Index = () => {
               isFetchingNextPage={isFetchingNextPage}
             />
           )}
+
+          {/* Empty State */}
+          {!isLoading && !isSemanticLoading && displayTools.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02]">
+              <div className="p-4 rounded-full bg-white/5 text-slate-500">
+                <Search className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-300">لم يتم العثور على نتائج</h3>
+              <p className="text-slate-500 max-w-sm">جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات.</p>
+              <button onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">عرض كل الأدوات</button>
+            </div>
+          )}
         </section>
 
-        {/* مساحة تنفّس أسفل الشبكة على الموبايل */}
-        <div className="h-6 sm:h-8" />
       </main>
-
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "@/context/AuthContext";
 import { CompareProvider } from "@/context/CompareContext";
@@ -42,6 +42,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // Lazy Load Components
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
+const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 // ScrollToTopButton moved to eager import
 
 const queryClient = new QueryClient({
@@ -57,7 +58,7 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+
   const location = useLocation(); // Get current location
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -118,6 +119,7 @@ const AppContent = () => {
         {isAddModalOpen && (
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         )}
+        <ChatWidget />
       </Suspense>
     </div>
   );

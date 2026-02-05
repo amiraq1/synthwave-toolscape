@@ -31,12 +31,14 @@ interface ToolListSchema {
   }>;
 }
 
-type SchemaType = WebsiteSchema | ToolSchema | ToolListSchema;
+type SchemaType = WebsiteSchema | ToolSchema | ToolListSchema | null;
 
 const SITE_URL = 'https://amiraq.org';
 
 export const useStructuredData = (schema: SchemaType) => {
   useEffect(() => {
+    if (!schema) return;
+
     const existingScript = document.querySelector('script[data-structured-data]');
     if (existingScript) {
       existingScript.remove();

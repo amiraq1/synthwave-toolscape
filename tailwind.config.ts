@@ -101,7 +101,7 @@ export default {
         },
         "marquee": {
           "0%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(50%)" },
         },
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -134,7 +134,7 @@ export default {
         "fade-in": "fade-in 0.5s ease-out forwards",
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "pulse-slow": "pulse-slow 6s ease-in-out infinite",
-        "marquee": "marquee 25s linear infinite",
+        "marquee": "marquee 40s linear infinite",
         "float": "float 4s ease-in-out infinite",
         "shimmer": "shimmer 2s linear infinite",
         "spin-slow": "spin-slow 8s linear infinite",

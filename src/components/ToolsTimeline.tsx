@@ -2,11 +2,10 @@ import { useMemo, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ar';
 import ToolCard from './ToolCard';
-
-// Configure dayjs locale
-dayjs.locale('ar');
 import type { Tool } from '@/hooks/useTools';
-import { CalendarDays, Loader2 } from 'lucide-react';
+import { CalendarDays, Loader2, Sparkles } from 'lucide-react';
+
+dayjs.locale('ar');
 
 interface ToolsTimelineProps {
     tools: Tool[];
@@ -15,111 +14,134 @@ interface ToolsTimelineProps {
     isFetchingNextPage?: boolean;
 }
 
+interface TimelineGroup {
+    key: string;
+    sortValue: number;
+    items: Tool[];
+}
+
 const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage }: ToolsTimelineProps) => {
-    // تجميع الأدوات حسب (الشهر سنة)
-    const groupedTools = useMemo(() => {
-        const groups: Record<string, Tool[]> = {};
+    const timelineGroups = useMemo(() => {
+        const groupsMap = new Map<string, TimelineGroup>();
 
         tools.forEach((tool) => {
-            // نستخدم release_date أو created_at كبديل
             const dateStr = tool.release_date || tool.created_at;
-            // مفتاح التجميع (مثلاً: "يناير 2026")
-            let groupKey = "أدوات مميزة";
+            const date = dayjs(dateStr);
 
-            if (dateStr) {
-                const date = dayjs(dateStr);
-                if (date.isValid()) {
-                    groupKey = date.format('MMMM YYYY');
-                }
+            let groupKey = "أدوات أخرى";
+            let sortValue = 0;
+
+            if (dateStr && date.isValid()) {
+                groupKey = date.format('MMMM YYYY');
+                sortValue = date.startOf('month').valueOf();
             }
 
-            if (!groups[groupKey]) {
-                groups[groupKey] = [];
+            if (!groupsMap.has(groupKey)) {
+                groupsMap.set(groupKey, {
+                    key: groupKey,
+                    sortValue: sortValue,
+                    items: []
+                });
             }
-            groups[groupKey].push(tool);
+
+            groupsMap.get(groupKey)!.items.push(tool);
         });
 
-        return groups;
+        return Array.from(groupsMap.values()).sort((a, b) => b.sortValue - a.sortValue);
     }, [tools]);
 
-    // ترتيب المفاتيح لضمان أن الأشهر الأحدث تظهر أولاً
-    // ملاحظة: هذا ترتيب بسيط، للأداء العالي يفضل الترتيب أثناء بناء الكائن
-    const sortedKeys = Object.keys(groupedTools);
-    // (يفترض أن البيانات قادمة مرتبة من الباك إند، لذا سنعتمد على ترتيبها الطبيعي)
-
-    const observerTarget = useRef(null);
+    const observerTarget = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const currentTarget = observerTarget.current;
+        if (!currentTarget || !hasNextPage) return;
+
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                if (entries[0].isIntersecting && !isFetchingNextPage) {
                     onFetchNextPage?.();
                 }
             },
-            { threshold: 0.1 }
+            { threshold: 0.1, rootMargin: '100px' }
         );
 
-        if (currentTarget) {
-            observer.observe(currentTarget);
-        }
-
-        return () => {
-            if (currentTarget) {
-                observer.unobserve(currentTarget);
-            }
-        };
+        observer.observe(currentTarget);
+        return () => observer.disconnect();
     }, [hasNextPage, isFetchingNextPage, onFetchNextPage]);
 
+    if (!tools.length && !isFetchingNextPage) {
+        return (
+            <div className="text-center py-20 text-muted-foreground animate-fade-in">
+                <p className="text-lg">لا توجد أدوات لعرضها حالياً.</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="relative space-y-8 pb-10">
-            {/* الخط الرأسي للتايم لاين */}
-            <div className="absolute top-0 bottom-0 right-4 md:right-8 w-0.5 bg-gradient-to-b from-neon-purple/50 via-blue-500/20 to-transparent hidden md:block" />
+        <div className="relative space-y-12 pb-10" dir="rtl">
 
-            {sortedKeys.map((monthKey) => (
-                <div key={monthKey} className="relative z-10">
+            {/* Avant-Garde Timeline Line */}
+            <div className="absolute top-0 bottom-0 right-6 md:right-8 w-[2px] bg-gradient-to-b from-neon-purple/50 via-neon-blue/20 to-transparent hidden md:block opacity-50 shadow-[0_0_10px_rgba(139,92,246,0.2)]" />
 
-                    {/* رأس المجموعة (الشهر) */}
-                    <div className="sticky top-[70px] z-20 mb-6 flex items-center gap-4">
-                        {/* نقطة التايم لاين */}
-                        <div className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-background border-2 border-neon-purple shadow-[0_0_10px_rgba(124,58,237,0.5)] shrink-0 translate-x-1/2 right-4 md:right-8 absolute">
-                            <div className="w-2.5 h-2.5 bg-neon-purple rounded-full animate-pulse" />
+            {timelineGroups.map((group, groupIndex) => (
+                <div
+                    key={group.key}
+                    className="relative z-10 animate-fade-in"
+                    style={{ animationDelay: `${groupIndex * 0.1}s` }}
+                >
+
+                    {/* Timeline Node & Header */}
+                    <div className="sticky top-[80px] z-20 mb-8 flex items-center">
+
+                        {/* Glowing Node */}
+                        <div className="hidden md:flex items-center justify-center absolute right-6 md:right-8 translate-x-1/2">
+                            <div className="w-5 h-5 rounded-full bg-[#0f0f1a] border-2 border-neon-purple shadow-[0_0_15px_rgba(139,92,246,0.8)] relative z-10">
+                                <div className="absolute inset-0 bg-neon-purple rounded-full animate-ping opacity-30" />
+                                <div className="absolute inset-0 bg-neon-purple rounded-full opacity-20 blur-sm" />
+                            </div>
                         </div>
 
-                        {/* عنوان الشهر */}
-                        <div className="flex items-center gap-3 bg-card/60 backdrop-blur-md border border-white/10 px-5 py-2 rounded-full shadow-lg mr-0 md:mr-12">
-                            <CalendarDays className="w-5 h-5 text-neon-purple" />
-                            <h2 className="text-lg font-bold text-foreground capitalize">
-                                {monthKey}
+                        {/* Date Capsule */}
+                        <div className="flex items-center gap-3 bg-[#0f0f1a]/60 backdrop-blur-xl border border-white/10 px-6 py-2.5 rounded-full shadow-lg mr-0 md:mr-16 transition-all hover:border-neon-purple/50 hover:shadow-neon-purple/20 group ring-1 ring-white/5">
+                            <CalendarDays className="w-5 h-5 text-neon-purple group-hover:scale-110 transition-transform duration-300" />
+                            <h2 className="text-lg font-bold text-white capitalize tracking-wide font-mono">
+                                {group.key}
                             </h2>
-                            <span className="text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-md">
-                                {groupedTools[monthKey].length}
+                            <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-neon-purple/20 border border-neon-purple/30 px-2 text-xs font-medium text-neon-purple">
+                                {group.items.length}
                             </span>
                         </div>
                     </div>
 
-                    {/* شبكة أدوات هذا الشهر */}
+                    {/* Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pr-0 md:pr-16 pl-4">
-                        {groupedTools[monthKey].map((tool, i) => (
-                            <ToolCard key={tool.id} tool={tool} index={i} />
+                        {group.items.map((tool, index) => (
+                            <ToolCard
+                                key={tool.id}
+                                tool={tool}
+                                index={index}
+                            />
                         ))}
                     </div>
                 </div>
             ))}
 
-            {/* زر تحميل المزيد */}
-            {/* مؤشر التحميل اللانهائي */}
-            <div ref={observerTarget} className="py-12 flex flex-col items-center justify-center gap-3">
+            {/* Loading & End States */}
+            <div ref={observerTarget} className="py-12 flex flex-col items-center justify-center gap-4 min-h-[100px]">
                 {isFetchingNextPage ? (
-                    <>
+                    <div className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-white/5 border border-white/5">
                         <Loader2 className="w-8 h-8 text-neon-purple animate-spin" />
-                        <p className="text-gray-400 text-sm animate-pulse">جاري جلب المزيد من الأدوات الرائعة...</p>
-                    </>
+                        <p className="text-slate-400 text-sm animate-pulse font-mono">جاري استدعاء المزيد من البيانات...</p>
+                    </div>
                 ) : hasNextPage ? (
-                    <span className="text-gray-600 text-sm">اسحب للمزيد ↓</span>
+                    <span className="text-muted-foreground/30 text-xs uppercase tracking-widest">Scroll for more</span>
                 ) : (
-                    <div className="text-gray-500 text-sm bg-white/5 px-6 py-2 rounded-full border border-white/5">
-                        🎉 لقد وصلت للنهاية! تصفحت {tools?.length || 0} أداة.
+                    <div className="flex flex-col items-center gap-4 animate-in zoom-in-50 duration-500">
+                        <div className="w-16 h-1 bg-gradient-to-r from-transparent via-neon-purple to-transparent rounded-full opacity-50" />
+                        <div className="flex items-center gap-2 text-slate-400 text-sm bg-[#0f0f1a] border border-white/10 px-6 py-3 rounded-full shadow-lg">
+                            <Sparkles className="w-4 h-4 text-neon-cyan" />
+                            <span>اكتمل الأرشيف. تم عرض {tools.length} أداة.</span>
+                        </div>
                     </div>
                 )}
             </div>
