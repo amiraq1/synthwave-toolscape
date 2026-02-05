@@ -36,7 +36,7 @@ export default function ChatBot() {
 
         if (!inputValue.trim()) return;
 
-        // 1. التحقق من الإنترنت (حل مشكلة PWA)
+        // 1. التحقق من الإنترنت
         if (!navigator.onLine) {
             toast.error("لا يوجد اتصال بالإنترنت", {
                 description: "المساعد الذكي يحتاج للإنترنت ليعمل.",
@@ -54,7 +54,6 @@ export default function ChatBot() {
 
         try {
             // 2. إرسال الطلب إلى Supabase Edge Function
-            // تأكد أن لديك دالة اسمها "chat" في Supabase
             const { data, error } = await supabase.functions.invoke("chat", {
                 body: { messages: [...messages, { role: "user", content: userMessage }] },
             });
@@ -68,16 +67,17 @@ export default function ChatBot() {
             // إضافة رد المساعد
             setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
 
-        } catch (error) {
-            console.error("Chat Error:", error);
+        } catch (error: any) {
+            console.error("Chat Error Details:", error);
 
-            // عرض الخطأ باستخدام Sonner
-            toast.error("حدث خطأ أثناء الاتصال", {
-                description: error instanceof Error ? error.message : "يرجى المحاولة لاحقاً",
-                action: {
-                    label: "إعادة المحاولة",
-                    onClick: () => setInputValue(userMessage), // إعادة النص للمستخدم
-                },
+            let errorMessage = "حدث خطأ أثناء الاتصال";
+            // محاولة استخراج تفاصيل الخطأ إذا أمكن
+            if (error?.message) {
+                errorMessage = error.message;
+            }
+
+            toast.error("فشل الاتصال بالمساعد", {
+                description: errorMessage,
             });
         } finally {
             setIsLoading(false);
