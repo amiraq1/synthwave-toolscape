@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
@@ -36,6 +37,8 @@ interface AdminToolsTableProps {
   tools: Tool[];
   onUpdate: () => void;
 }
+
+type ToolUpdate = Database["public"]["Tables"]["tools"]["Update"];
 
 const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,9 +68,10 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   };
 
   const toggleFeatured = async (tool: Tool) => {
+    const updatePayload: ToolUpdate = { is_featured: !tool.is_featured };
     const { error } = await supabase
       .from('tools')
-      .update({ is_featured: !tool.is_featured } as any)
+      .update(updatePayload)
       .eq('id', Number(tool.id));
 
     if (error) {
@@ -79,10 +83,10 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   };
 
   const togglePublished = async (tool: Tool) => {
-    // @ts-ignore
+    const updatePayload: ToolUpdate = { is_published: !tool.is_published };
     const { error } = await supabase
       .from('tools')
-      .update({ is_published: !tool.is_published })
+      .update(updatePayload)
       .eq('id', Number(tool.id));
 
     if (error) {

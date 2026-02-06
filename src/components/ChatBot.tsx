@@ -67,17 +67,25 @@ export default function ChatBot() {
             // إضافة رد المساعد
             setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Chat Error Details:", error);
 
             let errorMessage = "حدث خطأ أثناء الاتصال";
-            // محاولة استخراج تفاصيل الخطأ إذا أمكن
-            if (error?.message) {
+            if (error instanceof Error) {
                 errorMessage = error.message;
+            } else if (typeof error === "object" && error !== null && "message" in error) {
+                const fallbackMessage = (error as { message?: unknown }).message;
+                if (typeof fallbackMessage === "string" && fallbackMessage.trim()) {
+                    errorMessage = fallbackMessage;
+                }
             }
 
             toast.error("فشل الاتصال بالمساعد", {
                 description: errorMessage,
+                action: {
+                    label: "إعادة المحاولة",
+                    onClick: () => setInputValue(userMessage),
+                },
             });
         } finally {
             setIsLoading(false);

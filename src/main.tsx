@@ -88,10 +88,13 @@ const registerServiceWorker = async () => {
             const { registerSW } = await import('virtual:pwa-register');
             registerSW({
                 immediate: false,
-                onRegistered() { },
-                onRegisterError() { }
+                onRegisterError(error) {
+                    console.error('Service Worker registration failed:', error);
+                }
             });
-        } catch { }
+        } catch (error) {
+            console.error('Service Worker initialization failed:', error);
+        }
     }
 };
 

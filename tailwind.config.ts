@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
-
+import tailwindcssAnimate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
 export default {
   darkMode: ["class"],
   content: [
@@ -19,7 +20,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        cairo: ['Cairo', 'sans-serif'], // ✅ الخط العربي الأساسي
+        cairo: ['Cairo', 'sans-serif'], // Base Arabic font family
       },
       colors: {
         border: "hsl(var(--border))",
@@ -65,7 +66,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // 🎨 ألوان الهوية البصرية (AI Neon Theme)
+        // Brand neon colors (AI Neon Theme)
         "neon-purple": "hsl(var(--neon-purple))",
         "neon-blue": "hsl(var(--neon-blue))",
         "neon-cyan": "hsl(var(--neon-cyan))",
@@ -77,7 +78,7 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      // ✨ تأثيرات حركية مخصصة
+      // Custom motion keyframes
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -145,7 +146,7 @@ export default {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"), // ✅ تمت الإضافة: ضروري لتنسيق المقالات
+    tailwindcssAnimate,
+    typography, // Required for prose styling
   ],
 } satisfies Config;
