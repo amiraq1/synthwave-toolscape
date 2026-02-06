@@ -9,7 +9,7 @@ interface HeroSectionProps {
   isSearching?: boolean;
 }
 
-const HeroSection = ({ searchQuery, onSearchChange, isSearching }: HeroSectionProps) => {
+const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }: HeroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

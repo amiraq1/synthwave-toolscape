@@ -28,7 +28,7 @@ const ToolsGrid = ({
   onFetchNextPage
 }: ToolsGridProps) => {
   const [announcement, setAnnouncement] = useState('');
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
   useEffect(() => {

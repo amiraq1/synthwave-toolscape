@@ -41,11 +41,11 @@ serve(async (req) => {
             .maybeSingle(); // Changed single() to maybeSingle() to handle no results gracefully
 
         if (cachedData) {
-            console.log(`🔥 Cache HIT for query: "${cleanQuery}"`);
+            console.warn(`🔥 Cache HIT for query: "${cleanQuery}"`);
             // إذا كان stored as string في بعض الحالات، parse it. في vector type غالبًا يعود كـ string or array
             embedding = typeof cachedData.embedding === 'string' ? JSON.parse(cachedData.embedding) : cachedData.embedding;
         } else {
-            console.log(`❄️ Cache MISS for query: "${cleanQuery}" - Calling Gemini`);
+            console.warn(`❄️ Cache MISS for query: "${cleanQuery}" - Calling Gemini`);
 
             // 3. طلب Gemini (إذا لم نجد كاش)
             if (!GEMINI_API_KEY) {

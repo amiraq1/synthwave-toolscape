@@ -13,7 +13,7 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .select("*")
         .eq("is_published", true)

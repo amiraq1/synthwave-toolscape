@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Heart, MessageSquare, Settings, LogOut, Clock, PenTool } from "lucide-react";
+import { Loader2, Heart, MessageSquare, Settings, LogOut, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,11 @@ interface ProfileData {
     avatar_url: string | null;
     created_at: string;
 }
+
+type ProfileUpdate = {
+    display_name: string;
+    avatar_url: string;
+};
 
 interface Review {
     id: string;
@@ -88,8 +93,8 @@ const Profile = () => {
     }, [profile]);
 
     // 4. Optimistic Profile Update Mutation
-    const updateProfileMutation = useMutation({
-        mutationFn: async (updates: { display_name: string; avatar_url: string }) => {
+    const updateProfileMutation = useMutation<ProfileUpdate, Error, ProfileUpdate, { previousProfile?: ProfileData | null }>({
+        mutationFn: async (updates: ProfileUpdate) => {
             if (!session?.user.id) throw new Error("No session");
             const { error } = await supabase.from("profiles").update(updates).eq("id", session.user.id);
             if (error) throw error;
@@ -97,16 +102,15 @@ const Profile = () => {
         },
         onMutate: async (newProfile) => {
             await queryClient.cancelQueries({ queryKey: ['profile', session?.user.id] });
-            const previousProfile = queryClient.getQueryData(['profile', session?.user.id]);
+            const previousProfile = queryClient.getQueryData<ProfileData | null>(['profile', session?.user.id]);
 
-            queryClient.setQueryData(['profile', session?.user.id], (old: any) => ({
-                ...old,
-                ...newProfile
-            }));
+            queryClient.setQueryData<ProfileData | null>(['profile', session?.user.id], (old) =>
+                old ? { ...old, ...newProfile } : old
+            );
 
             return { previousProfile };
         },
-        onError: (err, newProfile, context: any) => {
+        onError: (_err, _newProfile, context) => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }

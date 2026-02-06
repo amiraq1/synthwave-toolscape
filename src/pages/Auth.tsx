@@ -40,9 +40,10 @@ const Auth = () => {
                 toast.success("تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني.");
                 if (!error) setIsLogin(true);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : undefined;
             toast.error("حدث خطأ ما", {
-                description: error.message,
+                description: message || "حاول مرة أخرى لاحقاً",
             });
         } finally {
             setLoading(false);
@@ -55,9 +56,10 @@ const Auth = () => {
             const { error } = await signInWithGoogle();
             if (error) throw error;
             // Google redirect happens automatically
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : undefined;
             toast.error("حدث خطأ ما", {
-                description: error.message,
+                description: message || "حاول مرة أخرى لاحقاً",
             });
             setLoading(false);
         }

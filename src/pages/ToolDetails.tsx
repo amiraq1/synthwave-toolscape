@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTool } from '@/hooks/useTool';
-import { cn } from '@/lib/utils';
 import AverageRating from '@/components/AverageRating';
 import SimilarTools from '@/components/SimilarTools';
 import ToolGallery from "@/components/ToolGallery";
@@ -102,7 +101,7 @@ const ToolDetails = () => {
       } else {
         throw new Error('Web Share API not supported');
       }
-    } catch (err) {
+    } catch {
       navigator.clipboard.writeText(window.location.href);
       toast.success(isAr ? "تم نسخ الرابط" : "Link copied to clipboard");
     }

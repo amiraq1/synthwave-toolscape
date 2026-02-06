@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, ExternalLink, Activity, Database, FileCheck } from "lucide-react";
+import { BarChart, ExternalLink, Activity, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AnalyticsWidget = () => {

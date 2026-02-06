@@ -12,14 +12,11 @@ import {
   Music,
   LayoutGrid,
   Crown,
-  Tag,
   Languages,
-  Flame,
   Clock,
   Scale
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
@@ -62,7 +59,6 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 
 const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
-  const [imageError, setImageError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
@@ -101,14 +97,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
     prefetchTool(String(tool.id));
   };
 
-  const handleExternalClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    recordClick(String(tool.id));
-  };
-
   // Image priority logic
   const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
-  const showOriginalImage = !!validImageUrl && !imageError;
+  const showOriginalImage = !!validImageUrl;
   const showFavicon = !!faviconSrc && !faviconError;
 
   return (

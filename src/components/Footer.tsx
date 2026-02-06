@@ -1,12 +1,10 @@
-import { Activity, Mail, Info, Phone, Github, Twitter } from 'lucide-react';
+import { Activity, Mail, Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import NewsletterForm from './NewsletterForm';
 
 const Footer = () => {
   const { t } = useTranslation();
-  const currentYear = new Date().getFullYear();
-
   const footerLinks = {
     main: [
       { label: t('nav.home'), href: '/' },

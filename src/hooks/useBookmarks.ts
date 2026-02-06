@@ -4,13 +4,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { Tool } from '@/types';
 
-interface BookmarkRecord {
-    id: string;
-    user_id: string;
-    tool_id: number;
-    created_at: string;
-}
-
 interface BookmarkToolId {
     tool_id: number;
 }

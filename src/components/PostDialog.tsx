@@ -89,17 +89,6 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
         },
     });
 
-    // Watch title for auto-slug generation
-    const watchedTitle = form.watch('title');
-
-    // Auto-generate slug when title changes (only if slug is empty)
-    useEffect(() => {
-        if (!isEditMode && watchedTitle && !form.getValues('slug')) {
-            const autoSlug = generateSlug(watchedTitle);
-            // Don't set automatically, just prepare it
-        }
-    }, [watchedTitle, isEditMode, form]);
-
     // Pre-fill form when editing
     useEffect(() => {
         if (open && postToEdit) {

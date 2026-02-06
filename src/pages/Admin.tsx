@@ -1,7 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,7 +52,6 @@ const Admin = () => {
     noIndex: true,
   });
 
-  const { session } = useAuth();
   const navigate = useNavigate();
   const { isAdmin, loading: authLoading } = useAdminCheck();
 

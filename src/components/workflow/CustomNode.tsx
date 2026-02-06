@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { Bot, Mail, Database, Play, Loader2, MoreHorizontal, Settings } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Bot, Mail, Database, Play, Loader2, Settings } from "lucide-react";
 
 const CustomNode = ({ data, selected }: NodeProps) => {
     // تحديد الأيقونة واللون بناءً على نوع العقدة (محفوظ في data.type أو slug)

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { HelpCircle, ArrowRight, ChevronDown } from 'lucide-react';
+import { HelpCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {

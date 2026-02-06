@@ -60,11 +60,11 @@ export default defineConfig(({ mode }) => {
       }),
 
       // 2. Bundle Visualizer (only when mode=analyze)
-      isAnalyze && visualizer({
+      ...(isAnalyze ? [visualizer({
         open: true,
         gzipSize: true,
         filename: "stats.html"
-      }) as any,
+      })] : []),
 
       // 3. PWA Configuration
       VitePWA({

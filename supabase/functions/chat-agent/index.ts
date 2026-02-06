@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
       const body = await req.json();
       query = body.query || body.message;
       agentSlug = body.agentSlug || 'general';
-    } catch (e) {
+    } catch {
       throw new Error("لم يتم إرسال أي بيانات (Body is empty)");
     }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCompare } from "@/context/CompareContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";

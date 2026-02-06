@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
     }
 
     try {
-        console.log("--- Generate Embeddings Started ---");
+        console.warn("--- Generate Embeddings Started ---");
 
         // 1. Allow Manual Trigger via Special Header (Simple Bypass)
         const manualTriggerKey = req.headers.get('x-admin-trigger');
@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
         const authHeader = req.headers.get('Authorization');
 
         if (!authHeader && !isManualTrigger) {
-            console.log("❌ No Authorization header provided.");
+            console.warn("❌ No Authorization header provided.");
             return new Response(
                 JSON.stringify({ error: 'Authentication required', message_ar: 'يجب تسجيل الدخول' }),
                 { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
         }
 
         if (isManualTrigger) {
-            console.log("✅ Manual Trigger detected. Bypassing all auth checks.");
+            console.warn("✅ Manual Trigger detected. Bypassing all auth checks.");
         } else {
             // Check Service Role or Admin User (Original Logic)
             const isServiceRole = authHeader && authHeader.includes(supabaseServiceKey);
@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
                     return new Response(JSON.stringify({ error: 'Not Admin' }), { status: 403, headers: corsHeaders });
                 }
             } else {
-                console.log("✅ Service Role Key detected.");
+                console.warn("✅ Service Role Key detected.");
             }
         }
 
@@ -176,7 +176,7 @@ Deno.serve(async (req) => {
         }
 
         if (!tools || tools.length === 0) {
-            console.log("✅ All tools already have embeddings");
+            console.warn("✅ All tools already have embeddings");
             return new Response(
                 JSON.stringify({
                     message: "All tools already have embeddings",
@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
             );
         }
 
-        console.log(`📊 Found ${tools.length} tools to embed...`);
+        console.warn(`📊 Found ${tools.length} tools to embed...`);
 
         const results: EmbeddingResult[] = [];
         let successCount = 0;
@@ -216,7 +216,7 @@ Deno.serve(async (req) => {
                     console.error(`❌ Update error for tool ${tool.id}:`, updateError);
                     results.push({ id: tool.id, success: false, error: "Update failed" });
                 } else {
-                    console.log(`✅ Tool ${tool.id} embedded successfully (${embedding.length} dims)`);
+                    console.warn(`✅ Tool ${tool.id} embedded successfully (${embedding.length} dims)`);
                     results.push({ id: tool.id, success: true, dimensions: embedding.length });
                     successCount++;
                 }
@@ -234,7 +234,7 @@ Deno.serve(async (req) => {
 
         const failedCount = results.length - successCount;
 
-        console.log(`🎉 Completed: ${successCount} success, ${failedCount} failed`);
+        console.warn(`🎉 Completed: ${successCount} success, ${failedCount} failed`);
 
         return new Response(
             JSON.stringify({

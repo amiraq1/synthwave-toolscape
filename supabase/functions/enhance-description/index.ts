@@ -121,7 +121,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Authenticated user:', user.id, 'identifier:', clientIdentifier);
+    console.warn('Authenticated user:', user.id, 'identifier:', clientIdentifier);
 
     const { toolName, description } = await req.json();
     
@@ -162,7 +162,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(
+    console.warn(
       'Input validation passed - user:',
       user.id,
       'identifier:',
@@ -192,7 +192,7 @@ serve(async (req) => {
 
 أعد صياغة هذا الوصف بأسلوب تسويقي احترافي.`;
 
-    console.log('Sending request to Lovable AI Gateway for user:', user.id, 'identifier:', clientIdentifier);
+    console.warn('Sending request to Lovable AI Gateway for user:', user.id, 'identifier:', clientIdentifier);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -246,7 +246,7 @@ serve(async (req) => {
       throw new Error('No response from AI');
     }
 
-    console.log('Successfully enhanced description for user:', user.id, 'identifier:', clientIdentifier);
+    console.warn('Successfully enhanced description for user:', user.id, 'identifier:', clientIdentifier);
 
     return new Response(
       JSON.stringify({ enhancedDescription }),

@@ -1,9 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, ThumbsUp, Filter, ArrowUpDown } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,7 +24,6 @@ interface ReviewData {
 }
 
 const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
-  const { session } = useAuth();
   const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
   const [reviews, setReviews] = useState<ReviewData[]>([]);
@@ -72,7 +69,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
     const { data } = await query;
     if (data) {
       // Transform data to match ReviewData interface
-      const reviews = data.map((item: any) => ({
+      const reviews = (data as ReviewData[]).map((item) => ({
         id: item.id,
         rating: item.rating,
         comment: item.comment,
@@ -90,7 +87,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
   }, [fetchReviews]);
 
   // دالة وهمية للتصويت (يمكن تفعيلها لاحقاً مع الباك إند)
-  const handleHelpful = (reviewId: string) => {
+  const handleHelpful = (_reviewId: string) => {
     toast.success(isAr ? "شكراً على تصويتك! 👍" : "Thanks for voting! 👍");
   };
 

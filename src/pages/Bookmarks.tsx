@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Loader2, Heart, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ToolCard from '@/components/ToolCard';

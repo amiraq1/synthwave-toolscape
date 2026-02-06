@@ -20,7 +20,7 @@ const Settings = () => {
     const getProfile = async () => {
       if (!session) return;
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
         .select("display_name, avatar_url") // Changed full_name to display_name to match DB schema
         .eq("id", session.user.id)

@@ -2,7 +2,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const BASE_URL = 'https://amiraq.org';
 
-Deno.serve(async (req) => {
+Deno.serve(async (_req) => {
   try {
     // 1. إعداد Supabase Client
     const supabase = createClient(

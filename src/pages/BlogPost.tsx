@@ -35,7 +35,7 @@ const BlogPost = () => {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
 
   // Content based on language
@@ -46,7 +46,7 @@ const BlogPost = () => {
     const fetchPost = async () => {
       if (!id) return;
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .select("*")
         .eq("id", id)
@@ -57,8 +57,8 @@ const BlogPost = () => {
 
         try {
           await supabase.rpc("increment_post_views", { p_post_id: id });
-        } catch (e) {
-          console.log("Views increment skipped");
+        } catch {
+          // Ignore view increment errors
         }
       }
       setLoading(false);
@@ -77,7 +77,7 @@ const BlogPost = () => {
           title: displayTitle,
           url: url,
         });
-      } catch (e) {
+      } catch {
         // المستخدم ألغى المشاركة
       }
     } else {

@@ -103,10 +103,11 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                 if (fileInputRef.current) fileInputRef.current.value = "";
                 toast.success("تم تحديث الصورة الشخصية بنجاح");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error uploading avatar:", error);
+            const message = error instanceof Error ? error.message : undefined;
             toast.error("فشل رفع الصورة", {
-                description: error.message || "تأكد من إعدادات التخزين في Supabase",
+                description: message || "تأكد من إعدادات التخزين في Supabase",
             });
         } finally {
             setUploading(false);

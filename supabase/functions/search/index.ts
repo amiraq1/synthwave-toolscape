@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     }
 
     try {
-        console.log("--- Semantic Search Started ---");
+        console.warn("--- Semantic Search Started ---");
 
         // 1. Environment Check
         const googleApiKey = Deno.env.get("GEMINI_API_KEY");
@@ -92,11 +92,11 @@ Deno.serve(async (req) => {
         // Validate and cap limit to prevent resource exhaustion
         const safeLimit = Math.min(Math.max(1, Number(limit) || 10), 50);
 
-        console.log("Search Query:", trimmedQuery);
+        console.warn("Search Query:", trimmedQuery);
 
         // 3. Generate Embedding for the query
         const queryEmbedding = await generateEmbedding(trimmedQuery, googleApiKey);
-        console.log("Embedding generated successfully");
+        console.warn("Embedding generated successfully");
 
         // 4. Search using match_tools RPC
         const { data: tools, error: searchError } = await supabase.rpc("match_tools", {
@@ -111,7 +111,7 @@ Deno.serve(async (req) => {
         }
 
         const results = (tools as ToolResult[]) || [];
-        console.log(`Found ${results.length} semantic matches`);
+        console.warn(`Found ${results.length} semantic matches`);
 
         return new Response(
             JSON.stringify({

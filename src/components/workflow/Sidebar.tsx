@@ -1,4 +1,4 @@
-import { MessageSquare, Mail, FileText, Database, Zap, Sparkles, Bot, Brain } from "lucide-react";
+import { MessageSquare, Mail, Database, Zap, Sparkles, Bot, Brain } from "lucide-react";
 
 export default function Sidebar() {
     // دالة تُنفذ عند بدء سحب عنصر

@@ -112,7 +112,7 @@ Deno.serve(async (req: Request) => {
     let toolData: AIResponse;
     try {
       toolData = JSON.parse(rawContent);
-    } catch (e) {
+    } catch {
       console.error("JSON Parse Error. Raw text was:", rawContent);
       throw new Error("Failed to parse AI response");
     }

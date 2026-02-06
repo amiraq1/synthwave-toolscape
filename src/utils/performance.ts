@@ -27,7 +27,8 @@ export const getOptimizedImageUrl = (
 
     // If it's a Supabase storage URL, use transformation
     if (url.includes('supabase.co/storage')) {
-        return `${url}?width=${width}&quality=${quality}`;
+        const formatParam = format ? `&format=${format}` : '';
+        return `${url}?width=${width}&quality=${quality}${formatParam}`;
     }
 
     // For external URLs, use a proxy/optimizer or return as-is
@@ -321,13 +322,17 @@ export const useRenderTime = (componentName: string): void => {
 export const reportWebVitals = (): void => {
     if (typeof window === 'undefined') return;
 
+    const logVital = (metric: { name: string; value: number }) => {
+        console.warn(`[WebVitals] ${metric.name}: ${metric.value}`);
+    };
+
     // Use web-vitals library if available
     import('web-vitals').then(({ onCLS, onFID, onLCP, onFCP, onTTFB }) => {
-        onCLS(console.log);
-        onFID(console.log);
-        onLCP(console.log);
-        onFCP(console.log);
-        onTTFB(console.log);
+        onCLS(logVital);
+        onFID(logVital);
+        onLCP(logVital);
+        onFCP(logVital);
+        onTTFB(logVital);
     }).catch(() => {
         // web-vitals not installed
     });

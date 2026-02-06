@@ -2,8 +2,8 @@
 // تعريف الأنواع لـ window
 declare global {
     interface Window {
-        dataLayer: any[];
-        gtag: (...args: any[]) => void;
+        dataLayer: unknown[];
+        gtag: (...args: unknown[]) => void;
     }
 }
 
@@ -31,9 +31,8 @@ export const initGA = () => {
     window.dataLayer = window.dataLayer || [];
 
     // دالة gtag
-    window.gtag = function (...args: any[]) {
-        // eslint-disable-next-line
-        window.dataLayer.push(arguments);
+    window.gtag = (...args: unknown[]) => {
+        window.dataLayer.push(args);
     };
 
     window.gtag('js', new Date());
@@ -41,7 +40,6 @@ export const initGA = () => {
         send_page_view: false // سنقوم بإرسالها يدوياً عند تغيير المسار
     });
 
-    console.log('Google Analytics initialized successfully');
 };
 
 // تسجيل مشاهدة صفحة (Page View)

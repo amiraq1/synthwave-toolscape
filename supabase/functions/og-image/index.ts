@@ -10,8 +10,6 @@ serve(async (req) => {
     // قراءة المتغيرات من الرابط (مثال: ?title=ChatGPT&category=برمجة)
     const title = url.searchParams.get("title") || "نبض AI";
     const category = url.searchParams.get("category") || "دليل أدوات الذكاء الاصطناعي";
-    const type = url.searchParams.get("type") || "tool"; // tool or blog
-
     // تصميم الصورة باستخدام JSX (شبيه بـ React)
     // هذا التصميم يستخدم ألوان الثيم الخاص بنا (الأسود والبنفسجي)
     const jsx = {

@@ -134,7 +134,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
         toast.success('تم جلب البيانات بنجاح! 🪄');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error('فشل التعبئة التلقائية', { description: 'تأكد من الرابط أو حاول يدوياً' });
     } finally {
@@ -162,7 +162,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         form.setValue('description', data.enhancedDescription, { shouldValidate: true });
         toast.success('✨ تم التحسين');
       }
-    } catch (error) {
+    } catch {
       toast.error('فشل التحسين');
     } finally {
       setIsEnhancing(false);

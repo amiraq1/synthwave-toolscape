@@ -15,14 +15,14 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function triggerEmbeddingGeneration() {
-    console.log("Starting full database re-indexing (generating OpenAI embeddings)...");
+    console.warn("Starting full database re-indexing (generating OpenAI embeddings)...");
 
     // Call the Edge Function
     // Note: Adjust the URL if deploying to production vs local
     // For local development with 'supabase start', functions are usually at the project URL or localhost
     const functionUrl = `${supabaseUrl}/functions/v1/generate-embeddings`;
 
-    console.log(`Invoking Edge Function at: ${functionUrl}`);
+    console.warn(`Invoking Edge Function at: ${functionUrl}`);
 
     try {
         const { data, error } = await supabase.functions.invoke('generate-embeddings', {
@@ -34,7 +34,7 @@ async function triggerEmbeddingGeneration() {
             return;
         }
 
-        console.log("Success! Response:", data);
+        console.warn("Success! Response:", data);
     } catch (err) {
         console.error("Unexpected error:", err);
     }
