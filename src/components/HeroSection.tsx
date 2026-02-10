@@ -13,18 +13,39 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-      const x = (e.clientX - left) / width;
-      const y = (e.clientY - top) / height;
+    const container = containerRef.current;
+    if (!container) return;
 
-      containerRef.current.style.setProperty('--mouse-x', `${x}`);
-      containerRef.current.style.setProperty('--mouse-y', `${y}`);
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+
+    if (prefersReducedMotion || !hasFinePointer) {
+      return;
+    }
+
+    let animationFrame = 0;
+    const handlePointerMove = (e: PointerEvent) => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+
+      animationFrame = requestAnimationFrame(() => {
+        const { left, top, width, height } = container.getBoundingClientRect();
+        const x = (e.clientX - left) / width;
+        const y = (e.clientY - top) / height;
+
+        container.style.setProperty('--mouse-x', `${x}`);
+        container.style.setProperty('--mouse-y', `${y}`);
+      });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    container.addEventListener('pointermove', handlePointerMove, { passive: true });
+    return () => {
+      container.removeEventListener('pointermove', handlePointerMove);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
   }, []);
 
   return (
@@ -117,6 +138,9 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             />
 
             <Button
+              type="button"
+              aria-label="Submit search"
+              onClick={() => onSearchChange(searchQuery.trim())}
               size="icon"
               className="h-12 w-12 rounded-xl bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg shadow-neon-purple/20 transition-all hover:scale-105"
             >

@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Link } from "react-router-dom";
 import { Search, Loader2, ArrowRight, ArrowLeft, Sparkles, Command, BookOpen, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useSemanticSearch } from "@/hooks/useSemanticSearch";
+import { useSemanticSearch, type SearchResponse } from "@/hooks/useSemanticSearch";
 import { cn } from "@/lib/utils";
 
 interface SearchAutocompleteProps {
@@ -26,6 +26,7 @@ const SearchAutocomplete = ({
     const { t, i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const listboxId = useId();
 
     const [internalQuery, setInternalQuery] = useState("");
     const query = value !== undefined ? value : internalQuery;
@@ -45,8 +46,9 @@ const SearchAutocomplete = ({
     });
 
     // Extract tools and posts from data
-    const suggestions = (data as any)?.tools || [];
-    const blogPosts = (data as any)?.posts || [];
+    const searchData: SearchResponse | undefined = data;
+    const suggestions = searchData?.tools ?? [];
+    const blogPosts = searchData?.posts ?? [];
 
     const handleChange = (val: string) => {
         if (onChange) onChange(val);
@@ -66,7 +68,8 @@ const SearchAutocomplete = ({
 
     const handleFullSearch = (e?: React.FormEvent) => {
         e?.preventDefault();
-        if (onSearch) onSearch(query);
+        const normalizedQuery = query.trim();
+        if (onSearch && normalizedQuery) onSearch(normalizedQuery);
         setShowSuggestions(false);
         (document.activeElement as HTMLElement)?.blur();
     };
@@ -104,6 +107,11 @@ const SearchAutocomplete = ({
                 <input
                     type="text"
                     dir={isAr ? "rtl" : "ltr"}
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={showSuggestions && query.length >= 2}
+                    aria-controls={listboxId}
+                    aria-label={placeholder || t('search.placeholder')}
                     className={cn(
                         "w-full bg-white/5 border border-white/10 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/50 focus:bg-white/10 transition-all duration-300 shadow-inner",
                         isAr ? 'pr-12 pl-12' : 'pl-12 pr-12',
@@ -139,6 +147,8 @@ const SearchAutocomplete = ({
 
             {showSuggestions && query.length >= 2 && (
                 <div
+                    id={listboxId}
+                    role="listbox"
                     className="absolute top-full left-0 right-0 mt-3 bg-[#0a0a16]/95 border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-300 ring-1 ring-white/5"
                     dir={isAr ? "rtl" : "ltr"}
                 >
@@ -156,13 +166,15 @@ const SearchAutocomplete = ({
                                 <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold">
                                     {isAr ? "الأدوات" : "Tools"}
                                 </div>
-                                {suggestions.map((tool: any) => {
+                                {suggestions.map((tool) => {
                                     const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
                                     const desc = isAr ? tool.description : (tool.description_en || tool.description);
 
                                     return (
                                         <Link
                                             key={tool.id}
+                                            id={`${listboxId}-tool-${tool.id}`}
+                                            role="option"
                                             to={`/tool/${tool.id}`}
                                             className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group relative overflow-hidden"
                                             onClick={() => setShowSuggestions(false)}
@@ -199,9 +211,11 @@ const SearchAutocomplete = ({
                                     <BookOpen className="w-3 h-3" />
                                     {isAr ? "من المدونة" : "From Blog"}
                                 </div>
-                                {blogPosts.map((post: any) => (
+                                {blogPosts.map((post) => (
                                     <Link
                                         key={post.id}
+                                        id={`${listboxId}-post-${post.id}`}
+                                        role="option"
                                         to={`/blog/${post.slug}`}
                                         className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group"
                                         onClick={() => setShowSuggestions(false)}
@@ -230,7 +244,8 @@ const SearchAutocomplete = ({
                                 <p className="text-xs text-muted-foreground/60 mt-2 max-w-[200px] mx-auto">
                                     {isAr ? "جرب البحث بكلمات عامة مثل 'تصميم' أو 'برمجة'" : "Try searching for general terms like 'design' or 'coding'"}
                                 </p>
-                                <button 
+                                <button
+                                    type="button"
                                     onClick={() => handleFullSearch()} 
                                     className="mt-6 px-6 py-2 bg-neon-purple/10 hover:bg-neon-purple/20 text-neon-purple text-xs rounded-full transition-all border border-neon-purple/20"
                                 >
@@ -242,6 +257,7 @@ const SearchAutocomplete = ({
 
                     {(suggestions.length > 0 || blogPosts.length > 0) && (
                         <button
+                            type="button"
                             className="w-full p-3 bg-white/5 hover:bg-white/10 text-center transition-colors border-t border-white/5 group"
                             onClick={() => handleFullSearch()}
                         >

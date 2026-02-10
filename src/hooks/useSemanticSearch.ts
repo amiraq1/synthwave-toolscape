@@ -10,12 +10,12 @@ interface SemanticSearchOptions {
     includeBlog?: boolean;
 }
 
-interface SemanticSearchResult extends Tool {
+export interface SemanticSearchResult extends Tool {
     similarity: number;
     rerank_score?: number;
 }
 
-interface BlogSearchResult {
+export interface BlogSearchResult {
     id: string;
     title: string;
     excerpt: string;
@@ -23,13 +23,21 @@ interface BlogSearchResult {
     similarity: number;
 }
 
-interface SearchResponse {
+export interface SearchResponse {
     tools: SemanticSearchResult[];
     posts: BlogSearchResult[];
     count: number;
     semantic: boolean;
     error?: string;
 }
+
+type FindSimilarToolsRpc = (
+    fn: "find_similar_tools",
+    args: {
+        tool_id: number | string;
+        limit_count: number;
+    }
+) => Promise<{ data: Tool[] | null; error: Error | null }>;
 
 /**
  * Hook for semantic search using vector embeddings
@@ -49,7 +57,7 @@ export const useSemanticSearch = ({
             }
 
             // Call the 'search' Edge Function
-            const { data, error } = await supabase.functions.invoke('search', {
+            const { data, error } = await supabase.functions.invoke<SearchResponse>('search', {
                 body: {
                     query,
                     limit,
@@ -67,7 +75,7 @@ export const useSemanticSearch = ({
                 return { tools: [], posts: [], count: 0, semantic: false };
             }
 
-            return data as SearchResponse;
+            return data ?? { tools: [], posts: [], count: 0, semantic: false };
         },
         enabled: enabled && query.trim().length >= 2,
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
@@ -113,7 +121,8 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
         queryFn: async () => {
             if (!toolId) return [];
 
-            const { data, error } = await (supabase as any).rpc('find_similar_tools', {
+            const rpc = supabase.rpc as unknown as FindSimilarToolsRpc;
+            const { data, error } = await rpc('find_similar_tools', {
                 tool_id: toolId,
                 limit_count: limit,
             });

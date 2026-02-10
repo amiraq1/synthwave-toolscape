@@ -136,7 +136,45 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         output: {
-          manualChunks: undefined
+          manualChunks(id: string) {
+            if (!id.includes("node_modules")) {
+              return;
+            }
+
+            if (
+              id.includes("/react/") ||
+              id.includes("/react-dom/") ||
+              id.includes("/scheduler/")
+            ) {
+              return "vendor-react";
+            }
+
+            if (id.includes("/react-router")) {
+              return "vendor-router";
+            }
+
+            if (id.includes("/@supabase/")) {
+              return "vendor-supabase";
+            }
+
+            if (id.includes("/@tanstack/")) {
+              return "vendor-query";
+            }
+
+            if (id.includes("/recharts/")) {
+              return "vendor-charts";
+            }
+
+            if (id.includes("/i18next") || id.includes("/react-i18next")) {
+              return "vendor-i18n";
+            }
+
+            if (id.includes("/dayjs/")) {
+              return "vendor-dayjs";
+            }
+
+            return "vendor";
+          }
         },
       },
     },

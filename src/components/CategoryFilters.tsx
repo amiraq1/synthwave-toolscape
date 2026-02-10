@@ -73,6 +73,7 @@ const CategoryFilters = ({
           return (
             <button
               key={category}
+              type="button"
               onClick={() => onCategoryChange(category)}
               aria-pressed={activeCategory === category}
               className={cn(

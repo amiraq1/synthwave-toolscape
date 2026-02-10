@@ -1,13 +1,9 @@
-import { useState, useMemo } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Helmet } from 'react-helmet-async';
 import HeroSection from "@/components/HeroSection";
-import TrendingTools from "@/components/TrendingTools";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
-import ToolsTimeline from "@/components/ToolsTimeline";
-import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
-import RecommendedForYou from "@/components/RecommendedForYou";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
@@ -15,6 +11,11 @@ import { useStructuredData } from "@/hooks/useStructuredData";
 import { Sparkles, Loader2, X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
+
+const LivePulse = lazy(() => import("@/components/LivePulse"));
+const TrendingTools = lazy(() => import("@/components/TrendingTools"));
+const RecommendedForYou = lazy(() => import("@/components/RecommendedForYou"));
+const ToolsTimeline = lazy(() => import("@/components/ToolsTimeline"));
 
 const Index = () => {
   const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
@@ -134,7 +135,9 @@ const Index = () => {
         تخطّي إلى المحتوى
       </a>
 
-      <LivePulse />
+      <Suspense fallback={null}>
+        <LivePulse />
+      </Suspense>
 
       <main
         id="main-content"
@@ -153,7 +156,9 @@ const Index = () => {
 
         {/* Section 1.5: Trending Ticker (NEW) */}
         <section className="-mt-8 mb-4 animate-fade-in">
-          <TrendingTools />
+          <Suspense fallback={<div className="h-10 w-full bg-white/[0.02] rounded-xl border border-white/5" aria-hidden="true" />}>
+            <TrendingTools />
+          </Suspense>
         </section>
 
         {/* Section 2: Persona Filter (Floating) */}
@@ -169,6 +174,7 @@ const Index = () => {
             {(selectedPersona !== 'all' || activeCategory !== 'الكل' || searchQuery) && (
               <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 animate-in fade-in slide-in-from-top-2">
                 <button
+                  type="button"
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-red-400 bg-black/40 px-4 py-2 rounded-full border border-white/10 hover:border-red-500/30 transition-all shadow-lg hover:shadow-red-500/10"
                 >
@@ -219,19 +225,23 @@ const Index = () => {
         {/* Section 4: Recommended (Only on default view) */}
         {!searchQuery && activeCategory === 'الكل' && selectedPersona === 'all' && (
           <section className="animate-in fade-in slide-in-from-bottom-5 duration-700">
-            <RecommendedForYou />
+            <Suspense fallback={<div className="h-40 w-full rounded-2xl border border-white/5 bg-white/[0.02]" aria-hidden="true" />}>
+              <RecommendedForYou />
+            </Suspense>
           </section>
         )}
 
         {/* Section 5: Main Grid/Timeline */}
         <section className="min-h-[50vh]">
           {(!searchQuery && activeCategory === 'الكل') ? (
-            <ToolsTimeline
-              tools={displayTools || []}
-              onFetchNextPage={fetchNextPage}
-              hasNextPage={hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-            />
+            <Suspense fallback={<ToolsGrid tools={displayTools || []} isLoading />}>
+              <ToolsTimeline
+                tools={displayTools || []}
+                onFetchNextPage={fetchNextPage}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+              />
+            </Suspense>
           ) : (
             <ToolsGrid
               tools={displayTools || []}
@@ -253,7 +263,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-slate-300">لم يتم العثور على نتائج</h3>
               <p className="text-slate-500 max-w-sm">جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات.</p>
-              <button onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">عرض كل الأدوات</button>
+              <button type="button" onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">عرض كل الأدوات</button>
             </div>
           )}
         </section>

@@ -103,12 +103,13 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
 
       // 2. Persona Filter
       if (selectedPersona && selectedPersona !== "all") {
+        const personaId = selectedPersona.toLowerCase();
         filteredTools = filteredTools.filter(t => {
-          const cat = t.category; // Removed .toLowerCase() as category might be Arabic
-          if (selectedPersona === "design") return cat.includes("صور");
-          if (selectedPersona === "dev") return cat.includes("برمجة");
-          if (selectedPersona === "content") return cat.includes("نصوص");
-          if (selectedPersona === "student") return cat.includes("دراسة");
+          const cat = t.category || "";
+          if (personaId === "designer" || personaId === "design") return cat.includes("صور") || cat.includes("تصميم");
+          if (personaId === "developer" || personaId === "dev") return cat.includes("برمجة") || cat.includes("تطوير");
+          if (personaId === "marketer" || personaId === "content") return cat.includes("نصوص") || cat.includes("تسويق");
+          if (personaId === "student") return cat.includes("دراسة") || cat.includes("تعليم");
           return true;
         });
       }

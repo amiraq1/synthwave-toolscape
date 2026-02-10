@@ -29,6 +29,10 @@ interface ToolResult {
     is_sponsored: boolean;
 }
 
+interface RerankedToolResult extends ToolResult {
+    rerank_score: number;
+}
+
 interface PostResult {
     id: string;
     title: string;
@@ -117,14 +121,17 @@ Deno.serve(async (req) => {
         if (toolError) throw toolError;
 
         // 3. Advanced Reranking Logic
-        let processedTools = (tools as ToolResult[]) || [];
-        processedTools = processedTools.map(tool => {
+        let processedTools: RerankedToolResult[] = (tools as ToolResult[] | null)?.map(tool => {
             // Reranking score: 70% similarity + 20% rating + 10% featured/sponsored
             const ratingScore = (tool.average_rating || 0) / 5;
             const boost = (tool.is_featured || tool.is_sponsored) ? 0.1 : 0;
             const finalScore = (tool.similarity * 0.7) + (ratingScore * 0.2) + boost;
             return { ...tool, rerank_score: finalScore };
-        }).sort((a, b) => (b as any).rerank_score - (a as any).rerank_score).slice(0, safeLimit);
+        }) ?? [];
+
+        processedTools = processedTools
+            .sort((a, b) => b.rerank_score - a.rerank_score)
+            .slice(0, safeLimit);
 
         // 4. Optional: Search Blog Posts (if requested)
         let processedPosts: PostResult[] = [];
@@ -147,10 +154,11 @@ Deno.serve(async (req) => {
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("❌ Search Error:", error);
+        const details = error instanceof Error ? error.message : "Unknown error";
         return new Response(
-            JSON.stringify({ error: "Search failed", details: error.message, tools: [], semantic: false }),
+            JSON.stringify({ error: "Search failed", details, tools: [], semantic: false }),
             { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }

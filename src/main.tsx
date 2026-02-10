@@ -81,25 +81,3 @@ createRoot(document.getElementById('root')!).render(
         </ErrorBoundary>
     </React.StrictMode>,
 );
-
-const registerServiceWorker = async () => {
-    if ('serviceWorker' in navigator) {
-        try {
-            const { registerSW } = await import('virtual:pwa-register');
-            registerSW({
-                immediate: false,
-                onRegisterError(error) {
-                    console.error('Service Worker registration failed:', error);
-                }
-            });
-        } catch (error) {
-            console.error('Service Worker initialization failed:', error);
-        }
-    }
-};
-
-if (typeof requestIdleCallback !== 'undefined') {
-    requestIdleCallback(() => registerServiceWorker());
-} else {
-    setTimeout(registerServiceWorker, 2000);
-}
