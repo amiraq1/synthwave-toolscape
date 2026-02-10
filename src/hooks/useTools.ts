@@ -52,44 +52,25 @@ export const categories: Category[] = [
   'أخرى'
 ];
 
-// تعريف أنواع المدخلات للبحث
 interface UseToolsParams {
   searchQuery?: string;
-  selectedPersona?: string; // الفلتر الجديد
+  selectedPersona?: string;
   category?: Category;
 }
 
-// دمجنا المعاملات في كائن واحد (params) بدلاً من وسائط منفصلة
-export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCategoryOld?: Category) => {
-
-  // Normalization logic: support both old signature and new object signature
-  let searchQuery = "";
-  let selectedPersona = "all";
-  let category: Category = "الكل";
-
-  if (typeof searchQueryOrParams === 'string') {
-    searchQuery = searchQueryOrParams;
-    if (activeCategoryOld) {
-      category = activeCategoryOld;
-    }
-  } else {
-    searchQuery = searchQueryOrParams.searchQuery || "";
-    selectedPersona = searchQueryOrParams.selectedPersona || "all";
-    category = searchQueryOrParams.category || "الكل";
-  }
+export const useTools = (params: UseToolsParams = {}) => {
+  const searchQuery = params.searchQuery || "";
+  const selectedPersona = params.selectedPersona || "all";
+  const category: Category = params.category || "الكل";
 
   return useInfiniteQuery({
-    // 1. تحسين مفاتيح الاستعلام (Query Keys) ✅
-    // الآن الكاش سيفصل بين نتائج "المصممين" ونتائج "المبرمجين"
-    // أي تغيير في هذه المصفوفة سيؤدي لجلب بيانات جديدة تلقائياً
     queryKey: ["tools", selectedPersona, searchQuery, category],
 
     queryFn: async ({ pageParam = 0 }) => {
       const itemsPerPage = 12;
-      const from = (pageParam as number);
+      const from = pageParam as number;
       const to = from + itemsPerPage;
 
-      // START LOCAL FILTERING LOGIC
       let filteredTools = localTools.filter(t => t.is_published);
 
       // 1. Search Filter
@@ -124,56 +105,45 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
           if (category === 'صناعة محتوى') return cat.includes('محتوى') || cat.includes('تسويق');
           if (category === 'تطوير وبرمجة') return cat.includes('برمجة');
           if (category === 'تعليم وبحث') return cat.includes('تعليم') || cat.includes('دراسة') || cat.includes('طلاب');
-          return cat === category;
+          // 'أخرى' — anything not matching above categories
+          return !['نصوص', 'صور', 'فيديو', 'إنتاجية', 'محتوى', 'تسويق', 'برمجة', 'تعليم', 'دراسة', 'طلاب', 'صوت'].some(k => cat.includes(k));
         });
       }
 
-      // Sorting: Featured first, then by Creation Date (Mocked logic since specific dates might be uniform in CSV)
+      // Sorting: Featured first
       filteredTools.sort((a, b) => {
         if (a.is_featured === b.is_featured) return 0;
         return a.is_featured ? -1 : 1;
       });
 
-      // Pagination
+      // Pagination — no artificial delay
       const result = filteredTools.slice(from, to);
 
-      // Simulate network delay for better UX (optional)
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      return result;
+      return result as unknown as Tool[];
     },
 
     initialPageParam: 0,
 
-    // 2. تحسين إعدادات الوقت (Stale & GC Time) ✅
-    // staleTime: الفترة التي تعتبر فيها البيانات "طازجة" ولا تحتاج لإعادة جلب (قللناها لـ 5 دقائق)
     staleTime: 1000 * 60 * 5,
-    // gcTime: الفترة التي تبقى فيها البيانات غير المستخدمة في الذاكرة قبل حذفها (30 دقيقة ممتازة)
     gcTime: 1000 * 60 * 30,
 
-    getNextPageParam: (lastPage, allPages) => {
-      // إذا كانت الصفحة الحالية فارغة أو أقل من العدد المطلوب، فلا توجد صفحات تالية
-      // lastPage is Tool[]
+    getNextPageParam: (lastPage: Tool[], allPages: Tool[][]) => {
       return lastPage.length < 12 ? undefined : allPages.length * 12;
     },
 
-    // 3. استخدام دالة Select للتحويل (Data Transformation) ✅
-    // هذه الدالة تعمل *بعد* الجلب و *قبل* أن تصل للمكون
-    // هنا نستخدمها لضمان أننا لا نمرر أي حقول حساسة أو غير ضرورية للواجهة
     select: (data) => {
       return {
         pages: data.pages.map((page) =>
           page.map((item) => ({
             ...item,
             id: String(item.id),
-            // مثال: تحويل السعر لرقم مقروء أو إضافة حقل مشتق
-            // is_new: new Date(tool.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // جديد إذا كان أقل من أسبوع
-          } as unknown as Tool)) // Force cast to match interface
+          } as unknown as Tool))
         ),
         pageParams: data.pageParams,
       };
     },
-    refetchOnMount: false, // استخدام الكاش
-    placeholderData: (previousData) => previousData, // عرض البيانات القديمة أثناء التحديث
+
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 };

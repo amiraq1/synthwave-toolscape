@@ -76,13 +76,14 @@ const SearchAutocomplete = ({
 
     const highlightText = (text: string, highlight: string) => {
         if (!highlight.trim()) return text;
-        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+        const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
         return (
             <span>
-                {parts.map((part, i) => 
-                    part.toLowerCase() === highlight.toLowerCase() ? 
-                    <span key={i} className="text-neon-cyan bg-neon-cyan/10 px-0.5 rounded">{part}</span> : 
-                    part
+                {parts.map((part, i) =>
+                    part.toLowerCase() === highlight.toLowerCase() ?
+                        <span key={i} className="text-neon-cyan bg-neon-cyan/10 px-0.5 rounded">{part}</span> :
+                        part
                 )}
             </span>
         );
@@ -246,7 +247,7 @@ const SearchAutocomplete = ({
                                 </p>
                                 <button
                                     type="button"
-                                    onClick={() => handleFullSearch()} 
+                                    onClick={() => handleFullSearch()}
                                     className="mt-6 px-6 py-2 bg-neon-purple/10 hover:bg-neon-purple/20 text-neon-purple text-xs rounded-full transition-all border border-neon-purple/20"
                                 >
                                     {isAr ? "بحث شامل في الدليل" : "Search entire directory"}

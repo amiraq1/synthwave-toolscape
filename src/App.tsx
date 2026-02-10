@@ -113,12 +113,14 @@ const AppContent = () => {
       <Footer />
 
       {/* Floating Components */}
-      <Suspense fallback={null}>
-        <CompareFloatingBar />
-        <ScrollToTopButton />
-        {isAddModalOpen && (
+      <CompareFloatingBar />
+      <ScrollToTopButton />
+      {isAddModalOpen && (
+        <Suspense fallback={null}>
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
-        )}
+        </Suspense>
+      )}
+      <Suspense fallback={null}>
         <ChatBot />
       </Suspense>
     </div>
@@ -129,16 +131,16 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
       <AuthProvider>
-        <CompareProvider>
-          <TooltipProvider>
-            <Toaster />
-            <PwaUpdateToast />
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <TooltipProvider>
+          <Toaster />
+          <PwaUpdateToast />
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <CompareProvider>
               <ScrollToTop />
               <AppContent />
-            </BrowserRouter>
-          </TooltipProvider>
-        </CompareProvider>
+            </CompareProvider>
+          </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
     </HelmetProvider>
   </QueryClientProvider>

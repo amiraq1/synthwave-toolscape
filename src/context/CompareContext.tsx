@@ -16,10 +16,15 @@ const CompareContext = createContext<CompareContextType | undefined>(undefined);
 export const CompareProvider = ({ children }: { children: ReactNode }) => {
     const { i18n } = useTranslation();
 
-    // استرجاع البيانات من LocalStorage لتبقى الاختيارات حتى بعد التحديث
+    // Safe localStorage read with try-catch for corrupted data
     const [selectedTools, setSelectedTools] = useState<string[]>(() => {
-        const saved = localStorage.getItem("compare_tools");
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem("compare_tools");
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            localStorage.removeItem("compare_tools");
+            return [];
+        }
     });
 
     useEffect(() => {
@@ -46,7 +51,6 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const setCompareList = (ids: string[]) => {
-        // التحقق من الحد الأقصى
         if (ids.length > 3) {
             setSelectedTools(ids.slice(0, 3));
         } else {

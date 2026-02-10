@@ -38,7 +38,7 @@ const Auth = () => {
                 const { error } = await signUp(formData.email, formData.password, formData.fullName);
                 if (error) throw error;
                 toast.success("تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني.");
-                if (!error) setIsLogin(true);
+                setIsLogin(true);
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : undefined;

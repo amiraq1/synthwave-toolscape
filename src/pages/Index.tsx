@@ -1,16 +1,14 @@
 import { lazy, Suspense, useMemo, useState } from "react";
-import { Helmet } from 'react-helmet-async';
 import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
-import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
+import PersonaFilter, { PERSONAS, type PersonaId } from "@/components/PersonaFilter";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
 import { Sparkles, Loader2, X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { getSupabaseFunctionsBaseUrl } from "@/utils/supabaseUrl";
 
 const LivePulse = lazy(() => import("@/components/LivePulse"));
 const TrendingTools = lazy(() => import("@/components/TrendingTools"));
@@ -18,14 +16,10 @@ const RecommendedForYou = lazy(() => import("@/components/RecommendedForYou"));
 const ToolsTimeline = lazy(() => import("@/components/ToolsTimeline"));
 
 const Index = () => {
-  const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
-  const ogImageUrl = functionsBaseUrl
-    ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent("\u0646\u0628\u0636 AI")}&category=${encodeURIComponent("\u062f\u0644\u064a\u0644\u0643 \u0627\u0644\u0630\u0643\u064a \u0644\u0623\u062f\u0648\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u0642\u0628\u0644")}`
-    : "";
-
+  // SEO — single source of truth (no duplicate Helmet)
   useSEO({
     title: "الرئيسية",
-    description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية.",
+    description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.",
     ogType: "website",
   });
 
@@ -39,6 +33,7 @@ const Index = () => {
     setSearchQuery("");
   };
 
+  // useTools handles all filtering (search + persona + category) — no re-filtering needed here
   const {
     data,
     isLoading,
@@ -72,30 +67,18 @@ const Index = () => {
     return counts;
   }, [tools]);
 
-  const filteredTools = useMemo(() => {
-    return tools.filter((tool) => {
-      const matchesSearch = searchQuery.trim() === '' ||
-        tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      if (selectedPersona === "all") return matchesSearch;
-      const filtered = filterToolsByPersona([tool], selectedPersona);
-      return matchesSearch && filtered.length > 0;
-    });
-  }, [tools, searchQuery, selectedPersona]);
-
   const {
     semanticTools,
     isSemanticLoading,
     isSemantic,
-  } = useHybridSearch(searchQuery, filteredTools.length, 3);
+  } = useHybridSearch(searchQuery, tools.length, 3);
 
   const displayTools = useMemo(() => {
     if (isSemantic && semanticTools.length > 0) {
       return semanticTools as unknown as Tool[];
     }
-    return filteredTools;
-  }, [filteredTools, semanticTools, isSemantic]);
+    return tools;
+  }, [tools, semanticTools, isSemantic]);
 
   const structuredDataItems = useMemo(
     () => displayTools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
@@ -115,17 +98,6 @@ const Index = () => {
       {/* Avant-Garde Backgrounds */}
       <div className="fixed -top-[20%] right-[20%] w-[60vw] h-[60vw] bg-neon-purple/5 rounded-full blur-[180px] pointer-events-none" />
       <div className="fixed bottom-[10%] -left-[10%] w-[50vw] h-[50vw] bg-neon-blue/5 rounded-full blur-[180px] pointer-events-none" />
-
-      <Helmet>
-        <title>نبض AI | الدليل العربي الأول لأدوات الذكاء الاصطناعي</title>
-        <meta name="description" content="اكتشف أفضل أدوات الذكاء الاصطناعي (ChatGPT, Midjourney, وغيرها) مع مراجعات عربية، مقارنات دقيقة، وفلاتر ذكية. دليلك الشامل لعام 2026." />
-        <meta property="og:title" content="نبض AI | اكتشف أدوات المستقبل" />
-        <meta property="og:description" content="أكبر مكتبة عربية لأدوات الذكاء الاصطناعي. ابحث، قارن، واختر الأداة المناسبة لك." />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImageUrl} />
-      </Helmet>
 
       {/* Skip link */}
       <a
@@ -154,7 +126,7 @@ const Index = () => {
           />
         </section>
 
-        {/* Section 1.5: Trending Ticker (NEW) */}
+        {/* Section 1.5: Trending Ticker */}
         <section className="-mt-8 mb-4 animate-fade-in">
           <Suspense fallback={<div className="h-10 w-full bg-white/[0.02] rounded-xl border border-white/5" aria-hidden="true" />}>
             <TrendingTools />

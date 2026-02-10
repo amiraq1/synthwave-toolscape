@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -20,7 +19,7 @@ import "@fontsource/ibm-plex-sans-arabic/600.css";
 dayjs.extend(relativeTime);
 dayjs.locale('ar');
 
-// Simple Error Boundary
+// Production-safe Error Boundary
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
         super(props);
@@ -34,10 +33,23 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
     render() {
         if (this.state.hasError) {
             return (
-                <div style={{ padding: 20, color: 'white', background: '#333', height: '100vh', direction: 'ltr' }}>
-                    <h1>Something went wrong.</h1>
-                    <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.toString()}</pre>
-                    <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.stack}</pre>
+                <div style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    minHeight: '100vh', background: '#0f0f1a', color: 'white', fontFamily: 'Cairo, sans-serif',
+                    direction: 'rtl', padding: '2rem', textAlign: 'center'
+                }}>
+                    <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>حدث خطأ غير متوقع</h1>
+                    <p style={{ color: '#94a3b8', marginBottom: '1.5rem', maxWidth: '400px' }}>نعتذر عن هذا الخطأ. يرجى إعادة تحميل الصفحة.</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        style={{
+                            background: '#7c3aed', color: 'white', border: 'none', borderRadius: '0.75rem',
+                            padding: '0.75rem 2rem', fontSize: '1rem', cursor: 'pointer', fontFamily: 'inherit'
+                        }}
+                    >
+                        إعادة تحميل الصفحة
+                    </button>
                 </div>
             );
         }
@@ -46,7 +58,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 }
 
 const initMonitoring = () => {
-    // Sentry placeholder
+    // Sentry placeholder — uncomment when ready:
     // Sentry.init({...})
 };
 
@@ -58,20 +70,10 @@ if (typeof requestIdleCallback !== 'undefined') {
     setTimeout(initMonitoring, 3000);
 }
 
-// Global error handler for uncaught promises (outside React)
+// Global error handler — log only, never expose to DOM
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled Rejection:', event.reason);
-    // Optionally create a visible element if React is dead
-    const errorDiv = document.createElement('div');
-    errorDiv.style.position = 'fixed';
-    errorDiv.style.top = '0';
-    errorDiv.style.left = '0';
-    errorDiv.style.width = '100%';
-    errorDiv.style.background = 'red';
-    errorDiv.style.color = 'white';
-    errorDiv.style.zIndex = '9999';
-    errorDiv.innerText = 'Unhandled Rejection: ' + event.reason;
-    document.body.appendChild(errorDiv);
+    // TODO: Send to Sentry/monitoring service in production
 });
 
 createRoot(document.getElementById('root')!).render(
