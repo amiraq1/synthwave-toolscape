@@ -7,32 +7,53 @@ interface SemanticSearchOptions {
     threshold?: number;
     limit?: number;
     enabled?: boolean;
+    includeBlog?: boolean;
 }
 
 interface SemanticSearchResult extends Tool {
     similarity: number;
+    rerank_score?: number;
+}
+
+interface BlogSearchResult {
+    id: string;
+    title: string;
+    excerpt: string;
+    slug: string;
+    similarity: number;
+}
+
+interface SearchResponse {
+    tools: SemanticSearchResult[];
+    posts: BlogSearchResult[];
+    count: number;
+    semantic: boolean;
+    error?: string;
 }
 
 /**
  * Hook for semantic search using vector embeddings
- * Uses the 'search' Edge Function with Gemini embeddings
+ * Uses the 'search' Edge Function with Gemini embeddings and Reranking
  */
 export const useSemanticSearch = ({
     query,
-    threshold = 0.3,
     limit = 15,
     enabled = true,
+    includeBlog = true,
 }: SemanticSearchOptions) => {
-    return useQuery<SemanticSearchResult[]>({
-        queryKey: ['semantic-search', query, threshold, limit],
+    return useQuery<SearchResponse>({
+        queryKey: ['semantic-search', query, limit, includeBlog],
         queryFn: async () => {
-            if (!query.trim() || query.trim().length < 2) return [];
+            if (!query.trim() || query.trim().length < 2) {
+                return { tools: [], posts: [], count: 0, semantic: false };
+            }
 
             // Call the 'search' Edge Function
             const { data, error } = await supabase.functions.invoke('search', {
                 body: {
                     query,
                     limit,
+                    include_blog: includeBlog
                 },
             });
 
@@ -43,10 +64,10 @@ export const useSemanticSearch = ({
 
             if (data?.error) {
                 console.error('Search function error:', data.error);
-                return [];
+                return { tools: [], posts: [], count: 0, semantic: false };
             }
 
-            return data?.tools || [];
+            return data as SearchResponse;
         },
         enabled: enabled && query.trim().length >= 2,
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
@@ -56,16 +77,12 @@ export const useSemanticSearch = ({
 
 /**
  * Hook for hybrid search: combines client-side filtering with semantic fallback
- * Automatically triggers semantic search when client-side results are insufficient
  */
 export const useHybridSearch = (
     query: string,
     clientSideResultsCount: number,
     minResultsThreshold: number = 3
 ) => {
-    // Only enable semantic search when:
-    // 1. Query is at least 2 characters
-    // 2. Client-side search found less than threshold results
     const shouldUseSemantic =
         query.trim().length >= 2 &&
         clientSideResultsCount < minResultsThreshold;
@@ -77,11 +94,12 @@ export const useHybridSearch = (
     });
 
     return {
-        semanticTools: semanticSearch.data || [],
+        semanticTools: semanticSearch.data?.tools || [],
+        semanticPosts: semanticSearch.data?.posts || [],
         isSemanticLoading: semanticSearch.isLoading,
         isSemanticError: semanticSearch.isError,
         semanticError: semanticSearch.error,
-        isSemantic: shouldUseSemantic && (semanticSearch.data?.length || 0) > 0,
+        isSemantic: shouldUseSemantic && (semanticSearch.data?.tools?.length || 0) > 0,
         shouldUseSemantic,
     };
 };
@@ -95,7 +113,6 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
         queryFn: async () => {
             if (!toolId) return [];
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase as any).rpc('find_similar_tools', {
                 tool_id: toolId,
                 limit_count: limit,

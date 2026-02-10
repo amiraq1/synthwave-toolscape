@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Link } from "react-router-dom";
-import { Search, Loader2, ArrowRight, ArrowLeft, Sparkles, Command } from "lucide-react";
+import { Search, Loader2, ArrowRight, ArrowLeft, Sparkles, Command, BookOpen, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { cn } from "@/lib/utils";
@@ -27,18 +27,16 @@ const SearchAutocomplete = ({
     const isAr = i18n.language === 'ar';
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // Internal state if uncontrolled, or sync with props
     const [internalQuery, setInternalQuery] = useState("");
     const query = value !== undefined ? value : internalQuery;
 
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
-    const debouncedQuery = useDebounce(query, 500); // 500ms delay for semantic search to save costs
+    const debouncedQuery = useDebounce(query, 500);
 
-    // Semantic Search Hook
     const {
-        data: suggestions = [],
+        data,
         isLoading
     } = useSemanticSearch({
         query: debouncedQuery,
@@ -46,13 +44,16 @@ const SearchAutocomplete = ({
         limit: 5
     });
 
+    // Extract tools and posts from data
+    const suggestions = (data as any)?.tools || [];
+    const blogPosts = (data as any)?.posts || [];
+
     const handleChange = (val: string) => {
         if (onChange) onChange(val);
         else setInternalQuery(val);
         setShowSuggestions(true);
     };
 
-    // Close on click outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -67,8 +68,21 @@ const SearchAutocomplete = ({
         e?.preventDefault();
         if (onSearch) onSearch(query);
         setShowSuggestions(false);
-        // Force blur to hide mobile keyboard
         (document.activeElement as HTMLElement)?.blur();
+    };
+
+    const highlightText = (text: string, highlight: string) => {
+        if (!highlight.trim()) return text;
+        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+        return (
+            <span>
+                {parts.map((part, i) => 
+                    part.toLowerCase() === highlight.toLowerCase() ? 
+                    <span key={i} className="text-neon-cyan bg-neon-cyan/10 px-0.5 rounded">{part}</span> : 
+                    part
+                )}
+            </span>
+        );
     };
 
     const Arrow = isAr ? ArrowLeft : ArrowRight;
@@ -105,7 +119,6 @@ const SearchAutocomplete = ({
                     onBlur={() => setIsFocused(false)}
                 />
 
-                {/* Keyboard Shortcut Hint or Enter Icon */}
                 <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center`}>
                     {query.length > 0 ? (
                         <button
@@ -124,13 +137,11 @@ const SearchAutocomplete = ({
                 </div>
             </form>
 
-            {/* Suggestions Dropdown */}
             {showSuggestions && query.length >= 2 && (
                 <div
                     className="absolute top-full left-0 right-0 mt-3 bg-[#0a0a16]/95 border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-300 ring-1 ring-white/5"
                     dir={isAr ? "rtl" : "ltr"}
                 >
-                    {/* Header */}
                     <div className="px-4 py-3 bg-white/5 border-b border-white/5 flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                             <Sparkles className="w-3 h-3 text-neon-purple" />
@@ -139,12 +150,14 @@ const SearchAutocomplete = ({
                         {isLoading && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
                     </div>
 
-                    {suggestions.length > 0 ? (
-                        <>
-                            <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
-                                {suggestions.map((tool) => {
+                    <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
+                        {suggestions.length > 0 && (
+                            <div className="py-2">
+                                <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold">
+                                    {isAr ? "الأدوات" : "Tools"}
+                                </div>
+                                {suggestions.map((tool: any) => {
                                     const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-                                    // Calculate display description
                                     const desc = isAr ? tool.description : (tool.description_en || tool.description);
 
                                     return (
@@ -154,8 +167,6 @@ const SearchAutocomplete = ({
                                             className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group relative overflow-hidden"
                                             onClick={() => setShowSuggestions(false)}
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/0 via-neon-purple/5 to-neon-purple/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-
                                             <div className="flex items-start gap-4 relative z-10">
                                                 <div className="w-10 h-10 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-neon-purple font-bold text-lg shadow-sm group-hover:border-neon-purple/50 group-hover:shadow-neon-purple/20 transition-all shrink-0">
                                                     {displayTitle.charAt(0)}
@@ -163,9 +174,9 @@ const SearchAutocomplete = ({
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center justify-between mb-1">
                                                         <h4 className="font-bold text-foreground group-hover:text-neon-purple transition-colors truncate">
-                                                            {displayTitle}
+                                                            {highlightText(displayTitle, query)}
                                                         </h4>
-                                                        {(tool.similarity !== undefined) && (
+                                                        {tool.similarity && (
                                                             <span className="text-[10px] bg-neon-purple/10 text-neon-purple px-1.5 py-0.5 rounded-full border border-neon-purple/20 shrink-0">
                                                                 {Math.round(tool.similarity * 100)}%
                                                             </span>
@@ -175,36 +186,71 @@ const SearchAutocomplete = ({
                                                         {desc}
                                                     </p>
                                                 </div>
-                                                <Arrow className="w-5 h-5 text-muted-foreground/30 group-hover:text-neon-cyan self-center -translate-x-2 group-hover:translate-x-0 transition-all opacity-0 group-hover:opacity-100 shrink-0" />
                                             </div>
                                         </Link>
                                     );
                                 })}
                             </div>
+                        )}
 
-                            <button
-                                className="w-full p-3 bg-white/5 hover:bg-white/10 text-center transition-colors border-t border-white/5 group"
-                                onClick={() => handleFullSearch()}
-                            >
-                                <span className="text-sm text-neon-purple group-hover:text-neon-cyan transition-colors flex items-center justify-center gap-2">
-                                    {isAr ? "عرض كل النتائج" : "View All Results"}
-                                    <Arrow className="w-4 h-4" />
-                                </span>
-                            </button>
-                        </>
-                    ) : (
-                        !isLoading && (
-                            <div className="p-8 text-center">
-                                <p className="text-muted-foreground text-sm">
-                                    {isAr ? "لا توجد نتائج مطابقة تماماً" : "No direct matches found"}
+                        {blogPosts.length > 0 && (
+                            <div className="py-2 border-t border-white/5">
+                                <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold flex items-center gap-1">
+                                    <BookOpen className="w-3 h-3" />
+                                    {isAr ? "من المدونة" : "From Blog"}
+                                </div>
+                                {blogPosts.map((post: any) => (
+                                    <Link
+                                        key={post.id}
+                                        to={`/blog/${post.slug}`}
+                                        className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group"
+                                        onClick={() => setShowSuggestions(false)}
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-medium text-sm text-foreground group-hover:text-neon-cyan transition-colors truncate">
+                                                {highlightText(post.title, query)}
+                                            </h4>
+                                            <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+                                                {post.excerpt}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+
+                        {!isLoading && suggestions.length === 0 && blogPosts.length === 0 && (
+                            <div className="p-10 text-center">
+                                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <AlertCircle className="w-6 h-6 text-muted-foreground/40" />
+                                </div>
+                                <p className="text-muted-foreground text-sm font-medium">
+                                    {isAr ? "لم نجد نتائج مطابقة تماماً" : "No direct matches found"}
                                 </p>
-                                <button onClick={() => handleFullSearch()} className="text-neon-purple text-xs mt-2 hover:underline">
+                                <p className="text-xs text-muted-foreground/60 mt-2 max-w-[200px] mx-auto">
+                                    {isAr ? "جرب البحث بكلمات عامة مثل 'تصميم' أو 'برمجة'" : "Try searching for general terms like 'design' or 'coding'"}
+                                </p>
+                                <button 
+                                    onClick={() => handleFullSearch()} 
+                                    className="mt-6 px-6 py-2 bg-neon-purple/10 hover:bg-neon-purple/20 text-neon-purple text-xs rounded-full transition-all border border-neon-purple/20"
+                                >
                                     {isAr ? "بحث شامل في الدليل" : "Search entire directory"}
                                 </button>
                             </div>
-                        )
-                    )}
+                        )}
+                    </div>
 
+                    {(suggestions.length > 0 || blogPosts.length > 0) && (
+                        <button
+                            className="w-full p-3 bg-white/5 hover:bg-white/10 text-center transition-colors border-t border-white/5 group"
+                            onClick={() => handleFullSearch()}
+                        >
+                            <span className="text-sm text-neon-purple group-hover:text-neon-cyan transition-colors flex items-center justify-center gap-2">
+                                {isAr ? "عرض كل النتائج" : "View All Results"}
+                                <Arrow className="w-4 h-4" />
+                            </span>
+                        </button>
+                    )}
                 </div>
             )}
         </div>
