@@ -31,6 +31,31 @@ export interface SearchResponse {
     error?: string;
 }
 
+const EMPTY_SEARCH_RESPONSE: SearchResponse = {
+    tools: [],
+    posts: [],
+    count: 0,
+    semantic: false,
+};
+
+const SEMANTIC_COOLDOWN_MS = 5 * 60 * 1000;
+let semanticServiceDisabledUntil = 0;
+let semanticFailureLogged = false;
+let semanticRequestInFlight = false;
+
+const isSemanticServiceDisabled = () => Date.now() < semanticServiceDisabledUntil;
+
+const temporarilyDisableSemanticService = (details?: string) => {
+    semanticServiceDisabledUntil = Date.now() + SEMANTIC_COOLDOWN_MS;
+    if (!semanticFailureLogged) {
+        console.warn(
+            `Semantic search disabled for ${SEMANTIC_COOLDOWN_MS / 60000} minutes due to backend errors.`,
+            details || "",
+        );
+        semanticFailureLogged = true;
+    }
+};
+
 type FindSimilarToolsRpc = (
     fn: "find_similar_tools",
     args: {
@@ -52,34 +77,50 @@ export const useSemanticSearch = ({
     return useQuery<SearchResponse>({
         queryKey: ['semantic-search', query, limit, includeBlog],
         queryFn: async () => {
-            if (!query.trim() || query.trim().length < 2) {
-                return { tools: [], posts: [], count: 0, semantic: false };
+            const normalizedQuery = query.trim();
+            if (!normalizedQuery || normalizedQuery.length < 2) {
+                return EMPTY_SEARCH_RESPONSE;
             }
 
-            // Call the 'search' Edge Function
-            const { data, error } = await supabase.functions.invoke<SearchResponse>('search', {
-                body: {
-                    query,
-                    limit,
-                    include_blog: includeBlog
-                },
-            });
-
-            if (error) {
-                console.error('Semantic search error:', error);
-                throw error;
+            if (isSemanticServiceDisabled()) {
+                return EMPTY_SEARCH_RESPONSE;
             }
 
-            if (data?.error) {
-                console.error('Search function error:', data.error);
-                return { tools: [], posts: [], count: 0, semantic: false };
+            // Prevent duplicate concurrent calls from multiple semantic consumers.
+            if (semanticRequestInFlight) {
+                return EMPTY_SEARCH_RESPONSE;
             }
 
-            return data ?? { tools: [], posts: [], count: 0, semantic: false };
+            semanticRequestInFlight = true;
+
+            try {
+                // Call the 'search' Edge Function
+                const { data, error } = await supabase.functions.invoke<SearchResponse>('search', {
+                    body: {
+                        query: normalizedQuery,
+                        limit,
+                        include_blog: includeBlog
+                    },
+                });
+
+                if (error) {
+                    temporarilyDisableSemanticService(error.message);
+                    return EMPTY_SEARCH_RESPONSE;
+                }
+
+                if (data?.error) {
+                    temporarilyDisableSemanticService(data.error);
+                    return EMPTY_SEARCH_RESPONSE;
+                }
+
+                return data ?? EMPTY_SEARCH_RESPONSE;
+            } finally {
+                semanticRequestInFlight = false;
+            }
         },
         enabled: enabled && query.trim().length >= 2,
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-        retry: 1,
+        retry: false,
     });
 };
 

@@ -103,6 +103,7 @@ const Auth = () => {
                                         id="fullName"
                                         type="text"
                                         required
+                                        autoComplete="name"
                                         placeholder="الاسم الكريم"
                                         className="bg-black/20 border-white/10 text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
                                         value={formData.fullName}
@@ -120,6 +121,7 @@ const Auth = () => {
                                     id="email"
                                     type="email"
                                     required
+                                    autoComplete="email"
                                     placeholder="name@example.com"
                                     className="bg-black/20 border-white/10 text-left placeholder:text-right text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
                                     dir="ltr"
@@ -144,6 +146,7 @@ const Auth = () => {
                                     id="password"
                                     type="password"
                                     required
+                                    autoComplete={isLogin ? "current-password" : "new-password"}
                                     placeholder="••••••••"
                                     className="bg-black/20 border-white/10 text-left placeholder:text-right text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
                                     dir="ltr"

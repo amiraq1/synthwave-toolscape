@@ -19,6 +19,6 @@ export const useFavicon = (toolUrl?: string | null, size = 128) => {
 
   return useMemo(() => {
     if (!hostname) return null;
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=${size}`;
+    return `https://api.faviconkit.com/${encodeURIComponent(hostname)}/${size}`;
   }, [hostname, size]);
 };
