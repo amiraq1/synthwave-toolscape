@@ -112,7 +112,7 @@ export default function ChatBot() {
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <Avatar className="h-8 w-8 bg-neon-purple/20">
-                                <AvatarImage src="/bot-avatar.png" />
+                                
                                 <AvatarFallback className="bg-primary text-primary-foreground"><Bot className="w-5 h-5" /></AvatarFallback>
                             </Avatar>
                             <div>
