@@ -38,6 +38,14 @@ export default defineConfig(({ mode }) => {
           );
         },
       },
+      {
+        name: 'inject-csp',
+        apply: 'build',
+        transformIndexHtml(html: string) {
+          const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://apis.google.com https://www.googletagmanager.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://hcaptcha.com https://*.hcaptcha.com; frame-src https://hcaptcha.com https://*.hcaptcha.com;">`;
+          return html.replace('</head>', `  ${csp}\n</head>`);
+        },
+      },
       react(),
       mode === 'development' && componentTagger(),
 
