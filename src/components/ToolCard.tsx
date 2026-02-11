@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
@@ -25,8 +25,7 @@ import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
 import { useTranslation } from 'react-i18next';
-import { isValidImageUrl } from '@/utils/imageUrl';
-import { useFavicon } from '@/hooks/useFavicon';
+import { getToolImageUrl } from '@/utils/imageUrl';
 
 interface ToolCardProps {
   tool: Tool;
@@ -59,13 +58,11 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 
 const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
-  const [faviconError, setFaviconError] = useState(false);
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
   const isCompared = selectedTools.includes(String(tool.id));
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
-  const faviconSrc = useFavicon(tool.url);
 
   const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
   const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
@@ -97,10 +94,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
     prefetchTool(String(tool.id));
   };
 
-  // Image priority logic
-  const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
-  const showOriginalImage = !!validImageUrl;
-  const showFavicon = !!faviconSrc && !faviconError;
+  // Unified image resolver: explicit image_url first, then favicon fallback from tool.url.
+  const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url);
+  const showResolvedImage = !!resolvedImageUrl;
 
   return (
     <div
@@ -157,39 +153,26 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
             <div className="flex items-center gap-3">
               <div className={cn(
                 "w-12 h-12 rounded-xl flex items-center justify-center border transition-all duration-500 group-hover:scale-105 overflow-hidden",
-                showOriginalImage
+                showResolvedImage
                   ? "bg-white/5 border-white/10"
                   : "bg-neon-purple/10 border-neon-purple/20 group-hover:border-neon-purple/50"
               )}>
-                {/* Priority 1: Manual image_url */}
-                {showOriginalImage ? (
+                {/* Resolved image (manual image_url or tool favicon fallback) */}
+                {showResolvedImage ? (
                   <ImageWithFallback
-                    src={validImageUrl ?? undefined}
+                    src={resolvedImageUrl}
                     alt={displayTitle}
                     width={100}
                     className="w-full h-full p-1.5 object-contain"
                     priority={index < 6}
                     aspectRatio="square"
                   />
-                ) : showFavicon ? (
-                  /* Priority 2: Favicon (cached) */
-                  <img
-                    src={faviconSrc!}
-                    alt={displayTitle}
-                    className="w-10 h-10 object-contain rounded-lg"
-                    loading={index < 6 ? "eager" : "lazy"}
-                    // @ts-expect-error fetchpriority is a valid attribute but not yet in React types
-                    fetchpriority={index < 6 ? "high" : "auto"}
-                    width="40"
-                    height="40"
-                    onError={() => setFaviconError(true)}
-                  />
                 ) : null}
 
                 {/* Fallback: First Letter or Category Icon */}
                 <div className={cn(
                   "fallback-icon flex items-center justify-center w-full h-full",
-                  (showOriginalImage || showFavicon) ? "hidden" : "flex"
+                  showResolvedImage ? "hidden" : "flex"
                 )}>
                   {tool.title ? (
                     <span className="text-xl font-bold text-neon-purple">

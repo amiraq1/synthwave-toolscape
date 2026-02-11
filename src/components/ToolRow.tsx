@@ -7,8 +7,7 @@ import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
-import { isValidImageUrl } from '@/utils/imageUrl';
-import { useFavicon } from '@/hooks/useFavicon';
+import { getToolImageUrl } from '@/utils/imageUrl';
 
 interface ToolRowProps {
     tool: Tool;
@@ -47,10 +46,8 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const navigate = useNavigate();
     const prefetchTool = usePrefetchTool();
     const [imageError, setImageError] = useState(false);
-    const [faviconError, setFaviconError] = useState(false);
     const { i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
-    const faviconSrc = useFavicon(tool.url);
 
     // Category styling
     const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
@@ -79,11 +76,10 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         ? displayDescription.slice(0, 100) + (displayDescription.length > 100 ? '...' : '')
         : '';
 
-    // Determine which icon layer to show
-    const validImageUrl = isValidImageUrl(tool.image_url) ? tool.image_url : null;
-    const hasValidImage = !!validImageUrl && !imageError;
-    const hasValidFavicon = !!faviconSrc && !faviconError;
-    const showCategoryIcon = !hasValidImage && !hasValidFavicon;
+    // Determine which icon layer to show (image_url first, then favicon fallback from tool.url)
+    const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url);
+    const hasResolvedImage = !!resolvedImageUrl && !imageError;
+    const showCategoryIcon = !hasResolvedImage;
 
     const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -121,9 +117,9 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                     showCategoryIcon && `bg-gradient-to-br ${categoryStyle.split(' ')[0]} ${categoryStyle.split(' ')[1]}`
                 )}
             >
-                {hasValidImage ? (
+                {hasResolvedImage ? (
                     <img
-                        src={validImageUrl!}
+                        src={resolvedImageUrl!}
                         alt=""
                         width={48}
                         height={48}
@@ -131,17 +127,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                         decoding="async"
                         className="w-full h-full p-1.5 rounded-2xl object-contain"
                         onError={() => setImageError(true)}
-                    />
-                ) : hasValidFavicon ? (
-                    <img
-                        src={faviconSrc!}
-                        alt=""
-                        width={32}
-                        height={32}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-8 h-8 rounded-lg object-contain"
-                        onError={() => setFaviconError(true)}
                     />
                 ) : (
                     <CategoryIcon className={cn("w-6 h-6 opacity-80", categoryStyle.split(' ')[2])} />
