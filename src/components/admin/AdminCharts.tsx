@@ -103,7 +103,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     paddingAngle={2}
                                     dataKey="value"
                                 >
-                                    {categoryData.map((entry, index) => (
+                                    {categoryData.map((_, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>

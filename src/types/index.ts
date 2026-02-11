@@ -8,7 +8,7 @@
 // ============================================
 
 export interface Tool {
-    id: string;
+    id: string | number;
     title: string;
     title_en?: string;
     description: string;
@@ -80,7 +80,7 @@ export interface UserStats {
 
 export interface Review {
     id: string;
-    tool_id: string;
+    tool_id: string | number;
     user_id: string;
     rating: number;
     comment: string;
@@ -104,7 +104,7 @@ export interface ReviewFormData {
 export interface Bookmark {
     id: string;
     user_id: string;
-    tool_id: string;
+    tool_id: string | number;
     created_at: string;
     tools?: Tool | null;
 }
@@ -116,10 +116,11 @@ export interface Bookmark {
 export interface BlogPost {
     id: string;
     title: string;
-    slug: string;
-    excerpt: string;
+    slug?: string;
+    excerpt?: string | null;
     content: string;
     cover_image?: string | null;
+    image_url?: string | null;
     author_id?: string;
     author_name?: string;
     category?: string;
@@ -207,7 +208,7 @@ export interface WorkflowEdge {
 // ============================================
 
 export interface ToolClick {
-    tool_id: string;
+    tool_id: string | number;
     user_id?: string;
     timestamp: string;
     referrer?: string;

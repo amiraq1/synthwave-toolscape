@@ -1,6 +1,7 @@
 // Preload functions for lazy-loaded routes
 const preloadFunctions = {
   toolDetails: () => import("@/pages/ToolDetails"),
+  auth: () => import("@/pages/Auth"),
   settings: () => import("@/pages/Settings"),
   admin: () => import("@/pages/Admin"),
   install: () => import("@/pages/Install"),

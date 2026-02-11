@@ -2,8 +2,8 @@
 // تعريف الأنواع لـ window
 declare global {
     interface Window {
-        dataLayer: unknown[];
-        gtag: (...args: unknown[]) => void;
+        dataLayer?: unknown[];
+        gtag?: (...args: unknown[]) => void;
     }
 }
 
@@ -32,7 +32,7 @@ export const initGA = () => {
 
     // دالة gtag
     window.gtag = (...args: unknown[]) => {
-        window.dataLayer.push(args);
+        window.dataLayer?.push(args);
     };
 
     window.gtag('js', new Date());

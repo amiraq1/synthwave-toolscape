@@ -8,10 +8,10 @@ dayjs.locale('ar');
 interface BlogPost {
     id: string;
     title: string;
-    excerpt?: string; // المقتطف القصير
+    excerpt?: string | null; // المقتطف القصير
     content?: string; // المحتوى الكامل (احتياطي)
     created_at: string;
-    image_url?: string;
+    image_url?: string | null;
     reading_time?: number; // وقت القراءة (اختياري)
     views_count?: number;
 }
@@ -90,3 +90,4 @@ const BlogCard = ({ post }: BlogCardProps) => {
 };
 
 export default BlogCard;
+

@@ -8,10 +8,14 @@ import type { Tool } from './useTools';
  */
 export const fetchToolById = async (id: string): Promise<Tool> => {
   const toolId = String(id);
+  const numericToolId = Number(id);
+  if (!Number.isFinite(numericToolId)) {
+    throw new Error('Invalid tool id');
+  }
   const { data, error } = await supabase
     .from('tools')
     .select('*')
-    .eq('id', toolId)
+    .eq('id', numericToolId)
     .maybeSingle();
 
   if (error || !data) {
@@ -20,7 +24,8 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
       return {
         ...localTool,
         id: String(localTool.id),
-      } as Tool;
+        features: localTool.features ? [...localTool.features] : null,
+      } as unknown as Tool;
     }
   }
 

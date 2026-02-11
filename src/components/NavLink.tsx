@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { preloadRoute } from "@/hooks/usePreloadRoute";
 
-type RouteKey = 'toolDetails' | 'auth' | 'settings' | 'admin' | 'install' | 'index';
+type RouteKey = Parameters<typeof preloadRoute>[0];
 
 interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
   className?: string;

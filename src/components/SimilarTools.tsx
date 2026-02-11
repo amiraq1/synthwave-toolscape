@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { Tool } from "@/types";
 
 interface SimilarToolsProps {
-    currentToolId: string;
+    currentToolId: string | number;
     category: string;
 }
 
@@ -19,14 +19,20 @@ const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
     useEffect(() => {
         const fetchSimilar = async () => {
             if (!category) return;
+            const numericCurrentToolId = Number(currentToolId);
 
-            const { data } = await supabase
+            let query = supabase
                 .from("tools")
                 .select("*")
                 .eq("category", category)
-                .neq("id", currentToolId as unknown as number)
                 .eq("is_published", true)
                 .limit(3);
+
+            if (Number.isFinite(numericCurrentToolId)) {
+                query = query.neq("id", numericCurrentToolId);
+            }
+
+            const { data } = await query;
 
             if (data) setTools(data);
             setLoading(false);

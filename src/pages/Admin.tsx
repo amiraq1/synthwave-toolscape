@@ -295,7 +295,7 @@ const Admin = () => {
                       <Button size="sm" variant="outline" onClick={() => openEdit(tool)} className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300">
                         <Edit className="w-4 h-4 ml-1" /> مراجعة ونشر
                       </Button>
-                      <Button size="icon" variant="destructive" onClick={() => deleteDraft(tool.id)} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
+                      <Button size="icon" variant="destructive" onClick={() => deleteDraft(String(tool.id))} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>

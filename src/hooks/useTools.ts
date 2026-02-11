@@ -4,7 +4,7 @@ import { localTools } from "@/data/localTools";
 export type Category = 'الكل' | 'توليد نصوص' | 'توليد صور وفيديو' | 'مساعدات إنتاجية' | 'صناعة محتوى' | 'تطوير وبرمجة' | 'تعليم وبحث' | 'أخرى';
 
 export interface Tool {
-  id: string;
+  id: string | number;
   title: string;
   title_en?: string;
   description: string;

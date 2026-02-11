@@ -39,6 +39,11 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
     const handleSave = async () => {
         if (!tool) return;
+        const numericToolId = Number(tool.id);
+        if (!Number.isFinite(numericToolId)) {
+            toast.error("ظ…ط¹ط±ظپ ط§ظ„ط£ط¯ط§ط© ط؛ظٹط± طµط­ظٹط­");
+            return;
+        }
 
         setLoading(true);
         const { error } = await supabase
@@ -51,7 +56,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                 url: formData.url,
                 is_published: true // نشر الأداة عند الحفظ
             })
-            .eq("id", tool.id);
+            .eq("id", numericToolId);
 
         if (error) {
             toast.error("فشل التحديث", {

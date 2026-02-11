@@ -22,8 +22,8 @@ interface Post {
   title_en?: string;
   content: string;
   content_en?: string;
-  excerpt?: string;
-  excerpt_en?: string;
+  excerpt?: string | null;
+  excerpt_en?: string | null;
   image_url: string | null;
   created_at: string;
   reading_time?: number;
@@ -135,17 +135,18 @@ const BlogPost = () => {
   const ogImageUrl = post && functionsBaseUrl
     ? `${functionsBaseUrl}/og-image?title=${encodeURIComponent(displayTitle)}&category=${encodeURIComponent(isAr ? "مدونة نبض AI" : "Pulse AI Blog")}`
     : "";
+  const metaDescription = (isAr ? post.excerpt : (post.excerpt_en || post.excerpt)) ?? undefined;
 
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={isAr ? "rtl" : "ltr"}>
       <Helmet>
         <title>{displayTitle} | {isAr ? "مدونة نبض AI" : "Pulse AI Blog"}</title>
-        <meta name="description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+        <meta name="description" content={metaDescription} />
 
         {/* Open Graph */}
         <meta property="og:type" content="article" />
         <meta property="og:title" content={`${displayTitle} | ${isAr ? "مدونة نبض AI" : "Pulse AI Blog"}`} />
-        <meta property="og:description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+        <meta property="og:description" content={metaDescription} />
         <meta property="og:image" content={ogImageUrl} />
 
         {/* Article Data */}
@@ -154,7 +155,7 @@ const BlogPost = () => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={displayTitle} />
-        <meta name="twitter:description" content={isAr ? post.excerpt : (post.excerpt_en || post.excerpt)} />
+        <meta name="twitter:description" content={metaDescription} />
         <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
       <main className="flex-1">
@@ -281,3 +282,6 @@ const BlogPost = () => {
 };
 
 export default BlogPost;
+
+
+

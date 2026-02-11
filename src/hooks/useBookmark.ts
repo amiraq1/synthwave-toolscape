@@ -64,7 +64,7 @@ export const useBookmark = (toolId: number) => {
             return { previousIsSaved };
         },
         // If error occurs
-        onError: (err, newTodo, context) => {
+        onError: (_err, _newTodo, context) => {
             // Rollback to previous value
             if (context?.previousIsSaved !== undefined) {
                 queryClient.setQueryData([BOOKMARK_QUERY_KEY, toolId, session?.user.id], context.previousIsSaved);

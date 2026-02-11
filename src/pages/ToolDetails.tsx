@@ -199,7 +199,7 @@ const ToolDetails = () => {
                 </h1>
 
                 <div className="flex items-center gap-4 mb-6">
-                  <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="lg" />
+                  <AverageRating rating={tool.average_rating} count={tool.reviews_count} size="md" />
                 </div>
 
                 <p className="text-lg text-gray-300 leading-relaxed">

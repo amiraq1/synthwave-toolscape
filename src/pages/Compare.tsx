@@ -52,6 +52,15 @@ const ComparePage = () => {
                 setLoading(false);
                 return;
             }
+            const numericIds = selectedTools
+                .map((value) => Number(value))
+                .filter((value) => Number.isFinite(value));
+
+            if (numericIds.length === 0) {
+                setTools([]);
+                setLoading(false);
+                return;
+            }
 
             setLoading(true);
             try {
@@ -59,7 +68,7 @@ const ComparePage = () => {
                 const { data } = await supabase
                     .from("tools")
                     .select("*")
-                    .in("id", selectedTools);
+                    .in("id", numericIds);
 
                 if (data) setTools(data);
             } catch (error) {
@@ -119,7 +128,7 @@ const ComparePage = () => {
                             {tools.map(tool => (
                                 <div key={tool.id} className="relative p-6 flex flex-col items-center text-center border-l border-white/10 last:border-0 bg-white/[0.02]">
                                     <button
-                                        onClick={() => removeFromCompare(tool.id)}
+                                        onClick={() => removeFromCompare(String(tool.id))}
                                         className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-red-500/20 text-gray-500 hover:text-red-400 transition-colors"
                                     >
                                         <X className="w-4 h-4" />
@@ -207,3 +216,4 @@ const ComparePage = () => {
 };
 
 export default ComparePage;
+

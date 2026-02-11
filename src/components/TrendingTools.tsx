@@ -4,9 +4,9 @@ import { Flame, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface TrendingTool {
-    id: string | number;
+    id: number;
     title: string;
-    views_count: number | null;
+    clicks_count: number;
 }
 
 const TrendingTools = () => {
@@ -17,14 +17,19 @@ const TrendingTools = () => {
         const fetchTrending = async () => {
             try {
                 const { data, error } = await supabase
-                    .from("tools")
-                    .select("id, title, views_count")
-                    .eq("is_published", true)
-                    .order("views_count", { ascending: false })
-                    .limit(10);
+                    .rpc("get_trending_tools", {
+                        p_limit: 10,
+                        p_offset: 0,
+                    });
 
                 if (error) throw error;
-                if (data) setTools(data);
+                if (data) {
+                    setTools(data.map((tool) => ({
+                        id: tool.id,
+                        title: tool.title,
+                        clicks_count: tool.clicks_count ?? 0,
+                    })));
+                }
             } catch (error) {
                 console.error("Error fetching trending tools:", error);
             } finally {
@@ -72,7 +77,7 @@ const TrendingTools = () => {
                                 </div>
 
                                 <span className="text-[10px] font-mono text-slate-500 bg-white/[0.03] border border-white/5 px-1.5 rounded-sm">
-                                    {(tool.views_count || 0) > 1000 ? `${((tool.views_count || 0) / 1000).toFixed(1)}k` : tool.views_count}
+                                    {tool.clicks_count > 1000 ? `${(tool.clicks_count / 1000).toFixed(1)}k` : tool.clicks_count}
                                 </span>
                             </Link>
                         ))}

@@ -20,7 +20,7 @@ interface ReviewData {
   rating: number;
   comment: string;
   created_at: string;
-  profiles: { full_name: string | null; avatar_url: string | null } | null;
+  profiles: { display_name: string | null; avatar_url: string | null } | null;
 }
 
 const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
@@ -41,7 +41,7 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
       .from("reviews")
       .select(`
         *,
-        profiles:user_id (full_name, avatar_url)
+        profiles:user_id (display_name, avatar_url)
       `)
       .eq("tool_id", numericToolId);
 
@@ -68,13 +68,17 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
 
     const { data } = await query;
     if (data) {
-      // Transform data to match ReviewData interface
-      const reviews = (data as ReviewData[]).map((item) => ({
+      const reviews: ReviewData[] = data.map((item) => ({
         id: item.id,
         rating: item.rating,
-        comment: item.comment,
+        comment: item.comment ?? "",
         created_at: item.created_at,
-        profiles: item.profiles || null,
+        profiles: item.profiles
+          ? {
+            display_name: item.profiles.display_name,
+            avatar_url: item.profiles.avatar_url,
+          }
+          : null,
       }));
       setReviews(reviews);
     }
@@ -145,10 +149,10 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-neon-purple to-blue-500 flex items-center justify-center text-white font-bold">
-                    {review.profiles?.full_name?.[0] || "U"}
+                    {review.profiles?.display_name?.[0] || "U"}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">{review.profiles?.full_name || (isAr ? "مستخدم مجهول" : "Anonymous User")}</h4>
+                    <h4 className="font-bold text-white text-sm">{review.profiles?.display_name || (isAr ? "مستخدم مجهول" : "Anonymous User")}</h4>
                     <div className="flex text-yellow-400 text-xs mt-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star key={i} className={`w-3 h-3 ${i < review.rating ? "fill-current" : "text-gray-600"}`} />
@@ -188,3 +192,4 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
 };
 
 export default ReviewSection;
+
