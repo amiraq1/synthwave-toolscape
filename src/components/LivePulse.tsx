@@ -71,9 +71,9 @@ const LivePulse = () => {
     if (activities.length === 0) return null;
 
     return (
-        <div className="w-full bg-black/40 border-b border-white/5 backdrop-blur-md overflow-hidden py-2">
+        <div className="w-full bg-black/50 border-b border-white/10 backdrop-blur-md overflow-hidden py-2">
             <div className="container mx-auto flex items-center gap-2">
-                <div className="flex items-center gap-1 text-neon-purple text-xs font-bold px-3 py-1 bg-neon-purple/10 rounded-full shrink-0 animate-pulse">
+                <div className="flex items-center gap-1 text-white text-xs font-bold px-3 py-1 bg-neon-purple/30 rounded-full shrink-0">
                     <div className="w-2 h-2 rounded-full bg-neon-purple" />
                     نبض مباشر
                 </div>
@@ -82,13 +82,13 @@ const LivePulse = () => {
                 <div className="flex-1 overflow-hidden relative group">
                     <div className="flex gap-8 animate-marquee whitespace-nowrap hover:[animation-play-state:paused]">
                         {[...activities, ...activities].map((item, i) => (
-                            <div key={i} className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
+                            <div key={i} className="flex items-center gap-2 text-xs md:text-sm text-slate-200">
                                 {item.icon}
                                 <span>{item.text}</span>
-                                <span className="text-gray-500 text-[10px]">
+                                <span className="text-slate-300 text-[10px]">
                                     ({dayjs(item.time).locale('ar').fromNow()})
                                 </span>
-                                <span className="w-1 h-1 rounded-full bg-gray-700 ml-4" />
+                                <span className="w-1 h-1 rounded-full bg-slate-500 ml-4" />
                             </div>
                         ))}
                     </div>

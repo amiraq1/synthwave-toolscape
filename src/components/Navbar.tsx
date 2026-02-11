@@ -118,7 +118,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="قائمة الحساب">
                     <Avatar className="h-9 w-9 border border-white/10">
                       <AvatarImage
                         src={session.user.user_metadata.avatar_url}
@@ -159,7 +159,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10 gap-2">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10 gap-2" aria-label="تسجيل الدخول">
                   <User className="w-4 h-4" />
                   <span className="hidden xs:inline">تسجيل الدخول</span>
                 </Button>

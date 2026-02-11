@@ -145,8 +145,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
       </div>
 
       {/* 2. المحتوى */}
-      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={`View details for ${displayTitle}`}>
-        <div className="p-6 flex flex-col h-full">
+      <div className="p-6 flex flex-col h-full">
+        <Link to={`/tool/${tool.id}`} className="flex flex-col flex-grow" aria-label={`View details for ${displayTitle}`}>
 
           {/* العنوان والأيقونة */}
           <div className="flex justify-between items-start mb-4 pl-4 mt-6">
@@ -196,7 +196,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           </div>
 
           {/* الوصف */}
-          <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2 flex-grow">
+          <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2">
             {displayDescription}
           </p>
 
@@ -222,36 +222,25 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           </div>
 
           {/* الفوتر: زر التفاصيل */}
-          <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
+        </Link>
+        <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
             <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
               <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
               AI Powered
             </span>
-            <div
-              role="button"
-              tabIndex={0}
-              className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            <button
+              type="button"
+              className="min-h-[44px] min-w-[44px] px-3 py-2 inline-flex items-center gap-1.5 rounded-md font-medium transition-colors text-gray-200 hover:text-neon-purple focus:outline-none focus:ring-2 focus:ring-neon-purple"
+              onClick={() => {
                 window.open(tool.url, '_blank', 'noopener,noreferrer');
                 recordClick(String(tool.id));
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  window.open(tool.url, '_blank', 'noopener,noreferrer');
-                  recordClick(String(tool.id));
-                }
-              }}
               aria-label={`visit ${displayTitle}`}
             >
-              {t('tools.visit')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-            </div>
+              {t('tools.visit')} <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
           </div>
         </div>
-      </Link>
     </div>
   );
 };

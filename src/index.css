@@ -343,16 +343,18 @@
     0 0 0 1px rgba(139, 92, 246, 0.1);
 }
 
-/* Animated Gradient Background */
-@keyframes gradient-shift {
+/* Animated Gradient Background (composited: transform/opacity only) */
+@keyframes gradient-breathe {
 
   0%,
   100% {
-    background-position: 0% 50%;
+    transform: translateZ(0) scale(1);
+    opacity: 0.92;
   }
 
   50% {
-    background-position: 100% 50%;
+    transform: translateZ(0) scale(1.04);
+    opacity: 1;
   }
 }
 
@@ -362,8 +364,10 @@
       hsl(var(--neon-blue)),
       hsl(var(--neon-cyan)),
       hsl(var(--neon-purple)));
-  background-size: 400% 400%;
-  animation: gradient-shift 8s ease infinite;
+  background-size: 100% 100%;
+  animation: gradient-breathe 6s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 /* Neon Text Glow */
@@ -524,16 +528,16 @@
   transform: scaleX(1);
 }
 
-/* Text Gradient Animation */
-@keyframes text-gradient {
+/* Text Gradient Animation (composited: opacity only) */
+@keyframes text-opacity-pulse {
 
   0%,
   100% {
-    background-position: 0% 50%;
+    opacity: 0.9;
   }
 
   50% {
-    background-position: 100% 50%;
+    opacity: 1;
   }
 }
 
@@ -543,11 +547,13 @@
       hsl(var(--neon-blue)),
       hsl(var(--neon-cyan)),
       hsl(var(--neon-purple)));
-  background-size: 300% 100%;
+  background-size: 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: text-gradient 4s ease infinite;
+  display: inline-block;
+  animation: text-opacity-pulse 4s ease-in-out infinite;
+  will-change: opacity;
 }
 
 /* Optimized Performance Utilities */

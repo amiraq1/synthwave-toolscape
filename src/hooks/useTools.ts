@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { localTools } from "@/data/localTools";
+import { loadToolsData } from "@/data/toolsData";
 
 export type Category = 'الكل' | 'توليد نصوص' | 'توليد صور وفيديو' | 'مساعدات إنتاجية' | 'صناعة محتوى' | 'تطوير وبرمجة' | 'تعليم وبحث' | 'أخرى';
 
@@ -71,7 +71,8 @@ export const useTools = (params: UseToolsParams = {}) => {
       const from = pageParam as number;
       const to = from + itemsPerPage;
 
-      let filteredTools = localTools.filter(t => t.is_published);
+      const tools = await loadToolsData();
+      let filteredTools = tools.filter(t => t.is_published);
 
       // 1. Search Filter
       if (searchQuery.trim()) {

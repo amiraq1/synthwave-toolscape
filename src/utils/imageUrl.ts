@@ -47,5 +47,5 @@ export const getToolImageUrl = (imageUrl?: string | null, toolUrl?: string | nul
   if (!hostname) return null;
 
   // Fallback logo for tools that don't have an explicit image_url.
-  return `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(hostname)}`;
+  return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(hostname)}`;
 };

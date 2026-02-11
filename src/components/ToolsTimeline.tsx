@@ -102,12 +102,12 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                         </div>
 
                         {/* Date Capsule */}
-                        <div className="flex items-center gap-3 bg-[#0f0f1a]/60 backdrop-blur-xl border border-white/10 px-6 py-2.5 rounded-full shadow-lg mr-0 md:mr-16 transition-all hover:border-neon-purple/50 hover:shadow-neon-purple/20 group ring-1 ring-white/5">
+                        <div className="flex items-center gap-3 bg-[#0f0f1a]/85 backdrop-blur-xl border border-white/20 px-6 py-2.5 rounded-full shadow-lg mr-0 md:mr-16 transition-all hover:border-neon-purple/50 hover:shadow-neon-purple/20 group ring-1 ring-white/10">
                             <CalendarDays className="w-5 h-5 text-neon-purple group-hover:scale-110 transition-transform duration-300" />
                             <h2 className="text-lg font-bold text-white capitalize tracking-wide font-mono">
                                 {group.key}
                             </h2>
-                            <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-neon-purple/20 border border-neon-purple/30 px-2 text-xs font-medium text-neon-purple">
+                            <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-neon-purple/60 border border-neon-purple/80 px-2 text-xs font-semibold text-white">
                                 {group.items.length}
                             </span>
                         </div>
@@ -134,7 +134,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                         <p className="text-slate-400 text-sm animate-pulse font-mono">جاري استدعاء المزيد من البيانات...</p>
                     </div>
                 ) : hasNextPage ? (
-                    <span className="text-muted-foreground/30 text-xs uppercase tracking-widest">Scroll for more</span>
+                    <span className="text-slate-300 text-xs uppercase tracking-widest">Scroll for more</span>
                 ) : (
                     <div className="flex flex-col items-center gap-4 animate-in zoom-in-50 duration-500">
                         <div className="w-16 h-1 bg-gradient-to-r from-transparent via-neon-purple to-transparent rounded-full opacity-50" />

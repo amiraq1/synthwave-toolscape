@@ -24,13 +24,27 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
     }
 
     let animationFrame = 0;
+    let rectFrame = 0;
+    const rectRef = { current: container.getBoundingClientRect() };
+
+    const updateRect = () => {
+      if (rectFrame) cancelAnimationFrame(rectFrame);
+      rectFrame = requestAnimationFrame(() => {
+        rectRef.current = container.getBoundingClientRect();
+      });
+    };
+
+    updateRect();
+    window.addEventListener('resize', updateRect, { passive: true });
+    window.addEventListener('scroll', updateRect, { passive: true });
+
     const handlePointerMove = (e: PointerEvent) => {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
 
       animationFrame = requestAnimationFrame(() => {
-        const { left, top, width, height } = container.getBoundingClientRect();
+        const { left, top, width, height } = rectRef.current;
         const x = (e.clientX - left) / width;
         const y = (e.clientY - top) / height;
 
@@ -42,8 +56,13 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
     container.addEventListener('pointermove', handlePointerMove, { passive: true });
     return () => {
       container.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('resize', updateRect);
+      window.removeEventListener('scroll', updateRect);
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
+      }
+      if (rectFrame) {
+        cancelAnimationFrame(rectFrame);
       }
     };
   }, []);

@@ -165,10 +165,20 @@ export default defineConfig(({ mode }) => {
             if (id.includes("/dayjs/")) {
               return "vendor-dayjs";
             }
+            if (id.includes("/reactflow/")) {
+              return "vendor-reactflow";
+            }
 
-            // Everything else (React + Radix + Router + UI libs) stays in one chunk
-            // to avoid circular dependency issues with createContext
-            return "vendor";
+            if (id.includes("/framer-motion/")) {
+              return "vendor-motion";
+            }
+
+            if (id.includes("/cmdk/")) {
+              return "vendor-cmdk";
+            }
+
+            // Let Rollup split the rest by import graph to reduce unused JS on entry.
+            return;
           }
         },
       },

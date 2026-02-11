@@ -12,10 +12,9 @@ import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
-import { initGA, logPageView } from "@/lib/analytics";
-import { PwaUpdateToast } from "@/components/pwa-update-toast";
+const PwaUpdateToast = lazy(() => import("@/components/pwa-update-toast").then(m => ({ default: m.PwaUpdateToast })));
 import Index from "./pages/Index"; // Eager load Home for better LCP
-import ScrollToTopButton from "@/components/ScrollToTopButton"; // Eager load for UI responsiveness
+const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
 
 
 // Lazy Load Pages
@@ -62,13 +61,25 @@ const AppContent = () => {
   const location = useLocation(); // Get current location
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Initialize GA and track page views
+  // Initialize GA and track page views (deferred)
   useEffect(() => {
-    initGA();
+    let cancelled = false;
+    import("@/lib/analytics").then(({ initGA }) => {
+      if (!cancelled) initGA();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
-    logPageView(location.pathname + location.search);
+    let cancelled = false;
+    import("@/lib/analytics").then(({ logPageView }) => {
+      if (!cancelled) logPageView(location.pathname + location.search);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [location]);
 
   const handleAddClick = () => {
@@ -113,8 +124,12 @@ const AppContent = () => {
       <Footer />
 
       {/* Floating Components */}
-      <CompareFloatingBar />
-      <ScrollToTopButton />
+      <Suspense fallback={null}>
+        <CompareFloatingBar />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ScrollToTopButton />
+      </Suspense>
       {isAddModalOpen && (
         <Suspense fallback={null}>
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
@@ -133,7 +148,9 @@ const App = () => (
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
-          <PwaUpdateToast />
+          <Suspense fallback={null}>
+            <PwaUpdateToast />
+          </Suspense>
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <CompareProvider>
               <ScrollToTop />

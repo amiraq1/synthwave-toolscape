@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { localTools } from '@/data/localTools';
+import { loadToolsData } from '@/data/toolsData';
 import type { Tool } from './useTools';
 
 /**
@@ -19,13 +19,18 @@ export const fetchToolById = async (id: string): Promise<Tool> => {
     .maybeSingle();
 
   if (error || !data) {
-    const localTool = localTools.find((tool) => String(tool.id) === toolId);
-    if (localTool) {
-      return {
-        ...localTool,
-        id: String(localTool.id),
-        features: localTool.features ? [...localTool.features] : null,
-      } as unknown as Tool;
+    try {
+      const tools = await loadToolsData();
+      const localTool = tools.find((tool) => String(tool.id) === toolId);
+      if (localTool) {
+        return {
+          ...localTool,
+          id: String(localTool.id),
+          features: localTool.features ? [...localTool.features] : null,
+        } as unknown as Tool;
+      }
+    } catch {
+      // Fallback to original error handling below.
     }
   }
 

@@ -99,6 +99,7 @@ export default function ChatBot() {
                 <Button
                     onClick={() => setIsOpen(true)}
                     className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-neon-purple hover:bg-neon-purple/80 z-50 animate-bounce"
+                    aria-label="فتح المساعد الذكي"
                 >
                     <MessageCircle className="h-8 w-8 text-white" />
                 </Button>
@@ -123,7 +124,7 @@ export default function ChatBot() {
                                 </span>
                             </div>
                         </CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full">
+                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full" aria-label="إغلاق نافذة المساعد">
                             <X className="h-4 w-4" />
                         </Button>
                     </CardHeader>
@@ -187,6 +188,7 @@ export default function ChatBot() {
                                 size="icon"
                                 disabled={isLoading || !inputValue.trim()}
                                 className="bg-primary hover:bg-primary/90 transition-all"
+                                aria-label="إرسال الرسالة"
                             >
                                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                             </Button>

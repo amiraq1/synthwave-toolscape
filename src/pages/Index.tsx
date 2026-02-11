@@ -102,7 +102,7 @@ const Index = () => {
       {/* Skip link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-background focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-[#111827] focus:text-white focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple"
       >
         تخطّي إلى المحتوى
       </a>
