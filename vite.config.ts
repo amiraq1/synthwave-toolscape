@@ -149,27 +149,12 @@ export default defineConfig(({ mode }) => {
               return;
             }
 
-            if (
-              id.includes("/react/") ||
-              id.includes("/react-dom/") ||
-              id.includes("/scheduler/")
-            ) {
-              return "vendor-react";
-            }
-
-            if (id.includes("/react-router")) {
-              return "vendor-router";
-            }
-
+            // Heavy, standalone libraries → separate chunks
             if (id.includes("/@supabase/")) {
               return "vendor-supabase";
             }
 
-            if (id.includes("/@tanstack/")) {
-              return "vendor-query";
-            }
-
-            if (id.includes("/recharts/")) {
+            if (id.includes("/recharts/") || id.includes("/d3-")) {
               return "vendor-charts";
             }
 
@@ -181,6 +166,8 @@ export default defineConfig(({ mode }) => {
               return "vendor-dayjs";
             }
 
+            // Everything else (React + Radix + Router + UI libs) stays in one chunk
+            // to avoid circular dependency issues with createContext
             return "vendor";
           }
         },
