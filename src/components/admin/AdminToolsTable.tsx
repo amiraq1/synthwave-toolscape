@@ -1,12 +1,8 @@
 import { useState } from "react";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Edit, Trash2, Search, ExternalLink, MoreHorizontal, CheckCircle, XCircle, Sparkles
-} from "lucide-react";
+import { Edit, Trash2, Search, ExternalLink, MoreHorizontal, CheckCircle, XCircle, Sparkles } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +28,7 @@ import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
 import { getToolImageUrl } from "@/utils/imageUrl";
+import { useTranslation } from "react-i18next";
 
 interface AdminToolsTableProps {
   tools: Tool[];
@@ -41,27 +38,30 @@ interface AdminToolsTableProps {
 type ToolUpdate = Database["public"]["Tables"]["tools"]["Update"];
 
 const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
+
   const [searchTerm, setSearchTerm] = useState("");
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  // Filter tools based on search
-  const filteredTools = tools.filter(tool =>
-    tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tool.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTools = tools.filter(
+    (tool) =>
+      tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tool.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const confirmDelete = async () => {
     if (!deleteId) return;
 
-    const { error } = await supabase.from('tools').delete().eq('id', deleteId);
+    const { error } = await supabase.from("tools").delete().eq("id", deleteId);
 
     if (error) {
-      toast.error("فشل الحذف");
+      toast.error(t("admin.table.toastDeleteFailed"));
     } else {
-      toast.success("تم الحذف بنجاح");
+      toast.success(t("admin.table.toastDeleteSuccess"));
       onUpdate();
     }
     setDeleteId(null);
@@ -69,30 +69,24 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
 
   const toggleFeatured = async (tool: Tool) => {
     const updatePayload: ToolUpdate = { is_featured: !tool.is_featured };
-    const { error } = await supabase
-      .from('tools')
-      .update(updatePayload)
-      .eq('id', Number(tool.id));
+    const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast.error(t("admin.table.toastError"));
     } else {
-      toast.success(tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة");
+      toast.success(tool.is_featured ? t("admin.table.toastUnfeatured") : t("admin.table.toastFeatured"));
       onUpdate();
     }
   };
 
   const togglePublished = async (tool: Tool) => {
     const updatePayload: ToolUpdate = { is_published: !tool.is_published };
-    const { error } = await supabase
-      .from('tools')
-      .update(updatePayload)
-      .eq('id', Number(tool.id));
+    const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast.error(t("admin.table.toastError"));
     } else {
-      toast.success(tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة");
+      toast.success(tool.is_published ? t("admin.table.toastHidden") : t("admin.table.toastPublished"));
       onUpdate();
     }
   };
@@ -107,7 +101,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
         <Search className="w-5 h-5 text-gray-400" />
         <Input
-          placeholder="بحث في الأدوات..."
+          placeholder={t("admin.table.search")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-none bg-transparent focus-visible:ring-0"
@@ -118,44 +112,44 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
         <Table>
           <TableHeader className="bg-white/5">
             <TableRow>
-              <TableHead className="text-right">الأداة</TableHead>
-              <TableHead className="text-right">الحالة</TableHead>
-              <TableHead className="text-right">التصنيف</TableHead>
-              <TableHead className="text-right">الإجراءات</TableHead>
+              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.tool")}</TableHead>
+              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.status")}</TableHead>
+              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.category")}</TableHead>
+              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTools.length > 0 ? (
               filteredTools.map((tool) => {
-                // In admin table, avoid favicon fallback network noise for low-quality URLs.
                 const imageUrl = getToolImageUrl(tool.image_url, tool.url, { fallbackToFavicon: false });
                 return (
                   <TableRow key={tool.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         {imageUrl && (
-                          <img
-                            src={imageUrl}
-                            alt={tool.title}
-                            className="w-10 h-10 rounded-lg object-cover bg-white/5"
-                          />
+                          <img src={imageUrl} alt={tool.title} className="w-10 h-10 rounded-lg object-cover bg-white/5" />
                         )}
                         <div>
                           <div className="font-bold">{tool.title}</div>
-                          <div className="text-xs text-gray-400 truncate max-w-[200px]">
-                            {tool.description}
-                          </div>
+                          <div className="text-xs text-gray-400 truncate max-w-[200px]">{tool.description}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
-                        <Badge variant={tool.is_published ? "default" : "secondary"} className={tool.is_published ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"}>
-                          {tool.is_published ? "منشور" : "مسودة"}
+                        <Badge
+                          variant={tool.is_published ? "default" : "secondary"}
+                          className={
+                            tool.is_published
+                              ? "bg-green-500/10 text-green-400 border-green-500/20"
+                              : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                          }
+                        >
+                          {tool.is_published ? t("admin.table.statusPublished") : t("admin.table.statusDraft")}
                         </Badge>
                         {tool.is_featured && (
                           <Badge variant="outline" className="border-purple-500/50 text-purple-400">
-                            ⭐ مميز
+                            {t("admin.table.featured")}
                           </Badge>
                         )}
                       </div>
@@ -170,23 +164,27 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>إجراءات</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t("admin.table.actions")}</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleEdit(tool)}>
-                            <Edit className="mr-2 h-4 w-4" /> تعديل
+                            <Edit className="mr-2 h-4 w-4" /> {t("admin.table.actionEdit")}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => togglePublished(tool)}>
                             {tool.is_published ? (
-                              <><XCircle className="mr-2 h-4 w-4" /> إخفاء</>
+                              <>
+                                <XCircle className="mr-2 h-4 w-4" /> {t("admin.table.actionHide")}
+                              </>
                             ) : (
-                              <><CheckCircle className="mr-2 h-4 w-4" /> نشر</>
+                              <>
+                                <CheckCircle className="mr-2 h-4 w-4" /> {t("admin.table.actionPublish")}
+                              </>
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
-                            <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز"}
+                            <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? t("admin.table.actionUnfeature") : t("admin.table.actionFeature")}
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="mr-2 h-4 w-4" /> زيارة الموقع
+                              <ExternalLink className="mr-2 h-4 w-4" /> {t("admin.table.actionVisit")}
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
@@ -194,7 +192,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                             onClick={() => setDeleteId(Number(tool.id))}
                             className="text-red-600 focus:text-red-600"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" /> حذف
+                            <Trash2 className="mr-2 h-4 w-4" /> {t("admin.table.actionDelete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -205,7 +203,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  لا توجد أدوات مطابقة للبحث.
+                  {t("admin.table.empty")}
                 </TableCell>
               </TableRow>
             )}
@@ -214,28 +212,26 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       </div>
 
       <div className="text-xs text-gray-500 text-center">
-        يتم عرض {filteredTools.length} أداة من أصل {tools.length}
+        {t("admin.table.showing", { shown: filteredTools.length, total: tools.length })}
       </div>
 
-      {/* نافذة تأكيد الحذف */}
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>هل أنت متأكد تماماً؟</AlertDialogTitle>
+            <AlertDialogTitle>{t("admin.table.deleteDialogTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              سيتم حذف هذه الأداة بشكل نهائي ولا يمكن التراجع عن هذا الإجراء.
+              {t("admin.table.deleteDialogDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t("admin.table.deleteDialogCancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              تأكيد الحذف
+              {t("admin.table.deleteDialogConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Dialog for editing */}
       {editingTool && (
         <EditDraftDialog
           isOpen={isDialogOpen}

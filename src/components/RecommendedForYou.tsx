@@ -11,6 +11,36 @@ interface BookmarkWithTool {
     tools: { category: string } | null;
 }
 
+const PLACEHOLDER_TITLE_REGEX = /^toolscape ai(?:\s+\d+)?$/i;
+const INTERNAL_TOOLSCAPE_URL_REGEX = /^https?:\/\/(?:www\.)?toolscape\.ai\/tool\/\d+\/?$/i;
+const MAX_RECOMMENDATIONS = 4;
+const PRIMARY_FETCH_LIMIT = 48;
+const FALLBACK_FETCH_LIMIT = 96;
+
+const isRecommendationCandidate = (tool: Tool): boolean => {
+    const title = (tool.title || "").trim();
+    const url = (tool.url || "").trim();
+
+    if (!title || !url) return false;
+    if (PLACEHOLDER_TITLE_REGEX.test(title)) return false;
+    if (INTERNAL_TOOLSCAPE_URL_REGEX.test(url)) return false;
+
+    return true;
+};
+
+const dedupeTools = (items: Tool[]): Tool[] => {
+    const map = new Map<string, Tool>();
+
+    for (const item of items) {
+        const key = `${String(item.id)}::${item.url || ""}`;
+        if (!map.has(key)) {
+            map.set(key, item);
+        }
+    }
+
+    return Array.from(map.values());
+};
+
 const RecommendedForYou = () => {
     const { session } = useAuth();
     const [tools, setTools] = useState<Tool[]>([]);
@@ -56,9 +86,54 @@ const RecommendedForYou = () => {
                 .in("category", interestedCategories)
                 .not("id", "in", `(${bookmarkedIds.join(',')})`)
                 .eq("is_published", true)
-                .limit(4);
+                .order("clicks_count", { ascending: false, nullsFirst: false })
+                .order("created_at", { ascending: false })
+                .limit(PRIMARY_FETCH_LIMIT);
 
-            if (recommendations) setTools(recommendations);
+            const primaryCandidates = dedupeTools(
+                (recommendations || []).filter(isRecommendationCandidate)
+            );
+
+            let finalRecommendations = primaryCandidates.slice(0, MAX_RECOMMENDATIONS);
+
+            // If category-based results are weak/noisy, fill from global top published tools.
+            if (finalRecommendations.length < MAX_RECOMMENDATIONS) {
+                const excludedIds = [
+                    ...new Set(
+                        [
+                            ...bookmarkedIds,
+                            ...finalRecommendations
+                                .map((tool) => Number(tool.id))
+                                .filter((value) => Number.isFinite(value)),
+                        ]
+                    ),
+                ];
+
+                let fallbackQuery = supabase
+                    .from("tools")
+                    .select("*")
+                    .eq("is_published", true)
+                    .order("clicks_count", { ascending: false, nullsFirst: false })
+                    .order("created_at", { ascending: false })
+                    .limit(FALLBACK_FETCH_LIMIT);
+
+                if (excludedIds.length > 0) {
+                    fallbackQuery = fallbackQuery.not("id", "in", `(${excludedIds.join(",")})`);
+                }
+
+                const { data: fallbackTools } = await fallbackQuery;
+
+                const merged = dedupeTools([
+                    ...finalRecommendations,
+                    ...(fallbackTools || []).filter(isRecommendationCandidate),
+                ]);
+
+                finalRecommendations = merged.slice(0, MAX_RECOMMENDATIONS);
+            }
+
+            if (finalRecommendations.length > 0) {
+                setTools(finalRecommendations);
+            }
             setLoading(false);
         };
 

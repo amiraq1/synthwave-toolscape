@@ -7,7 +7,18 @@ export const isValidImageUrl = (value?: string | null): value is string => {
 
   try {
     const parsed = new URL(trimmed);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+
+    const hostname = parsed.hostname.toLowerCase();
+    const pathname = parsed.pathname.toLowerCase();
+
+    // Ignore Google faviconV2 endpoints. They are often stale for this dataset and
+    // produce noisy 404s in the browser console.
+    if (hostname.endsWith("gstatic.com") && pathname.includes("faviconv2")) {
+      return false;
+    }
+
+    return true;
   } catch {
     return false;
   }
@@ -84,8 +95,6 @@ const getHostname = (toolUrl?: string | null): string | null => {
   const hostname = parsed.hostname.replace(/^www\./i, "").toLowerCase();
   if (!isLikelyPublicHostname(hostname)) return null;
   return hostname;
-
-  return null;
 };
 
 interface ToolImageUrlOptions {
@@ -101,7 +110,7 @@ export const getToolImageUrl = (
   const valid = getValidImageUrl(imageUrl);
   if (valid) return valid;
 
-  const { fallbackToFavicon = true, faviconSize = 64 } = options;
+  const { fallbackToFavicon = false, faviconSize = 64 } = options;
   if (!fallbackToFavicon) return null;
 
   const hostname = getHostname(toolUrl);

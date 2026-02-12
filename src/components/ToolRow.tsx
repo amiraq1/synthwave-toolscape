@@ -77,7 +77,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         : '';
 
     // Determine which icon layer to show (image_url first, then favicon fallback from tool.url)
-    const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url);
+    const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url, { fallbackToFavicon: false });
     const hasResolvedImage = !!resolvedImageUrl && !imageError;
     const showCategoryIcon = !hasResolvedImage;
 

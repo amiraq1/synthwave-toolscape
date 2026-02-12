@@ -16,11 +16,14 @@ const TrendingTools = () => {
     useEffect(() => {
         const fetchTrending = async () => {
             try {
+                // Query directly to avoid RPC overload ambiguity (PGRST203).
                 const { data, error } = await supabase
-                    .rpc("get_trending_tools", {
-                        p_limit: 10,
-                        p_offset: 0,
-                    });
+                    .from("tools")
+                    .select("id, title, clicks_count, created_at")
+                    .eq("is_published", true)
+                    .order("clicks_count", { ascending: false, nullsFirst: false })
+                    .order("created_at", { ascending: false })
+                    .limit(10);
 
                 if (error) throw error;
                 if (data) {
