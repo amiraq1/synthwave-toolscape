@@ -3,7 +3,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Link } from "react-router-dom";
 import { Search, Loader2, ArrowRight, ArrowLeft, Sparkles, Command, BookOpen, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useSemanticSearch, type SearchResponse } from "@/hooks/useSemanticSearch";
+import { useSemanticSearchFixed as useSemanticSearch, type SearchResponse } from "@/hooks/useSemanticSearch";
 import { cn } from "@/lib/utils";
 
 interface SearchAutocompleteProps {

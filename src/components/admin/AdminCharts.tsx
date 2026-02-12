@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import {
     BarChart,
@@ -15,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 
-// تعريف واجهة البيانات
+// Admin Charts Component - Optimized & No Search Calls
 interface Tool {
     category: string;
     created_at?: string;
@@ -25,36 +26,29 @@ interface AdminChartsProps {
     tools: Tool[];
 }
 
-// ألوان المخطط الدائري
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a0c4ff', '#bdb2ff'];
 
 const AdminCharts = ({ tools }: AdminChartsProps) => {
 
-    // 1. معالجة بيانات توزيع التصنيفات (Pie Chart)
-    // نأخذ أعلى 8 تصنيفات لعدم ازدحام الرسم
     const categoryData = useMemo(() => {
         const counts: Record<string, number> = {};
         tools.forEach(tool => {
-            // إذا لم يوجد تصنيف، نضعه تحت "Other"
             const cat = tool.category || 'Other';
             counts[cat] = (counts[cat] || 0) + 1;
         });
 
         return Object.entries(counts)
             .map(([name, value]) => ({ name, value }))
-            .sort((a, b) => b.value - a.value) // الترتيب من الأكثر للأقل
-            .slice(0, 8); // الاكتفاء بأعلى 8
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 8);
     }, [tools]);
 
-    // 2. معالجة بيانات النمو الشهري (Bar Chart) - آخر 6 أشهر
     const growthData = useMemo(() => {
         const months: Record<string, number> = {};
         const today = new Date();
 
-        // تهيئة الأشهر الستة الماضية بالقيمة 0 لضمان ظهورها حتى لو لم تكن هناك بيانات
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            // استخدام اسم الشهر بالإنجليزي للمطابقة مع البيانات، ويمكن تعريبه في العرض
             const key = d.toLocaleString('en-US', { month: 'short' });
             months[key] = 0;
         }
@@ -62,26 +56,31 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
         tools.forEach(tool => {
             if (tool.created_at) {
                 const date = new Date(tool.created_at);
-                // التحقق مما إذا كان التاريخ ضمن آخر 6 أشهر تقريباً
                 const diffTime = Math.abs(today.getTime() - date.getTime());
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays <= 180) {
                     const key = date.toLocaleString('en-US', { month: 'short' });
-                    if (Object.prototype.hasOwnProperty.call(months, key)) {
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (months.hasOwnProperty(key)) {
                         months[key]++;
                     }
                 }
             }
         });
 
-        return Object.entries(months).map(([name, count]) => ({ name, count }));
+        // Convert to array for Recharts
+        const result = Object.entries(months).map(([name, count]) => ({ name, count }));
+        return result;
     }, [tools]);
+
+    if (!tools || tools.length === 0) {
+        return <div className="text-center p-4 text-gray-500">No data available for charts</div>;
+    }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-            {/* القسم الأول: توزيع التصنيفات (دائري) */}
             <Card className="bg-black/20 border-white/10 overflow-hidden">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
@@ -97,7 +96,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     data={categoryData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={50} // تصميم الدونات (Donut Chart)
+                                    innerRadius={50}
                                     outerRadius={80}
                                     fill="#8884d8"
                                     paddingAngle={2}
@@ -118,7 +117,6 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 </CardContent>
             </Card>
 
-            {/* القسم الثاني: النمو الشهري (أعمدة) */}
             <Card className="bg-black/20 border-white/10 overflow-hidden">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
@@ -138,7 +136,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                                     itemStyle={{ color: '#82ca9d' }}
                                 />
-                                <Bar dataKey="count" name="عدد الأدوات" fill="#82ca9d" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="count" fill="#82ca9d" radius={[4, 4, 0, 0]} name="Count" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
