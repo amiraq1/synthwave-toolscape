@@ -79,8 +79,8 @@ const cleanAllFakeTools = async () => {
         batchNum++;
 
         // Safety brake
-        if (totalDeleted > 15000) {
-            console.log("⚠️ Reached safety limit of 15,000 deletions. Stopping.");
+        if (totalDeleted > 100000) {
+            console.log("⚠️ Reached safety limit of 100,000 deletions. Stopping.");
             keepGoing = false;
         }
     }
