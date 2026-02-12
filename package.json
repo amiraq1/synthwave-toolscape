@@ -8,6 +8,7 @@
     "build": "node scripts/generate-sitemap.js && vite build",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "tools:add-10k": "node scripts/add-bulk-tools.js 10000",
+    "tools:sync-supabase": "node scripts/sync-tools-to-supabase.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"

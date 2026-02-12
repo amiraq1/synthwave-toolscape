@@ -127,7 +127,8 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
           <TableBody>
             {filteredTools.length > 0 ? (
               filteredTools.map((tool) => {
-                const imageUrl = getToolImageUrl(tool.image_url, tool.url);
+                // In admin table, avoid favicon fallback network noise for low-quality URLs.
+                const imageUrl = getToolImageUrl(tool.image_url, tool.url, { fallbackToFavicon: false });
                 return (
                   <TableRow key={tool.id}>
                     <TableCell className="font-medium">
