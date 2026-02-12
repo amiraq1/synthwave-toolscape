@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { getValidImageUrl } from "@/utils/imageUrl";
 
 interface NavbarProps {
   onAddClick: () => void;
@@ -24,6 +25,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const { session, signOut } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false); // حالة القائمة الجانبية للموبايل
+  const userAvatarUrl = getValidImageUrl(session?.user?.user_metadata?.avatar_url) || undefined;
 
   // دالة مساعدة لتحديد الرابط النشط
   const isActive = (path: string) => location.pathname === path;
@@ -121,7 +123,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="قائمة الحساب">
                     <Avatar className="h-9 w-9 border border-white/10">
                       <AvatarImage
-                        src={session.user.user_metadata.avatar_url}
+                        src={userAvatarUrl}
                         loading="eager"
                         fetchPriority="high"
                       />
@@ -229,7 +231,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                       <>
                         <div className="flex items-center gap-3 px-2 mb-4">
                           <Avatar className="h-10 w-10 border border-white/10">
-                            <AvatarImage src={session.user.user_metadata.avatar_url} />
+                            <AvatarImage src={userAvatarUrl} />
                             <AvatarFallback className="bg-neon-purple text-white">
                               {session.user.email?.charAt(0).toUpperCase()}
                             </AvatarFallback>

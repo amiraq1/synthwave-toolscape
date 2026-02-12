@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Send, Trash2, Loader2, User } from "lucide-react";
+import { getValidImageUrl } from "@/utils/imageUrl";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -143,7 +144,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                 <form onSubmit={handleSubmit} className="mb-8">
                     <div className="flex gap-3">
                         <Avatar className="w-10 h-10 shrink-0">
-                            <AvatarImage src={user.user_metadata?.avatar_url} />
+                            <AvatarImage src={getValidImageUrl(user.user_metadata?.avatar_url) || undefined} />
                             <AvatarFallback className="bg-neon-purple/20 text-neon-purple">
                                 <User className="w-5 h-5" />
                             </AvatarFallback>
@@ -204,7 +205,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                         >
                             <div className="flex gap-3">
                                 <Avatar className="w-10 h-10 shrink-0">
-                                    <AvatarImage src={comment.user?.avatar_url || undefined} />
+                                    <AvatarImage src={getValidImageUrl(comment.user?.avatar_url) || undefined} />
                                     <AvatarFallback className="bg-neon-purple/20 text-neon-purple text-sm">
                                         {comment.user?.display_name?.charAt(0)?.toUpperCase() || "؟"}
                                     </AvatarFallback>

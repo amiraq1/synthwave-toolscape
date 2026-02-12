@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect, type ComponentType } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +16,30 @@ const PwaUpdateToast = lazy(() => import("@/components/pwa-update-toast").then(m
 import Index from "./pages/Index"; // Eager load Home for better LCP
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
 
+function lazyWithRetry<T extends ComponentType<any>>(
+  importFn: () => Promise<{ default: T }>,
+  retryKey: string,
+) {
+  return lazy(async () => {
+    try {
+      const module = await importFn();
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(retryKey);
+      }
+      return module;
+    } catch (error) {
+      if (typeof window !== "undefined") {
+        const hasRetried = window.sessionStorage.getItem(retryKey) === "1";
+        if (!hasRetried) {
+          window.sessionStorage.setItem(retryKey, "1");
+          window.location.reload();
+        }
+      }
+      throw error;
+    }
+  });
+}
+
 
 // Lazy Load Pages
 // const Index = lazy(() => import("./pages/Index")); // Moved to eager load
@@ -25,7 +49,7 @@ const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
 const Settings = lazy(() => import("./pages/Settings"));
-const Admin = lazy(() => import("./pages/Admin"));
+const Admin = lazyWithRetry(() => import("./pages/Admin"), "lazy-retry-admin-page");
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const FAQ = lazy(() => import("./pages/FAQ"));
