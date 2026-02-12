@@ -13,7 +13,30 @@ interface SearchAutocompleteProps {
     className?: string;
     inputClassName?: string;
     placeholder?: string;
+    quickSuggestions?: string[];
 }
+
+const DEFAULT_AR_SUGGESTIONS = [
+    "تصميم",
+    "برمجة",
+    "كتابة محتوى",
+    "ذكاء اصطناعي",
+    "تسويق",
+    "تعليم",
+    "صوت",
+    "فيديو"
+];
+
+const DEFAULT_EN_SUGGESTIONS = [
+    "design",
+    "coding",
+    "content writing",
+    "ai assistant",
+    "marketing",
+    "education",
+    "audio",
+    "video"
+];
 
 const SearchAutocomplete = ({
     value,
@@ -21,7 +44,8 @@ const SearchAutocomplete = ({
     onSearch,
     className,
     inputClassName,
-    placeholder
+    placeholder,
+    quickSuggestions
 }: SearchAutocompleteProps) => {
     const { t, i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
@@ -35,6 +59,17 @@ const SearchAutocomplete = ({
     const [isFocused, setIsFocused] = useState(false);
 
     const debouncedQuery = useDebounce(query, 500);
+    const keywordSource = quickSuggestions && quickSuggestions.length > 0
+        ? quickSuggestions
+        : (isAr ? DEFAULT_AR_SUGGESTIONS : DEFAULT_EN_SUGGESTIONS);
+    const normalizedQuery = query.trim().toLowerCase();
+    const keywordSuggestions = (normalizedQuery.length >= 2
+        ? keywordSource.filter((keyword) => keyword.toLowerCase().includes(normalizedQuery))
+        : keywordSource
+    )
+        .filter((keyword) => keyword.toLowerCase() !== normalizedQuery)
+        .slice(0, 8);
+    const shouldShowDropdown = showSuggestions && (query.length >= 2 || keywordSuggestions.length > 0);
 
     const {
         data,
@@ -110,7 +145,7 @@ const SearchAutocomplete = ({
                     dir={isAr ? "rtl" : "ltr"}
                     role="combobox"
                     aria-autocomplete="list"
-                    aria-expanded={showSuggestions && query.length >= 2}
+                    aria-expanded={shouldShowDropdown}
                     aria-controls={listboxId}
                     aria-label={placeholder || t('search.placeholder')}
                     className={cn(
@@ -146,7 +181,7 @@ const SearchAutocomplete = ({
                 </div>
             </form>
 
-            {showSuggestions && query.length >= 2 && (
+            {shouldShowDropdown && (
                 <div
                     id={listboxId}
                     role="listbox"
@@ -156,12 +191,38 @@ const SearchAutocomplete = ({
                     <div className="px-4 py-3 bg-white/5 border-b border-white/5 flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                             <Sparkles className="w-3 h-3 text-neon-purple" />
-                            {isLoading ? (isAr ? "جاري التفكير..." : "Thinking...") : (isAr ? "اقتراحات ذكية" : "AI Suggestions")}
+                            {isLoading && query.length >= 2
+                                ? (isAr ? "جاري التفكير..." : "Thinking...")
+                                : (isAr ? "اقتراحات البحث" : "Search Suggestions")}
                         </span>
-                        {isLoading && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
+                        {isLoading && query.length >= 2 && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
                     </div>
 
                     <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
+                        {keywordSuggestions.length > 0 && (
+                            <div className="py-3 px-4 border-b border-white/5">
+                                <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground/60 font-bold">
+                                    {isAr ? "كلمات مقترحة" : "Suggested Keywords"}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {keywordSuggestions.map((keyword) => (
+                                        <button
+                                            key={keyword}
+                                            type="button"
+                                            className="px-3 py-1.5 text-xs rounded-full bg-white/5 border border-white/10 text-foreground/90 hover:border-neon-purple/40 hover:bg-neon-purple/10 hover:text-neon-purple transition-colors"
+                                            onClick={() => {
+                                                handleChange(keyword);
+                                                if (onSearch) onSearch(keyword);
+                                                setShowSuggestions(false);
+                                            }}
+                                        >
+                                            {keyword}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {suggestions.length > 0 && (
                             <div className="py-2">
                                 <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold">
@@ -234,7 +295,7 @@ const SearchAutocomplete = ({
                             </div>
                         )}
 
-                        {!isLoading && suggestions.length === 0 && blogPosts.length === 0 && (
+                        {!isLoading && query.length >= 2 && suggestions.length === 0 && blogPosts.length === 0 && (
                             <div className="p-10 text-center">
                                 <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <AlertCircle className="w-6 h-6 text-muted-foreground/40" />

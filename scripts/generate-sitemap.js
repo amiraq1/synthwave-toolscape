@@ -76,8 +76,33 @@ async function generateSitemap() {
   </url>`;
     });
 
+    // 3) دمج أدوات الملف المحلي (public/data/tools.json) غير الموجودة في Supabase
+    const localToolsPath = path.resolve(__dirname, "../public/data/tools.json");
+    let mergedTools = [...tools];
+
+    try {
+        if (fs.existsSync(localToolsPath)) {
+            const localToolsRaw = fs.readFileSync(localToolsPath, "utf8");
+            const localTools = JSON.parse(localToolsRaw);
+
+            if (Array.isArray(localTools)) {
+                const supabaseIds = new Set((tools || []).map((t) => String(t.id)));
+                const localOnlyTools = localTools
+                    .filter((t) => t && t.is_published !== false && t.id !== undefined && !supabaseIds.has(String(t.id)))
+                    .map((t) => ({
+                        id: t.id,
+                        created_at: t.created_at || new Date().toISOString()
+                    }));
+
+                mergedTools = [...tools, ...localOnlyTools];
+            }
+        }
+    } catch (localReadError) {
+        console.warn("⚠️ Could not merge local tools into sitemap:", localReadError?.message || localReadError);
+    }
+
     // إضافة الأدوات (Tools)
-    tools.forEach(tool => {
+    mergedTools.forEach(tool => {
         sitemap += `
   <url>
     <loc>${SITE_URL}/tool/${tool.id}</loc>
@@ -108,7 +133,7 @@ async function generateSitemap() {
     }
 
     fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap);
-    console.log(`✅ Sitemap generated successfully with ${tools.length} tools and ${posts?.length || 0} posts.`);
+    console.log(`✅ Sitemap generated successfully with ${mergedTools.length} tools and ${posts?.length || 0} posts.`);
     console.log(`📄 Saved to: ${path.join(publicDir, 'sitemap.xml')}`);
 }
 
