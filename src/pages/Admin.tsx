@@ -61,22 +61,40 @@ const Admin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", url: "", description_en: "" });
 
-  const { data: tools = [], refetch: refetchTools } = useQuery({
-    queryKey: ["admin_tools"],
+  // Fetch only Pending Drafts (limit 20 for review section) instead of ALL tools
+  const { data: drafts = [], refetch: refetchDrafts } = useQuery({
+    queryKey: ["admin_drafts"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("tools")
+        .select("*")
+        .eq("is_published", false)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (!data) return [];
+
+      return data.map((t) => ({
+        ...t,
+        id: String(t.id),
+        features: t.features || [],
+      })) as unknown as DraftTool[];
+    },
+    enabled: isAdmin,
+  });
+
+  // Fetch tools for Charts (Fetch recent 100 tools for charts to avoid heavy load)
+  const { data: recentToolsForCharts = [] } = useQuery({
+    queryKey: ["admin_recent_tools_charts"],
     queryFn: async () => {
       const { data } = await supabase
         .from("tools")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(1000);
-      if (!data) return [];
-      return data.map((t) => ({
-        ...t,
-        id: String(t.id),
-        features: t.features || [],
-      })) as unknown as Tool[];
+        .limit(100);
+      return (data || []).map(t => ({ ...t, id: String(t.id), features: t.features || [] })) as unknown as Tool[];
     },
-    enabled: isAdmin,
+    enabled: isAdmin
   });
 
   const { data: totalToolsCount = 0 } = useQuery({
@@ -112,7 +130,6 @@ const Admin = () => {
     enabled: isAdmin,
   });
 
-  const drafts = tools.filter((t) => t.is_published === false) as DraftTool[];
   const stats = {
     totalTools: totalToolsCount,
     pendingDrafts: pendingDraftsCount,
@@ -133,7 +150,7 @@ const Admin = () => {
       if (error) throw error;
       toast.success(t("admin.autoDraft.success", { name: formData.name }));
       setFormData({ name: "", url: "", description_en: "" });
-      refetchTools();
+      refetchDrafts();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       toast.error(t("admin.autoDraft.errorTitle"), {
@@ -148,7 +165,7 @@ const Admin = () => {
     if (!confirm(t("admin.drafts.deleteConfirm"))) return;
     await supabase.from("tools").delete().eq("id", Number(id));
     toast.success(t("admin.drafts.deleteSuccess"));
-    refetchTools();
+    refetchDrafts();
   };
 
   const openEdit = (tool: DraftTool) => {
@@ -222,7 +239,7 @@ const Admin = () => {
         </div>
 
         <Suspense fallback={<ChartsLoadingSkeleton />}>
-          <AdminCharts tools={tools} />
+          <AdminCharts tools={recentToolsForCharts} />
         </Suspense>
 
         <Tabs defaultValue="tools" className="w-full">
@@ -293,57 +310,58 @@ const Admin = () => {
                 <BarChart3 className="w-5 h-5" /> {t("admin.drafts.reviewTitle", { count: stats.pendingDrafts })}
               </h2>
 
-              {drafts.length === 0 && (
+              {drafts.length === 0 ? (
                 <div className="text-center py-12 border border-dashed border-white/10 rounded-xl bg-white/5">
                   <Database className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-400">{t("admin.drafts.empty")}</p>
                 </div>
+              ) : (
+                <div className="grid gap-4">
+                  {drafts.map((tool) => (
+                    <div
+                      key={tool.id}
+                      className="bg-card/40 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center group hover:border-neon-purple/30 transition-all hover:bg-white/5"
+                    >
+                      <div className="flex-1 w-full">
+                        <h3 className="font-bold text-lg text-white flex items-center flex-wrap gap-2 mb-1">
+                          {tool.title}
+                          <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full text-gray-400 font-normal border border-white/5">
+                            {tool.category}
+                          </span>
+                        </h3>
+                        <p className="text-sm text-gray-400 line-clamp-2 pl-4">{tool.description}</p>
+                      </div>
+
+                      <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openEdit(tool)}
+                          className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300"
+                        >
+                          <Edit className="w-4 h-4 ml-1" /> {t("admin.drafts.reviewPublish")}
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="destructive"
+                          onClick={() => deleteDraft(String(tool.id))}
+                          className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
-
-              <div className="grid gap-4">
-                {drafts.map((tool) => (
-                  <div
-                    key={tool.id}
-                    className="bg-card/40 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center group hover:border-neon-purple/30 transition-all hover:bg-white/5"
-                  >
-                    <div className="flex-1 w-full">
-                      <h3 className="font-bold text-lg text-white flex items-center flex-wrap gap-2 mb-1">
-                        {tool.title}
-                        <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full text-gray-400 font-normal border border-white/5">
-                          {tool.category}
-                        </span>
-                      </h3>
-                      <p className="text-sm text-gray-400 line-clamp-2 pl-4">{tool.description}</p>
-                    </div>
-
-                    <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openEdit(tool)}
-                        className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300"
-                      >
-                        <Edit className="w-4 h-4 ml-1" /> {t("admin.drafts.reviewPublish")}
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => deleteDraft(String(tool.id))}
-                        className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
             <div className="mt-8">
               <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
                 <Database className="w-5 h-5" /> {t("admin.allTools.title", { count: stats.totalTools })}
               </h2>
-              <AdminToolsTable tools={tools} onUpdate={() => refetchTools()} />
+              {/* No longer passing tools prop, only update callback */}
+              <AdminToolsTable onUpdate={() => refetchDrafts()} />
             </div>
           </TabsContent>
 
@@ -363,7 +381,7 @@ const Admin = () => {
             isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
             tool={editingTool}
-            onUpdate={() => refetchTools()}
+            onUpdate={() => refetchDrafts()}
           />
         )}
       </div>

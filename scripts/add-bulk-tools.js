@@ -17,34 +17,58 @@ const randomDateInLastYears = (years = 2) => {
   return new Date(now - Math.floor(Math.random() * span)).toISOString();
 };
 
-const useCasesByCategory = {
-  text: ["كتابة المحتوى", "إعادة الصياغة", "التلخيص", "تحسين SEO", "المراسلات"],
-  image: ["تصميم الصور", "تحرير الصور", "توليد الشعارات", "إنشاء هوية بصرية", "تحسين الدقة"],
-  video: ["تحرير الفيديو", "إنشاء فيديو قصير", "إضافة ترجمة", "تحويل النص إلى فيديو", "تحسين المونتاج"],
-  code: ["توليد الكود", "مراجعة الكود", "تصحيح الأخطاء", "بناء API", "أتمتة التطوير"],
-  productivity: ["إدارة المهام", "كتابة التقارير", "أتمتة سير العمل", "إدارة المشاريع", "تنظيم المعرفة"],
-  study: ["البحث العلمي", "تلخيص الأوراق", "إنشاء مذكرات", "شرح المفاهيم", "تحليل PDF"],
-  audio: ["تحويل النص إلى صوت", "تنقية الصوت", "نسخ الصوت", "إنشاء بودكاست", "إنتاج موسيقى"]
-};
+// --- DATA LISTS FOR GENERATION ---
 
-const featuresByCategory = {
-  text: ["كتابة ذكية", "تلخيص سريع", "دعم عربي", "تحسين أسلوب", "قوالب جاهزة"],
-  image: ["توليد صور", "رفع الجودة", "إزالة الخلفية", "تحرير سريع", "أنماط فنية"],
-  video: ["تحويل نص إلى فيديو", "ترجمة تلقائية", "مؤثرات ذكية", "تحرير زمني", "إخراج HD"],
-  code: ["إكمال كود", "فحص أخطاء", "شرح كود", "اقتراح حلول", "دعم متعدد اللغات"],
-  productivity: ["إدارة أعمال", "تقارير تلقائية", "تذكيرات ذكية", "لوحات متابعة", "تكاملات"],
-  study: ["تحليل مستندات", "تلخيص أكاديمي", "استشهادات", "خرائط ذهنية", "اختبارات قصيرة"],
-  audio: ["استنساخ صوت", "تنقية ضوضاء", "تحويل صوت لنص", "أصوات متعددة", "مكساج ذكي"]
+const prefixes = ["Super", "Ultra", "Hyper", "Mega", "Giga", "Pro", "Smart", "Auto", "Quick", "Easy", "Master", "Genius", "Future", "Tech", "Cyber", "Nova", "Apex", "Prime", "Elite", "Core"];
+const nouns = ["Write", "Pixel", "Code", "Chat", "Bot", "Gen", "Draft", "Flow", "Task", "Mind", "Learn", "Speak", "Voice", "Vision", "Data", "Graph", "Note", "Edit", "Clip", "Sound"];
+const suffixes = ["AI", "Pro", "Labs", "IO", "App", "Hub", "Box", "Mate", "Pilot", "Engine", "Works", "Studio", "Kit", "Sync", "Stream", "Fusion", "Spark", "Pulse", "Wave", "Sphere"];
+
+const categories = {
+  text: {
+    names: ["Writer", "Copy", "Script", "Text", "Word", "Content", "Blog", "Essay"],
+    useCases: ["كتابة المحتوى التسويقي", "تلخيص المقالات الطويلة", "تحسين محركات البحث SEO", "إعادة صياغة النصوص", "كتابة البريد الإلكتروني", "تأليف القصص"],
+    features: ["تدقيق لغوي", "اقتراحات ذكية", "قوالب جاهزة", "نبرات متعددة", "توليد عناوين"]
+  },
+  image: {
+    names: ["Image", "Art", "Pic", "Photo", "Canvas", "Draw", "Sketch", "Design"],
+    useCases: ["توليد الصور من النص", "تحسين جودة الصور", "إزالة الخلفيات", "تصميم الشعارات", "تعديل الصور الشخصية", "إنشاء تصاميم السوشيال ميديا"],
+    features: ["دقة عالية 4K", "فلاتر فنية", "تحرير سريع", "تصدير متعدد الصيغ", "أنماط متنوعة"]
+  },
+  video: {
+    names: ["Video", "Clip", "Film", "Motion", "Reel", "Stream", "Studio", "Cut"],
+    useCases: ["مونتاج الفيديو الآلي", "إضافة ترجمات تلقائية", "تحويل النص إلى فيديو", "إنشاء مقاطع قصيرة (Shoorts)", "تحسين إضاءة الفيديو"],
+    features: ["تصدير سريع", "مكتبة مؤثرات", "دعم 4K", "مزامنة صوتية", "قوالب جاهزة"]
+  },
+  code: {
+    names: ["Code", "Dev", "Git", "Stack", "Script", "Terminal", "Debug", "API"],
+    useCases: ["إنشاء أكواد برمجية", "شرح الأكواد المعقدة", "اكتشاف الأخطاء وإصلاحها", "تحويل التصميم لكود", "أتمتة الاختبارات البرمجية"],
+    features: ["دعم لغات متعددة", "تكامل مع VS Code", "شرح تفصيلي", "توليد اختبارات", "دعم API"]
+  },
+  productivity: {
+    names: ["Task", "Plan", "Organize", "Focus", "Team", "Work", "Flow", "Done"],
+    useCases: ["إدارة المشاريع", "تنظيم المهام اليومية", "أتمتة سير العمل", "تلخيص الاجتماعات", "إدارة البريد الوارد"],
+    features: ["لوحة تحكم", "تنبيهات ذكية", "تقارير أداء", "ربط مع أدوات أخرى", "وضع التركيز"]
+  },
+  study: {
+    names: ["Study", "Learn", "Exam", "Scholar", "Research", "Paper", "Uni", "Grade"],
+    useCases: ["تلخيص الأبحاث العلمية", "شرح المفاهيم الصعبة", "إنشاء اختبارات مراجعة", "المساعدة في كتابة الرسائل", "حل المسائل الرياضية"],
+    features: ["مصارد موثوقة", "شرح مبسط", "فلاش كاردز", "خرائط ذهنية", "اقتباس مصادر"]
+  },
+  audio: {
+    names: ["Audio", "Sound", "Voice", "Music", "Tune", "Beat", "Pod", "Cast"],
+    useCases: ["تحويل النص إلى كلام", "استنساخ الأصوات", "عزل الضوضاء", "توليد موسيقى خلفية", "تفريغ الملفات الصوتية"],
+    features: ["أصوات طبيعية", "دعم لهجات", "مؤثرات صوتية", "تصدير MP3/WAV", "تحرير موجات"]
+  }
 };
 
 const toCategoryKey = (categoryValue = "") => {
   const c = String(categoryValue).toLowerCase();
-  if (c.includes("برمج") || c.includes("coding") || c.includes("development")) return "code";
+  if (c.includes("برمج") || c.includes("coding") || c.includes("dev")) return "code";
   if (c.includes("فيديو") || c.includes("video")) return "video";
   if (c.includes("صوت") || c.includes("audio") || c.includes("music")) return "audio";
   if (c.includes("صور") || c.includes("تصميم") || c.includes("image") || c.includes("design")) return "image";
-  if (c.includes("تعليم") || c.includes("دراسة") || c.includes("طلاب") || c.includes("study") || c.includes("research")) return "study";
-  if (c.includes("إنتاجية") || c.includes("productivity")) return "productivity";
+  if (c.includes("تعليم") || c.includes("دراسة") || c.includes("study") || c.includes("research")) return "study";
+  if (c.includes("إنتاجية") || c.includes("prod")) return "productivity";
   return "text";
 };
 
@@ -57,70 +81,86 @@ const main = () => {
   const raw = fs.readFileSync(filePath, "utf8");
   const existing = JSON.parse(raw);
 
-  if (!Array.isArray(existing)) {
-    console.error("Invalid tools.json format. Expected an array.");
-    process.exit(1);
-  }
-
   const numericIds = existing
     .map((tool) => Number.parseInt(String(tool.id), 10))
     .filter((id) => Number.isFinite(id));
 
   const maxId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
-  const categories = [...new Set(existing.map((tool) => tool.category).filter(Boolean))];
-  const pricingTypes = [...new Set(existing.map((tool) => tool.pricing_type).filter(Boolean))];
 
+  // Weights for categories to ensure distribution
   const fallbackCategories = ["نصوص", "صور", "فيديو", "برمجة", "إنتاجية", "دراسة وطلاب", "صوت"];
-  const finalCategories = categories.length > 0 ? categories : fallbackCategories;
-  const finalPricing = pricingTypes.length > 0 ? pricingTypes : ["مجاني", "Freemium", "مدفوع"];
 
-  const existingUrls = new Set(existing.map((tool) => String(tool.url || "").toLowerCase().trim()));
   const generated = [];
+  const existingUrls = new Set(existing.map((tool) => String(tool.url || "").toLowerCase().trim()));
+
+  console.log(`🚀 Generating ${additionalCount} diverse tools...`);
 
   for (let i = 1; i <= additionalCount; i += 1) {
     const id = maxId + i;
-    const category = pick(finalCategories);
-    const categoryKey = toCategoryKey(category);
-    const useCase = pick(useCasesByCategory[categoryKey]);
-    const featurePool = featuresByCategory[categoryKey];
+    const categoryName = pick(fallbackCategories);
+    const catKey = toCategoryKey(categoryName);
+    const catData = categories[catKey];
 
-    let url = `https://toolscape.ai/tool/${id}`;
+    // Generate Name: [Prefix] [Noun] [Suffix] OR [Noun][Suffix]
+    let nameEn = "";
+    if (Math.random() > 0.5) {
+      nameEn = `${pick(prefixes)} ${pick(catData.names)} ${pick(suffixes)}`;
+    } else {
+      nameEn = `${pick(catData.names)}${pick(suffixes)}`;
+    }
+
+    // Ensure uniqueness roughly
+    nameEn = `${nameEn} ${Math.floor(Math.random() * 99)}`;
+
+    const useCase = pick(catData.useCases);
+    const description = `أداة ذكاء اصطناعي متطورة متخصصة في ${useCase}، تساعدك على إنجاز مهامك بسرعة ودقة عالية.`;
+    const descriptionEn = `Advanced AI tool specialized in ${catKey} related tasks, helping you achieve more in less time with ${pick(catData.features)}.`;
+
+    // Generate URL
+    let slug = nameEn.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    let url = `https://${slug}.com`;
+
+    // Avoid dupes
     while (existingUrls.has(url)) {
-      url = `https://toolscape.ai/tool/${id}-${Math.floor(Math.random() * 10000)}`;
+      url = `https://${slug}-${Math.floor(Math.random() * 1000)}.com`;
     }
     existingUrls.add(url);
 
-    const features = [...featurePool].sort(() => 0.5 - Math.random()).slice(0, 3);
-    const rating = Number((3.7 + Math.random() * 1.3).toFixed(1));
+    const toolFeatures = [];
+    while (toolFeatures.length < 3) {
+      const f = pick(catData.features);
+      if (!toolFeatures.includes(f)) toolFeatures.push(f);
+    }
+
+    const rating = Number((3.5 + Math.random() * 1.5).toFixed(1)); // 3.5 to 5.0
 
     generated.push({
       id: String(id),
-      title: `Toolscape AI ${id}`,
-      title_en: `Toolscape AI ${id}`,
-      description: `أداة ذكاء اصطناعي متخصصة في ${useCase} مع واجهة سهلة وسرعة عالية.`,
-      description_en: `An AI tool focused on ${useCase} with a fast workflow and easy interface.`,
-      category,
-      url,
+      title: nameEn,
+      title_en: nameEn,
+      description: description,
+      description_en: descriptionEn,
+      category: categoryName,
+      url: url,
       image_url: "",
-      pricing_type: pick(finalPricing),
-      is_featured: i % 250 === 0,
+      pricing_type: pick(["مجاني", "Freemium", "مدفوع", "تجربة مجانية"]),
+      is_featured: Math.random() < 0.05, // 5% chance
       is_published: true,
       created_at: randomDateInLastYears(2),
-      features,
+      features: toolFeatures,
       screenshots: [],
-      is_sponsored: false,
-      supports_arabic: Math.random() < 0.6,
+      is_sponsored: Math.random() < 0.02,
+      supports_arabic: Math.random() > 0.4,
       average_rating: rating,
-      reviews_count: Math.floor(Math.random() * 900)
+      reviews_count: Math.floor(Math.random() * 500)
     });
   }
 
   const nextData = [...existing, ...generated];
-  fs.writeFileSync(filePath, `${JSON.stringify(nextData, null, 2)}\n`, "utf8");
+  fs.writeFileSync(filePath, JSON.stringify(nextData, null, 2), "utf8");
 
-  console.log(`Added ${generated.length} tools.`);
-  console.log(`Total tools in file: ${nextData.length}`);
-  console.log(`Updated file: ${filePath}`);
+  console.log(`✅ Added ${generated.length} tools successfully.`);
+  console.log(`📊 Total tools in file: ${nextData.length}`);
 };
 
 main();

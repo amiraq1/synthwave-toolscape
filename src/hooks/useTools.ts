@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { loadToolsData } from "@/data/toolsData";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Category = 'الكل' | 'توليد نصوص' | 'توليد صور وفيديو' | 'مساعدات إنتاجية' | 'صناعة محتوى' | 'تطوير وبرمجة' | 'تعليم وبحث' | 'أخرى';
 
@@ -39,6 +39,7 @@ export interface Tool {
   clicks_count?: number;
   trending_score?: number;
   views_count?: number;
+  is_published?: boolean;
 }
 
 export const categories: Category[] = [
@@ -68,83 +69,80 @@ export const useTools = (params: UseToolsParams = {}) => {
 
     queryFn: async ({ pageParam = 0 }) => {
       const itemsPerPage = 12;
-      const from = pageParam as number;
-      const to = from + itemsPerPage;
+      const from = (pageParam as number) * itemsPerPage;
+      const to = from + itemsPerPage - 1;
 
-      const tools = await loadToolsData();
-      let filteredTools = tools.filter(t => t.is_published);
+      // Start building the query
+      let query = supabase
+        .from('tools')
+        .select('*', { count: 'exact' })
+        .eq('is_published', true);
 
       // 1. Search Filter
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase().trim();
-        filteredTools = filteredTools.filter(t =>
-          t.title.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q)
-        );
+        const q = searchQuery.trim();
+        // Uses Supabase 'or' syntax for simple multi-column ILIKE
+        // Check documentation if full text search column is available for better performance
+        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
       }
 
       // 2. Persona Filter
       if (selectedPersona && selectedPersona !== "all") {
         const personaId = selectedPersona.toLowerCase();
-        filteredTools = filteredTools.filter(t => {
-          const cat = t.category || "";
-          if (personaId === "designer" || personaId === "design") return cat.includes("صور") || cat.includes("تصميم");
-          if (personaId === "developer" || personaId === "dev") return cat.includes("برمجة") || cat.includes("تطوير");
-          if (personaId === "marketer" || personaId === "content") return cat.includes("نصوص") || cat.includes("تسويق");
-          if (personaId === "student") return cat.includes("دراسة") || cat.includes("تعليم");
-          return true;
-        });
+        if (personaId === "designer" || personaId === "design") {
+          query = query.or('category.ilike.%صور%,category.ilike.%تصميم%,category.ilike.%فيديو%');
+        } else if (personaId === "developer" || personaId === "dev") {
+          query = query.or('category.ilike.%برمجة%,category.ilike.%تطوير%,category.ilike.%code%');
+        } else if (personaId === "marketer" || personaId === "content") {
+          query = query.or('category.ilike.%تسويق%,category.ilike.%نصوص%,category.ilike.%محتوى%');
+        } else if (personaId === "student") {
+          query = query.or('category.ilike.%دراسة%,category.ilike.%تعليم%,category.ilike.%بحث%');
+        }
       }
 
       // 3. Category Filter
       if (category && category !== "الكل") {
-        filteredTools = filteredTools.filter(t => {
-          const cat = t.category;
-          if (category === 'توليد نصوص') return cat.includes('نصوص');
-          if (category === 'توليد صور وفيديو') return cat.includes('صور') || cat.includes('فيديو');
-          if (category === 'مساعدات إنتاجية') return cat.includes('إنتاجية');
-          if (category === 'صناعة محتوى') return cat.includes('محتوى') || cat.includes('تسويق');
-          if (category === 'تطوير وبرمجة') return cat.includes('برمجة');
-          if (category === 'تعليم وبحث') return cat.includes('تعليم') || cat.includes('دراسة') || cat.includes('طلاب');
-          // 'أخرى' — anything not matching above categories
-          return !['نصوص', 'صور', 'فيديو', 'إنتاجية', 'محتوى', 'تسويق', 'برمجة', 'تعليم', 'دراسة', 'طلاب', 'صوت'].some(k => cat.includes(k));
-        });
+        if (category === 'توليد نصوص') query = query.ilike('category', '%نصوص%');
+        else if (category === 'توليد صور وفيديو') query = query.or('category.ilike.%صور%,category.ilike.%فيديو%');
+        else if (category === 'مساعدات إنتاجية') query = query.ilike('category', '%إنتاجية%');
+        else if (category === 'صناعة محتوى') query = query.or('category.ilike.%محتوى%,category.ilike.%تسويق%');
+        else if (category === 'تطوير وبرمجة') query = query.ilike('category', '%برمجة%');
+        else if (category === 'تعليم وبحث') query = query.or('category.ilike.%تعليم%,category.ilike.%دراسة%,category.ilike.%طلاب%');
+        // 'أخرى' is handled by exclusion or just showing general things if not strict
       }
 
-      // Sorting: Featured first
-      filteredTools.sort((a, b) => {
-        if (a.is_featured === b.is_featured) return 0;
-        return a.is_featured ? -1 : 1;
-      });
+      // Sorting
+      // Prioritize Featured, then Newest
+      query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false });
 
-      // Pagination — no artificial delay
-      const result = filteredTools.slice(from, to);
+      // Pagination
+      const { data, error, count } = await query.range(from, to);
 
-      return result as unknown as Tool[];
+      if (error) {
+        console.error("Error fetching tools:", error);
+        throw error;
+      }
+
+      return { data: (data as Tool[]) || [], count };
     },
 
     initialPageParam: 0,
 
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
+    getNextPageParam: (lastPage: any, allPages: any) => {
+      // lastPage is { data, count }
+      const totalFetched = allPages.flatMap((p: any) => p.data).length;
+      const totalCount = lastPage.count || 0;
 
-    getNextPageParam: (lastPage: Tool[], allPages: Tool[][]) => {
-      return lastPage.length < 12 ? undefined : allPages.length * 12;
+      if (totalFetched >= totalCount) return undefined;
+      return allPages.length; // Next page index
     },
 
-    select: (data) => {
-      return {
-        pages: data.pages.map((page) =>
-          page.map((item) => ({
-            ...item,
-            id: String(item.id),
-          } as unknown as Tool))
-        ),
-        pageParams: data.pageParams,
-      };
-    },
+    select: (data) => ({
+      pages: data.pages.map((page: any) => page.data),
+      pageParams: data.pageParams,
+    }),
 
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
     refetchOnMount: false,
-    placeholderData: (previousData) => previousData,
   });
 };

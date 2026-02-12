@@ -4,137 +4,115 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
-// تحميل متغيرات البيئة
-dotenv.config({ path: '.env.local' });
-dotenv.config(); // fallback
-
+// Load environment variables
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, "../.env.local");
+dotenv.config({ path: envPath });
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-// نستخدم المفتاح الموجود في المتغيرات (VITE_SUPABASE_PUBLISHABLE_KEY)
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-const SITE_URL = "https://amiraq.org";
+const SITE_URL = "https://amiraq.org"; // Ensure this is your production URL
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
     console.error("❌ Supabase URL or Key is missing!");
     process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: false }
+});
 
-async function generateSitemap() {
+async function fetchAllTools() {
+    let allTools = [];
+    let page = 0;
+    const pageSize = 1000;
+
+    console.log("📥 Fetching tools from Supabase...");
+
+    while (true) {
+        const { data, error } = await supabase
+            .from('tools')
+            .select('id, created_at')
+            .eq('is_published', true)
+            .range(page * pageSize, (page + 1) * pageSize - 1);
+
+        if (error) {
+            console.error("❌ Error fetching tools:", error);
+            break;
+        }
+
+        if (!data || data.length === 0) break;
+
+        allTools = allTools.concat(data);
+        console.log(`🔹 Fetched ${data.length} tools (Total: ${allTools.length})...`);
+
+        if (data.length < pageSize) break;
+        page++;
+    }
+
+    return allTools;
+}
+
+async function renderSitemap() {
     console.log("⏳ Generating sitemap...");
 
-    // 1. الروابط الثابتة
+    const tools = await fetchAllTools();
+
+    // Static Routes
     const staticRoutes = [
-        '/',
-        '/tools',
-        '/blog',
-        '/contact',
-        '/about',
-        '/faq',
-        '/agents',
-        '/workflow/new',
-        '/bookmarks'
+        { url: '/', changefreq: 'daily', priority: 1.0 },
+        { url: '/tools', changefreq: 'daily', priority: 0.9 },
+        { url: '/blog', changefreq: 'weekly', priority: 0.8 },
+        { url: '/contact', changefreq: 'monthly', priority: 0.5 },
+        { url: '/about', changefreq: 'monthly', priority: 0.6 },
+        { url: '/terms', changefreq: 'yearly', priority: 0.3 },
+        { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
     ];
 
-    // 2. جلب الروابط الديناميكية من Supabase
-    // ملاحظة: قاعدة البيانات تستخدم id وليس slug، وتستخدم created_at
-    const { data: tools, error } = await supabase
-        .from('tools')
-        .select('id, created_at')
-        .eq('is_published', true);
-
-    if (error) {
-        console.error("❌ Error fetching tools:", error);
-        process.exit(1);
-    }
-
-    // جلب المقالات أيضاً
-    const { data: posts, error: postsError } = await supabase
-        .from('posts')
-        .select('id, created_at')
-        .eq('is_published', true);
-
-    if (postsError) {
-        console.error("❌ Error fetching posts:", postsError);
-        // لن نوقف العملية، سنكمل
-    }
-
-    // دمج الروابط (XML Construction)
-    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+    let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
 
-    // إضافة الروابط الثابتة
+    // Add Static Routes
     staticRoutes.forEach(route => {
-        sitemap += `
+        sitemapContent += `
   <url>
-    <loc>${SITE_URL}${route}</loc>
-    <changefreq>weekly</changefreq>
-    <priority>${route === '/' ? '1.0' : '0.8'}</priority>
+    <loc>${SITE_URL}${route.url}</loc>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
   </url>`;
     });
 
-    // 3) دمج أدوات الملف المحلي (public/data/tools.json) غير الموجودة في Supabase
-    const localToolsPath = path.resolve(__dirname, "../public/data/tools.json");
-    let mergedTools = [...tools];
-
-    try {
-        if (fs.existsSync(localToolsPath)) {
-            const localToolsRaw = fs.readFileSync(localToolsPath, "utf8");
-            const localTools = JSON.parse(localToolsRaw);
-
-            if (Array.isArray(localTools)) {
-                const supabaseIds = new Set((tools || []).map((t) => String(t.id)));
-                const localOnlyTools = localTools
-                    .filter((t) => t && t.is_published !== false && t.id !== undefined && !supabaseIds.has(String(t.id)))
-                    .map((t) => ({
-                        id: t.id,
-                        created_at: t.created_at || new Date().toISOString()
-                    }));
-
-                mergedTools = [...tools, ...localOnlyTools];
-            }
-        }
-    } catch (localReadError) {
-        console.warn("⚠️ Could not merge local tools into sitemap:", localReadError?.message || localReadError);
-    }
-
-    // إضافة الأدوات (Tools)
-    mergedTools.forEach(tool => {
-        sitemap += `
+    // Add Tools Routes
+    tools.forEach(tool => {
+        const lastMod = tool.created_at || new Date().toISOString();
+        sitemapContent += `
   <url>
     <loc>${SITE_URL}/tool/${tool.id}</loc>
-    <lastmod>${new Date(tool.created_at).toISOString()}</lastmod>
+    <lastmod>${new Date(lastMod).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>`;
     });
 
-    // إضافة المقالات (Posts)
-    posts?.forEach(post => {
-        sitemap += `
-  <url>
-    <loc>${SITE_URL}/blog/${post.id}</loc>
-    <lastmod>${new Date(post.created_at).toISOString()}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>`;
-    });
-
-    sitemap += `
+    sitemapContent += `
 </urlset>`;
 
-    // 3. الحفظ في مجلد public
+    // Save to public directory
     const publicDir = path.resolve(__dirname, '../public');
     if (!fs.existsSync(publicDir)) {
         fs.mkdirSync(publicDir, { recursive: true });
     }
 
-    fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap);
-    console.log(`✅ Sitemap generated successfully with ${mergedTools.length} tools and ${posts?.length || 0} posts.`);
-    console.log(`📄 Saved to: ${path.join(publicDir, 'sitemap.xml')}`);
+    const sitemapPath = path.join(publicDir, 'sitemap.xml');
+    fs.writeFileSync(sitemapPath, sitemapContent);
+
+    console.log(`✅ Sitemap generated successfully!`);
+    console.log(`📊 Total URLs: ${staticRoutes.length + tools.length}`);
+    console.log(`📄 Saved to: ${sitemapPath}`);
 }
 
-generateSitemap();
+renderSitemap().catch(err => {
+    console.error("❌ Fatal error:", err);
+    process.exit(1);
+});
