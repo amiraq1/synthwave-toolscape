@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-02-13T08:53:25.711Z",
+  "mode": "write",
+  "backup_file": "D:\\synthwave-toolscape\\backups\\supabase-tools-before-2026-02-13T08-46-20-228Z.json",
+  "batch_size": 250,
+  "counts": {
+    "backup_rows": 12254,
+    "before": 12129,
+    "after": 12254,
+    "expected_after_if_apply": 12254,
+    "conflict_deleted": 0,
+    "upserted": 12254,
+    "extra_deleted": 0,
+    "failed": 0,
+    "missing_backup_rows_after_restore": 0,
+    "expected_missing_backup_rows_if_apply": 0
+  },
+  "acceptance": {
+    "restored_count_matches_backup": true,
+    "all_backup_ids_present": true
+  },
+  "failures_sample": []
+}

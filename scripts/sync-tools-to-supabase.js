@@ -7,15 +7,26 @@ dotenv.config({ path: ".env" });
 dotenv.config({ path: ".env.local", override: false });
 
 const args = process.argv.slice(2);
-const dryRun = args.includes("--dry-run");
 
-const batchArg = args.find((arg) => arg.startsWith("--batch-size="));
-const batchSize = Number.parseInt(batchArg?.split("=")[1] || "250", 10);
+const getArgValue = (name, fallback) => {
+  const arg = args.find((item) => item.startsWith(`${name}=`));
+  return arg ? arg.slice(name.length + 1) : fallback;
+};
+
+const dryRun = args.includes("--dry-run");
+const upsertMode = args.includes("--upsert");
+const deleteSuspicious = args.includes("--delete-suspicious");
+const deleteInvalidUrl = args.includes("--delete-invalid-url");
+const pruneNonSource = args.includes("--prune-non-source");
+
+const batchArg = getArgValue("--batch-size", "250");
+const batchSize = Number.parseInt(batchArg, 10);
 const finalBatchSize = Number.isFinite(batchSize) && batchSize > 0 ? batchSize : 250;
 
-const sourceArg = args.find((arg) => arg.startsWith("--source="));
-const sourceFile = sourceArg?.split("=")[1] || "public/data/tools.json";
+const sourceFile = getArgValue("--source", "public/data/tools.json");
+const backupDirArg = getArgValue("--backup-dir", "backups");
 const sourcePath = path.resolve(process.cwd(), sourceFile);
+const backupDirPath = path.resolve(process.cwd(), backupDirArg);
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const serviceRoleKey =
@@ -49,7 +60,32 @@ const supabase = createClient(supabaseUrl, serviceRoleKey || anonKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
+const FAKE_TITLE_REGEX = /^[A-Z][a-zA-Z]+\s+\d+$/;
+const FAKE_URL_REGEX_1 = /^https?:\/\/[a-z]+-[a-z0-9]+-\d+\.com\/?$/i;
+const FAKE_URL_REGEX_2 = /^https?:\/\/[a-z]+-\d+\.com\/?$/i;
+
 const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
+
+const normalizeLower = (value) => (isNonEmptyString(value) ? value.trim().toLowerCase() : "");
+
+const isValidHttpUrl = (value) => {
+  if (!isNonEmptyString(value)) return false;
+  try {
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+const isFakeGeneratedPattern = (title, url) => {
+  const safeTitle = isNonEmptyString(title) ? title.trim() : "";
+  const safeUrl = isNonEmptyString(url) ? url.trim() : "";
+  return (
+    FAKE_TITLE_REGEX.test(safeTitle) &&
+    (FAKE_URL_REGEX_1.test(safeUrl) || FAKE_URL_REGEX_2.test(safeUrl))
+  );
+};
 
 const toBooleanOrUndefined = (value) =>
   typeof value === "boolean" ? value : undefined;
@@ -78,14 +114,24 @@ const normalizeArrayOfStrings = (value) => {
   return arr.length > 0 ? arr : [];
 };
 
-const isValidHttpUrl = (value) => {
-  if (!isNonEmptyString(value)) return false;
-  try {
-    const u = new URL(value.trim());
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
+const getTimestampLabel = () => new Date().toISOString().replace(/[:.]/g, "-");
+
+const ensureDir = (dirPath) => {
+  fs.mkdirSync(dirPath, { recursive: true });
+};
+
+const writeJsonFile = (filePath, data) => {
+  ensureDir(path.dirname(filePath));
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+};
+
+const readSourceTools = () => {
+  const raw = fs.readFileSync(sourcePath, "utf8");
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed)) {
+    throw new Error("Source JSON is not an array.");
   }
+  return parsed;
 };
 
 const getSchemaColumns = async () => {
@@ -97,18 +143,24 @@ const getSchemaColumns = async () => {
     return new Set(Object.keys(data[0]));
   }
 
-  // Fallback if table is empty. Keep to safest minimal columns.
   return new Set([
     "title",
+    "title_en",
     "description",
+    "description_en",
     "category",
     "url",
-    "pricing_type",
     "image_url",
+    "pricing_type",
     "is_featured",
     "is_published",
     "features",
     "screenshots",
+    "is_sponsored",
+    "supports_arabic",
+    "average_rating",
+    "reviews_count",
+    "views_count",
     "created_at",
   ]);
 };
@@ -154,143 +206,497 @@ const buildRow = (tool, availableColumns) => {
   return row;
 };
 
-const readSourceTools = () => {
-  const raw = fs.readFileSync(sourcePath, "utf8");
-  const parsed = JSON.parse(raw);
-  if (!Array.isArray(parsed)) {
-    throw new Error("Source JSON is not an array.");
-  }
-  return parsed;
-};
-
-const fetchExistingUrls = async () => {
-  const all = new Set();
-  const pageSize = 1000;
+const fetchAllTools = async (selectColumns, pageSize = 1000) => {
+  const allRows = [];
   let from = 0;
 
   while (true) {
     const to = from + pageSize - 1;
-    const { data, error } = await supabase.from("tools").select("url").range(from, to);
+    const { data, error } = await supabase
+      .from("tools")
+      .select(selectColumns)
+      .order("id", { ascending: true })
+      .range(from, to);
+
     if (error) {
-      throw new Error(`Failed to read existing tools: ${error.message}`);
+      throw new Error(`Failed to read tools rows: ${error.message}`);
     }
+
     if (!data || data.length === 0) break;
-    for (const row of data) {
-      if (isNonEmptyString(row.url)) {
-        all.add(row.url.trim().toLowerCase());
-      }
-    }
+    allRows.push(...data);
     if (data.length < pageSize) break;
     from += data.length;
   }
 
-  return all;
+  return allRows;
 };
 
-const insertBatchSafely = async (batch, startIndex) => {
-  const { error } = await supabase.from("tools").insert(batch);
-  if (!error) {
-    return { inserted: batch.length, failed: 0, failures: [] };
-  }
+const buildLookupMaps = (rows) => {
+  const byUrl = new Map();
+  const byTitle = new Map();
 
-  const failures = [];
-  let inserted = 0;
-  let failed = 0;
+  for (const row of rows) {
+    const urlKey = normalizeLower(row.url);
+    const titleKey = normalizeLower(row.title);
 
-  for (let i = 0; i < batch.length; i += 1) {
-    const row = batch[i];
-    const { error: singleError } = await supabase.from("tools").insert(row);
-    if (singleError) {
-      failed += 1;
-      if (failures.length < 20) {
-        failures.push({
-          index: startIndex + i,
-          url: row.url,
-          error: singleError.message,
-        });
+    if (urlKey) {
+      const existing = byUrl.get(urlKey);
+      if (!existing || Number(row.id) > Number(existing.id)) {
+        byUrl.set(urlKey, row);
       }
-    } else {
-      inserted += 1;
+    }
+
+    if (titleKey) {
+      const existing = byTitle.get(titleKey);
+      if (!existing || Number(row.id) > Number(existing.id)) {
+        byTitle.set(titleKey, row);
+      }
     }
   }
 
-  return { inserted, failed, failures };
+  return { byUrl, byTitle };
 };
 
-const main = async () => {
-  console.log(`Source: ${sourcePath}`);
-  console.log(`Mode: ${dryRun ? "DRY RUN" : "WRITE"}`);
-  console.log(`Batch size: ${finalBatchSize}`);
+const normalizeSourceRows = (source, availableColumns) => {
+  const normalizedRows = [];
+  const seenUrls = new Set();
+  const seenTitles = new Set();
 
-  const source = readSourceTools();
-  const availableColumns = await getSchemaColumns();
-  const existingUrls = await fetchExistingUrls();
-
-  const dedupedByUrl = new Map();
   let invalidSourceCount = 0;
-  let duplicateUrlCount = 0;
+  let duplicateSourceCount = 0;
 
   for (const item of source) {
-    const built = buildRow(item, availableColumns);
-    if (!built) {
+    const row = buildRow(item, availableColumns);
+    if (!row) {
       invalidSourceCount += 1;
       continue;
     }
-    const key = built.url.toLowerCase();
-    if (!dedupedByUrl.has(key)) {
-      dedupedByUrl.set(key, built);
-    } else {
-      duplicateUrlCount += 1;
+
+    const urlKey = normalizeLower(row.url);
+    const titleKey = normalizeLower(row.title);
+
+    if (seenUrls.has(urlKey) || seenTitles.has(titleKey)) {
+      duplicateSourceCount += 1;
+      continue;
+    }
+
+    seenUrls.add(urlKey);
+    seenTitles.add(titleKey);
+    normalizedRows.push(row);
+  }
+
+  return { normalizedRows, invalidSourceCount, duplicateSourceCount };
+};
+
+const chunkArray = (items, size) => {
+  const out = [];
+  for (let i = 0; i < items.length; i += size) {
+    out.push(items.slice(i, i + size));
+  }
+  return out;
+};
+
+const tryResolveTitleConflict = async (title) => {
+  const { data, error } = await supabase.from("tools").select("id,title,url").ilike("title", title).limit(10);
+  if (error || !data) return null;
+  const targetKey = normalizeLower(title);
+  return data.find((row) => normalizeLower(row.title) === targetKey) || data[0] || null;
+};
+
+const isUniqueConflictError = (message) => {
+  const lowered = String(message || "").toLowerCase();
+  return (
+    lowered.includes("duplicate key") ||
+    lowered.includes("unique") ||
+    lowered.includes("idx_tools_unique_title")
+  );
+};
+
+const applyUpdatePlan = async (plan, pushFailure) => {
+  let updated = 0;
+  let failed = 0;
+
+  const batches = chunkArray(plan, finalBatchSize);
+  for (const batch of batches) {
+    const payload = batch.map((item) => ({ id: Number(item.id), ...item.row }));
+    const { error } = await supabase.from("tools").upsert(payload, { onConflict: "id" });
+    if (!error) {
+      updated += batch.length;
+      continue;
+    }
+
+    for (const item of batch) {
+      const { error: singleError } = await supabase
+        .from("tools")
+        .update(item.row)
+        .eq("id", Number(item.id));
+
+      if (singleError) {
+        failed += 1;
+        pushFailure({
+          operation: "update",
+          index: item.index,
+          id: item.id,
+          title: item.row.title,
+          url: item.row.url,
+          error: singleError.message,
+        });
+      } else {
+        updated += 1;
+      }
     }
   }
 
-  const normalizedTools = Array.from(dedupedByUrl.values());
-  const toInsert = normalizedTools.filter((row) => !existingUrls.has(row.url.toLowerCase()));
+  return { updated, failed };
+};
 
-  const { count: beforeCount } = await supabase
-    .from("tools")
-    .select("*", { count: "exact", head: true });
+const applyInsertPlan = async (plan, upsertEnabled, pushFailure) => {
+  let inserted = 0;
+  let updated = 0;
+  let failed = 0;
 
-  console.log(`Source rows: ${source.length}`);
-  console.log(`Valid rows after normalization: ${normalizedTools.length}`);
-  console.log(`Invalid/ignored source rows: ${invalidSourceCount}`);
-  console.log(`Duplicate URLs ignored: ${duplicateUrlCount}`);
-  console.log(`Existing rows in DB: ${beforeCount ?? existingUrls.size}`);
-  console.log(`Rows to insert: ${toInsert.length}`);
+  const batches = chunkArray(plan, finalBatchSize);
+  for (const batch of batches) {
+    const payload = batch.map((item) => item.row);
+    const { error } = await supabase.from("tools").insert(payload);
+    if (!error) {
+      inserted += batch.length;
+      continue;
+    }
 
-  if (dryRun) {
-    return;
+    for (const item of batch) {
+      const { error: singleInsertError } = await supabase.from("tools").insert(item.row);
+      if (!singleInsertError) {
+        inserted += 1;
+        continue;
+      }
+
+      if (upsertEnabled && isUniqueConflictError(singleInsertError.message)) {
+        const conflictRow = await tryResolveTitleConflict(item.row.title);
+        if (conflictRow) {
+          const { error: conflictUpdateError } = await supabase
+            .from("tools")
+            .update(item.row)
+            .eq("id", Number(conflictRow.id));
+          if (!conflictUpdateError) {
+            updated += 1;
+            continue;
+          }
+          failed += 1;
+          pushFailure({
+            operation: "conflict-update",
+            index: item.index,
+            title: item.row.title,
+            url: item.row.url,
+            error: conflictUpdateError.message,
+          });
+          continue;
+        }
+      }
+
+      failed += 1;
+      pushFailure({
+        operation: "insert",
+        index: item.index,
+        title: item.row.title,
+        url: item.row.url,
+        error: singleInsertError.message,
+      });
+    }
   }
 
-  let insertedTotal = 0;
-  let failedTotal = 0;
+  return { inserted, updated, failed };
+};
+
+const main = async () => {
+  const timestampLabel = getTimestampLabel();
+  const source = readSourceTools();
+  const availableColumns = await getSchemaColumns();
+  const { normalizedRows, invalidSourceCount, duplicateSourceCount } = normalizeSourceRows(
+    source,
+    availableColumns
+  );
+
+  if (normalizedRows.length === 0) {
+    throw new Error("No valid source rows to sync after normalization.");
+  }
+
+  const initialRows = await fetchAllTools("id,title,url");
+  const beforeCount = initialRows.length;
+
+  console.log(`Source: ${sourcePath}`);
+  console.log(`Mode: ${dryRun ? "DRY RUN" : "WRITE"}`);
+  console.log(`Sync behavior: ${upsertMode ? "UPSERT (update + insert)" : "INSERT ONLY"}`);
+  console.log(`Delete suspicious: ${deleteSuspicious ? "yes" : "no"}`);
+  console.log(`Delete invalid URLs: ${deleteInvalidUrl ? "yes" : "no"}`);
+  console.log(`Prune non-source rows: ${pruneNonSource ? "yes" : "no"}`);
+  console.log(`Batch size: ${finalBatchSize}`);
+  console.log(`Source rows: ${source.length}`);
+  console.log(`Valid source rows: ${normalizedRows.length}`);
+  console.log(`Invalid source rows ignored: ${invalidSourceCount}`);
+  console.log(`Duplicate source rows ignored: ${duplicateSourceCount}`);
+  console.log(`Rows in DB before sync: ${beforeCount}`);
+
+  let backupFilePath = null;
+  let deletedLogPath = null;
+  let invalidDeletedLogPath = null;
+
+  if (!dryRun) {
+    ensureDir(backupDirPath);
+    const snapshotRows = await fetchAllTools("*");
+    backupFilePath = path.join(backupDirPath, `supabase-tools-before-${timestampLabel}.json`);
+    writeJsonFile(backupFilePath, snapshotRows);
+    console.log(`Backup snapshot written: ${backupFilePath}`);
+  }
+
+  let workingRows = initialRows;
+  let suspiciousCandidates = [];
+  let deletedCount = 0;
+  let deleteFailures = 0;
+  let invalidUrlCandidates = [];
+  let invalidDeletedCount = 0;
+  let invalidDeleteFailures = 0;
+  let pruneCandidates = [];
+  let pruneDeletedCount = 0;
+  let pruneDeleteFailures = 0;
+
+  if (deleteSuspicious) {
+    suspiciousCandidates = initialRows.filter((row) => isFakeGeneratedPattern(row.title, row.url));
+    console.log(`Suspicious rows detected in DB: ${suspiciousCandidates.length}`);
+
+    if (!dryRun && suspiciousCandidates.length > 0) {
+      deletedLogPath = path.join(backupDirPath, `supabase-tools-deleted-${timestampLabel}.json`);
+      writeJsonFile(deletedLogPath, suspiciousCandidates);
+
+      const idBatches = chunkArray(suspiciousCandidates.map((row) => row.id), 500);
+      for (const idBatch of idBatches) {
+        const { error } = await supabase.from("tools").delete().in("id", idBatch);
+        if (error) {
+          deleteFailures += idBatch.length;
+          console.error(`Delete batch failed: ${error.message}`);
+          continue;
+        }
+        deletedCount += idBatch.length;
+      }
+      console.log(`Deleted suspicious rows: ${deletedCount}`);
+      if (deleteFailures > 0) {
+        console.log(`Suspicious rows failed to delete: ${deleteFailures}`);
+      }
+      workingRows = await fetchAllTools("id,title,url");
+    } else if (dryRun && suspiciousCandidates.length > 0) {
+      const candidateIds = new Set(suspiciousCandidates.map((row) => row.id));
+      workingRows = initialRows.filter((row) => !candidateIds.has(row.id));
+    }
+  }
+
+  if (deleteInvalidUrl) {
+    invalidUrlCandidates = workingRows.filter((row) => !isValidHttpUrl(row.url));
+    console.log(`Invalid-URL rows detected in DB: ${invalidUrlCandidates.length}`);
+
+    if (!dryRun && invalidUrlCandidates.length > 0) {
+      invalidDeletedLogPath = path.join(
+        backupDirPath,
+        `supabase-tools-deleted-invalid-url-${timestampLabel}.json`
+      );
+      writeJsonFile(invalidDeletedLogPath, invalidUrlCandidates);
+
+      const idBatches = chunkArray(
+        invalidUrlCandidates.map((row) => row.id),
+        500
+      );
+      for (const idBatch of idBatches) {
+        const { error } = await supabase.from("tools").delete().in("id", idBatch);
+        if (error) {
+          invalidDeleteFailures += idBatch.length;
+          console.error(`Delete invalid-url batch failed: ${error.message}`);
+          continue;
+        }
+        invalidDeletedCount += idBatch.length;
+      }
+      console.log(`Deleted invalid-url rows: ${invalidDeletedCount}`);
+      if (invalidDeleteFailures > 0) {
+        console.log(`Invalid-url rows failed to delete: ${invalidDeleteFailures}`);
+      }
+      workingRows = await fetchAllTools("id,title,url");
+    } else if (dryRun && invalidUrlCandidates.length > 0) {
+      const invalidIds = new Set(invalidUrlCandidates.map((row) => row.id));
+      workingRows = workingRows.filter((row) => !invalidIds.has(row.id));
+    }
+  }
+
+  const { byUrl, byTitle } = buildLookupMaps(workingRows);
+
+  let inserted = 0;
+  let updated = 0;
+  let skipped = 0;
+  let failed = 0;
   const failures = [];
 
-  for (let i = 0; i < toInsert.length; i += finalBatchSize) {
-    const batch = toInsert.slice(i, i + finalBatchSize);
-    const result = await insertBatchSafely(batch, i);
-    insertedTotal += result.inserted;
-    failedTotal += result.failed;
-    failures.push(...result.failures);
-    const done = Math.min(i + finalBatchSize, toInsert.length);
-    console.log(`Progress: ${done}/${toInsert.length} inserted=${insertedTotal} failed=${failedTotal}`);
+  const pushFailure = (payload) => {
+    if (failures.length < 20) failures.push(payload);
+  };
+
+  const updatePlan = [];
+  const insertPlan = [];
+
+  for (let index = 0; index < normalizedRows.length; index += 1) {
+    const row = normalizedRows[index];
+    const urlKey = normalizeLower(row.url);
+    const titleKey = normalizeLower(row.title);
+    const matched = byUrl.get(urlKey) || byTitle.get(titleKey);
+
+    if (matched && !upsertMode) {
+      skipped += 1;
+      continue;
+    }
+
+    if (matched && upsertMode) {
+      updatePlan.push({
+        index,
+        id: Number(matched.id),
+        row,
+      });
+      continue;
+    }
+
+    insertPlan.push({
+      index,
+      row,
+    });
   }
 
-  const { count: afterCount } = await supabase
-    .from("tools")
-    .select("*", { count: "exact", head: true });
+  if (dryRun) {
+    updated += updatePlan.length;
+    inserted += insertPlan.length;
+  } else {
+    if (updatePlan.length > 0) {
+      const updateResult = await applyUpdatePlan(updatePlan, pushFailure);
+      updated += updateResult.updated;
+      failed += updateResult.failed;
+    }
+
+    if (insertPlan.length > 0) {
+      const insertResult = await applyInsertPlan(insertPlan, upsertMode, pushFailure);
+      inserted += insertResult.inserted;
+      updated += insertResult.updated;
+      failed += insertResult.failed;
+    }
+  }
+
+  if (pruneNonSource) {
+    const sourceUrlSet = new Set(normalizedRows.map((row) => normalizeLower(row.url)).filter(Boolean));
+    const rowsForPrune = await fetchAllTools("id,title,url");
+    pruneCandidates = rowsForPrune.filter((row) => !sourceUrlSet.has(normalizeLower(row.url)));
+    console.log(`Non-source rows detected for prune: ${pruneCandidates.length}`);
+
+    if (!dryRun && pruneCandidates.length > 0) {
+      const pruneLogPath = path.join(
+        backupDirPath,
+        `supabase-tools-pruned-non-source-${timestampLabel}.json`
+      );
+      writeJsonFile(pruneLogPath, pruneCandidates);
+
+      const idBatches = chunkArray(
+        pruneCandidates.map((row) => row.id),
+        500
+      );
+      for (const idBatch of idBatches) {
+        const { error } = await supabase.from("tools").delete().in("id", idBatch);
+        if (error) {
+          pruneDeleteFailures += idBatch.length;
+          console.error(`Prune batch failed: ${error.message}`);
+          continue;
+        }
+        pruneDeletedCount += idBatch.length;
+      }
+      console.log(`Pruned non-source rows: ${pruneDeletedCount}`);
+      if (pruneDeleteFailures > 0) {
+        console.log(`Non-source rows failed to prune: ${pruneDeleteFailures}`);
+      }
+    }
+  }
+
+  const afterRows = await fetchAllTools("id,title,url");
+  const afterCount = afterRows.length;
+  const suspiciousAfter = afterRows.filter((row) => isFakeGeneratedPattern(row.title, row.url)).length;
+  const invalidUrlAfter = afterRows.filter((row) => !isValidHttpUrl(row.url)).length;
+
+  const suspiciousRatio = afterCount > 0 ? suspiciousAfter / afterCount : 0;
+  const validUrlRatio = afterCount > 0 ? (afterCount - invalidUrlAfter) / afterCount : 1;
+
+  const syncReport = {
+    generated_at: new Date().toISOString(),
+    mode: dryRun ? "dry-run" : "write",
+    source_path: sourceFile,
+    options: {
+      upsert: upsertMode,
+      delete_suspicious: deleteSuspicious,
+      delete_invalid_url: deleteInvalidUrl,
+      prune_non_source: pruneNonSource,
+      batch_size: finalBatchSize,
+      backup_dir: backupDirArg,
+    },
+    counts: {
+      before: beforeCount,
+      after: afterCount,
+      source_total: source.length,
+      source_valid: normalizedRows.length,
+      source_invalid_ignored: invalidSourceCount,
+      source_duplicates_ignored: duplicateSourceCount,
+      suspicious_detected_for_delete: suspiciousCandidates.length,
+      suspicious_deleted: deletedCount,
+      suspicious_delete_failures: deleteFailures,
+      invalid_url_detected_for_delete: invalidUrlCandidates.length,
+      invalid_url_deleted: invalidDeletedCount,
+      invalid_url_delete_failures: invalidDeleteFailures,
+      non_source_detected_for_prune: pruneCandidates.length,
+      non_source_pruned: pruneDeletedCount,
+      non_source_prune_failures: pruneDeleteFailures,
+      inserted,
+      updated,
+      skipped,
+      failed,
+    },
+    verification: {
+      suspicious_count: suspiciousAfter,
+      suspicious_ratio: suspiciousRatio,
+      invalid_url_count: invalidUrlAfter,
+      valid_url_ratio: validUrlRatio,
+      pass_suspicious_lt_1pct: suspiciousRatio < 0.01,
+      pass_valid_urls_100pct: validUrlRatio === 1,
+    },
+    artifacts: {
+      backup_snapshot: backupFilePath,
+      deleted_log: deletedLogPath,
+      deleted_invalid_url_log: invalidDeletedLogPath,
+    },
+    failures_sample: failures,
+  };
 
   console.log("---- Sync Summary ----");
-  console.log(`Inserted: ${insertedTotal}`);
-  console.log(`Failed: ${failedTotal}`);
-  console.log(`Before: ${beforeCount ?? "unknown"}`);
-  console.log(`After: ${afterCount ?? "unknown"}`);
+  console.log(`Before: ${beforeCount}`);
+  console.log(`After: ${afterCount}`);
+  console.log(`Inserted: ${inserted}`);
+  console.log(`Updated: ${updated}`);
+  console.log(`Deleted suspicious: ${deletedCount}`);
+  console.log(`Skipped: ${skipped}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Post-check suspicious ratio: ${(suspiciousRatio * 100).toFixed(4)}%`);
+  console.log(`Post-check valid URL ratio: ${(validUrlRatio * 100).toFixed(2)}%`);
+  console.log(`Acceptance suspicious<1%: ${syncReport.verification.pass_suspicious_lt_1pct ? "PASS" : "FAIL"}`);
+  console.log(`Acceptance valid URLs=100%: ${syncReport.verification.pass_valid_urls_100pct ? "PASS" : "FAIL"}`);
 
   if (failures.length > 0) {
     console.log("Sample failures (max 20):");
-    for (const f of failures) {
-      console.log(`- idx=${f.index} url=${f.url} error=${f.error}`);
+    for (const entry of failures) {
+      console.log(`- op=${entry.operation} idx=${entry.index} title=${entry.title || ""} error=${entry.error}`);
     }
+  }
+
+  if (!dryRun) {
+    const reportPath = path.join(backupDirPath, `supabase-sync-report-${timestampLabel}.json`);
+    writeJsonFile(reportPath, syncReport);
+    console.log(`Sync report written: ${reportPath}`);
   }
 };
 

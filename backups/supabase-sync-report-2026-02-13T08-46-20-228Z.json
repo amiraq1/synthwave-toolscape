@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-02-13T08:46:57.935Z",
+  "mode": "write",
+  "source_path": "public/data/tools.cleaned.json",
+  "options": {
+    "upsert": true,
+    "delete_suspicious": true,
+    "delete_invalid_url": true,
+    "batch_size": 250,
+    "backup_dir": "backups"
+  },
+  "counts": {
+    "before": 12254,
+    "after": 12129,
+    "source_total": 5090,
+    "source_valid": 5090,
+    "source_invalid_ignored": 0,
+    "source_duplicates_ignored": 0,
+    "suspicious_detected_for_delete": 0,
+    "suspicious_deleted": 0,
+    "suspicious_delete_failures": 0,
+    "invalid_url_detected_for_delete": 125,
+    "invalid_url_deleted": 125,
+    "invalid_url_delete_failures": 0,
+    "inserted": 0,
+    "updated": 5090,
+    "skipped": 0,
+    "failed": 0
+  },
+  "verification": {
+    "suspicious_count": 0,
+    "suspicious_ratio": 0,
+    "invalid_url_count": 0,
+    "valid_url_ratio": 1,
+    "pass_suspicious_lt_1pct": true,
+    "pass_valid_urls_100pct": true
+  },
+  "artifacts": {
+    "backup_snapshot": "D:\\synthwave-toolscape\\backups\\supabase-tools-before-2026-02-13T08-46-20-228Z.json",
+    "deleted_log": null,
+    "deleted_invalid_url_log": "D:\\synthwave-toolscape\\backups\\supabase-tools-deleted-invalid-url-2026-02-13T08-46-20-228Z.json"
+  },
+  "failures_sample": []
+}

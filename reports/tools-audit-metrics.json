@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-02-13T08:34:52.496Z",
+  "mode": "apply",
+  "strictness": "balanced",
+  "source_path": "public/data/tools.json",
+  "outputs": {
+    "cleaned_out": "public/data/tools.cleaned.json",
+    "report_out": "reports/tools-audit-report.md",
+    "metrics_out": "reports/tools-audit-metrics.json",
+    "removed_out": "reports/tools-removed.jsonl"
+  },
+  "counts": {
+    "source_total": 10103,
+    "kept_after_validation": 5101,
+    "cleaned_total": 5090,
+    "removed_total": 5013
+  },
+  "removed_by_reason": {
+    "FAKE_GENERATED_PATTERN": 5002,
+    "MISSING_REQUIRED": 0,
+    "INVALID_URL": 0,
+    "DUPLICATE_URL": 2,
+    "DUPLICATE_TITLE": 9
+  },
+  "post_clean_quality": {
+    "suspicious_pattern_count": 0,
+    "suspicious_ratio": 0,
+    "invalid_url_count": 0,
+    "valid_url_ratio": 1
+  },
+  "acceptance": {
+    "suspicious_ratio_lt_1pct": true,
+    "valid_urls_100pct": true
+  }
+}

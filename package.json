@@ -9,6 +9,13 @@
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "tools:add-10k": "node scripts/add-bulk-tools.js 10000",
     "tools:sync-supabase": "node scripts/sync-tools-to-supabase.js",
+    "tools:audit:dry": "node scripts/audit-tools.js --source=public/data/tools.json --strictness=balanced",
+    "tools:audit:apply": "node scripts/audit-tools.js --source=public/data/tools.json --strictness=balanced --apply --cleaned-out=public/data/tools.cleaned.json --report-out=reports/tools-audit-report.md --metrics-out=reports/tools-audit-metrics.json --removed-out=reports/tools-removed.jsonl",
+    "tools:sync:clean:dry": "node scripts/sync-tools-to-supabase.js --source=public/data/tools.cleaned.json --upsert --delete-suspicious --delete-invalid-url --prune-non-source --backup-dir=backups --dry-run",
+    "tools:sync:clean:apply": "node scripts/sync-tools-to-supabase.js --source=public/data/tools.cleaned.json --upsert --delete-suspicious --delete-invalid-url --prune-non-source --backup-dir=backups",
+    "tools:verify:db": "node scripts/verify-tools-quality.js --source=public/data/tools.cleaned.json --fail-on-acceptance",
+    "tools:restore:dry": "node scripts/restore-tools-from-backup.js --backup-dir=backups",
+    "tools:restore:apply": "node scripts/restore-tools-from-backup.js --backup-dir=backups --apply",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
