@@ -1,0 +1,193 @@
+{
+  "generated_at": "2026-02-13T09:26:51.106Z",
+  "mode": "dry-run",
+  "options": {
+    "timeout_ms": 12000,
+    "concurrency": 24,
+    "retries": 1,
+    "batch_size": 500,
+    "backup_dir": "backups"
+  },
+  "counts": {
+    "before": 5090,
+    "checked": 5090,
+    "alive": 99,
+    "dead": 4991,
+    "deleted": 0,
+    "delete_failures": 0,
+    "after": 5090
+  },
+  "dead_by_reason": {
+    "TIMEOUT": 1,
+    "HTTP_STATUS": 1,
+    "NETWORK_ERROR": 4989
+  },
+  "artifacts": {
+    "dead_links": "D:\\synthwave-toolscape\\backups\\supabase-dead-links-2026-02-13T09-22-21-340Z.json",
+    "backup_snapshot": null
+  },
+  "dead_sample": [
+    {
+      "id": 245,
+      "title": "Lexica Art",
+      "url": "https://lexica.art",
+      "alive": false,
+      "reason": "TIMEOUT",
+      "error": "Request timeout"
+    },
+    {
+      "id": 262,
+      "title": "Phind",
+      "url": "https://phind.com",
+      "alive": false,
+      "reason": "HTTP_STATUS",
+      "status": 404,
+      "method": "GET",
+      "finalUrl": "https://phind.com/"
+    },
+    {
+      "id": 11322,
+      "title": "Giga Cast Spark 28",
+      "url": "https://giga-cast-spark-28.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11327,
+      "title": "Giga Clip Studio 80",
+      "url": "https://giga-clip-studio-80.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11332,
+      "title": "Elite Uni Kit 77",
+      "url": "https://elite-uni-kit-77.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11334,
+      "title": "Future Draw Sync 83",
+      "url": "https://future-draw-sync-83.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11338,
+      "title": "Auto Pod AI 51",
+      "url": "https://auto-pod-ai-51.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11341,
+      "title": "Hyper Reel Engine 58",
+      "url": "https://hyper-reel-engine-58.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11342,
+      "title": "Mega Film Sync 14",
+      "url": "https://mega-film-sync-14.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11344,
+      "title": "Ultra Study Labs 41",
+      "url": "https://ultra-study-labs-41.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11345,
+      "title": "Core Video Kit 43",
+      "url": "https://core-video-kit-43.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11346,
+      "title": "Genius Writer Studio 52",
+      "url": "https://genius-writer-studio-52.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11353,
+      "title": "Genius Script Kit 54",
+      "url": "https://genius-script-kit-54.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11354,
+      "title": "Elite Beat Studio 22",
+      "url": "https://elite-beat-studio-22.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11355,
+      "title": "Core Beat Spark 29",
+      "url": "https://core-beat-spark-29.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11358,
+      "title": "Prime Code Box 7",
+      "url": "https://prime-code-box-7.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11360,
+      "title": "Pro Research Engine 26",
+      "url": "https://pro-research-engine-26.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11361,
+      "title": "Future Canvas Kit 39",
+      "url": "https://future-canvas-kit-39.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11362,
+      "title": "Prime Code Engine 31",
+      "url": "https://prime-code-engine-31.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    },
+    {
+      "id": 11364,
+      "title": "Cyber Music Sync 82",
+      "url": "https://cyber-music-sync-82.com",
+      "alive": false,
+      "reason": "NETWORK_ERROR",
+      "error": "fetch failed"
+    }
+  ]
+}

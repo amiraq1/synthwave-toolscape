@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-02-13T15:03:51.496756Z",
+  "source": "public/data/tools.cleaned.json",
+  "dead_log": "backups/supabase-dead-links-2026-02-13T13-51-24-988Z.json",
+  "output": "public/data/tools.cleaned.live.json",
+  "source_count": 5090,
+  "dead_urls_count": 4991,
+  "filtered_count": 99,
+  "removed_count": 4991
+}
