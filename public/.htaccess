@@ -2,8 +2,8 @@
   RewriteEngine On
   RewriteBase /
 
-  RewriteRule ^sitemap\.xml$ https://jjsnjbyfpboersvrmxqb.supabase.co/functions/v1/sitemap [R=302,L]
-  RewriteRule ^sitemap$ https://jjsnjbyfpboersvrmxqb.supabase.co/functions/v1/sitemap [R=302,L]
+  RewriteRule ^sitemap\.xml$ https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/sitemap [R=302,L]
+  RewriteRule ^sitemap$ https://iazvsdwkbfzjhscyfvec.supabase.co/functions/v1/sitemap [R=302,L]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

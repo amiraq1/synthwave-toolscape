@@ -96,23 +96,12 @@ const AdminUsersTable = () => {
     setIsUpdating(true);
 
     try {
-      if (newRole === null) {
-        // إزالة الصلاحية (إرجاع لمستخدم عادي)
-        const { error } = await supabase
-          .from('user_roles')
-          .delete()
-          .eq('user_id', user.id);
-
-        if (error) throw error;
-      } else {
-        // التحقق هل لديه دور حالياً للتحديث أو الإضافة
-        // نستخدم upsert لدمج الحالتين (insert/update) لتسهيل الأمر
-        const { error } = await supabase
-          .from('user_roles')
-          .upsert({ user_id: user.id, role: newRole }, { onConflict: 'user_id' });
-
-        if (error) throw error;
-      }
+      // Use SECURITY DEFINER RPC to avoid direct RLS conflicts on user_roles.
+      const { error } = await supabase.rpc('admin_set_user_role', {
+        p_user_id: user.id,
+        p_role: newRole,
+      });
+      if (error) throw error;
 
       toast.success('تم التحديث', {
         description: `تم تحديث صلاحيات ${user.display_name || user.email}`,

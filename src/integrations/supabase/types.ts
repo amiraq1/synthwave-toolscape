@@ -355,6 +355,13 @@ export type Database = {
       }
     }
     Functions: {
+      admin_set_user_role: {
+        Args: {
+          p_role?: Database["public"]["Enums"]["app_role"] | null
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       admin_get_users: {
         Args: never
         Returns: {
