@@ -1,0 +1,969 @@
+{
+  "source": "reports/csv-audit-ai_tools_list_v2-dead-links-2026-02-13T15-20-29.json",
+  "rechecked_urls": 75,
+  "confirmed_after_recheck": 15,
+  "final_reasons": {
+    "DNS_NOT_FOUND_x3": 12,
+    "BECAME_ALIVE": 59,
+    "HTTP_DEAD": 3,
+    "UNCERTAIN": 1
+  },
+  "elapsed_seconds": 50.54,
+  "results": {
+    "https://animegenius.live3d.io": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://based.so": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://beautyai.fun": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://base64.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://baron.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://beepoapp.net": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bayuegua.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bardeen.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://aihumanize.com//": {
+      "confirmed_dead": true,
+      "final_reason": "HTTP_DEAD",
+      "history": [
+        {
+          "alive": false,
+          "reason": "HTTP_DEAD",
+          "status": 404
+        }
+      ]
+    },
+    "https://bertha.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bearkd.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://belong.life": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bertha.ai/": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://benchiq.com": {
+      "confirmed_dead": true,
+      "final_reason": "HTTP_DEAD",
+      "history": [
+        {
+          "alive": false,
+          "reason": "HTTP_DEAD",
+          "status": 451
+        }
+      ]
+    },
+    "https://articulearnai.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://beautyai.fun/faceSwap": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bgremover.stockphotos.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bethgelab.org": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://beta.dreamstudio.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bik.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bigvu.tv": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://beta.pickaxeproject.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bibleai.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bikinavatar.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bika.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bidinfluence.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bestbikesplit.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://binauralbeatsfactory.com/": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bigsur.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://billing.getwebsite.report": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://billing.charmshotai.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://batchcropper.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://birthdayaiapp.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bitedata.io": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bithoop.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bith.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bing.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bizmagnets.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bizplanr.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bito.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bizplanner.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://birdseyeglobal.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://candy.ai": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://bizplanner.ai/marketing": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://blend-ai.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 403
+        }
+      ]
+    },
+    "https://bland.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://blackforestlabs.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://blazefeeds.nikpatil.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://blackink.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://dreamgf.ai/": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://blaze.today": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://getliqquid.com": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://blend-ed.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://chatdaddy.tech": {
+      "confirmed_dead": true,
+      "final_reason": "HTTP_DEAD",
+      "history": [
+        {
+          "alive": false,
+          "reason": "HTTP_DEAD",
+          "status": 404
+        }
+      ]
+    },
+    "https://managebetter.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://newfuku.com": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://manageprompt.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://mancer.tech": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://sharesome.com/ai": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://www.deepswap.ai": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://manaflow.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://mindlogic.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://www.seduced.com": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://metaplane.dev": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://getcore.app": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://www.citebuddy.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://www.i18now.ai/": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://soulgen.net": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://www.soulgen.net": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://opinio.ai": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://l.fusionos.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://www.dreamup.com": {
+      "confirmed_dead": true,
+      "final_reason": "DNS_NOT_FOUND_x3",
+      "history": [
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "DNS_NOT_FOUND",
+          "status": null
+        }
+      ]
+    },
+    "https://bingbang.ai": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://birdvoz.com": {
+      "confirmed_dead": false,
+      "final_reason": "BECAME_ALIVE",
+      "history": [
+        {
+          "alive": true,
+          "reason": "OK",
+          "status": 200
+        }
+      ]
+    },
+    "https://bible.ai": {
+      "confirmed_dead": false,
+      "final_reason": "UNCERTAIN",
+      "history": [
+        {
+          "alive": false,
+          "reason": "TIMEOUT",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "TIMEOUT",
+          "status": null
+        },
+        {
+          "alive": false,
+          "reason": "TIMEOUT",
+          "status": null
+        }
+      ]
+    }
+  }
+}

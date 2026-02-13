@@ -1,0 +1,12 @@
+{
+  "generated_at_utc": "2026-02-13T15:48:12Z",
+  "source_csv": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.cleaned.csv",
+  "output_csv": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.strict.cleaned.csv",
+  "rows_total": 9985,
+  "rows_written": 9819,
+  "rows_removed_total": 166,
+  "rows_removed_missing_required": 1,
+  "rows_removed_duplicate_name": 165,
+  "removed_rows_file": "reports/csv-strict-removed-2026-02-13T15-20-29.json",
+  "dedupe_policy": "keep_first_by_order_case_insensitive_name"
+}

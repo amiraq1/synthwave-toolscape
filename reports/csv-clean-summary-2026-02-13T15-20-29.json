@@ -1,0 +1,28 @@
+{
+  "generated_at_utc": "2026-02-13T15:46:50Z",
+  "source_csv": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.csv",
+  "output_csv": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.cleaned.csv",
+  "recheck_report": "reports/csv-audit-ai_tools_list_v2-dead-links-recheck-2026-02-13T15-20-29.json",
+  "dead_rows_report": "reports/csv-audit-ai_tools_list_v2-dead-links-2026-02-13T15-20-29.json",
+  "rows_total": 10000,
+  "rows_removed_confirmed_dead": 15,
+  "rows_remaining": 9985,
+  "removed_rows_file": "reports/csv-clean-removed-confirmed-dead-2026-02-13T15-20-29.json",
+  "removed_lines": [
+    617,
+    1367,
+    2930,
+    3009,
+    5416,
+    5512,
+    5515,
+    5525,
+    6761,
+    8881,
+    9201,
+    9322,
+    9443,
+    9832,
+    9872
+  ]
+}

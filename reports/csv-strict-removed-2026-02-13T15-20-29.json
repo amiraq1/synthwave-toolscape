@@ -1,0 +1,1333 @@
+[
+  {
+    "line": 2,
+    "reason": "MISSING_REQUIRED",
+    "missing_fields": [
+      "description"
+    ],
+    "name": "TakeAI",
+    "link": "https://takeai.org",
+    "description": "",
+    "category": "General"
+  },
+  {
+    "line": 3382,
+    "reason": "DUPLICATE_NAME",
+    "name": "MAGE",
+    "link": "https://usemage.ai",
+    "description": "GPT Web App Generator. [Free]",
+    "category": "Low-code/no-code"
+  },
+  {
+    "line": 3632,
+    "reason": "DUPLICATE_NAME",
+    "name": "Odin AI",
+    "link": "https://www.getodin.ai",
+    "description": "Automates enterprise workflows with AI-powered tools and integrations.. [Paid]",
+    "category": "AI Chatbots"
+  },
+  {
+    "line": 3763,
+    "reason": "DUPLICATE_NAME",
+    "name": "AI Baby Generator",
+    "link": "https://www.aibabygenerator.io",
+    "description": "Instantly visualize your future baby with ultra-realistic AI photos.. [Contact for Pricing]",
+    "category": "Fun Tools"
+  },
+  {
+    "line": 3780,
+    "reason": "DUPLICATE_NAME",
+    "name": "quickads",
+    "link": "https://www.quickads.ai/",
+    "description": "AI ad generator for creating image and video ads quickly and efficiently.",
+    "category": "General AI"
+  },
+  {
+    "line": 3783,
+    "reason": "DUPLICATE_NAME",
+    "name": "pencil",
+    "link": "https://trypencil.com",
+    "description": "AI ad generator for faster ad creation and improved performance.",
+    "category": "General AI"
+  },
+  {
+    "line": 3796,
+    "reason": "DUPLICATE_NAME",
+    "name": "unbound",
+    "link": "http://unboundcontent.ai/",
+    "description": "AI-powered platform for automated content creation and AI assistance.",
+    "category": "General AI"
+  },
+  {
+    "line": 3798,
+    "reason": "DUPLICATE_NAME",
+    "name": "meshy",
+    "link": "https://app.meshy.ai",
+    "description": "Meshy is an AI-powered platform for creating 3D assets from text and images quickly and easily.",
+    "category": "General AI"
+  },
+  {
+    "line": 3817,
+    "reason": "DUPLICATE_NAME",
+    "name": "styldod",
+    "link": "https://styldod.refr.cc/toolify",
+    "description": "Styldod simplifies real estate marketing with virtual staging, photo editing, and AI tools.",
+    "category": "General AI"
+  },
+  {
+    "line": 3846,
+    "reason": "DUPLICATE_NAME",
+    "name": "draw3d",
+    "link": "https://draw3d.lemonsqueezy.com/",
+    "description": "AI tool that converts sketches into photorealistic images.",
+    "category": "General AI"
+  },
+  {
+    "line": 3883,
+    "reason": "DUPLICATE_NAME",
+    "name": "pump",
+    "link": "https://www.pump.co/",
+    "description": "AI-powered cloud cost optimization tool using group buying to save startups money.",
+    "category": "General AI"
+  },
+  {
+    "line": 3931,
+    "reason": "DUPLICATE_NAME",
+    "name": "reform",
+    "link": "https://reformhq.com",
+    "description": "AI-powered platform for logistics automation and freight forwarding.",
+    "category": "General AI"
+  },
+  {
+    "line": 4000,
+    "reason": "DUPLICATE_NAME",
+    "name": "evercopy",
+    "link": "https://dashboard.evercopy.ai/",
+    "description": "AI-powered platform for generating on-brand marketing creatives at scale.",
+    "category": "General AI"
+  },
+  {
+    "line": 4006,
+    "reason": "DUPLICATE_NAME",
+    "name": "shakespeare",
+    "link": "https://www.shakespeare.ai",
+    "description": "AI copywriting software for marketing, offering targeting, automation, and optimization solutions.",
+    "category": "General AI"
+  },
+  {
+    "line": 4020,
+    "reason": "DUPLICATE_NAME",
+    "name": "quantplus",
+    "link": "http://quantplus.io",
+    "description": "AI-driven platform optimizing ad creative performance through element analysis and data-backed insights.",
+    "category": "General AI"
+  },
+  {
+    "line": 4059,
+    "reason": "DUPLICATE_NAME",
+    "name": "neuroflash",
+    "link": "https://app.neuro-flash.com/free",
+    "description": "Europe's leading AI text and image generator for scalable content creation and marketing.",
+    "category": "General AI"
+  },
+  {
+    "line": 4076,
+    "reason": "DUPLICATE_NAME",
+    "name": "copymatic",
+    "link": "https://copymatic.ai/",
+    "description": "AI-powered copywriter and content writer for generating various types of content quickly.",
+    "category": "General AI"
+  },
+  {
+    "line": 4118,
+    "reason": "DUPLICATE_NAME",
+    "name": "editby",
+    "link": "https://editby.ai",
+    "description": "AI platform automating marketing campaign creation and localization for ecommerce and retail brands.",
+    "category": "General AI"
+  },
+  {
+    "line": 4124,
+    "reason": "DUPLICATE_NAME",
+    "name": "marmof",
+    "link": "https://marmof.com/",
+    "description": "AI-powered writing tool for creating content quickly and efficiently.",
+    "category": "General AI"
+  },
+  {
+    "line": 4150,
+    "reason": "DUPLICATE_NAME",
+    "name": "clevopyai",
+    "link": "https://clevopy.ai/",
+    "description": "AI-powered tool for generating marketing content with 90+ templates and an image generator.",
+    "category": "General AI"
+  },
+  {
+    "line": 4155,
+    "reason": "DUPLICATE_NAME",
+    "name": "insertchatgpt",
+    "link": "https://insertchatgpt.com/",
+    "description": "Build and embed AI chatbots using your data without coding.",
+    "category": "General AI"
+  },
+  {
+    "line": 4341,
+    "reason": "DUPLICATE_NAME",
+    "name": "evolup",
+    "link": "https://evolup.com/",
+    "description": "AI-powered platform for creating and managing affiliate stores.",
+    "category": "General AI"
+  },
+  {
+    "line": 4352,
+    "reason": "DUPLICATE_NAME",
+    "name": "interaxai",
+    "link": "https://interaxai.com/pricing",
+    "description": "No-code platform for creating monetizable and embeddable AI widgets.",
+    "category": "General AI"
+  },
+  {
+    "line": 4371,
+    "reason": "DUPLICATE_NAME",
+    "name": "ourbabyai",
+    "link": "https://ourbabyai.com/",
+    "description": "AI baby generator that creates images of future children from parent photos.",
+    "category": "General AI"
+  },
+  {
+    "line": 4390,
+    "reason": "DUPLICATE_NAME",
+    "name": "kaneai",
+    "link": "http://www.lambdatest.com",
+    "description": "Unified testing cloud for cross-browser, automation, and real device testing with AI insights.",
+    "category": "General AI"
+  },
+  {
+    "line": 4391,
+    "reason": "DUPLICATE_NAME",
+    "name": "vapi",
+    "link": "https://vapi.ai/",
+    "description": "Platform for developers to build, test, and deploy voice AI agents.",
+    "category": "General AI"
+  },
+  {
+    "line": 4394,
+    "reason": "DUPLICATE_NAME",
+    "name": "composio",
+    "link": "https://composio.dev",
+    "description": "A toolset for AI Agents and LLMs to streamline API integrations with 250+ tools.",
+    "category": "General AI"
+  },
+  {
+    "line": 4397,
+    "reason": "DUPLICATE_NAME",
+    "name": "taskade",
+    "link": "https://taskade.com",
+    "description": "Taskade is a unified workspace with AI agents for tasks, notes, and team collaboration.",
+    "category": "General AI"
+  },
+  {
+    "line": 4403,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatbase",
+    "link": "https://www.chatbase.co/",
+    "description": "Platform to build & deploy AI Agents for customer support & revenue.",
+    "category": "General AI"
+  },
+  {
+    "line": 4410,
+    "reason": "DUPLICATE_NAME",
+    "name": "cody",
+    "link": "https://sourcegraph.com/cody",
+    "description": "AI-powered code search and analysis platform for efficient code understanding and maintenance.",
+    "category": "General AI"
+  },
+  {
+    "line": 4414,
+    "reason": "DUPLICATE_NAME",
+    "name": "anythingllm",
+    "link": "https://anythingllm.com",
+    "description": "All-in-one AI desktop app with LLM, RAG, AI Agents, running locally and privately.",
+    "category": "General AI"
+  },
+  {
+    "line": 4415,
+    "reason": "DUPLICATE_NAME",
+    "name": "databutton",
+    "link": "https://www.databutton.com",
+    "description": "AI platform to build SaaS apps without coding.",
+    "category": "General AI"
+  },
+  {
+    "line": 4424,
+    "reason": "DUPLICATE_NAME",
+    "name": "delphi",
+    "link": "https://www.delphi.ai/pricing",
+    "description": "Delphi AI creates a digital version of you to scale your expertise and availability.",
+    "category": "General AI"
+  },
+  {
+    "line": 4441,
+    "reason": "DUPLICATE_NAME",
+    "name": "axiom",
+    "link": "https://axiom.ai/a",
+    "description": "No-code browser automation and web scraping tool.",
+    "category": "General AI"
+  },
+  {
+    "line": 4469,
+    "reason": "DUPLICATE_NAME",
+    "name": "momen",
+    "link": "https://momen.app/ai",
+    "description": "No-code platform to build and monetize AI-powered apps and AI agents.",
+    "category": "General AI"
+  },
+  {
+    "line": 4477,
+    "reason": "DUPLICATE_NAME",
+    "name": "salesforge",
+    "link": "https://salesforge.ai/",
+    "description": "Cold outreach platform blending human efforts with AI agents for sales pipeline growth.",
+    "category": "General AI"
+  },
+  {
+    "line": 4485,
+    "reason": "DUPLICATE_NAME",
+    "name": "flatlogic",
+    "link": "https://flatlogic.com/templates",
+    "description": "AI-powered platform for rapid web app development, offering full code ownership and instant deployment.",
+    "category": "General AI"
+  },
+  {
+    "line": 4487,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatsimple",
+    "link": "https://app.chatsimple.ai/",
+    "description": "AI chatbot platform for lead generation, qualification, and customer support.",
+    "category": "General AI"
+  },
+  {
+    "line": 4492,
+    "reason": "DUPLICATE_NAME",
+    "name": "koala",
+    "link": "https://getkoala.com",
+    "description": "Sales intelligence platform using AI to prioritize accounts and improve sales engagement.",
+    "category": "General AI"
+  },
+  {
+    "line": 4521,
+    "reason": "DUPLICATE_NAME",
+    "name": "ema",
+    "link": "https://ema.co",
+    "description": "Ema is a Universal AI Employee that automates tasks across various enterprise roles.",
+    "category": "General AI"
+  },
+  {
+    "line": 4537,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatbotkit",
+    "link": "https://chatbotkit.com/",
+    "description": "A versatile platform to build and deploy conversational AI bots and agents.",
+    "category": "General AI"
+  },
+  {
+    "line": 4539,
+    "reason": "DUPLICATE_NAME",
+    "name": "nex",
+    "link": "https://nex.art",
+    "description": "Multimodal AI platform for brand content creation, asset management, and campaign optimization.",
+    "category": "General AI"
+  },
+  {
+    "line": 4560,
+    "reason": "DUPLICATE_NAME",
+    "name": "agentql",
+    "link": "https://agentql.com",
+    "description": "A tool suite connecting AI agents to web data for precise automation via natural language.",
+    "category": "General AI"
+  },
+  {
+    "line": 4585,
+    "reason": "DUPLICATE_NAME",
+    "name": "prem",
+    "link": "http://www.premai.io",
+    "description": "PremAI builds sovereign, private, and personalized AI solutions for enterprises and consumers.",
+    "category": "General AI"
+  },
+  {
+    "line": 4590,
+    "reason": "DUPLICATE_NAME",
+    "name": "echowin",
+    "link": "https://echo.win/referral",
+    "description": "AI Voice Agent Builder Platform for automating calls and customer service.",
+    "category": "General AI"
+  },
+  {
+    "line": 4593,
+    "reason": "DUPLICATE_NAME",
+    "name": "linkdr",
+    "link": "https://linkdr.com/",
+    "description": "AI-powered link building tool automating backlink acquisition with transparent pricing.",
+    "category": "General AI"
+  },
+  {
+    "line": 4609,
+    "reason": "DUPLICATE_NAME",
+    "name": "digitalgenius",
+    "link": "http://digitalgenius.com",
+    "description": "AI-powered customer service automation for ecommerce.",
+    "category": "General AI"
+  },
+  {
+    "line": 4677,
+    "reason": "DUPLICATE_NAME",
+    "name": "brainfish",
+    "link": "https://www.brainfi.sh",
+    "description": "AI-powered help center platform for instant customer inquiry resolution and support automation.",
+    "category": "General AI"
+  },
+  {
+    "line": 4684,
+    "reason": "DUPLICATE_NAME",
+    "name": "langwatch",
+    "link": "https://www.langwatch.ai",
+    "description": "LLM observability and evaluation platform for monitoring, evaluating, and optimizing LLM applications.",
+    "category": "General AI"
+  },
+  {
+    "line": 4731,
+    "reason": "DUPLICATE_NAME",
+    "name": "jsonify",
+    "link": "https://jsonify.com",
+    "description": "AI-powered data extraction and monitoring platform.",
+    "category": "General AI"
+  },
+  {
+    "line": 4735,
+    "reason": "DUPLICATE_NAME",
+    "name": "yarnit",
+    "link": "https://yarnit.live/",
+    "description": "AI-powered platform for content creation, AI art generation, and marketing campaign management.",
+    "category": "General AI"
+  },
+  {
+    "line": 4797,
+    "reason": "DUPLICATE_NAME",
+    "name": "integry",
+    "link": "https://integry.ai",
+    "description": "Integry: Embeddable iPaaS for SaaS and AI, simplifying integration design and support.",
+    "category": "General AI"
+  },
+  {
+    "line": 4814,
+    "reason": "DUPLICATE_NAME",
+    "name": "vee",
+    "link": "https://vee.ai/en",
+    "description": "AI virtual receptionist for handling business phone calls.",
+    "category": "General AI"
+  },
+  {
+    "line": 4935,
+    "reason": "DUPLICATE_NAME",
+    "name": "mixus",
+    "link": "https://www.mixus.ai/",
+    "description": "Multiplayer AI chat platform for co-intelligence.",
+    "category": "General AI"
+  },
+  {
+    "line": 5089,
+    "reason": "DUPLICATE_NAME",
+    "name": "questflow",
+    "link": "https://questflow.xyz",
+    "description": "AI-native no-code workflow automation platform and decentralized AI agent economy.",
+    "category": "General AI"
+  },
+  {
+    "line": 5091,
+    "reason": "DUPLICATE_NAME",
+    "name": "backengine",
+    "link": "https://www.backengine.dev",
+    "description": "AI software engineer automating pull requests and clearing backlogs.",
+    "category": "General AI"
+  },
+  {
+    "line": 5108,
+    "reason": "DUPLICATE_NAME",
+    "name": "coinfeeds",
+    "link": "https://www.coinfeeds.io",
+    "description": "AI-powered platform simplifying cryptocurrency insights with tailored analysis and custom AI agents.",
+    "category": "General AI"
+  },
+  {
+    "line": 5137,
+    "reason": "DUPLICATE_NAME",
+    "name": "agentic",
+    "link": "https://beagentic.com",
+    "description": "AI-powered platform for generating high-quality blog posts and images quickly.",
+    "category": "General AI"
+  },
+  {
+    "line": 5191,
+    "reason": "DUPLICATE_NAME",
+    "name": "scoopika",
+    "link": "https://scoopika.com",
+    "description": "Platform for integrating AI assistants into applications with data validation and memory.",
+    "category": "General AI"
+  },
+  {
+    "line": 5387,
+    "reason": "DUPLICATE_NAME",
+    "name": "productai",
+    "link": "https://productai.photo",
+    "description": "AI product photo generator for professional product photos in minutes.",
+    "category": "General AI"
+  },
+  {
+    "line": 5388,
+    "reason": "DUPLICATE_NAME",
+    "name": "shuffll",
+    "link": "https://shuffll.com/",
+    "description": "AI-powered video creation platform for businesses to create videos quickly and easily.",
+    "category": "General AI"
+  },
+  {
+    "line": 5501,
+    "reason": "DUPLICATE_NAME",
+    "name": "openart",
+    "link": "https://openart.ai/",
+    "description": "AI image generator with diverse models, styles, and tools for creative AI art.",
+    "category": "General AI"
+  },
+  {
+    "line": 5509,
+    "reason": "DUPLICATE_NAME",
+    "name": "dezgo",
+    "link": "https://dezgo.sjv.io/oq7jvb",
+    "description": "Text-to-image AI generator with free tier and Stable Diffusion models.",
+    "category": "General AI"
+  },
+  {
+    "line": 5512,
+    "reason": "DUPLICATE_NAME",
+    "name": "aitubo",
+    "link": "https://aitubo.ai",
+    "description": "AI tool for easy image and video creation for various digital content.",
+    "category": "General AI"
+  },
+  {
+    "line": 5583,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatpdf",
+    "link": "https://www.chatpdf.com/",
+    "description": "ChatPDF uses AI to interact with and extract information from PDF documents.",
+    "category": "General AI"
+  },
+  {
+    "line": 5590,
+    "reason": "DUPLICATE_NAME",
+    "name": "slidespeak",
+    "link": "https://slidespeak.co/",
+    "description": "AI tool to chat with PowerPoints, summarize documents, and generate presentations.",
+    "category": "General AI"
+  },
+  {
+    "line": 5606,
+    "reason": "DUPLICATE_NAME",
+    "name": "sitegpt",
+    "link": "https://sitegpt.ai/",
+    "description": "SiteGPT creates personalized chatbots trained on website content for instant customer support.",
+    "category": "General AI"
+  },
+  {
+    "line": 5685,
+    "reason": "DUPLICATE_NAME",
+    "name": "chadview",
+    "link": "https://chadview.com",
+    "description": "Meeting assistant for real-time transcripts and AI-suggested responses during online meetings and interviews.",
+    "category": "General AI"
+  },
+  {
+    "line": 5865,
+    "reason": "DUPLICATE_NAME",
+    "name": "heygen",
+    "link": "https://app.heygen.com/guest",
+    "description": "AI video generation platform for creating engaging business videos quickly and easily.",
+    "category": "General AI"
+  },
+  {
+    "line": 5880,
+    "reason": "DUPLICATE_NAME",
+    "name": "logoai",
+    "link": "https://www.logoai.com/",
+    "description": "AI-powered logo maker and brand automation platform for small businesses.",
+    "category": "General AI"
+  },
+  {
+    "line": 5884,
+    "reason": "DUPLICATE_NAME",
+    "name": "runpod",
+    "link": "https://runpod.io",
+    "description": "RunPod offers cost-effective GPU rentals and serverless inference for AI development and scaling.",
+    "category": "General AI"
+  },
+  {
+    "line": 5915,
+    "reason": "DUPLICATE_NAME",
+    "name": "chathub",
+    "link": "https://chathub.gg/",
+    "description": "All-in-one chatbot client supporting multiple LLMs and offering various AI tools.",
+    "category": "General AI"
+  },
+  {
+    "line": 5921,
+    "reason": "DUPLICATE_NAME",
+    "name": "mubert",
+    "link": "https://mubert.com/render/pricing",
+    "description": "AI music ecosystem for royalty-free music generation.",
+    "category": "General AI"
+  },
+  {
+    "line": 5961,
+    "reason": "DUPLICATE_NAME",
+    "name": "respeecher",
+    "link": "https://www.respeecher.com",
+    "description": "AI voice generator with realistic text-to-speech and speech-to-speech capabilities.",
+    "category": "General AI"
+  },
+  {
+    "line": 5993,
+    "reason": "DUPLICATE_NAME",
+    "name": "wordai",
+    "link": "https://wordai.com/",
+    "description": "AI-powered text rewriter for high-quality, unique content creation and SEO improvement.",
+    "category": "General AI"
+  },
+  {
+    "line": 6045,
+    "reason": "DUPLICATE_NAME",
+    "name": "podium",
+    "link": "https://hello.podium.page/",
+    "description": "AI-powered podcast production tool for transcripts, show notes, chapters, and clips.",
+    "category": "General AI"
+  },
+  {
+    "line": 6051,
+    "reason": "DUPLICATE_NAME",
+    "name": "theneo",
+    "link": "https://theneo.io",
+    "description": "AI-powered platform for automated API documentation and developer portals.",
+    "category": "General AI"
+  },
+  {
+    "line": 6063,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatnode",
+    "link": "https://www.chatnode.ai/",
+    "description": "ChatNode: Train AI Chatbots on your data and embed them on your website.",
+    "category": "General AI"
+  },
+  {
+    "line": 6068,
+    "reason": "DUPLICATE_NAME",
+    "name": "spinrewriter",
+    "link": "https://www.spinrewriter.com/",
+    "description": "AI-powered article rewriter for unique, human-quality content to improve SEO rankings.",
+    "category": "General AI"
+  },
+  {
+    "line": 6071,
+    "reason": "DUPLICATE_NAME",
+    "name": "sitespeakai",
+    "link": "https://sitespeak.ai/",
+    "description": "Embed a ChatGPT chatbot on your website to answer questions 24/7.",
+    "category": "General AI"
+  },
+  {
+    "line": 6100,
+    "reason": "DUPLICATE_NAME",
+    "name": "pipio",
+    "link": "https://pipio.ai/",
+    "description": "AI video production platform with digital actors, text-to-speech, and video dubbing.",
+    "category": "General AI"
+  },
+  {
+    "line": 6165,
+    "reason": "DUPLICATE_NAME",
+    "name": "audioshake",
+    "link": "https://indie.audioshake.ai",
+    "description": "Audio separation platform for stems creation.",
+    "category": "General AI"
+  },
+  {
+    "line": 6226,
+    "reason": "DUPLICATE_NAME",
+    "name": "sharpapi",
+    "link": "https://sharpapi.com/ref/sharpapi_tkriyt9w",
+    "description": "AI-powered API for workflow automation across various industries.",
+    "category": "General AI"
+  },
+  {
+    "line": 6251,
+    "reason": "DUPLICATE_NAME",
+    "name": "userdesk",
+    "link": "https://userdesk.io",
+    "description": "No-code platform to build AI ChatBots trained on your data.",
+    "category": "General AI"
+  },
+  {
+    "line": 6313,
+    "reason": "DUPLICATE_NAME",
+    "name": "datalang",
+    "link": "https://datalang.io/",
+    "description": "Platform to create custom chatbots from various data sources using AI.",
+    "category": "General AI"
+  },
+  {
+    "line": 6330,
+    "reason": "DUPLICATE_NAME",
+    "name": "enhanceai",
+    "link": "https://enhanceai.dev",
+    "description": "EnhanceAI adds AI autocomplete to websites, enhancing user experience with GPT-powered forms and text inputs.",
+    "category": "General AI"
+  },
+  {
+    "line": 6425,
+    "reason": "DUPLICATE_NAME",
+    "name": "zenmulti",
+    "link": "https://zenmulti.lemonsqueezy.com",
+    "description": "A GPT-powered tool for multilingual translation of products, aiming to increase visits and revenue.",
+    "category": "General AI"
+  },
+  {
+    "line": 6574,
+    "reason": "DUPLICATE_NAME",
+    "name": "pickaxe",
+    "link": "https://www.pickaxeproject.com",
+    "description": "No-code platform to build, share, and manage AI-powered tools and applications.",
+    "category": "General AI"
+  },
+  {
+    "line": 6628,
+    "reason": "DUPLICATE_NAME",
+    "name": "archie",
+    "link": "https://archie-ai.com",
+    "description": "AI platform for pre-development: requirements, designs, architecture, plans, and SOWs.",
+    "category": "General AI"
+  },
+  {
+    "line": 6728,
+    "reason": "DUPLICATE_NAME",
+    "name": "lummi",
+    "link": "https://lummi.ai",
+    "description": "AI stock images, illustrations, and 3D assets for creative projects.",
+    "category": "General AI"
+  },
+  {
+    "line": 6737,
+    "reason": "DUPLICATE_NAME",
+    "name": "dreamstudio",
+    "link": "https://dreamstudio.ai",
+    "description": "DreamStudio is an online AI image generation tool by Stability.ai.",
+    "category": "General AI"
+  },
+  {
+    "line": 6757,
+    "reason": "DUPLICATE_NAME",
+    "name": "thinkdiffusion",
+    "link": "https://www.thinkdiffusion.com/",
+    "description": "Cloud platform for open-source generative AI art and video tools.",
+    "category": "General AI"
+  },
+  {
+    "line": 6957,
+    "reason": "DUPLICATE_NAME",
+    "name": "dreamspace",
+    "link": "https://dreamspace.art",
+    "description": "Infinite canvas for exploring and chaining large language model outputs.",
+    "category": "General AI"
+  },
+  {
+    "line": 7033,
+    "reason": "DUPLICATE_NAME",
+    "name": "unriddle",
+    "link": "https://www.unriddle.ai//",
+    "description": "An AI research assistant to understand, organize, and write scientific documents faster.",
+    "category": "General AI"
+  },
+  {
+    "line": 7080,
+    "reason": "DUPLICATE_NAME",
+    "name": "brevity",
+    "link": "https://brevity.sh",
+    "description": "AI tool that summarizes long texts into clear, easy-to-read summaries.",
+    "category": "General AI"
+  },
+  {
+    "line": 7108,
+    "reason": "DUPLICATE_NAME",
+    "name": "yeschat",
+    "link": "https://yeschat.ai",
+    "description": "YesChat.ai offers free access to Claude 2, GPT4V, and Dalle3 for various AI tasks.",
+    "category": "General AI"
+  },
+  {
+    "line": 7111,
+    "reason": "DUPLICATE_NAME",
+    "name": "elicit",
+    "link": "https://elicit.com",
+    "description": "AI research assistant to automate research workflows, find papers, summarize, and extract data.",
+    "category": "General AI"
+  },
+  {
+    "line": 7121,
+    "reason": "DUPLICATE_NAME",
+    "name": "jenni",
+    "link": "https://jenni.ai/",
+    "description": "AI writing assistant for efficient academic writing and research.",
+    "category": "General AI"
+  },
+  {
+    "line": 7142,
+    "reason": "DUPLICATE_NAME",
+    "name": "accio",
+    "link": "https://www.accio.com/",
+    "description": "Accio: Smart wholesale solutions with data-backed insights and supplier connections.",
+    "category": "General AI"
+  },
+  {
+    "line": 7181,
+    "reason": "DUPLICATE_NAME",
+    "name": "socialbu",
+    "link": "https://socialbu.com/",
+    "description": "Social media management and automation tool with publishing, analytics, and AI assistance.",
+    "category": "General AI"
+  },
+  {
+    "line": 7189,
+    "reason": "DUPLICATE_NAME",
+    "name": "paperguide",
+    "link": "https://paperguide.ai//",
+    "description": "All-in-one AI research platform for understanding, reading, writing, and managing research.",
+    "category": "General AI"
+  },
+  {
+    "line": 7199,
+    "reason": "DUPLICATE_NAME",
+    "name": "venturekit",
+    "link": "https://venturekit.ai",
+    "description": "AI-powered platform for business planning, formation, and growth.",
+    "category": "General AI"
+  },
+  {
+    "line": 7215,
+    "reason": "DUPLICATE_NAME",
+    "name": "fabric",
+    "link": "https://fabric.so/",
+    "description": "A self-organizing workspace and AI search engine for managing digital content.",
+    "category": "General AI"
+  },
+  {
+    "line": 7218,
+    "reason": "DUPLICATE_NAME",
+    "name": "dart",
+    "link": "https://itsdart.com",
+    "description": "AI-powered project management tool automating tasks and saving time.",
+    "category": "General AI"
+  },
+  {
+    "line": 7285,
+    "reason": "DUPLICATE_NAME",
+    "name": "webbotify",
+    "link": "https://www.webbotify.com//",
+    "description": "AI chatbot platform to reduce support costs, capture leads, and boost engagement.",
+    "category": "General AI"
+  },
+  {
+    "line": 7304,
+    "reason": "DUPLICATE_NAME",
+    "name": "huru",
+    "link": "https://payments.pabbly.com/api/affurl/7dfZ0gsQVAUsZ1wNJo/ll38j81qz4e5Z2a9p",
+    "description": "AI-powered interview preparation app with personalized feedback and mock interviews.",
+    "category": "General AI"
+  },
+  {
+    "line": 7334,
+    "reason": "DUPLICATE_NAME",
+    "name": "bagoodex",
+    "link": "https://bagoodex.io/",
+    "description": "Online AI chatbot and chat generator.",
+    "category": "General AI"
+  },
+  {
+    "line": 7351,
+    "reason": "DUPLICATE_NAME",
+    "name": "gpt-trainer",
+    "link": "https://gpt-trainer.com/",
+    "description": "AI chatbot builder using custom data for contextual responses, embeddable on websites and Slack.",
+    "category": "General AI"
+  },
+  {
+    "line": 7356,
+    "reason": "DUPLICATE_NAME",
+    "name": "roketfy",
+    "link": "https://roketfy.com/",
+    "description": "AI-powered platform for Etsy sellers to boost sales with smart tools and data.",
+    "category": "General AI"
+  },
+  {
+    "line": 7425,
+    "reason": "DUPLICATE_NAME",
+    "name": "paradot",
+    "link": "https://www.paradot.ai",
+    "description": "Paradot is an AI companion app for emotional connection and personalized experiences.",
+    "category": "General AI"
+  },
+  {
+    "line": 7500,
+    "reason": "DUPLICATE_NAME",
+    "name": "ayraa",
+    "link": "https://ayraa.io",
+    "description": "AI-powered knowledge discovery & search platform for teams.",
+    "category": "General AI"
+  },
+  {
+    "line": 7523,
+    "reason": "DUPLICATE_NAME",
+    "name": "beloga",
+    "link": "https://beloga.xyz",
+    "description": "AI-powered knowledge vault for instant answers and enhanced productivity.",
+    "category": "General AI"
+  },
+  {
+    "line": 7552,
+    "reason": "DUPLICATE_NAME",
+    "name": "tidalflow",
+    "link": "https://tidalflow.com",
+    "description": "AI-powered consumer health products and personalized health mentorship via WhatsApp.",
+    "category": "General AI"
+  },
+  {
+    "line": 7566,
+    "reason": "DUPLICATE_NAME",
+    "name": "timemaster",
+    "link": "https://timemaster.lemonsqueezy.com",
+    "description": "TimeMaster is a productivity app for time tracking, analytics, and focus enhancement.",
+    "category": "General AI"
+  },
+  {
+    "line": 7598,
+    "reason": "DUPLICATE_NAME",
+    "name": "supermoon",
+    "link": "https://getsupermoon.com",
+    "description": "E-commerce & customer service communication management software powered by AI.",
+    "category": "General AI"
+  },
+  {
+    "line": 7627,
+    "reason": "DUPLICATE_NAME",
+    "name": "palettebrain",
+    "link": "https://palettebrain.lemonsqueezy.com/",
+    "description": "PaletteBrain is a macOS app that integrates ChatGPT with any application via shortcuts.",
+    "category": "General AI"
+  },
+  {
+    "line": 7637,
+    "reason": "DUPLICATE_NAME",
+    "name": "sixty",
+    "link": "https://www.sixty.app",
+    "description": "Sixty AI uses AI to manage tasks and help users reclaim their time.",
+    "category": "General AI"
+  },
+  {
+    "line": 7724,
+    "reason": "DUPLICATE_NAME",
+    "name": "zivy",
+    "link": "https://zivy.app",
+    "description": "AI tool to streamline workplace communication and prioritize messages in Slack.",
+    "category": "General AI"
+  },
+  {
+    "line": 8259,
+    "reason": "DUPLICATE_NAME",
+    "name": "venuelog",
+    "link": "https://venuelog.co",
+    "description": "VenueLog simplifies venue management with integrated systems, automation, and AI-powered insights.",
+    "category": "General AI"
+  },
+  {
+    "line": 8506,
+    "reason": "DUPLICATE_NAME",
+    "name": "resumebuild",
+    "link": "https://www.resumebuild.in",
+    "description": "Resumebuild is a resume, video resume, and web portfolio builder.",
+    "category": "General AI"
+  },
+  {
+    "line": 8590,
+    "reason": "DUPLICATE_NAME",
+    "name": "coglayer",
+    "link": "https://coglayer.com/",
+    "description": "Coglayer is an AI thinking partner that helps you explore and understand your thoughts.",
+    "category": "General AI"
+  },
+  {
+    "line": 8595,
+    "reason": "DUPLICATE_NAME",
+    "name": "waspgpt",
+    "link": "https://waspgpt.io",
+    "description": "WASPGPT simplifies Blockchain exploration with conversational AI.",
+    "category": "General AI"
+  },
+  {
+    "line": 8600,
+    "reason": "DUPLICATE_NAME",
+    "name": "tinyeinstein",
+    "link": "https://www.tinyalbert.ai/",
+    "description": "AI-powered email marketing manager for Shopify stores, automating tasks and boosting conversions.",
+    "category": "General AI"
+  },
+  {
+    "line": 8644,
+    "reason": "DUPLICATE_NAME",
+    "name": "enhancedocs",
+    "link": "https://enhancedocs.com",
+    "description": "AI-powered search engine for documentation with natural language search and pre-built integrations.",
+    "category": "General AI"
+  },
+  {
+    "line": 8667,
+    "reason": "DUPLICATE_NAME",
+    "name": "b7labs",
+    "link": "https://www.getconverse.com/",
+    "description": "AI reading companion for summarizing and interacting with web articles, PDFs, and videos.",
+    "category": "General AI"
+  },
+  {
+    "line": 8670,
+    "reason": "DUPLICATE_NAME",
+    "name": "podcastle",
+    "link": "https://podcastle.ai/",
+    "description": "AI-powered platform for studio-quality video and podcast creation, editing, and distribution.",
+    "category": "General AI"
+  },
+  {
+    "line": 8707,
+    "reason": "DUPLICATE_NAME",
+    "name": "crystalsound",
+    "link": "https://gumroad.com",
+    "description": "AI-powered noise cancelling app and screen recorder for clear audio and productive meetings.",
+    "category": "General AI"
+  },
+  {
+    "line": 8723,
+    "reason": "DUPLICATE_NAME",
+    "name": "invideo",
+    "link": "https://invideo.sjv.io/zN76Mm",
+    "description": "Online video editor with 5000+ templates, AI tools, and stock media.",
+    "category": "General AI"
+  },
+  {
+    "line": 8725,
+    "reason": "DUPLICATE_NAME",
+    "name": "synthesia",
+    "link": "https://www.synthesia.io/",
+    "description": "AI video platform for creating professional videos from text.",
+    "category": "General AI"
+  },
+  {
+    "line": 8726,
+    "reason": "DUPLICATE_NAME",
+    "name": "fliki",
+    "link": "https://fliki.ai/",
+    "description": "AI platform to create videos from text with realistic voices and media.",
+    "category": "General AI"
+  },
+  {
+    "line": 8852,
+    "reason": "DUPLICATE_NAME",
+    "name": "pebblely",
+    "link": "https://pebblely.com",
+    "description": "Pebblely is an AI tool that creates marketing assets from product images.",
+    "category": "General AI"
+  },
+  {
+    "line": 8855,
+    "reason": "DUPLICATE_NAME",
+    "name": "soona",
+    "link": "https://soona.co/start",
+    "description": "Creative platform for professional and UGC e-commerce content creation and management.",
+    "category": "General AI"
+  },
+  {
+    "line": 8915,
+    "reason": "DUPLICATE_NAME",
+    "name": "radaar",
+    "link": "https://rdar.li/pl/qaxzm8d",
+    "description": "Social media management platform for scheduling, publishing, and analyzing social media efforts.",
+    "category": "General AI"
+  },
+  {
+    "line": 8939,
+    "reason": "DUPLICATE_NAME",
+    "name": "thumbmachine",
+    "link": "https://thumbmachine.com/users/lander/",
+    "description": "AI-powered platform for creating YouTube thumbnails, social media posts, and marketing designs.",
+    "category": "General AI"
+  },
+  {
+    "line": 9068,
+    "reason": "DUPLICATE_NAME",
+    "name": "scalenut",
+    "link": "https://scalenut.com/",
+    "description": "AI-SEO platform for planning, creating, and optimizing content to scale organic traffic.",
+    "category": "General AI"
+  },
+  {
+    "line": 9069,
+    "reason": "DUPLICATE_NAME",
+    "name": "podsqueeze",
+    "link": "https://podsqueeze.com/",
+    "description": "AI-powered tool for podcasters to generate and customize various content types from audio/video.",
+    "category": "General AI"
+  },
+  {
+    "line": 9084,
+    "reason": "DUPLICATE_NAME",
+    "name": "growthbar",
+    "link": "https://growthbarseo.com/",
+    "description": "AI SEO and content tool for faster content creation and optimization.",
+    "category": "General AI"
+  },
+  {
+    "line": 9085,
+    "reason": "DUPLICATE_NAME",
+    "name": "abun",
+    "link": "https://abun.com/",
+    "description": "AI tool for SEO-optimized content creation and automated publishing.",
+    "category": "General AI"
+  },
+  {
+    "line": 9090,
+    "reason": "DUPLICATE_NAME",
+    "name": "bramework",
+    "link": "http://bramework.com/",
+    "description": "AI-powered platform for bloggers to create SEO-optimized content faster.",
+    "category": "General AI"
+  },
+  {
+    "line": 9094,
+    "reason": "DUPLICATE_NAME",
+    "name": "moonbeam",
+    "link": "https://gomoonbeam.com/",
+    "description": "AI writing assistant for long-form content creation with smart features.",
+    "category": "General AI"
+  },
+  {
+    "line": 9165,
+    "reason": "DUPLICATE_NAME",
+    "name": "sleepseo",
+    "link": "https://sleepseo.com",
+    "description": "AI-powered SEO content generation tool for creating blog titles and articles.",
+    "category": "General AI"
+  },
+  {
+    "line": 9174,
+    "reason": "DUPLICATE_NAME",
+    "name": "cuppa",
+    "link": "https://www.cuppa.sh/",
+    "description": "AI-powered content marketing suite for creating various types of SEO-optimized content.",
+    "category": "General AI"
+  },
+  {
+    "line": 9254,
+    "reason": "DUPLICATE_NAME",
+    "name": "sudowrite",
+    "link": "https://www.sudowrite.com/",
+    "description": "AI writing partner for fiction, helps overcome writer's block and speed up writing.",
+    "category": "General AI"
+  },
+  {
+    "line": 9269,
+    "reason": "DUPLICATE_NAME",
+    "name": "bookai",
+    "link": "https://trybookai.com",
+    "description": "BookAI is an AI-powered book generator for creating professional-quality books quickly and easily.",
+    "category": "General AI"
+  },
+  {
+    "line": 9395,
+    "reason": "DUPLICATE_NAME",
+    "name": "10web",
+    "link": "https://10web.io/",
+    "description": "AI-powered WordPress platform for building, hosting, and scaling websites.",
+    "category": "General AI"
+  },
+  {
+    "line": 9415,
+    "reason": "DUPLICATE_NAME",
+    "name": "stealthwriter",
+    "link": "https://stealthwriter.ai/",
+    "description": "StealthWriter humanizes AI-generated content to bypass AI detection and ensure content integrity.",
+    "category": "General AI"
+  },
+  {
+    "line": 9421,
+    "reason": "DUPLICATE_NAME",
+    "name": "stealthgpt",
+    "link": "https://stealthgpt.ai/",
+    "description": "AI tool to humanize AI content and bypass AI detection.",
+    "category": "General AI"
+  },
+  {
+    "line": 9528,
+    "reason": "DUPLICATE_NAME",
+    "name": "submagic",
+    "link": "https://submagic.co",
+    "description": "AI tool for generating trendy captions and boosting engagement for short videos.",
+    "category": "General AI"
+  },
+  {
+    "line": 9534,
+    "reason": "DUPLICATE_NAME",
+    "name": "klap",
+    "link": "https://klap.app/",
+    "description": "AI tool to repurpose long videos into viral short-form content for social media.",
+    "category": "General AI"
+  },
+  {
+    "line": 9536,
+    "reason": "DUPLICATE_NAME",
+    "name": "gling",
+    "link": "https://gling.ai/",
+    "description": "AI video editing software for YouTube creators to optimize workflow and content.",
+    "category": "General AI"
+  },
+  {
+    "line": 9542,
+    "reason": "DUPLICATE_NAME",
+    "name": "choppity",
+    "link": "https://choppity.com/",
+    "description": "Automated video editor for social media, sales, and training videos.",
+    "category": "General AI"
+  },
+  {
+    "line": 9544,
+    "reason": "DUPLICATE_NAME",
+    "name": "creasquare",
+    "link": "https://creasquare.io/",
+    "description": "AI-powered platform for creating and scheduling social media content.",
+    "category": "General AI"
+  },
+  {
+    "line": 9557,
+    "reason": "DUPLICATE_NAME",
+    "name": "openrep",
+    "link": "https://openrep.ai",
+    "description": "AI-powered SEO and social media content generator and scheduler.",
+    "category": "General AI"
+  },
+  {
+    "line": 9611,
+    "reason": "DUPLICATE_NAME",
+    "name": "audyo",
+    "link": "https://audyo.ai/",
+    "description": "Audyo creates human-quality audio from text with easy editing and voice options.",
+    "category": "General AI"
+  },
+  {
+    "line": 9657,
+    "reason": "DUPLICATE_NAME",
+    "name": "talefy",
+    "link": "https://talefy.ai/",
+    "description": "Talefy is an AI-powered platform for reading and creating interactive stories.",
+    "category": "General AI"
+  },
+  {
+    "line": 9758,
+    "reason": "DUPLICATE_NAME",
+    "name": "chartpixel",
+    "link": "https://www.chartpixel.com",
+    "description": "AI-assisted data analysis and visualization platform for instant insights.",
+    "category": "General AI"
+  },
+  {
+    "line": 9761,
+    "reason": "DUPLICATE_NAME",
+    "name": "tradeui",
+    "link": "https://tradeui.com/c",
+    "description": "TradeUI offers AI-driven trading tools and real-time alerts to improve trading strategies.",
+    "category": "General AI"
+  },
+  {
+    "line": 9765,
+    "reason": "DUPLICATE_NAME",
+    "name": "askcsv",
+    "link": "https://www.askcsv.com/",
+    "description": "Interactive data analysis tool using ChatGPT on CSV files within your browser.",
+    "category": "General AI"
+  },
+  {
+    "line": 9846,
+    "reason": "DUPLICATE_NAME",
+    "name": "afforai",
+    "link": "https://afforai.com/",
+    "description": "AI research assistant for managing references, literature reviews, and writing papers.",
+    "category": "General AI"
+  },
+  {
+    "line": 9873,
+    "reason": "DUPLICATE_NAME",
+    "name": "katteb",
+    "link": "https://katteb.com/en",
+    "description": "AI-powered writing software with fact-checking for credible and reliable content generation.",
+    "category": "General AI"
+  },
+  {
+    "line": 9874,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatling",
+    "link": "https://chatling.ai/",
+    "description": "No-code AI chatbot platform for automating customer support and lead generation.",
+    "category": "General AI"
+  },
+  {
+    "line": 9907,
+    "reason": "DUPLICATE_NAME",
+    "name": "askyourdatabase",
+    "link": "https://askyourdatabase.com",
+    "description": "Chat with your database using natural language, no SQL needed.",
+    "category": "General AI"
+  },
+  {
+    "line": 9919,
+    "reason": "DUPLICATE_NAME",
+    "name": "chapple",
+    "link": "https://chapple.ai/",
+    "description": "Chapple AI is an all-in-one platform for fast content creation using AI-powered tools and templates.",
+    "category": "General AI"
+  },
+  {
+    "line": 9920,
+    "reason": "DUPLICATE_NAME",
+    "name": "cursor",
+    "link": "https://www.cursor.so",
+    "description": "AI-powered code editor for faster software development and pair-programming.",
+    "category": "General AI"
+  },
+  {
+    "line": 9934,
+    "reason": "DUPLICATE_NAME",
+    "name": "magicform",
+    "link": "https://www.magicform.ai/",
+    "description": "Train an AI salesperson to boost conversions through real-time conversations.",
+    "category": "General AI"
+  },
+  {
+    "line": 9977,
+    "reason": "DUPLICATE_NAME",
+    "name": "chatshape",
+    "link": "https://www.chatshape.com/",
+    "description": "Train a custom AI chatbot on your website content and embed it to enhance customer support.",
+    "category": "General AI"
+  }
+]
