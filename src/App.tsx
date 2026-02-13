@@ -84,6 +84,7 @@ const AppContent = () => {
 
   const location = useLocation(); // Get current location
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showDeferredUi, setShowDeferredUi] = useState(false);
 
   // Initialize GA and track page views (deferred)
   useEffect(() => {
@@ -105,6 +106,32 @@ const AppContent = () => {
       cancelled = true;
     };
   }, [location]);
+
+  useEffect(() => {
+    let activated = false;
+
+    const activateDeferredUi = () => {
+      if (activated) return;
+      activated = true;
+      setShowDeferredUi(true);
+      window.removeEventListener("pointerdown", activateDeferredUi);
+      window.removeEventListener("keydown", activateDeferredUi);
+      window.removeEventListener("scroll", activateDeferredUi);
+    };
+
+    window.addEventListener("pointerdown", activateDeferredUi, { passive: true });
+    window.addEventListener("keydown", activateDeferredUi);
+    window.addEventListener("scroll", activateDeferredUi, { passive: true });
+
+    const timeoutId = window.setTimeout(activateDeferredUi, 12000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("pointerdown", activateDeferredUi);
+      window.removeEventListener("keydown", activateDeferredUi);
+      window.removeEventListener("scroll", activateDeferredUi);
+    };
+  }, []);
 
   const handleAddClick = () => {
     if (!user) {
@@ -148,20 +175,26 @@ const AppContent = () => {
       <Footer />
 
       {/* Floating Components */}
-      <Suspense fallback={null}>
-        <CompareFloatingBar />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ScrollToTopButton />
-      </Suspense>
+      {showDeferredUi && (
+        <Suspense fallback={null}>
+          <CompareFloatingBar />
+        </Suspense>
+      )}
+      {showDeferredUi && (
+        <Suspense fallback={null}>
+          <ScrollToTopButton />
+        </Suspense>
+      )}
       {isAddModalOpen && (
         <Suspense fallback={null}>
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         </Suspense>
       )}
-      <Suspense fallback={null}>
-        <ChatBot />
-      </Suspense>
+      {showDeferredUi && (
+        <Suspense fallback={null}>
+          <ChatBot />
+        </Suspense>
+      )}
     </div>
   );
 };

@@ -68,7 +68,8 @@ export const useTools = (params: UseToolsParams = {}) => {
     queryKey: ["tools", selectedPersona, searchQuery, category],
 
     queryFn: async ({ pageParam = 0 }) => {
-      const itemsPerPage = 12;
+      // Keep initial DOM lighter for faster first render and lower layout cost.
+      const itemsPerPage = 8;
       const from = (pageParam as number) * itemsPerPage;
       const to = from + itemsPerPage - 1;
 

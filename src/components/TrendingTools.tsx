@@ -66,7 +66,7 @@ const TrendingTools = () => {
                 {/* Marquee Container */}
                 <div className="flex-1 overflow-hidden relative mask-fade-sides">
                     <div className="flex w-max animate-marquee-slow gap-12 group hover:[animation-play-state:paused] items-center">
-                        {[...tools, ...tools, ...tools].map((tool, index) => (
+                        {[...tools, ...tools].map((tool, index) => (
                             <Link
                                 key={`${tool.id}-${index}`}
                                 to={`/tool/${tool.id}`}

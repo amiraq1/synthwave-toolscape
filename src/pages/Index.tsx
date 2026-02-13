@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
@@ -26,6 +26,34 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
+  const [showEnhancements, setShowEnhancements] = useState(false);
+
+  useEffect(() => {
+    let activated = false;
+
+    const activateEnhancements = () => {
+      if (activated) return;
+      activated = true;
+      setShowEnhancements(true);
+      window.removeEventListener("pointerdown", activateEnhancements);
+      window.removeEventListener("keydown", activateEnhancements);
+      window.removeEventListener("scroll", activateEnhancements);
+    };
+
+    // Mount decorative widgets on first user intent (or after a quiet timeout).
+    window.addEventListener("pointerdown", activateEnhancements, { passive: true });
+    window.addEventListener("keydown", activateEnhancements);
+    window.addEventListener("scroll", activateEnhancements, { passive: true });
+
+    const timeoutId = window.setTimeout(activateEnhancements, 12000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("pointerdown", activateEnhancements);
+      window.removeEventListener("keydown", activateEnhancements);
+      window.removeEventListener("scroll", activateEnhancements);
+    };
+  }, []);
 
   const clearFilters = () => {
     setSelectedPersona("all");
@@ -107,9 +135,11 @@ const Index = () => {
         تخطّي إلى المحتوى
       </a>
 
-      <Suspense fallback={null}>
-        <LivePulse />
-      </Suspense>
+      {showEnhancements && (
+        <Suspense fallback={null}>
+          <LivePulse />
+        </Suspense>
+      )}
 
       <main
         id="main-content"
@@ -127,11 +157,13 @@ const Index = () => {
         </section>
 
         {/* Section 1.5: Trending Ticker */}
-        <section className="-mt-8 mb-4 animate-fade-in">
-          <Suspense fallback={<div className="h-10 w-full bg-white/[0.02] rounded-xl border border-white/5" aria-hidden="true" />}>
-            <TrendingTools />
-          </Suspense>
-        </section>
+        {showEnhancements && (
+          <section className="-mt-8 mb-4 animate-fade-in">
+            <Suspense fallback={<div className="h-10 w-full bg-white/[0.02] rounded-xl border border-white/5" aria-hidden="true" />}>
+              <TrendingTools />
+            </Suspense>
+          </section>
+        )}
 
         {/* Section 2: Persona Filter (Floating) */}
         <section className="sticky top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -195,7 +227,7 @@ const Index = () => {
         </section>
 
         {/* Section 4: Recommended (Only on default view) */}
-        {!searchQuery && activeCategory === 'الكل' && selectedPersona === 'all' && (
+        {showEnhancements && !searchQuery && activeCategory === 'الكل' && selectedPersona === 'all' && (
           <section className="animate-in fade-in slide-in-from-bottom-5 duration-700">
             <Suspense fallback={<div className="h-40 w-full rounded-2xl border border-white/5 bg-white/[0.02]" aria-hidden="true" />}>
               <RecommendedForYou />

@@ -149,13 +149,22 @@ export default defineConfig(({ mode }) => {
               return;
             }
 
-            // Heavy, standalone libraries → separate chunks
-            if (id.includes("/@supabase/")) {
-              return "vendor-supabase";
+            // Keep React/runtime in its own stable chunk so feature chunks
+            // (like charts) don't become entry-time dependencies.
+            if (
+              id.includes("/react/") ||
+              id.includes("/react-dom/") ||
+              id.includes("/scheduler/")
+            ) {
+              return "vendor-react";
             }
 
-            if (id.includes("/recharts/") || id.includes("/d3-")) {
-              return "vendor-charts";
+            if (id.includes("/@tanstack/")) {
+              return "vendor-query";
+            }
+
+            if (id.includes("/@supabase/")) {
+              return "vendor-supabase";
             }
 
             if (id.includes("/i18next") || id.includes("/react-i18next")) {
@@ -165,6 +174,11 @@ export default defineConfig(({ mode }) => {
             if (id.includes("/dayjs/")) {
               return "vendor-dayjs";
             }
+
+            if (id.includes("/react-router-dom/") || id.includes("/react-router/")) {
+              return "vendor-router";
+            }
+
             if (id.includes("/reactflow/")) {
               return "vendor-reactflow";
             }
@@ -177,7 +191,7 @@ export default defineConfig(({ mode }) => {
               return "vendor-cmdk";
             }
 
-            // Let Rollup split the rest by import graph to reduce unused JS on entry.
+            // Let Rollup split the rest by import graph.
             return;
           }
         },
