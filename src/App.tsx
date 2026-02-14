@@ -86,11 +86,13 @@ const AppContent = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [showDeferredUi, setShowDeferredUi] = useState(false);
 
-  // Initialize GA and track page views (deferred)
+  // Initialize analytics (deferred)
   useEffect(() => {
     let cancelled = false;
-    import("@/lib/analytics").then(({ initGA }) => {
-      if (!cancelled) initGA();
+    import("@/lib/analytics").then(({ initGA, initHeap }) => {
+      if (cancelled) return;
+      initGA();
+      initHeap();
     });
     return () => {
       cancelled = true;
@@ -99,8 +101,10 @@ const AppContent = () => {
 
   useEffect(() => {
     let cancelled = false;
-    import("@/lib/analytics").then(({ logPageView }) => {
-      if (!cancelled) logPageView(location.pathname + location.search);
+    import("@/lib/analytics").then(({ logPageView, logHeapPageView }) => {
+      if (cancelled) return;
+      logPageView(location.pathname + location.search);
+      logHeapPageView();
     });
     return () => {
       cancelled = true;
