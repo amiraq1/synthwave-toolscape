@@ -2,13 +2,19 @@
 <html lang="ar" dir="rtl">
 
 <head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R43ED44ZYM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-R43ED44ZYM');
+  </script>
   <meta charset="UTF-8" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <!-- CSP is injected at build time via vite.config.ts (production only) -->
   <meta name="msvalidate.01" content="474F2AE0302E7CE5EE69EE39E6337EDD" />
 
-  <!-- Viewport: أفضل للموبايل + Safe Area -->
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes" />
 
@@ -22,11 +28,9 @@
   <meta http-equiv="content-language" content="ar" />
   <meta name="language" content="Arabic" />
 
-  <!-- UX على iOS -->
   <meta name="format-detection" content="telephone=no" />
   <meta name="color-scheme" content="dark" />
 
-  <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#7c3aed" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -35,7 +39,6 @@
   <link rel="apple-touch-icon" href="/pwa-192x192.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
 
-  <!-- URL Sanitizer - Runs before React to catch malformed URLs -->
   <script type="text/javascript">
     (function () {
       var loc = window.location;
@@ -43,7 +46,6 @@
       var search = loc.search;
       var pathname = loc.pathname;
 
-      // 1. التحقق من وجود URL مشوه
       var isMalformed =
         url.indexOf('~and~') !== -1 ||
         search.indexOf('/?/') !== -1 ||
@@ -53,24 +55,18 @@
 
       if (isMalformed) {
         console.warn('🛡️ Malformed URL detected in pre-load script');
-        // تحديد الصفحة الأساسية
         var basePath = pathname.split('?')[0].split('~')[0].replace(/\/+$/, '') || '/';
         if (basePath.indexOf('/auth') !== -1) basePath = '/auth';
-        // إعادة التوجيه مباشرة
         window.location.replace(basePath);
         return;
       }
 
-      // 2. GitHub Pages SPA redirect handler (Corrected & Safe)
       if (search[1] === '/') {
         try {
           var decoded = search.slice(1).split('&').map(function (s) {
             return s.replace(/~and~/g, '&');
           }).join('?');
-
-          // Use the decoded path directly, removing any potential artifacts safely
           var cleanDecoded = decoded;
-
           window.history.replaceState(null, null,
             pathname.slice(0, -1) + cleanDecoded + loc.hash
           );
@@ -81,12 +77,9 @@
     })();
   </script>
 
-  <!-- Preconnect for Supabase -->
   <link rel="dns-prefetch" href="<%- VITE_SUPABASE_URL %>" />
   <link rel="preconnect" href="<%- VITE_SUPABASE_URL %>" />
 
-
-  <!-- Open Graph -->
   <meta property="og:site_name" content="نبض" />
   <meta property="og:title" content="نبض - دليل أدوات الذكاء الاصطناعي" />
   <meta property="og:description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
@@ -98,7 +91,6 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="نبض - دليل أدوات الذكاء الاصطناعي" />
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@NabdAI" />
   <meta name="twitter:title" content="نبض - دليل أدوات الذكاء الاصطناعي" />
@@ -106,11 +98,7 @@
   <meta name="twitter:image"
     content="%VITE_SUPABASE_URL%/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
 
-
-
-  <!-- Critical CSS - Inline for instant rendering -->
   <style>
-    /* CSS مضمن (Inline) للسرعة القصوى */
     .app-loader {
       display: flex;
       flex-direction: column;
@@ -145,7 +133,6 @@
     }
   </style>
 
-  <!-- Structured Data (JSON-LD) for SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
