@@ -14,22 +14,22 @@ declare global {
     }
 }
 
-// الحصول على معرف القياس من متغيرات البيئة
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_ID;
+// الحصول على معرف القياس من متغيرات البيئة أو استخدام المعرف الثابت من index.html
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_ID || 'G-R43ED44ZYM';
 const HEAP_APP_ID = "1749502766";
 
 // تهيئة Google Analytics
 export const initGA = () => {
-    // لا تقم بالتهيئة إذا لم يكن المعرف موجوداً (مثلاً في بيئة التطوير المحلية)
-    if (!GA_MEASUREMENT_ID) {
-        // console.log('Google Analytics: ID missing, skipping initialization');
+    // gtag قد يكون محمّلاً بالفعل من index.html
+    if (window.gtag) {
+        // تأكد من إعداد config مع send_page_view: false للتحكم اليدوي
+        window.gtag('config', GA_MEASUREMENT_ID, {
+            send_page_view: false
+        });
         return;
     }
 
-    // تجنب إعادة تحميل السكربت إذا كان موجوداً
-    if (window.gtag) return;
-
-    // تحميل سكربت gtag.js
+    // تحميل سكربت gtag.js إذا لم يكن محمّلاً
     const script = document.createElement('script');
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
     script.async = true;
