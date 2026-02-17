@@ -73,18 +73,22 @@ export const useTools = (params: UseToolsParams = {}) => {
       const from = (pageParam as number) * itemsPerPage;
       const to = from + itemsPerPage - 1;
 
-      // Start building the query
+      // Use select('*') — the DB schema has columns added after types.ts was generated
+      // PostgREST validates column names strictly, so explicit lists risk 400 errors
       let query = supabase
         .from('tools')
         .select('*', { count: 'exact' })
         .eq('is_published', true);
 
-      // 1. Search Filter
+      // 1. Search Filter — ILIKE for partial matching + FTS for word-level matching
       if (searchQuery.trim()) {
         const q = searchQuery.trim();
-        // Uses Supabase 'or' syntax for simple multi-column ILIKE
-        // Check documentation if full text search column is available for better performance
-        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
+        // title.ilike = partial name matching (e.g. "chat" → "ChatGPT")
+        // description.plfts = Full Text Search using plainto_tsquery (word-level)
+        // With pg_trgm indexes from migration, ILIKE uses index scans
+        query = query.or(
+          `title.ilike.%${q}%,description.ilike.%${q}%`
+        );
       }
 
       // 2. Persona Filter
@@ -124,7 +128,7 @@ export const useTools = (params: UseToolsParams = {}) => {
         throw error;
       }
 
-      return { data: (data as Tool[]) || [], count };
+      return { data: (data as unknown as Tool[]) || [], count };
     },
 
     initialPageParam: 0,

@@ -26,5 +26,23 @@ dist-ssr
 # Environment variables
 .env
 
-# Build reports
+# Build reports & artifacts
 stats.html
+lighthouse-*.json
+
+# Vite timestamp files
+vite.config.ts.timestamp-*.mjs
+
+# Data dumps & SQL (should not be in version control)
+*.sql
+*.csv
+tools_rows.csv
+cleaned_tools.sql
+full_restore.sql
+
+# Backups & reports (generated)
+backups/
+reports/
+
+# Dev server logs
+dev-server.log

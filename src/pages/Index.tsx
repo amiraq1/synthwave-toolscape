@@ -3,11 +3,10 @@ import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
 import PersonaFilter, { PERSONAS, type PersonaId } from "@/components/PersonaFilter";
-import { useTools, type Category, type Tool } from "@/hooks/useTools";
-import { useHybridSearch } from "@/hooks/useSemanticSearch";
+import { useTools, type Category } from "@/hooks/useTools";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
-import { Sparkles, Loader2, X, Search } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const LivePulse = lazy(() => import("@/components/LivePulse"));
@@ -95,18 +94,7 @@ const Index = () => {
     return counts;
   }, [tools]);
 
-  const {
-    semanticTools,
-    isSemanticLoading,
-    isSemantic,
-  } = useHybridSearch(searchQuery, tools.length, 3);
-
-  const displayTools = useMemo(() => {
-    if (isSemantic && semanticTools.length > 0) {
-      return semanticTools as unknown as Tool[];
-    }
-    return tools;
-  }, [tools, semanticTools, isSemantic]);
+  const displayTools = tools;
 
   const structuredDataItems = useMemo(
     () => displayTools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
@@ -152,7 +140,7 @@ const Index = () => {
           <HeroSection
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            isSearching={isLoading || isSemanticLoading}
+            isSearching={isLoading}
           />
         </section>
 
@@ -198,25 +186,13 @@ const Index = () => {
               الأدوات المتاحة
             </h2>
 
-            {/* Semantic Search Badge */}
+            {/* Search Status Badge */}
             {searchQuery && (
               <div className="flex items-center gap-2 animate-in fade-in zoom-in-95">
-                {isSemanticLoading ? (
-                  <Badge variant="outline" className="gap-2 border-neon-purple/30 text-neon-purple bg-neon-purple/5 px-3 py-1.5">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    جاري التحليل الذكي...
-                  </Badge>
-                ) : isSemantic ? (
-                  <Badge className="gap-1.5 bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 text-neon-purple border-neon-purple/30 px-3 py-1.5">
-                    <Sparkles className="w-3 h-3" />
-                    نتائج بحث ذكية
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary" className="bg-white/5 text-slate-400 gap-2">
-                    <Search className="w-3 h-3" />
-                    نتائج مباشرة
-                  </Badge>
-                )}
+                <Badge variant="secondary" className="bg-white/5 text-slate-400 gap-2">
+                  <Search className="w-3 h-3" />
+                  نتائج البحث
+                </Badge>
               </div>
             )}
           </div>
@@ -249,18 +225,18 @@ const Index = () => {
           ) : (
             <ToolsGrid
               tools={displayTools || []}
-              isLoading={isLoading || isSemanticLoading}
+              isLoading={isLoading}
               error={error}
               searchQuery={searchQuery}
               activeCategory={activeCategory}
               onFetchNextPage={fetchNextPage}
-              hasNextPage={hasNextPage && !isSemantic}
+              hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
             />
           )}
 
           {/* Empty State */}
-          {!isLoading && !isSemanticLoading && displayTools.length === 0 && (
+          {!isLoading && displayTools.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02]">
               <div className="p-4 rounded-full bg-white/5 text-slate-500">
                 <Search className="w-8 h-8" />

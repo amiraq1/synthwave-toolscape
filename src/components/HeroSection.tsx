@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import { ArrowRight, Sparkles, Command, Cpu, Globe, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchAutocomplete from "@/components/SearchAutocomplete";
+import { useToolsStats } from '@/hooks/useToolsCount';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -11,6 +12,13 @@ interface HeroSectionProps {
 
 const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }: HeroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { data: stats } = useToolsStats();
+
+  const formatCount = (n: number) => {
+    if (n >= 1000) return `+${Math.floor(n / 100) * 100}`;
+    if (n >= 100) return `+${Math.floor(n / 10) * 10}`;
+    return `${n}`;
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -120,16 +128,16 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
 
         {/* Typography: The Statement */}
         <div className="space-y-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6 leading-tight text-center">
-            THE{' '}
+          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-[1.15] text-center">
+            نبض{' '}
             <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-violet-500 animate-pulse-slow">
-                PULSE
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple via-violet-400 to-neon-cyan animate-pulse-slow">
+                الذكاء
               </span>
               {/* تأثير توهج خلف النص */}
-              <div className="absolute inset-0 bg-neon-purple/20 blur-xl -z-10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-neon-purple/20 blur-xl -z-10 animate-pulse" />
             </span>{' '}
-            OF AI
+            الاصطناعي
           </h1>
           <p className="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
             محرك البحث العربي الأول لأدوات الذكاء الاصطناعي.
@@ -168,43 +176,49 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
           </div>
 
           {/* Quick Tags underneath */}
-          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-slate-500 font-mono">
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Coding</span>
+          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-slate-500 font-cairo">
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#برمجة</span>
             <span className="text-slate-700">•</span>
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Design</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#تصميم</span>
             <span className="text-slate-700">•</span>
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#Productivity</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#إنتاجية</span>
+            <span className="text-slate-700">•</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">#كتابة</span>
           </div>
         </div>
 
         {/* Status Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 pt-12 border-t border-white/5 w-full max-w-3xl">
-          {/* Stat 1 */}
+          {/* Stat 1: Total Tools */}
           <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
             <Cpu className="w-6 h-6 text-slate-500 group-hover:text-neon-purple transition-colors" />
-            <span className="text-3xl font-black text-white font-mono tracking-tighter">+500</span>
+            <span className="text-3xl font-black text-white font-mono tracking-tighter tabular-nums">
+              {stats ? formatCount(stats.total_tools) : '—'}
+            </span>
             <span className="text-sm text-slate-400 font-cairo font-medium">أداة ذكية</span>
           </div>
 
-          {/* Stat 2 */}
+          {/* Stat 2: Bilingual */}
           <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
             <Globe className="w-6 h-6 text-slate-500 group-hover:text-neon-cyan transition-colors" />
             <span className="text-3xl font-black text-white font-mono tracking-tighter">AR/EN</span>
             <span className="text-sm text-slate-400 font-cairo font-medium">دعم ثنائي اللغة</span>
           </div>
 
-          {/* Stat 3 */}
+          {/* Stat 3: Free Tools */}
+          <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
+            <Sparkles className="w-6 h-6 text-slate-500 group-hover:text-pink-400 transition-colors" />
+            <span className="text-3xl font-black text-white font-mono tracking-tighter tabular-nums">
+              {stats?.free_tools ? formatCount(stats.free_tools) : '—'}
+            </span>
+            <span className="text-sm text-slate-400 font-cairo font-medium">أداة مجانية</span>
+          </div>
+
+          {/* Stat 4: Performance */}
           <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
             <Zap className="w-6 h-6 text-slate-500 group-hover:text-yellow-400 transition-colors" />
             <span className="text-3xl font-black text-white font-cairo tracking-tight">سريع</span>
             <span className="text-sm text-slate-400 font-cairo font-medium">أداء فوري</span>
-          </div>
-
-          {/* Stat 4 */}
-          <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
-            <Sparkles className="w-6 h-6 text-slate-500 group-hover:text-pink-400 transition-colors" />
-            <span className="text-3xl font-black text-white font-cairo tracking-tight">مجاني</span>
-            <span className="text-sm text-slate-400 font-cairo font-medium">وصول كامل</span>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useId } from "react";
+import { useState, useEffect, useRef, useId, useCallback } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Link } from "react-router-dom";
 import { Search, Loader2, ArrowRight, ArrowLeft, Sparkles, Command, BookOpen, AlertCircle } from "lucide-react";
@@ -57,6 +57,7 @@ const SearchAutocomplete = ({
 
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     const debouncedQuery = useDebounce(query, 500);
     const keywordSource = quickSuggestions && quickSuggestions.length > 0
@@ -106,8 +107,55 @@ const SearchAutocomplete = ({
         const normalizedQuery = query.trim();
         if (onSearch && normalizedQuery) onSearch(normalizedQuery);
         setShowSuggestions(false);
+        setActiveIndex(-1);
         (document.activeElement as HTMLElement)?.blur();
     };
+
+    // Build a flat list of selectable items for keyboard navigation
+    const flatItems = useCallback(() => {
+        const items: { type: 'keyword' | 'tool' | 'blog'; id: string; value: string }[] = [];
+        keywordSuggestions.forEach((kw) => items.push({ type: 'keyword', id: `kw-${kw}`, value: kw }));
+        suggestions.forEach((tool) => items.push({ type: 'tool', id: `tool-${tool.id}`, value: String(tool.id) }));
+        blogPosts.forEach((post) => items.push({ type: 'blog', id: `blog-${post.id}`, value: post.slug }));
+        return items;
+    }, [keywordSuggestions, suggestions, blogPosts]);
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (!shouldShowDropdown) return;
+        const items = flatItems();
+        const total = items.length;
+        if (total === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev + 1) % total);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev <= 0 ? total - 1 : prev - 1));
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setShowSuggestions(false);
+            setActiveIndex(-1);
+        } else if (e.key === 'Enter' && activeIndex >= 0) {
+            e.preventDefault();
+            const item = items[activeIndex];
+            if (item.type === 'keyword') {
+                handleChange(item.value);
+                if (onSearch) onSearch(item.value);
+                setShowSuggestions(false);
+            } else if (item.type === 'tool') {
+                window.location.href = `/tool/${item.value}`;
+            } else if (item.type === 'blog') {
+                window.location.href = `/blog/${item.value}`;
+            }
+            setActiveIndex(-1);
+        }
+    }, [shouldShowDropdown, flatItems, activeIndex, handleChange, onSearch]);
+
+    // Reset active index when query changes
+    useEffect(() => {
+        setActiveIndex(-1);
+    }, [query]);
 
     const highlightText = (text: string, highlight: string) => {
         if (!highlight.trim()) return text;
@@ -156,11 +204,15 @@ const SearchAutocomplete = ({
                     placeholder={placeholder || t('search.placeholder')}
                     value={query}
                     onChange={(e) => handleChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     onFocus={() => {
                         setIsFocused(true);
                         setShowSuggestions(true);
                     }}
                     onBlur={() => setIsFocused(false)}
+                    aria-activedescendant={
+                        activeIndex >= 0 ? `${listboxId}-item-${activeIndex}` : undefined
+                    }
                 />
 
                 <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center`}>
@@ -205,11 +257,15 @@ const SearchAutocomplete = ({
                                     {isAr ? "كلمات مقترحة" : "Suggested Keywords"}
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {keywordSuggestions.map((keyword) => (
+                                    {keywordSuggestions.map((keyword, idx) => (
                                         <button
                                             key={keyword}
+                                            id={`${listboxId}-item-${idx}`}
                                             type="button"
-                                            className="px-3 py-1.5 text-xs rounded-full bg-white/5 border border-white/10 text-foreground/90 hover:border-neon-purple/40 hover:bg-neon-purple/10 hover:text-neon-purple transition-colors"
+                                            className={cn(
+                                                "px-3 py-1.5 text-xs rounded-full bg-white/5 border border-white/10 text-foreground/90 hover:border-neon-purple/40 hover:bg-neon-purple/10 hover:text-neon-purple transition-colors",
+                                                activeIndex === idx && "border-neon-purple/50 bg-neon-purple/15 text-neon-purple ring-1 ring-neon-purple/30"
+                                            )}
                                             onClick={() => {
                                                 handleChange(keyword);
                                                 if (onSearch) onSearch(keyword);
@@ -228,17 +284,22 @@ const SearchAutocomplete = ({
                                 <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold">
                                     {isAr ? "الأدوات" : "Tools"}
                                 </div>
-                                {suggestions.map((tool) => {
+                                {suggestions.map((tool, i) => {
+                                    const flatIdx = keywordSuggestions.length + i;
                                     const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
                                     const desc = isAr ? tool.description : (tool.description_en || tool.description);
 
                                     return (
                                         <Link
                                             key={tool.id}
-                                            id={`${listboxId}-tool-${tool.id}`}
+                                            id={`${listboxId}-item-${flatIdx}`}
                                             role="option"
+                                            aria-selected={activeIndex === flatIdx}
                                             to={`/tool/${tool.id}`}
-                                            className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group relative overflow-hidden"
+                                            className={cn(
+                                                "block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group relative overflow-hidden",
+                                                activeIndex === flatIdx && "bg-white/5 ring-1 ring-inset ring-neon-purple/20"
+                                            )}
                                             onClick={() => setShowSuggestions(false)}
                                         >
                                             <div className="flex items-start gap-4 relative z-10">
@@ -273,25 +334,32 @@ const SearchAutocomplete = ({
                                     <BookOpen className="w-3 h-3" />
                                     {isAr ? "من المدونة" : "From Blog"}
                                 </div>
-                                {blogPosts.map((post) => (
-                                    <Link
-                                        key={post.id}
-                                        id={`${listboxId}-post-${post.id}`}
-                                        role="option"
-                                        to={`/blog/${post.slug}`}
-                                        className="block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group"
-                                        onClick={() => setShowSuggestions(false)}
-                                    >
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-medium text-sm text-foreground group-hover:text-neon-cyan transition-colors truncate">
-                                                {highlightText(post.title, query)}
-                                            </h4>
-                                            <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
-                                                {post.excerpt}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                ))}
+                                {blogPosts.map((post, i) => {
+                                    const flatIdx = keywordSuggestions.length + suggestions.length + i;
+                                    return (
+                                        <Link
+                                            key={post.id}
+                                            id={`${listboxId}-item-${flatIdx}`}
+                                            role="option"
+                                            aria-selected={activeIndex === flatIdx}
+                                            to={`/blog/${post.slug}`}
+                                            className={cn(
+                                                "block p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors group",
+                                                activeIndex === flatIdx && "bg-white/5 ring-1 ring-inset ring-neon-purple/20"
+                                            )}
+                                            onClick={() => setShowSuggestions(false)}
+                                        >
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-medium text-sm text-foreground group-hover:text-neon-cyan transition-colors truncate">
+                                                    {highlightText(post.title, query)}
+                                                </h4>
+                                                <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+                                                    {post.excerpt}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         )}
 

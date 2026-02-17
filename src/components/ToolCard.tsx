@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
@@ -56,7 +56,7 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
   );
 };
 
-const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
+const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
@@ -224,25 +224,27 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           {/* الفوتر: زر التفاصيل */}
         </Link>
         <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
-            <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
-              <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
-              AI Powered
-            </span>
-            <button
-              type="button"
-              className="min-h-[44px] min-w-[44px] px-3 py-2 inline-flex items-center gap-1.5 rounded-md font-medium transition-colors text-gray-200 hover:text-neon-purple focus:outline-none focus:ring-2 focus:ring-neon-purple"
-              onClick={() => {
-                window.open(tool.url, '_blank', 'noopener,noreferrer');
-                recordClick(String(tool.id));
-              }}
-              aria-label={`visit ${displayTitle}`}
-            >
-              {t('tools.visit')} <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-          </div>
+          <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
+            <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
+            AI Powered
+          </span>
+          <button
+            type="button"
+            className="min-h-[44px] min-w-[44px] px-3 py-2 inline-flex items-center gap-1.5 rounded-md font-medium transition-colors text-gray-200 hover:text-neon-purple focus:outline-none focus:ring-2 focus:ring-neon-purple"
+            onClick={() => {
+              window.open(tool.url, '_blank', 'noopener,noreferrer');
+              recordClick(String(tool.id));
+            }}
+            aria-label={`visit ${displayTitle}`}
+          >
+            {t('tools.visit')} <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
         </div>
+      </div>
     </div>
   );
-};
+});
+
+ToolCard.displayName = 'ToolCard';
 
 export default ToolCard;
