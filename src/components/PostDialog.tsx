@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Loader2, Image as ImageIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Post {
     id: string;
@@ -69,6 +70,8 @@ const generateSlug = (title: string): string => {
 };
 
 const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
     const { user } = useAuth();
     const queryClient = useQueryClient();
     const [imagePreview, setImagePreview] = useState<string>('');
@@ -219,7 +222,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
+            <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir={isAr ? 'rtl' : 'ltr'}>
 
                 {/* Fixed Header */}
                 <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">

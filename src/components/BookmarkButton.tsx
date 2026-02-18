@@ -1,6 +1,7 @@
 import { Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmark } from "@/hooks/useBookmark";
+import { useTranslation } from "react-i18next";
 
 interface BookmarkButtonProps {
   toolId: string | number;
@@ -10,6 +11,12 @@ interface BookmarkButtonProps {
 const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
   const numericToolId = Number(toolId);
   const { isSaved, toggleBookmark, isMutating } = useBookmark(numericToolId);
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
+
+  const label = isSaved
+    ? (isAr ? "إزالة من المفضلة" : "Remove from bookmarks")
+    : (isAr ? "حفظ في المفضلة" : "Save to bookmarks");
 
   return (
     <Button
@@ -21,10 +28,10 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
         e.stopPropagation();
         toggleBookmark();
       }}
-      disabled={isMutating && false} // We don't want to disable, we want it to feel instant
+      disabled={isMutating && false}
       aria-pressed={isSaved}
-      aria-label={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
-      title={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
+      aria-label={label}
+      title={label}
     >
       <Bookmark
         className={`w-5 h-5 transition-all duration-300 ${isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"
@@ -35,4 +42,3 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
 };
 
 export default BookmarkButton;
-

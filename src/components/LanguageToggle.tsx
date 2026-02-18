@@ -4,31 +4,31 @@ import { Languages } from "lucide-react";
 import { useEffect } from "react";
 
 const LanguageToggle = () => {
-    const { i18n } = useTranslation();
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
 
-    // تغيير اتجاه الصفحة عند تغيير اللغة
-    useEffect(() => {
-        document.dir = i18n.language === "ar" ? "rtl" : "ltr";
-        document.documentElement.lang = i18n.language;
-    }, [i18n.language]);
+  useEffect(() => {
+    document.dir = isAr ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language;
+  }, [isAr, i18n.language]);
 
-    const toggleLang = () => {
-        const newLang = i18n.language === "ar" ? "en" : "ar";
-        i18n.changeLanguage(newLang);
-    };
+  const toggleLang = () => {
+    i18n.changeLanguage(isAr ? "en" : "ar");
+  };
 
-    return (
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleLang}
-            className="gap-2 font-bold"
-            aria-label="تغيير اللغة"
-        >
-            <Languages className="w-4 h-4" />
-            {i18n.language === "ar" ? "EN" : "عربي"}
-        </Button>
-    );
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggleLang}
+      className="gap-2 font-bold"
+      aria-label={isAr ? "تغيير اللغة" : "Change language"}
+      title={isAr ? "تغيير اللغة" : "Change language"}
+    >
+      <Languages className="w-4 h-4" />
+      {isAr ? "EN" : "عربي"}
+    </Button>
+  );
 };
 
 export default LanguageToggle;

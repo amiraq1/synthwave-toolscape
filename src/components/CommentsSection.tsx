@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Send, Trash2, Loader2, User } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { getValidImageUrl } from "@/utils/imageUrl";
 import {
     AlertDialog,
@@ -39,6 +40,8 @@ interface CommentsSectionProps {
 }
 
 const CommentsSection = ({ postId }: CommentsSectionProps) => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
     const [newComment, setNewComment] = useState("");
     const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
     const { user } = useAuth();
@@ -90,12 +93,12 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
         onSuccess: () => {
             setNewComment("");
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
-            toast.success("✅ تم إضافة التعليق");
+              toast.success(isAr ? "✅ تم إضافة التعليق" : "✅ Comment added");
         },
         onError: () => {
-            toast.error("خطأ", {
-                description: "فشل في إضافة التعليق",
-            });
+              toast.error(isAr ? "خطأ" : "Error", {
+                  description: isAr ? "فشل في إضافة التعليق" : "Failed to add comment",
+              });
         },
     });
 
@@ -111,11 +114,11 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
         onSuccess: () => {
             setCommentToDelete(null);
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
-            toast.success("🗑️ تم حذف التعليق");
+              toast.success(isAr ? "🗑️ تم حذف التعليق" : "🗑️ Comment deleted");
         },
         onError: () => {
-            toast.error("خطأ", {
-                description: "فشل في حذف التعليق",
+            toast.error(isAr ? "خطأ" : "Error", {
+                description: isAr ? "فشل في حذف التعليق" : "Failed to delete comment",
             });
         },
     });
@@ -150,13 +153,13 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 space-y-3">
-                            <Textarea
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                placeholder="اكتب تعليقك هنا..."
-                                className="min-h-[100px] bg-white/5 border-white/10 focus:border-neon-purple/50 resize-none"
-                                dir="rtl"
-                            />
+<Textarea
+                                  value={newComment}
+                                  onChange={(e) => setNewComment(e.target.value)}
+                                  placeholder={isAr ? "اكتب تعليقك هنا..." : "Write your comment here..."}
+                                  className="min-h-[100px] bg-white/5 border-white/10 focus:border-neon-purple/50 resize-none"
+                                  dir={isAr ? "rtl" : "ltr"}
+                              />
                             <div className="flex justify-end">
                                 <Button
                                     type="submit"
@@ -216,9 +219,9 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                             <span className="font-semibold text-white">
                                                 {comment.user?.display_name || "مستخدم"}
                                             </span>
-                                            <span className="text-xs text-gray-500">
-                                                {dayjs(comment.created_at).locale('ar').format("D MMMM YYYY - HH:mm")}
-                                            </span>
+                          <span className="text-xs text-gray-500">
+                                                  {dayjs(comment.created_at).locale(isAr ? 'ar' : 'en').format("D MMMM YYYY - HH:mm")}
+                                              </span>
                                         </div>
                                         {user?.id === comment.user_id && (
                                             <Button
@@ -244,7 +247,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
 
             {/* مربع حوار تأكيد الحذف */}
             <AlertDialog open={!!commentToDelete} onOpenChange={(open) => !open && setCommentToDelete(null)}>
-                <AlertDialogContent dir="rtl">
+                <AlertDialogContent dir={isAr ? "rtl" : "ltr"}>
                     <AlertDialogHeader>
                         <AlertDialogTitle>حذف التعليق؟</AlertDialogTitle>
                         <AlertDialogDescription>

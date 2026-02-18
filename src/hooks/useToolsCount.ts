@@ -17,13 +17,18 @@ export const useToolsStats = () => {
     return useQuery<ToolsStats>({
         queryKey: ['tools-stats'],
         queryFn: async () => {
-            // Try RPC first (fast, single call for all stats)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data: rpcData, error: rpcError } = await (supabase as any)
-                .rpc('get_tools_stats');
+            try {
+                // Try RPC first (fast, single call for all stats)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const { data: rpcData, error: rpcError } = await (supabase as any)
+                    .rpc('get_tools_stats');
 
-            if (!rpcError && rpcData) {
-                return rpcData as unknown as ToolsStats;
+                if (!rpcError && rpcData) {
+                    return rpcData as unknown as ToolsStats;
+                }
+            } catch (rpcException) {
+                // PostgREST schema cache or transient parse issues should not break UI.
+                console.error('RPC get_tools_stats failed, falling back to count query:', rpcException);
             }
 
             // Fallback: simple count query (works without running the migration)

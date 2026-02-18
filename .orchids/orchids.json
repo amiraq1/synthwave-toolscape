@@ -1,0 +1,8 @@
+{
+  "projectId": "0146c9a2-6cbe-490b-a3c0-257c95f94002",
+  "createdAt": 1771435138,
+  "startupCommands": [
+    "bun install; npx vite --port 8080 --host"
+  ],
+  "templateId": "any"
+}

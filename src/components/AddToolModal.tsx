@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Loader2, Sparkles, LogIn, Plus, X, Link as LinkIcon, Image as ImageIcon, Wand2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface AddToolModalProps {
   open: boolean;
@@ -64,6 +65,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -197,7 +200,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-xs p-6 text-center" dir="rtl">
+        <DialogContent className="sm:max-w-xs p-6 text-center" dir={isAr ? 'rtl' : 'ltr'}>
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <LogIn className="w-6 h-6 text-primary" />
           </div>
@@ -211,7 +214,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
+      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir={isAr ? 'rtl' : 'ltr'}>
 
         <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
           <div className="flex items-center justify-between">

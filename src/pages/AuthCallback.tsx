@@ -3,10 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import PageLoader from "@/components/PageLoader";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,9 +21,7 @@ const AuthCallback = () => {
         const errorDescription =
           url.searchParams.get("error_description") || url.searchParams.get("error");
 
-        if (errorDescription) {
-          throw new Error(errorDescription);
-        }
+        if (errorDescription) throw new Error(errorDescription);
 
         const code = url.searchParams.get("code");
         if (code) {
@@ -31,32 +32,30 @@ const AuthCallback = () => {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : "تعذّر إكمال تسجيل الدخول");
+          setError(err instanceof Error ? err.message : (isAr ? "تعذّر إكمال تسجيل الدخول" : "Could not complete sign in"));
         }
         return;
       }
 
       if (!isMounted) return;
-
       const params = new URLSearchParams(location.search);
       const from = params.get("from") || "/";
       navigate(from, { replace: true });
     };
 
     void finalizeAuth();
-
     return () => {
       isMounted = false;
     };
-  }, [navigate, location.search]);
+  }, [navigate, location.search, isAr]);
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="rtl" role="main">
-        <h1 className="text-2xl font-bold mb-3">فشل تسجيل الدخول</h1>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir={isAr ? "rtl" : "ltr"} role="main">
+        <h1 className="text-2xl font-bold mb-3">{isAr ? "فشل تسجيل الدخول" : "Sign in failed"}</h1>
         <p className="text-muted-foreground mb-6">{error}</p>
         <Button onClick={() => navigate("/auth")} className="bg-neon-purple hover:bg-neon-purple/80">
-          العودة لصفحة الدخول
+          {isAr ? "العودة لصفحة الدخول" : "Back to sign in"}
         </Button>
       </div>
     );
