@@ -15,7 +15,7 @@ const PageLoader = () => {
 
     if (isTimeout) {
         return (
-            <div className="fixed inset-0 bg-[#0f0f1a] flex flex-col items-center justify-center z-50">
+            <div className="fixed inset-0 bg-[#0f0f1a] flex flex-col items-center justify-center z-50" role="main">
                 <div className="relative">
                     <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full" />
                     <AlertCircle className="w-12 h-12 text-red-500 relative z-10" />
@@ -34,7 +34,7 @@ const PageLoader = () => {
     }
 
     return (
-        <div className="fixed inset-0 bg-[#0f0f1a] flex flex-col items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[#0f0f1a] flex flex-col items-center justify-center z-50" role="main">
             <div className="relative">
                 <div className="absolute inset-0 bg-neon-purple/20 blur-xl rounded-full" />
                 <Loader2 className="w-12 h-12 text-neon-purple animate-spin relative z-10" />

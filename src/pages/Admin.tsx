@@ -175,7 +175,7 @@ const Admin = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir={isAr ? "rtl" : "ltr"}>
+      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir={isAr ? "rtl" : "ltr"} role="main">
         <div>
           <Loader2 className="h-12 w-12 animate-spin text-neon-purple mx-auto mb-4" />
           <p className="text-muted-foreground">{t("admin.loadingPermissions")}</p>
@@ -186,7 +186,7 @@ const Admin = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir={isAr ? "rtl" : "ltr"}>
+      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir={isAr ? "rtl" : "ltr"} role="main">
         <div className="space-y-4 max-w-md">
           <ShieldAlert className="h-16 w-16 text-destructive mx-auto" />
           <h1 className="text-2xl font-bold">{t("admin.unauthorized.title")}</h1>
@@ -200,7 +200,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20" dir={isAr ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-background pb-20" dir={isAr ? "rtl" : "ltr"} role="main">
       <div className="container mx-auto p-6 max-w-6xl min-h-screen space-y-8">
         <h1 className="text-3xl font-bold mb-6">{t("admin.title")}</h1>
 

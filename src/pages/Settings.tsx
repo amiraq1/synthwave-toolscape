@@ -61,11 +61,11 @@ const Settings = () => {
     setUpdating(false);
   };
 
-  if (!session) return <div className="p-10 text-center">يرجى تسجيل الدخول.</div>;
-  if (loading) return <div className="flex justify-center mt-20"><Loader2 className="animate-spin" /></div>;
+  if (!session) return <div className="p-10 text-center" role="main">يرجى تسجيل الدخول.</div>;
+  if (loading) return <div className="flex justify-center mt-20" role="main"><Loader2 className="animate-spin" /></div>;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl">
+    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl" role="main">
       <h1 className="text-3xl font-bold mb-8 text-white">إعدادات الحساب</h1>
 
       <Card className="bg-white/5 border-white/10 text-right">

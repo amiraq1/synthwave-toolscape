@@ -27,13 +27,13 @@ const Blog = () => {
   }, []);
 
   if (loading) return (
-    <div className="flex justify-center mt-20">
+    <div className="flex justify-center mt-20" role="main">
       <Loader2 className="animate-spin text-neon-purple" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"} role="main">
       {/* هيدر بسيط للمدونة */}
       <div className="bg-black/40 border-b border-white/5 py-12 mb-10">
         <div className="container mx-auto px-4 text-center">

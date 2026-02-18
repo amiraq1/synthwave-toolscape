@@ -160,13 +160,13 @@ const Profile = () => {
     }, [session, authLoading, navigate]);
 
     if (authLoading || profileLoading) return (
-        <div className="flex justify-center mt-20">
+        <div className="flex justify-center mt-20" role="main">
             <Loader2 className="animate-spin text-neon-purple w-12 h-12" />
         </div>
     );
 
     if (isError) return (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4" role="main">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md">
                 <h2 className="text-xl font-bold text-red-400 mb-2">عذراً، حدث خطأ ما</h2>
                 <p className="text-gray-400 mb-6">لم نتمكن من تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى لاحقاً.</p>
@@ -178,7 +178,7 @@ const Profile = () => {
     );
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl" dir="rtl">
+        <div className="container mx-auto px-4 py-8 max-w-5xl" dir="rtl" role="main">
             <Helmet>
                 <title>{t('profile.title')} | نبض AI</title>
             </Helmet>

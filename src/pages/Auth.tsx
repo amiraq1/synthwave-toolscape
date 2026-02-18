@@ -66,7 +66,7 @@ const Auth = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f0f1a]" dir="rtl">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f0f1a]" dir="rtl" role="main">
             <Helmet>
                 <title>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"} | نبض AI</title>
             </Helmet>

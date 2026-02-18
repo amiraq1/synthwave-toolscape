@@ -7,7 +7,7 @@ const WorkflowBuilder = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center" role="main">
             <Helmet>
                 <title>بناء الوكلاء | نبض AI</title>
                 <meta name="description" content="قم ببناء وتخصيص وكلاء الذكاء الاصطناعي الخاصين بك بسهولة." />

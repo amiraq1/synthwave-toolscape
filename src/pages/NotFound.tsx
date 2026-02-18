@@ -19,6 +19,7 @@ const NotFound = () => {
     <div
       className="flex min-h-[80vh] items-center justify-center px-4"
       dir="rtl"
+      role="main"
     >
       {/* Background Orb */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[40vw] h-[40vw] bg-neon-purple/5 rounded-full blur-[160px] pointer-events-none" />

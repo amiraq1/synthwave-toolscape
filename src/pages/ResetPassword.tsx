@@ -130,7 +130,7 @@ const ResetPassword = () => {
   // شاشة تحميل بسيطة أثناء فحص الرابط (أفضل UX للموبايل)
   if (isCheckingLink) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4" dir="rtl">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4" dir="rtl" role="main">
         <div className="w-full max-w-md">
           <div className="glass rounded-3xl p-6 sm:p-8 text-center space-y-4">
             <Activity className="mx-auto h-10 w-10 text-neon-purple animate-pulse" />
@@ -143,7 +143,7 @@ const ResetPassword = () => {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl" role="main">
         <div className="fixed top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
         <div className="fixed bottom-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
 
@@ -181,7 +181,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl" role="main">
       <div className="fixed top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
 

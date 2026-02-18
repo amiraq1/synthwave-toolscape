@@ -81,11 +81,11 @@ const ComparePage = () => {
         fetchTools();
     }, [selectedTools]);
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a]"><Loader2 className="w-10 h-10 animate-spin text-neon-purple" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a]" role="main"><Loader2 className="w-10 h-10 animate-spin text-neon-purple" /></div>;
 
     if (tools.length === 0) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1a] p-4 text-center font-cairo">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1a] p-4 text-center font-cairo" role="main">
                 <h1 className="text-3xl font-bold text-white mb-4">لا توجد أدوات للمقارنة</h1>
                 <p className="text-gray-400 mb-8 max-w-md">قم بإضافة أدوات من الصفحة الرئيسية لتبدأ المقارنة بينهم واكتشاف الأفضل لاحتياجاتك.</p>
                 <Link to="/">
@@ -98,7 +98,7 @@ const ComparePage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0f0f1a] pt-24 pb-20 px-4 md:px-8 font-cairo">
+        <div className="min-h-screen bg-[#0f0f1a] pt-24 pb-20 px-4 md:px-8 font-cairo" role="main">
             <Helmet>
                 <title>مقارنة الأدوات | نبض AI</title>
             </Helmet>

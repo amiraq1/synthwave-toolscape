@@ -52,7 +52,7 @@ const AuthCallback = () => {
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="rtl">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="rtl" role="main">
         <h1 className="text-2xl font-bold mb-3">فشل تسجيل الدخول</h1>
         <p className="text-muted-foreground mb-6">{error}</p>
         <Button onClick={() => navigate("/auth")} className="bg-neon-purple hover:bg-neon-purple/80">

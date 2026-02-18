@@ -50,7 +50,7 @@ const Install = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="rtl">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="rtl" role="main">
       {/* Background gradient orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />

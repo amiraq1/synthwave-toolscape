@@ -7,7 +7,7 @@ const AgentsMarketplace = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center" role="main">
             <Helmet>
                 <title>سوق الوكلاء | نبض AI</title>
                 <meta name="description" content="استكشف واستخدم وكلاء الذكاء الاصطناعي الجاهزين." />
