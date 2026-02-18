@@ -36,12 +36,6 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/251</loc>
-    <lastmod>2026-01-06T19:27:56.322Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/252</loc>
     <lastmod>2026-01-06T19:27:56.734Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -120,12 +114,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/301</loc>
-    <lastmod>2026-01-06T19:28:15.697Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/302</loc>
     <lastmod>2026-01-06T19:28:16.057Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -162,6 +150,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amiraq.org/tool/251</loc>
+    <lastmod>2026-01-06T19:27:56.322Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amiraq.org/tool/320</loc>
     <lastmod>2026-01-06T19:28:23.325Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -176,12 +170,6 @@
   <url>
     <loc>https://amiraq.org/tool/330</loc>
     <lastmod>2026-01-06T19:28:27.048Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/331</loc>
-    <lastmod>2026-01-06T19:28:27.443Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -296,6 +284,12 @@
   <url>
     <loc>https://amiraq.org/tool/39793</loc>
     <lastmod>2026-02-13T15:51:17.703Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/331</loc>
+    <lastmod>2026-01-06T19:28:27.443Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -740,12 +734,6 @@
   <url>
     <loc>https://amiraq.org/tool/39866</loc>
     <lastmod>2026-02-13T15:51:17.703Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/230</loc>
-    <lastmod>2025-12-29T06:20:47.426Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1494,12 +1482,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/257</loc>
-    <lastmod>2026-01-06T19:27:59.034Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/39987</loc>
     <lastmod>2026-02-13T15:51:17.703Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -2202,6 +2184,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amiraq.org/tool/248</loc>
+    <lastmod>2026-01-06T19:27:55.171Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amiraq.org/tool/242</loc>
     <lastmod>2026-01-06T19:27:52.851Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -2222,12 +2210,6 @@
   <url>
     <loc>https://amiraq.org/tool/247</loc>
     <lastmod>2026-01-06T19:27:54.792Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/248</loc>
-    <lastmod>2026-01-06T19:27:55.171Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -2472,14 +2454,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/259</loc>
-    <lastmod>2026-01-06T19:27:59.769Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/260</loc>
-    <lastmod>2026-01-06T19:28:00.129Z</lastmod>
+    <loc>https://amiraq.org/tool/315</loc>
+    <lastmod>2026-01-06T19:28:21.454Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -2502,8 +2478,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/315</loc>
-    <lastmod>2026-01-06T19:28:21.454Z</lastmod>
+    <loc>https://amiraq.org/tool/260</loc>
+    <lastmod>2026-01-06T19:28:00.129Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -3338,12 +3314,6 @@
   <url>
     <loc>https://amiraq.org/tool/40269</loc>
     <lastmod>2026-02-13T15:51:18.790Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/49288</loc>
-    <lastmod>2026-02-13T15:51:38.990Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -19884,12 +19854,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/43023</loc>
-    <lastmod>2026-02-13T15:51:25.956Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/43024</loc>
     <lastmod>2026-02-13T15:51:25.956Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -19903,12 +19867,6 @@
   </url>
   <url>
     <loc>https://amiraq.org/tool/43026</loc>
-    <lastmod>2026-02-13T15:51:25.956Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/43027</loc>
     <lastmod>2026-02-13T15:51:25.956Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -58986,6 +58944,48 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amiraq.org/tool/259</loc>
+    <lastmod>2026-01-06T19:27:59.769Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/230</loc>
+    <lastmod>2025-12-29T06:20:47.426Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/43023</loc>
+    <lastmod>2026-02-13T15:51:25.956Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/43027</loc>
+    <lastmod>2026-02-13T15:51:25.956Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/257</loc>
+    <lastmod>2026-01-06T19:27:59.034Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/49288</loc>
+    <lastmod>2026-02-13T15:51:38.990Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/301</loc>
+    <lastmod>2026-01-06T19:28:15.697Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amiraq.org/tool/231</loc>
     <lastmod>2025-12-29T06:20:47.426Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -59016,8 +59016,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/237</loc>
-    <lastmod>2026-01-06T19:27:50.795Z</lastmod>
+    <loc>https://amiraq.org/tool/240</loc>
+    <lastmod>2026-01-06T19:27:52.037Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -59028,8 +59028,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/240</loc>
-    <lastmod>2026-01-06T19:27:52.037Z</lastmod>
+    <loc>https://amiraq.org/tool/237</loc>
+    <lastmod>2026-01-06T19:27:50.795Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -59058,12 +59058,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/279</loc>
-    <lastmod>2026-01-06T19:28:07.253Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/280</loc>
     <lastmod>2026-01-06T19:28:07.673Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -59072,6 +59066,12 @@
   <url>
     <loc>https://amiraq.org/tool/276</loc>
     <lastmod>2026-01-06T19:28:06.122Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/279</loc>
+    <lastmod>2026-01-06T19:28:07.253Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -59130,6 +59130,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amiraq.org/tool/308</loc>
+    <lastmod>2026-01-06T19:28:18.314Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amiraq.org/tool/310</loc>
     <lastmod>2026-01-06T19:28:19.557Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -59138,12 +59144,6 @@
   <url>
     <loc>https://amiraq.org/tool/311</loc>
     <lastmod>2026-01-06T19:28:19.956Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://amiraq.org/tool/308</loc>
-    <lastmod>2026-01-06T19:28:18.314Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -59166,12 +59166,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/325</loc>
-    <lastmod>2026-01-06T19:28:25.186Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/326</loc>
     <lastmod>2026-01-06T19:28:25.544Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -59186,6 +59180,12 @@
   <url>
     <loc>https://amiraq.org/tool/328</loc>
     <lastmod>2026-01-06T19:28:26.303Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/325</loc>
+    <lastmod>2026-01-06T19:28:25.186Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
