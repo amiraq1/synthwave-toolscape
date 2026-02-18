@@ -7,6 +7,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { getToolImageUrl } from "@/utils/imageUrl";
+import { translateFeature } from "@/utils/featureTranslations";
 import type { Tool } from "@/hooks/useTools";
 
 const ComparePage = () => {
@@ -190,8 +191,8 @@ const ComparePage = () => {
                             {tools.map(tool => (
                                 <div key={tool.id} className="p-5 px-6 flex items-center justify-center border-l border-white/10 last:border-0">
                                     <span className={`px-4 py-2 rounded-xl text-sm font-bold border ${tool.pricing_type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                            tool.pricing_type === 'Freemium' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                                        tool.pricing_type === 'Freemium' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                            'bg-orange-500/10 text-orange-400 border-orange-500/20'
                                         }`}>
                                         {tool.pricing_type === 'Free' ? 'مجاني بالكامل' :
                                             tool.pricing_type === 'Freemium' ? 'مجاني / مدفوع' : 'مدفوع'}
@@ -235,7 +236,7 @@ const ComparePage = () => {
                                                 <div className="mt-1 min-w-[16px] h-4 w-4 bg-neon-purple/20 text-neon-purple rounded-full flex items-center justify-center">
                                                     <Check className="w-2.5 h-2.5" />
                                                 </div>
-                                                <span className="leading-relaxed">{feature}</span>
+                                                <span className="leading-relaxed">{translateFeature(feature)}</span>
                                             </li>
                                         ))}
                                         {(!tool.features || tool.features.length === 0) && (
