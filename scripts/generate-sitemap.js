@@ -15,8 +15,8 @@ const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VI
 const SITE_URL = "https://amiraq.org"; // Ensure this is your production URL
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.error("❌ Supabase URL or Key is missing!");
-    process.exit(1);
+    console.warn("⚠️ Supabase URL or Key is missing — skipping sitemap generation.");
+    process.exit(0);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
