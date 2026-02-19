@@ -2,8 +2,11 @@ import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Home, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const NotFound = () => {
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
   const location = useLocation();
 
   useEffect(() => {
@@ -18,7 +21,7 @@ const NotFound = () => {
   return (
     <div
       className="flex min-h-[80vh] items-center justify-center px-4"
-      dir="ltr"
+      dir={isAr ? "rtl" : "ltr"}
       role="main"
     >
       {/* Background Orb */}
@@ -36,11 +39,13 @@ const NotFound = () => {
         </div>
 
         <h1 className="text-2xl md:text-3xl font-bold text-white -mt-8">
-          Page Not Found
+          {isAr ? "الصفحة غير موجودة" : "Page Not Found"}
         </h1>
 
         <p className="text-muted-foreground leading-relaxed max-w-sm mx-auto">
-          This link is unavailable or has moved. You can head back and explore AI tools from the homepage.
+          {isAr
+            ? "هذا الرابط غير متاح أو تم نقله. يمكنك الرجوع واستكشاف أدوات الذكاء الاصطناعي من الصفحة الرئيسية."
+            : "This link is unavailable or has moved. You can head back and explore AI tools from the homepage."}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -50,7 +55,7 @@ const NotFound = () => {
           >
             <Link to="/">
               <Home className="w-4 h-4" />
-              Back to Home
+              {isAr ? "العودة للرئيسية" : "Back to Home"}
             </Link>
           </Button>
 
@@ -60,8 +65,8 @@ const NotFound = () => {
             className="border-white/10 hover:border-neon-purple/50 hover:text-neon-purple gap-2 h-12 rounded-xl"
           >
             <Link to="/blog">
-              Browse Blog
-              <ArrowRight className="w-4 h-4" />
+              {isAr ? "تصفح المدونة" : "Browse Blog"}
+              <ArrowRight className={`w-4 h-4 ${isAr ? "rotate-180" : ""}`} />
             </Link>
           </Button>
         </div>

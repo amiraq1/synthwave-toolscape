@@ -3,34 +3,46 @@ import { Activity, Users, Target, Zap, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
+
     useSEO({
-        title: 'About Nabd - AI Tools Directory',
-        description: 'Learn about Nabd, a curated platform for discovering the best AI tools for work and creativity.',
-        keywords: 'Nabd, about, AI tools directory, AI tools, who we are',
+        title: isAr ? 'حول نبض - دليل أدوات الذكاء الاصطناعي' : 'About Nabd - AI Tools Directory',
+        description: isAr
+            ? 'تعرّف على نبض، منصة منتقاة لاكتشاف أفضل أدوات الذكاء الاصطناعي للعمل والإبداع.'
+            : 'Learn about Nabd, a curated platform for discovering the best AI tools for work and creativity.',
+        keywords: isAr ? 'نبض، حول، دليل أدوات الذكاء الاصطناعي، أدوات AI' : 'Nabd, about, AI tools directory, AI tools, who we are',
     });
 
     const features = [
         {
             icon: Target,
-            title: 'Our Mission',
-            description: 'Make AI tool discovery faster, clearer, and more reliable for everyone.',
+            title: isAr ? 'رسالتنا' : 'Our Mission',
+            description: isAr
+                ? 'نجعل اكتشاف أدوات الذكاء الاصطناعي أسرع وأوضح وأكثر موثوقية للجميع.'
+                : 'Make AI tool discovery faster, clearer, and more reliable for everyone.',
         },
         {
             icon: Users,
-            title: 'Who Is Nabd For?',
-            description: 'Creators, founders, developers, writers, designers, and teams that want higher output.',
+            title: isAr ? 'لمن منصة نبض؟' : 'Who Is Nabd For?',
+            description: isAr
+                ? 'للمبدعين، ورواد الأعمال، والمطورين، والكتّاب، والمصممين، والفرق التي تريد إنتاجية أعلى.'
+                : 'Creators, founders, developers, writers, designers, and teams that want higher output.',
         },
         {
             icon: Zap,
-            title: 'Why Nabd?',
-            description: 'Accurate categories, practical comparisons, and continuously updated AI tool coverage.',
+            title: isAr ? 'لماذا نبض؟' : 'Why Nabd?',
+            description: isAr
+                ? 'تصنيفات دقيقة، ومقارنات عملية، وتغطية محدثة باستمرار لأدوات الذكاء الاصطناعي.'
+                : 'Accurate categories, practical comparisons, and continuously updated AI tool coverage.',
         },
     ];
 
     return (
-        <div className="min-h-screen bg-background" dir="ltr">
+        <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -40,8 +52,8 @@ const About = () => {
                 <div className="container mx-auto max-w-5xl px-4 py-4">
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5 rotate-180" />
-                            Back to Home
+                            <ArrowRight className={`h-5 w-5 ${isAr ? "" : "rotate-180"}`} />
+                            {isAr ? "العودة للرئيسية" : "Back to Home"}
                         </Button>
                     </Link>
                 </div>
@@ -57,10 +69,12 @@ const About = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        About Nabd
+                        {isAr ? "عن نبض" : "About Nabd"}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                        Nabd is your smart guide to discovering the AI tools that can transform how you work and create.
+                        {isAr
+                            ? "نبض دليلك الذكي لاكتشاف أدوات الذكاء الاصطناعي التي تغيّر طريقة عملك وإبداعك."
+                            : "Nabd is your smart guide to discovering the AI tools that can transform how you work and create."}
                     </p>
                 </section>
 
@@ -82,33 +96,38 @@ const About = () => {
 
                 {/* Story Section */}
                 <section className="glass rounded-3xl p-8 md:p-12 space-y-6">
-                    <h2 className="text-3xl font-bold text-foreground">Our Story</h2>
+                    <h2 className="text-3xl font-bold text-foreground">{isAr ? "قصتنا" : "Our Story"}</h2>
                     <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                         <p>
-                            Nabd started with a simple idea: one place to find the best AI tools without the noise.
+                            {isAr
+                                ? "بدأت نبض بفكرة بسيطة: مكان واحد للوصول إلى أفضل أدوات الذكاء الاصطناعي بدون ضوضاء."
+                                : "Nabd started with a simple idea: one place to find the best AI tools without the noise."}
                         </p>
                         <p>
-                            As AI products evolve rapidly, it becomes harder to track what is actually useful.
-                            Nabd does that research and curation work for you.
+                            {isAr
+                                ? "مع التطور السريع لمنتجات الذكاء الاصطناعي، أصبح من الصعب متابعة ما هو مفيد فعلاً. نبض تقوم ببحث واختيار الأدوات المناسبة نيابةً عنك."
+                                : "As AI products evolve rapidly, it becomes harder to track what is actually useful. Nabd does that research and curation work for you."}
                         </p>
                         <p>
-                            We believe AI should be accessible and practical. Our goal is to help you make better, faster decisions.
+                            {isAr
+                                ? "نؤمن أن الذكاء الاصطناعي يجب أن يكون عملياً ومتاحاً للجميع. هدفنا أن نساعدك على اتخاذ قرارات أفضل وأسرع."
+                                : "We believe AI should be accessible and practical. Our goal is to help you make better, faster decisions."}
                         </p>
                     </div>
                 </section>
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <h2 className="text-2xl font-bold text-foreground">Ready to explore the future of AI tools?</h2>
+                    <h2 className="text-2xl font-bold text-foreground">{isAr ? "جاهز لاستكشاف مستقبل أدوات الذكاء الاصطناعي؟" : "Ready to explore the future of AI tools?"}</h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         <Link to="/">
                             <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                                Browse Tools
+                                {isAr ? "تصفح الأدوات" : "Browse Tools"}
                             </Button>
                         </Link>
                         <Link to="/contact">
                             <Button size="lg" variant="outline">
-                                Contact Us
+                                {isAr ? "تواصل معنا" : "Contact Us"}
                             </Button>
                         </Link>
                     </div>
@@ -118,7 +137,7 @@ const About = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 Nabd AI. All rights reserved.</p>
+                    <p>{isAr ? "© 2024 نبض AI. جميع الحقوق محفوظة." : "© 2024 Nabd AI. All rights reserved."}</p>
                 </div>
             </footer>
         </div>

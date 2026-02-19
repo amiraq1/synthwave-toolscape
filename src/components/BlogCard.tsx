@@ -3,13 +3,18 @@ import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import dayjs from "dayjs";
 import 'dayjs/locale/en';
+import 'dayjs/locale/ar';
+import { useTranslation } from "react-i18next";
 dayjs.locale('en');
 
 interface BlogPost {
     id: string;
     title: string;
+    title_en?: string | null;
     excerpt?: string | null; // المقتطف القصير
+    excerpt_en?: string | null;
     content?: string; // المحتوى الكامل (احتياطي)
+    content_en?: string;
     created_at: string;
     image_url?: string | null;
     reading_time?: number; // وقت القراءة (اختياري)
@@ -21,8 +26,12 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
-    // استخدام المقتطف إذا وجد، أو أخذ أول 100 حرف من المحتوى
-    const summary = post.excerpt || post.content?.substring(0, 120) + "..." || "";
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
+    const displayTitle = isAr ? post.title : (post.title_en || post.title);
+    const displayExcerpt = isAr ? post.excerpt : (post.excerpt_en || post.excerpt);
+    const displayContent = isAr ? post.content : (post.content_en || post.content);
+    const summary = displayExcerpt || (displayContent ? `${displayContent.substring(0, 120)}...` : "");
 
     return (
         <article className="group relative flex flex-col h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:border-neon-purple/50 hover:shadow-[0_0_20px_rgba(124,58,237,0.1)] hover:-translate-y-1">
@@ -34,7 +43,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
                         <img
                             src={post.image_url}
-                            alt={post.title}
+                            alt={displayTitle}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                             loading="lazy"
                         />
@@ -47,12 +56,12 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{dayjs(post.created_at).locale('en').format("D MMMM YYYY")}</span>
+                        <span>{dayjs(post.created_at).locale(isAr ? 'ar' : 'en').format("D MMMM YYYY")}</span>
                     </div>
                     {post.reading_time && (
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{post.reading_time} min read</span>
+                            <span>{isAr ? `${post.reading_time} دقائق قراءة` : `${post.reading_time} min read`}</span>
                         </div>
                     )}
                     {typeof post.views_count === 'number' && (
@@ -67,7 +76,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 {/* العنوان */}
                 <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-neon-purple transition-colors">
                     <Link to={`/blog/${post.id}`}>
-                        {post.title}
+                        {displayTitle}
                     </Link>
                 </h3>
 

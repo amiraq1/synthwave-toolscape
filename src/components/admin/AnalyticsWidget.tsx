@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, ExternalLink, Activity, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const AnalyticsWidget = () => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
     // جلب إحصائيات سريعة من قاعدة البيانات
     const { data: stats } = useQuery({
         queryKey: ['admin-quick-stats'],
@@ -30,7 +33,7 @@ const AnalyticsWidget = () => {
                 <CardTitle className="flex items-center justify-between text-lg">
                     <div className="flex items-center gap-2 text-indigo-100">
                         <BarChart className="w-5 h-5 text-indigo-400" />
-                        <span>مركز البيانات والتحليلات</span>
+                        <span>{isAr ? "مركز البيانات والتحليلات" : "Data & Analytics Hub"}</span>
                     </div>
                     <Button
                         variant="ghost"
@@ -49,7 +52,7 @@ const AnalyticsWidget = () => {
                     {/* حالة تتبع GA4 */}
                     <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
                         <div className="flex justify-between items-start mb-2">
-                            <p className="text-gray-400 text-xs">حالة التتبع (GA4)</p>
+                            <p className="text-gray-400 text-xs">{isAr ? "حالة التتبع (GA4)" : "Tracking Status (GA4)"}</p>
                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse" />
                         </div>
                         <div>
@@ -57,7 +60,7 @@ const AnalyticsWidget = () => {
                                 {gaMeasurementId}
                             </p>
                             <p className="text-[10px] text-gray-500 mt-1">
-                                البيانات المباشرة متوفرة في لوحة Google
+                                {isAr ? "البيانات المباشرة متوفرة في لوحة Google" : "Live data is available in the Google dashboard"}
                             </p>
                         </div>
                     </div>
@@ -65,7 +68,7 @@ const AnalyticsWidget = () => {
                     {/* نسبة النشر */}
                     <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
                         <div className="flex justify-between items-start mb-2">
-                            <p className="text-gray-400 text-xs">صحة المحتوى</p>
+                            <p className="text-gray-400 text-xs">{isAr ? "صحة المحتوى" : "Content Health"}</p>
                             <FileCheck className="w-4 h-4 text-emerald-400" />
                         </div>
                         <div>
@@ -73,7 +76,7 @@ const AnalyticsWidget = () => {
                                 <p className="text-2xl font-bold text-emerald-200">
                                     {stats ? Math.round((stats.published / (stats.total || 1)) * 100) : 0}%
                                 </p>
-                                <span className="text-xs text-emerald-500/80 mb-1.5">منشور</span>
+                                <span className="text-xs text-emerald-500/80 mb-1.5">{isAr ? "منشور" : "Published"}</span>
                             </div>
 
                             {/* Progress Bar */}
@@ -89,20 +92,20 @@ const AnalyticsWidget = () => {
                     {/* حالة النظام */}
                     <div className="bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm flex flex-col justify-between">
                         <div className="flex justify-between items-start mb-2">
-                            <p className="text-gray-400 text-xs">حالة النظام</p>
+                            <p className="text-gray-400 text-xs">{isAr ? "حالة النظام" : "System Status"}</p>
                             <Activity className="w-4 h-4 text-blue-400" />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs">
-                                <span className="text-gray-400">قاعدة البيانات</span>
+                                <span className="text-gray-400">{isAr ? "قاعدة البيانات" : "Database"}</span>
                                 <span className="text-emerald-400 flex items-center gap-1">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> متصل
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {isAr ? "متصل" : "Connected"}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-gray-400">Edge Functions</span>
                                 <span className="text-emerald-400 flex items-center gap-1">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> نشط
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {isAr ? "نشط" : "Active"}
                                 </span>
                             </div>
                         </div>

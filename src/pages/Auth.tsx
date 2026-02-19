@@ -7,8 +7,11 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { Loader2, Mail, Lock, CircuitBoard, Sparkles, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Auth = () => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
     const { signIn, signUp, signInWithGoogle } = useAuth();
@@ -32,18 +35,18 @@ const Auth = () => {
             if (isLogin) {
                 const { error } = await signIn(formData.email, formData.password);
                 if (error) throw error;
-                toast.success("Signed in successfully.");
+                toast.success(isAr ? "تم تسجيل الدخول بنجاح" : "Signed in successfully.");
                 navigate(from);
             } else {
                 const { error } = await signUp(formData.email, formData.password, formData.fullName);
                 if (error) throw error;
-                toast.success("Account created successfully. Please check your email.");
+                toast.success(isAr ? "تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني." : "Account created successfully. Please check your email.");
                 setIsLogin(true);
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : undefined;
-            toast.error("Something went wrong", {
-                description: message || "Please try again later",
+            toast.error(isAr ? "حدث خطأ" : "Something went wrong", {
+                description: message || (isAr ? "يرجى المحاولة لاحقاً" : "Please try again later"),
             });
         } finally {
             setLoading(false);
@@ -58,17 +61,17 @@ const Auth = () => {
             // Google redirect happens automatically
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : undefined;
-            toast.error("Something went wrong", {
-                description: message || "Please try again later",
+            toast.error(isAr ? "حدث خطأ" : "Something went wrong", {
+                description: message || (isAr ? "يرجى المحاولة لاحقاً" : "Please try again later"),
             });
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f0f1a]" dir="ltr" role="main">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f0f1a]" dir={isAr ? "rtl" : "ltr"} role="main">
             <Helmet>
-                <title>{isLogin ? "Login" : "Create Account"} | Nabd AI</title>
+                <title>{isLogin ? (isAr ? "تسجيل الدخول" : "Login") : (isAr ? "إنشاء حساب" : "Create Account")} | Nabd AI</title>
             </Helmet>
 
             {/* Animated Background Elements */}
@@ -85,37 +88,37 @@ const Auth = () => {
                             <CircuitBoard className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-2">
-                            {isLogin ? "Welcome Back" : "Join Nabd AI"}
+                            {isLogin ? (isAr ? "مرحباً بعودتك" : "Welcome Back") : (isAr ? "انضم إلى نبض AI" : "Join Nabd AI")}
                         </h1>
                         <p className="text-gray-400 text-sm">
                             {isLogin
-                                ? "Sign in to access your saved tools"
-                                : "Discover high-impact AI tools with us"}
+                                ? (isAr ? "سجّل الدخول للوصول إلى أدواتك المحفوظة" : "Sign in to access your saved tools")
+                                : (isAr ? "اكتشف أدوات ذكاء اصطناعي عالية التأثير معنا" : "Discover high-impact AI tools with us")}
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
                             <div className="space-y-2">
-                                <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
+                                <Label htmlFor="fullName" className="text-gray-300">{isAr ? "الاسم الكامل" : "Full Name"}</Label>
                                 <div className="relative">
                                     <Input
                                         id="fullName"
                                         type="text"
                                         required
                                         autoComplete="name"
-                                        placeholder="Your full name"
-                                        className="bg-black/20 border-white/10 text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                                        placeholder={isAr ? "اسمك الكامل" : "Your full name"}
+                                        className={`bg-black/20 border-white/10 text-white h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20 ${isAr ? "pr-10 text-right" : "pl-10"}`}
                                         value={formData.fullName}
                                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                     />
-                                    <Sparkles className="w-4 h-4 text-gray-500 absolute top-3 left-3" />
+                                    <Sparkles className={`w-4 h-4 text-gray-500 absolute top-3 ${isAr ? "right-3" : "left-3"}`} />
                                 </div>
                             </div>
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-gray-300">Email</Label>
+                            <Label htmlFor="email" className="text-gray-300">{isAr ? "البريد الإلكتروني" : "Email"}</Label>
                             <div className="relative">
                                 <Input
                                     id="email"
@@ -123,21 +126,21 @@ const Auth = () => {
                                     required
                                     autoComplete="email"
                                     placeholder="name@example.com"
-                                    className="bg-black/20 border-white/10 text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                                    className={`bg-black/20 border-white/10 text-white h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20 ${isAr ? "pr-10 text-right" : "pl-10"}`}
                                     dir="ltr"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
-                                <Mail className="w-4 h-4 text-gray-500 absolute top-3 left-3" />
+                                <Mail className={`w-4 h-4 text-gray-500 absolute top-3 ${isAr ? "right-3" : "left-3"}`} />
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <Label htmlFor="password" className="text-gray-300">Password</Label>
+                                <Label htmlFor="password" className="text-gray-300">{isAr ? "كلمة المرور" : "Password"}</Label>
                                 {isLogin && (
                                     <Button variant="link" className="p-0 h-auto text-xs text-neon-purple hover:text-neon-purple/80" type="button" onClick={() => navigate('/reset-password')}>
-                                        Forgot password?
+                                        {isAr ? "نسيت كلمة المرور؟" : "Forgot password?"}
                                     </Button>
                                 )}
                             </div>
@@ -148,12 +151,12 @@ const Auth = () => {
                                     required
                                     autoComplete={isLogin ? "current-password" : "new-password"}
                                     placeholder="••••••••"
-                                    className="bg-black/20 border-white/10 text-white pl-10 h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                                    className={`bg-black/20 border-white/10 text-white h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20 ${isAr ? "pr-10 text-right" : "pl-10"}`}
                                     dir="ltr"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
-                                <Lock className="w-4 h-4 text-gray-500 absolute top-3 left-3" />
+                                <Lock className={`w-4 h-4 text-gray-500 absolute top-3 ${isAr ? "right-3" : "left-3"}`} />
                             </div>
                         </div>
 
@@ -166,8 +169,8 @@ const Auth = () => {
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    {isLogin ? "Login" : "Create Account"}
-                                    <ArrowRight className="w-5 h-5 ml-2 rotate-180" />
+                                    {isLogin ? (isAr ? "تسجيل الدخول" : "Login") : (isAr ? "إنشاء حساب" : "Create Account")}
+                                    <ArrowRight className={`w-5 h-5 ${isAr ? "mr-2" : "ml-2 rotate-180"}`} />
                                 </>
                             )}
                         </Button>
@@ -178,7 +181,7 @@ const Auth = () => {
                             <span className="w-full border-t border-white/10" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-[#131320] px-2 text-gray-500 rounded-full border border-white/5">or continue with</span>
+                            <span className="bg-[#131320] px-2 text-gray-500 rounded-full border border-white/5">{isAr ? "أو المتابعة عبر" : "or continue with"}</span>
                         </div>
                     </div>
 
@@ -207,18 +210,20 @@ const Auth = () => {
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                         </svg>
-                        Sign in with Google
+                        {isAr ? "تسجيل الدخول عبر Google" : "Sign in with Google"}
                     </Button>
 
                     <div className="mt-6 text-center text-sm">
                         <span className="text-gray-400">
-                            {isLogin ? "Don't have an account?" : "Already have an account?"}
+                            {isLogin
+                                ? (isAr ? "ليس لديك حساب؟" : "Don't have an account?")
+                                : (isAr ? "لديك حساب بالفعل؟" : "Already have an account?")}
                         </span>{" "}
                         <button
                             onClick={() => setIsLogin(!isLogin)}
                             className="text-neon-purple hover:underline font-medium hover:text-neon-purple/80 transition-colors"
                         >
-                            {isLogin ? "Create one now" : "Sign in"}
+                            {isLogin ? (isAr ? "أنشئ حساباً الآن" : "Create one now") : (isAr ? "تسجيل الدخول" : "Sign in")}
                         </button>
                     </div>
                 </div>

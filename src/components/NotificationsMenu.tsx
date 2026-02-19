@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/ar';
 import 'dayjs/locale/en';
 import { useTranslation } from "react-i18next";
+import { getCategoryLabel } from "@/utils/localization";
 
 dayjs.extend(relativeTime);
 
@@ -33,7 +34,7 @@ const NotificationsMenu = () => {
             // 1. جلب أحدث 5 أدوات منشورة
             const { data } = await supabase
                 .from("tools")
-                .select("id, title, category, created_at")
+                .select("id, title, title_en, category, created_at")
                 .eq("is_published", true)
                 .order("created_at", { ascending: false })
                 .limit(5);
@@ -95,6 +96,7 @@ const NotificationsMenu = () => {
                         <div className="flex flex-col">
                             {notifications.map((tool) => {
                                 const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
+                                const displayCategory = getCategoryLabel(tool.category, isAr);
                                 return (
                                     <Link
                                         key={tool.id}
@@ -110,8 +112,8 @@ const NotificationsMenu = () => {
                                         </div>
                                         <span className="text-xs text-gray-400">
                                             {isAr
-                                                ? <>تمت إضافة أداة جديدة في قسم <span className="text-white">{tool.category}</span></>
-                                                : <>New tool added in <span className="text-white">{tool.category}</span> category</>
+                                                ? <>تمت إضافة أداة جديدة في قسم <span className="text-white">{displayCategory}</span></>
+                                                : <>New tool added in <span className="text-white">{displayCategory}</span> category</>
                                             }
                                         </span>
                                     </Link>

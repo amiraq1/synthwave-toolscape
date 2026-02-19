@@ -243,7 +243,7 @@ const ComparePage = () => {
                                                 <div className="mt-1 min-w-[16px] h-4 w-4 bg-neon-purple/20 text-neon-purple rounded-full flex items-center justify-center">
                                                     <Check className="w-2.5 h-2.5" />
                                                 </div>
-                                                <span className="leading-relaxed">{translateFeature(feature)}</span>
+                                                <span className="leading-relaxed">{isAr ? translateFeature(feature) : feature}</span>
                                             </li>
                                         ))}
                                         {(!tool.features || tool.features.length === 0) && (

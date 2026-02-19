@@ -7,9 +7,6 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import 'dayjs/locale/ar';
 import { Loader2 } from "lucide-react";
-
-// Configure locale globally (safe to call multiple times)
-dayjs.locale('ar');
 import PostBookmarkButton from "@/components/PostBookmarkButton";
 import CommentsSection from "@/components/CommentsSection";
 import { toast } from "sonner";

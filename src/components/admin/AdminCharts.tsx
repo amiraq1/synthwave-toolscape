@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, PieChart as PieChartIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Admin Charts Component - Optimized & No Search Calls
 interface Tool {
@@ -29,6 +30,8 @@ interface AdminChartsProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a0c4ff', '#bdb2ff'];
 
 const AdminCharts = ({ tools }: AdminChartsProps) => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
 
     const categoryData = useMemo(() => {
         const counts: Record<string, number> = {};
@@ -85,7 +88,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
                         <PieChartIcon className="w-4 h-4 text-neon-purple" />
-                        توزيع التصنيفات
+                        {isAr ? 'توزيع التصنيفات' : 'Category Distribution'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -121,7 +124,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
                         <BarChart3 className="w-4 h-4 text-neon-blue" />
-                        الأدوات المضافة شهرياً
+                        {isAr ? 'الأدوات المضافة شهرياً' : 'Tools Added Per Month'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -136,7 +139,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                                     itemStyle={{ color: '#82ca9d' }}
                                 />
-                                <Bar dataKey="count" fill="#82ca9d" radius={[4, 4, 0, 0]} name="Count" />
+                                <Bar dataKey="count" fill="#82ca9d" radius={[4, 4, 0, 0]} name={isAr ? 'العدد' : 'Count'} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

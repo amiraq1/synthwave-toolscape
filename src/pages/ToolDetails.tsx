@@ -256,7 +256,7 @@ const ToolDetails = () => {
                       <div className="mt-1 w-5 h-5 rounded-full bg-neon-purple/20 flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 text-neon-purple" />
                       </div>
-                      <span className="text-gray-200 text-sm leading-relaxed">{translateFeature(feature)}</span>
+                      <span className="text-gray-200 text-sm leading-relaxed">{isAr ? translateFeature(feature) : feature}</span>
                     </div>
                   ))}
                 </div>

@@ -2,6 +2,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Languages } from "lucide-react";
 import { useEffect } from "react";
+import dayjs from "dayjs";
+import "dayjs/locale/ar";
+import "dayjs/locale/en";
 
 const LanguageToggle = () => {
     const { i18n } = useTranslation();
@@ -10,6 +13,7 @@ const LanguageToggle = () => {
     useEffect(() => {
         document.dir = i18n.language === "ar" ? "rtl" : "ltr";
         document.documentElement.lang = i18n.language;
+        dayjs.locale(i18n.language === "ar" ? "ar" : "en");
     }, [i18n.language]);
 
     const toggleLang = () => {

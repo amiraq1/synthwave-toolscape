@@ -49,11 +49,11 @@ interface PostDialogProps {
 }
 
 const formSchema = z.object({
-    title: z.string().min(3, 'العنوان قصير جداً').max(200),
+    title: z.string().min(3, 'Title is too short').max(200),
     slug: z.string().optional(),
-    content: z.string().min(20, 'المحتوى قصير جداً'),
-    excerpt: z.string().max(300, 'الملخص طويل جداً').optional(),
-    image_url: z.string().url('رابط غير صحيح').optional().or(z.literal('')),
+    content: z.string().min(20, 'Content is too short'),
+    excerpt: z.string().max(300, 'Excerpt is too long').optional(),
+    image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
     is_published: z.boolean(),
 });
 
@@ -164,14 +164,18 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             }
         },
         onSuccess: () => {
-            toast.success(isEditMode ? '✅ تم التحديث' : '🎉 تم النشر');
+            toast.success(isEditMode
+                ? (isAr ? '✅ تم التحديث' : '✅ Updated successfully')
+                : (isAr ? '🎉 تم النشر' : '🎉 Published successfully'));
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             onOpenChange(false);
             form.reset();
         },
         onError: (error: Error) => {
-            toast.error('خطأ', {
-                description: error?.message || (isEditMode ? 'فشل التحديث' : 'فشل النشر'),
+            toast.error(isAr ? 'خطأ' : 'Error', {
+                description: error?.message || (isEditMode
+                    ? (isAr ? 'فشل التحديث' : 'Update failed')
+                    : (isAr ? 'فشل النشر' : 'Publish failed')),
             });
         },
     });
@@ -207,11 +211,11 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
             setImagePreview(publicUrl);
             setImageError(false);
 
-            toast.success("تم الرفع بنجاح");
+            toast.success(isAr ? "تم الرفع بنجاح" : "Uploaded successfully");
         } catch (error) {
             console.error('Upload error:', error);
-            const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
-            toast.error("فشل الرفع", {
+            const errorMessage = error instanceof Error ? error.message : (isAr ? 'فشل الرفع' : 'Upload failed');
+            toast.error(isAr ? "فشل الرفع" : "Upload failed", {
                 description: errorMessage,
             });
         } finally {
@@ -227,10 +231,14 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                 {/* Fixed Header */}
                 <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
                     <DialogTitle className="text-lg font-bold">
-                        {isEditMode ? 'تعديل المقال' : 'إضافة مقال جديد'}
+                        {isEditMode
+                            ? (isAr ? 'تعديل المقال' : 'Edit Post')
+                            : (isAr ? 'إضافة مقال جديد' : 'Add New Post')}
                     </DialogTitle>
                     <DialogDescription className="text-xs">
-                        {isEditMode ? 'قم بتعديل بيانات المقال' : 'شارك معرفتك مع المجتمع'}
+                        {isEditMode
+                            ? (isAr ? 'قم بتعديل بيانات المقال' : 'Update post details')
+                            : (isAr ? 'شارك معرفتك مع المجتمع' : 'Share your knowledge with the community')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -242,9 +250,9 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             {/* Title */}
                             <FormField control={form.control} name="title" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs">عنوان المقال *</FormLabel>
+                                    <FormLabel className="text-xs">{isAr ? 'عنوان المقال *' : 'Post Title *'}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="عنوان جذاب للمقال..." {...field} className="h-10 bg-background/50" />
+                                        <Input placeholder={isAr ? "عنوان جذاب للمقال..." : "A compelling post title..."} {...field} className="h-10 bg-background/50" />
                                     </FormControl>
                                     <FormMessage className="text-[10px]" />
                                 </FormItem>
@@ -254,7 +262,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             <FormField control={form.control} name="slug" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs flex items-center justify-between">
-                                        <span>الرابط المختصر (Slug)</span>
+                                        <span>{isAr ? 'الرابط المختصر (Slug)' : 'Slug'}</span>
                                         <Button
                                             type="button"
                                             variant="ghost"
@@ -262,14 +270,16 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                                             onClick={handleAutoSlug}
                                             className="h-6 text-xs text-neon-purple"
                                         >
-                                            توليد تلقائي
+                                            {isAr ? 'توليد تلقائي' : 'Auto-generate'}
                                         </Button>
                                     </FormLabel>
                                     <FormControl>
                                         <Input placeholder="my-post-title" dir="ltr" {...field} className="h-8 bg-background/50 font-mono text-sm" />
                                     </FormControl>
                                     <FormDescription className="text-[10px]">
-                                        يُستخدم في رابط URL. اتركه فارغاً للتوليد التلقائي.
+                                        {isAr
+                                            ? 'يُستخدم في رابط URL. اتركه فارغاً للتوليد التلقائي.'
+                                            : 'Used in the URL. Leave empty to auto-generate.'}
                                     </FormDescription>
                                 </FormItem>
                             )} />
@@ -277,7 +287,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             {/* Image Upload & URL */}
                             <div className="space-y-4 border border-white/5 bg-muted/10 p-4 rounded-xl">
                                 <FormItem>
-                                    <FormLabel className="text-xs">رفع صورة من الجهاز</FormLabel>
+                                    <FormLabel className="text-xs">{isAr ? 'رفع صورة من الجهاز' : 'Upload Image from Device'}</FormLabel>
                                     <div className="flex gap-2">
                                         <Input
                                             type="file"
@@ -297,7 +307,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                                 <FormField control={form.control} name="image_url" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="text-xs flex items-center gap-1">
-                                            <ImageIcon className="w-3 h-3" /> صورة الغلاف
+                                            <ImageIcon className="w-3 h-3" /> {isAr ? 'صورة الغلاف' : 'Cover Image'}
                                         </FormLabel>
                                         <FormControl>
                                             <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
@@ -309,14 +319,16 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                                             {imagePreview && !imageError ? (
                                                 <img
                                                     src={imagePreview}
-                                                    alt="معاينة"
+                                                    alt={isAr ? "معاينة" : "Preview"}
                                                     className="w-full h-full object-cover"
                                                     onError={() => setImageError(true)}
                                                 />
                                             ) : (
                                                 <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
                                                     <ImageIcon className="w-8 h-8 opacity-30" />
-                                                    <span>{imageError ? 'رابط الصورة غير صحيح' : 'معاينة الصورة'}</span>
+                                                    <span>{imageError
+                                                        ? (isAr ? 'رابط الصورة غير صحيح' : 'Invalid image URL')
+                                                        : (isAr ? 'معاينة الصورة' : 'Image preview')}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -327,10 +339,10 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             {/* Excerpt */}
                             <FormField control={form.control} name="excerpt" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs">ملخص قصير</FormLabel>
+                                    <FormLabel className="text-xs">{isAr ? 'ملخص قصير' : 'Short Excerpt'}</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder="ملخص مختصر يظهر في قائمة المقالات..."
+                                            placeholder={isAr ? "ملخص مختصر يظهر في قائمة المقالات..." : "A short excerpt shown in the posts list..."}
                                             {...field}
                                             className="min-h-[60px] bg-background/50 resize-none text-sm"
                                         />
@@ -342,10 +354,10 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             {/* Content */}
                             <FormField control={form.control} name="content" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs">المحتوى *</FormLabel>
+                                    <FormLabel className="text-xs">{isAr ? 'المحتوى *' : 'Content *'}</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder="اكتب محتوى المقال هنا..."
+                                            placeholder={isAr ? "اكتب محتوى المقال هنا..." : "Write your post content here..."}
                                             {...field}
                                             className="min-h-[200px] bg-background/50 resize-none text-sm"
                                         />
@@ -358,9 +370,9 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                             <FormField control={form.control} name="is_published" render={({ field }) => (
                                 <FormItem className="flex items-center justify-between rounded-lg border border-white/10 p-3 bg-muted/10">
                                     <div className="space-y-0.5">
-                                        <FormLabel className="text-sm">نشر المقال</FormLabel>
+                                        <FormLabel className="text-sm">{isAr ? 'نشر المقال' : 'Publish Post'}</FormLabel>
                                         <FormDescription className="text-xs">
-                                            عند التفعيل، سيظهر المقال للجميع
+                                            {isAr ? 'عند التفعيل، سيظهر المقال للجميع' : 'When enabled, the post will be visible to everyone'}
                                         </FormDescription>
                                     </div>
                                     <FormControl>
@@ -379,7 +391,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                 {/* Fixed Footer */}
                 < DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2" >
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">
-                        إلغاء
+                        {isAr ? 'إلغاء' : 'Cancel'}
                     </Button>
                     <Button
                         type="submit"
@@ -390,7 +402,9 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                         {mutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                            isEditMode ? 'حفظ التعديلات' : 'نشر المقال'
+                            isEditMode
+                                ? (isAr ? 'حفظ التعديلات' : 'Save Changes')
+                                : (isAr ? 'نشر المقال' : 'Publish Post')
                         )}
                     </Button>
                 </DialogFooter >

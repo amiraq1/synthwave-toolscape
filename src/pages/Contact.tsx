@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useSEO } from '@/hooks/useSEO';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const Contact = () => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === 'ar';
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,9 +21,11 @@ const Contact = () => {
     });
 
     useSEO({
-        title: 'Contact Us - Nabd AI',
-        description: 'Reach out to the Nabd AI team for questions, feedback, or partnership opportunities.',
-        keywords: 'contact, Nabd, support, help, feedback',
+        title: isAr ? 'تواصل معنا - نبض AI' : 'Contact Us - Nabd AI',
+        description: isAr
+            ? 'تواصل مع فريق نبض AI للاستفسارات أو الملاحظات أو فرص الشراكة.'
+            : 'Reach out to the Nabd AI team for questions, feedback, or partnership opportunities.',
+        keywords: isAr ? 'تواصل، نبض، دعم، مساعدة، ملاحظات' : 'contact, Nabd, support, help, feedback',
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -32,8 +37,8 @@ const Contact = () => {
 
         setIsSubmitting(false);
         setIsSubmitted(true);
-        toast.success('Message sent', {
-            description: 'Thanks for reaching out. We will get back to you shortly.',
+        toast.success(isAr ? 'تم إرسال الرسالة' : 'Message sent', {
+            description: isAr ? 'شكراً لتواصلك. سنعود إليك قريباً.' : 'Thanks for reaching out. We will get back to you shortly.',
         });
     };
 
@@ -45,7 +50,7 @@ const Contact = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background" dir="ltr">
+        <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -55,8 +60,8 @@ const Contact = () => {
                 <div className="container mx-auto max-w-5xl px-4 py-4">
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5 rotate-180" />
-                            Back to Home
+                            <ArrowRight className={`h-5 w-5 ${isAr ? "" : "rotate-180"}`} />
+                            {isAr ? "العودة للرئيسية" : "Back to Home"}
                         </Button>
                     </Link>
                 </div>
@@ -72,10 +77,12 @@ const Contact = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        Contact Us
+                        {isAr ? "تواصل معنا" : "Contact Us"}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                        Have a question or idea? Send us a message and we will respond as soon as possible.
+                        {isAr
+                            ? "لديك سؤال أو فكرة؟ أرسل لنا رسالة وسنرد عليك في أقرب وقت."
+                            : "Have a question or idea? Send us a message and we will respond as soon as possible."}
                     </p>
                 </section>
 
@@ -86,10 +93,10 @@ const Contact = () => {
                             <div className="w-20 h-20 mx-auto rounded-full bg-emerald-500/20 flex items-center justify-center">
                                 <CheckCircle className="h-10 w-10 text-emerald-500" />
                             </div>
-                            <h2 className="text-2xl font-bold text-foreground">Thanks for contacting us!</h2>
-                            <p className="text-muted-foreground">Your message was sent successfully.</p>
+                            <h2 className="text-2xl font-bold text-foreground">{isAr ? "شكراً لتواصلك معنا!" : "Thanks for contacting us!"}</h2>
+                            <p className="text-muted-foreground">{isAr ? "تم إرسال رسالتك بنجاح." : "Your message was sent successfully."}</p>
                             <Button onClick={() => setIsSubmitted(false)} variant="outline">
-                                Send another message
+                                {isAr ? "إرسال رسالة أخرى" : "Send another message"}
                             </Button>
                         </div>
                     ) : (
@@ -97,21 +104,21 @@ const Contact = () => {
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label htmlFor="name" className="text-sm font-medium text-foreground">
-                                        Name
+                                        {isAr ? "الاسم" : "Name"}
                                     </label>
                                     <Input
                                         id="name"
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        placeholder="Your full name"
+                                        placeholder={isAr ? "اسمك الكامل" : "Your full name"}
                                         required
                                         className="bg-background/50"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                        Email
+                                        {isAr ? "البريد الإلكتروني" : "Email"}
                                     </label>
                                     <Input
                                         id="email"
@@ -129,14 +136,14 @@ const Contact = () => {
 
                             <div className="space-y-2">
                                 <label htmlFor="subject" className="text-sm font-medium text-foreground">
-                                    Subject
+                                    {isAr ? "الموضوع" : "Subject"}
                                 </label>
                                 <Input
                                     id="subject"
                                     name="subject"
                                     value={formData.subject}
                                     onChange={handleChange}
-                                    placeholder="Message subject"
+                                    placeholder={isAr ? "موضوع الرسالة" : "Message subject"}
                                     required
                                     className="bg-background/50"
                                 />
@@ -144,14 +151,14 @@ const Contact = () => {
 
                             <div className="space-y-2">
                                 <label htmlFor="message" className="text-sm font-medium text-foreground">
-                                    Message
+                                    {isAr ? "الرسالة" : "Message"}
                                 </label>
                                 <Textarea
                                     id="message"
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    placeholder="Write your message here..."
+                                    placeholder={isAr ? "اكتب رسالتك هنا..." : "Write your message here..."}
                                     required
                                     rows={6}
                                     className="bg-background/50 resize-none"
@@ -167,12 +174,12 @@ const Contact = () => {
                                 {isSubmitting ? (
                                     <span className="flex items-center gap-2">
                                         <span className="animate-spin">⏳</span>
-                                        Sending...
+                                        {isAr ? "جاري الإرسال..." : "Sending..."}
                                     </span>
                                 ) : (
                                     <span className="flex items-center gap-2">
                                         <Send className="h-5 w-5" />
-                                        Send Message
+                                        {isAr ? "إرسال الرسالة" : "Send Message"}
                                     </span>
                                 )}
                             </Button>
@@ -182,7 +189,7 @@ const Contact = () => {
 
                 {/* Alternative Contact */}
                 <section className="text-center space-y-4">
-                    <p className="text-muted-foreground">Or contact us directly via:</p>
+                    <p className="text-muted-foreground">{isAr ? "أو تواصل معنا مباشرة عبر:" : "Or contact us directly via:"}</p>
                     <div className="flex justify-center gap-4 flex-wrap">
                         <a
                             href="mailto:contact@amiraq.org"
@@ -198,7 +205,7 @@ const Contact = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 Nabd AI. All rights reserved.</p>
+                    <p>{isAr ? "© 2024 نبض AI. جميع الحقوق محفوظة." : "© 2024 Nabd AI. All rights reserved."}</p>
                 </div>
             </footer>
         </div>

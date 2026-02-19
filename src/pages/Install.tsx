@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Activity, Download, Smartphone, CheckCircle, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 
 // Interface is globally defined in vite-env.d.ts
 
 
 const Install = () => {
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -50,7 +53,7 @@ const Install = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="ltr" role="main">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir={isAr ? "rtl" : "ltr"} role="main">
       {/* Background gradient orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -72,41 +75,41 @@ const Install = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-center gap-2 text-emerald-400">
                 <CheckCircle className="h-6 w-6" />
-                <span className="text-xl font-semibold">App Installed!</span>
+                <span className="text-xl font-semibold">{isAr ? "تم تثبيت التطبيق!" : "App Installed!"}</span>
               </div>
               <p className="text-muted-foreground">
-                You can now launch Nabd AI directly from your home screen.
+                {isAr ? "يمكنك الآن تشغيل نبض AI مباشرة من الشاشة الرئيسية." : "You can now launch Nabd AI directly from your home screen."}
               </p>
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                Back to Home
+                {isAr ? "العودة للرئيسية" : "Back to Home"}
               </Button>
             </div>
           ) : isIOS ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">Install the App</span>
+                <span className="text-xl font-semibold">{isAr ? "تثبيت التطبيق" : "Install the App"}</span>
               </div>
 
-              <div className="space-y-4 text-left">
+              <div className={`space-y-4 ${isAr ? "text-right" : "text-left"}`}>
                 <p className="text-muted-foreground">
-                  To install on iPhone or iPad:
+                  {isAr ? "لتثبيت التطبيق على iPhone أو iPad:" : "To install on iPhone or iPad:"}
                 </p>
                 <ol className="space-y-3 text-foreground">
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">1</span>
-                    <span>Tap the Share icon <Share className="inline h-4 w-4 mx-1" /> at the bottom of Safari</span>
+                    <span>{isAr ? <>اضغط على أيقونة المشاركة <Share className="inline h-4 w-4 mx-1" /> أسفل Safari</> : <>Tap the Share icon <Share className="inline h-4 w-4 mx-1" /> at the bottom of Safari</>}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">2</span>
-                    <span>Scroll down and choose "Add to Home Screen"</span>
+                    <span>{isAr ? 'مرّر للأسفل واختر "Add to Home Screen"' : 'Scroll down and choose "Add to Home Screen"'}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">3</span>
-                    <span>Tap "Add" in the top corner</span>
+                    <span>{isAr ? 'اضغط "Add" في أعلى الشاشة' : 'Tap "Add" in the top corner'}</span>
                   </li>
                 </ol>
               </div>
@@ -116,18 +119,18 @@ const Install = () => {
                 variant="outline"
                 className="w-full py-6 text-lg border-border/50"
               >
-                Back to Home
+                {isAr ? "العودة للرئيسية" : "Back to Home"}
               </Button>
             </div>
           ) : deferredPrompt ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Download className="h-6 w-6" />
-                <span className="text-xl font-semibold">Install App</span>
+                <span className="text-xl font-semibold">{isAr ? "تثبيت التطبيق" : "Install App"}</span>
               </div>
 
               <p className="text-muted-foreground">
-                Install Nabd AI for faster access and offline support.
+                {isAr ? "ثبّت نبض AI للوصول الأسرع ودعم العمل دون اتصال." : "Install Nabd AI for faster access and offline support."}
               </p>
 
               <div className="space-y-3">
@@ -136,7 +139,7 @@ const Install = () => {
                   className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg gap-2"
                 >
                   <Download className="h-5 w-5" />
-                  Install
+                  {isAr ? "تثبيت" : "Install"}
                 </Button>
 
                 <Button
@@ -144,7 +147,7 @@ const Install = () => {
                   variant="outline"
                   className="w-full py-6 text-lg border-border/50"
                 >
-                  Not Now
+                  {isAr ? "ليس الآن" : "Not Now"}
                 </Button>
               </div>
             </div>
@@ -152,18 +155,18 @@ const Install = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">Continue in Browser</span>
+                <span className="text-xl font-semibold">{isAr ? "المتابعة عبر المتصفح" : "Continue in Browser"}</span>
               </div>
 
               <p className="text-muted-foreground">
-                You can install later from the browser menu or continue now.
+                {isAr ? "يمكنك التثبيت لاحقاً من قائمة المتصفح أو المتابعة الآن." : "You can install later from the browser menu or continue now."}
               </p>
 
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                Explore Tools
+                {isAr ? "استكشاف الأدوات" : "Explore Tools"}
               </Button>
             </div>
           )}
