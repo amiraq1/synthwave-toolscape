@@ -138,7 +138,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                     <MessageSquare className="w-5 h-5 text-neon-purple" />
                 </div>
                 <h2 className="text-xl font-bold text-white">
-                    التعليقات ({comments?.length || 0})
+                    {isAr ? "التعليقات" : "Comments"} ({comments?.length || 0})
                 </h2>
             </div>
 
@@ -171,7 +171,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                     ) : (
                                         <Send className="w-4 h-4" />
                                     )}
-                                    إرسال التعليق
+                                    {isAr ? "إرسال التعليق" : "Post Comment"}
                                 </Button>
                             </div>
                         </div>
@@ -180,10 +180,10 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             ) : (
                 <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl text-center">
                     <p className="text-gray-400 mb-3">
-                        يجب تسجيل الدخول لإضافة تعليق
+                        {isAr ? "يجب تسجيل الدخول لإضافة تعليق" : "You need to sign in to add a comment"}
                     </p>
                     <Button asChild variant="outline" className="border-neon-purple/50 hover:bg-neon-purple/10">
-                        <Link to="/auth">تسجيل الدخول</Link>
+                        <Link to="/auth">{isAr ? "تسجيل الدخول" : "Sign in"}</Link>
                     </Button>
                 </div>
             )}
@@ -197,8 +197,8 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                 ) : comments?.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                         <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                        <p>لا توجد تعليقات بعد</p>
-                        <p className="text-sm mt-1">كن أول من يعلق!</p>
+                        <p>{isAr ? "لا توجد تعليقات بعد" : "No comments yet"}</p>
+                        <p className="text-sm mt-1">{isAr ? "كن أول من يعلق!" : "Be the first to comment!"}</p>
                     </div>
                 ) : (
                     comments?.map((comment) => (
@@ -217,7 +217,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                     <div className="flex items-center justify-between gap-2 mb-2">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span className="font-semibold text-white">
-                                                {comment.user?.display_name || "مستخدم"}
+                                                {comment.user?.display_name || (isAr ? "مستخدم" : "User")}
                                             </span>
                           <span className="text-xs text-gray-500">
                                                   {dayjs(comment.created_at).locale(isAr ? 'ar' : 'en').format("D MMMM YYYY - HH:mm")}
@@ -229,7 +229,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                                 size="icon"
                                                 onClick={() => setCommentToDelete(comment.id)}
                                                 className="h-8 w-8 opacity-0 group-hover:opacity-100 hover:bg-destructive/20 hover:text-destructive transition-all"
-                                                aria-label="حذف التعليق"
+                                                aria-label={isAr ? "حذف التعليق" : "Delete comment"}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </Button>
@@ -249,13 +249,15 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             <AlertDialog open={!!commentToDelete} onOpenChange={(open) => !open && setCommentToDelete(null)}>
                 <AlertDialogContent dir={isAr ? "rtl" : "ltr"}>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>حذف التعليق؟</AlertDialogTitle>
+                        <AlertDialogTitle>{isAr ? "حذف التعليق؟" : "Delete comment?"}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.
+                            {isAr
+                                ? "هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء."
+                                : "Are you sure you want to delete this comment? This action cannot be undone."}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-row-reverse gap-2">
-                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                        <AlertDialogCancel>{isAr ? "إلغاء" : "Cancel"}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => commentToDelete && deleteMutation.mutate(commentToDelete)}
                             className="bg-destructive hover:bg-destructive/90"
@@ -264,7 +266,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                             {deleteMutation.isPending ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                "حذف"
+                                isAr ? "حذف" : "Delete"
                             )}
                         </AlertDialogAction>
                     </AlertDialogFooter>

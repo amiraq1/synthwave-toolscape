@@ -1,5 +1,6 @@
 import { Heart, MessageSquare, Star, Calendar, TrendingUp, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface UserStats {
     bookmarksCount: number;
@@ -54,11 +55,29 @@ const StatCard = ({ label, value, icon, colorClass, trend, delay = 0 }: StatCard
     </div>
 );
 
-const ActivityBadge = ({ level }: { level: 'very_active' | 'active' | 'inactive' }) => {
+const ActivityBadge = ({
+    level,
+    isAr
+}: {
+    level: 'very_active' | 'active' | 'inactive';
+    isAr: boolean;
+}) => {
     const config = {
-        very_active: { label: 'نشط جداً 🔥', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10', icon: true },
-        active: { label: 'نشط ⚡', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-blue-500/10', icon: false },
-        inactive: { label: 'خامل 💤', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20', icon: false },
+        very_active: {
+            label: isAr ? 'نشط جداً 🔥' : 'Very active 🔥',
+            color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10',
+            icon: true
+        },
+        active: {
+            label: isAr ? 'نشط ⚡' : 'Active ⚡',
+            color: 'bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-blue-500/10',
+            icon: false
+        },
+        inactive: {
+            label: isAr ? 'خامل 💤' : 'Inactive 💤',
+            color: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+            icon: false
+        },
     };
 
     return (
@@ -78,42 +97,45 @@ const ActivityBadge = ({ level }: { level: 'very_active' | 'active' | 'inactive'
 };
 
 const UserStatsCards = ({ stats }: { stats: UserStats }) => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
+
     return (
         <div className="space-y-5 mb-10">
             {/* Header with Activity Badge */}
             <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
                     <Activity className="w-5 h-5 text-neon-purple" />
-                    <h2 className="text-xl font-bold text-white">لوحة الإحصائيات</h2>
+                    <h2 className="text-xl font-bold text-white">{isAr ? "لوحة الإحصائيات" : "Stats Overview"}</h2>
                 </div>
-                <ActivityBadge level={stats.activityLevel} />
+                <ActivityBadge level={stats.activityLevel} isAr={isAr} />
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <StatCard
-                    label="الأدوات المحفوظة"
+                    label={isAr ? "الأدوات المحفوظة" : "Saved Tools"}
                     value={stats.bookmarksCount}
                     icon={<Heart className="w-6 h-6 text-rose-400 fill-rose-400/20" />}
                     colorClass="bg-rose-500/50"
                     delay={0}
                 />
                 <StatCard
-                    label="المراجعات المكتوبة"
+                    label={isAr ? "المراجعات المكتوبة" : "Written Reviews"}
                     value={stats.reviewsCount}
                     icon={<MessageSquare className="w-6 h-6 text-blue-400 fill-blue-400/20" />}
                     colorClass="bg-blue-500/50"
                     delay={100}
                 />
                 <StatCard
-                    label="متوسط تقييماتك"
+                    label={isAr ? "متوسط تقييماتك" : "Average Rating"}
                     value={stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}
                     icon={<Star className="w-6 h-6 text-amber-400 fill-amber-400/20" />}
                     colorClass="bg-amber-500/50"
                     delay={200}
                 />
                 <StatCard
-                    label="أيام في المنصة"
+                    label={isAr ? "أيام في المنصة" : "Days on Platform"}
                     value={stats.joinedDaysAgo}
                     icon={<Calendar className="w-6 h-6 text-purple-400" />}
                     colorClass="bg-purple-500/50"

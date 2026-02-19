@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface AvatarUploadProps {
     currentAvatarUrl: string | null;
@@ -13,6 +14,8 @@ interface AvatarUploadProps {
 }
 
 const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }: AvatarUploadProps) => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
     const [uploading, setUploading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -30,12 +33,12 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
     const processFile = (file: File) => {
         // التحقق من نوع الملف وحجمه
         if (!file.type.startsWith("image/")) {
-            toast.error("يرجى اختيار ملف صورة صالح (JPG, PNG)");
+            toast.error(isAr ? "يرجى اختيار ملف صورة صالح (JPG, PNG)" : "Please select a valid image file (JPG, PNG)");
             return;
         }
 
         if (file.size > 2 * 1024 * 1024) { // 2MB limit
-            toast.error("حجم الصورة يجب أن يكون أقل من 2 ميجابايت");
+            toast.error(isAr ? "حجم الصورة يجب أن يكون أقل من 2 ميجابايت" : "Image size must be less than 2 MB");
             return;
         }
 
@@ -101,13 +104,13 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                 onUploadComplete(data.publicUrl);
                 setPreviewUrl(null);
                 if (fileInputRef.current) fileInputRef.current.value = "";
-                toast.success("تم تحديث الصورة الشخصية بنجاح");
+                toast.success(isAr ? "تم تحديث الصورة الشخصية بنجاح" : "Profile photo updated successfully");
             }
         } catch (error: unknown) {
             console.error("Error uploading avatar:", error);
             const message = error instanceof Error ? error.message : undefined;
-            toast.error("فشل رفع الصورة", {
-                description: message || "تأكد من إعدادات التخزين في Supabase",
+            toast.error(isAr ? "فشل رفع الصورة" : "Avatar upload failed", {
+                description: message || (isAr ? "تأكد من إعدادات التخزين في Supabase" : "Please verify your Supabase storage settings"),
             });
         } finally {
             setUploading(false);
@@ -157,7 +160,7 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                     {/* طبقة السحب والإفلات */}
                     {isDragging && !uploading && (
                         <div className="absolute inset-0 bg-neon-purple/20 flex items-center justify-center z-10 border-4 border-dashed border-neon-purple rounded-full">
-                            <span className="text-white font-bold text-sm drop-shadow-md">أفلت الصورة هنا</span>
+                            <span className="text-white font-bold text-sm drop-shadow-md">{isAr ? "أفلت الصورة هنا" : "Drop image here"}</span>
                         </div>
                     )}
                 </div>
@@ -176,7 +179,7 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         className="absolute bottom-1 right-1 p-2.5 bg-neon-purple rounded-full text-white shadow-lg hover:bg-neon-purple/90 hover:scale-110 transition-all border-4 border-background"
-                        title="تغيير الصورة"
+                        title={isAr ? "تغيير الصورة" : "Change photo"}
                     >
                         <Camera className="w-5 h-5" />
                     </button>
@@ -191,7 +194,7 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                         onClick={handleUpload}
                         className="bg-green-600 hover:bg-green-700 min-w-[100px]"
                     >
-                        حفظ التغيير
+                        {isAr ? "حفظ التغيير" : "Save"}
                     </Button>
                     <Button
                         size="sm"
@@ -199,14 +202,16 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId, className }:
                         onClick={cancelPreview}
                         className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                     >
-                        <X className="w-4 h-4 mr-1" /> إلغاء
+                        <X className="w-4 h-4 mr-1" /> {isAr ? "إلغاء" : "Cancel"}
                     </Button>
                 </div>
             ) : (
                 <div className="text-center space-y-1">
-                    <p className="text-sm font-medium text-gray-300">الصورة الشخصية</p>
+                    <p className="text-sm font-medium text-gray-300">{isAr ? "الصورة الشخصية" : "Profile Photo"}</p>
                     <p className="text-xs text-gray-500">
-                        {isDragging ? "أفلت الصورة لرفعها" : "اضغط على الأيقونة لتغيير الصورة"}
+                        {isDragging
+                            ? (isAr ? "أفلت الصورة لرفعها" : "Drop the image to upload")
+                            : (isAr ? "اضغط على الأيقونة لتغيير الصورة" : "Click the icon to change your photo")}
                     </p>
                 </div>
             )}

@@ -7,8 +7,11 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import type { Tool } from "@/types"; // يفضل استخدام النوع المركزي
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const RecentlyViewedTools = () => {
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
     const { recentIds, clearRecent, hasRecent } = useRecentlyViewed();
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
@@ -66,7 +69,7 @@ const RecentlyViewedTools = () => {
             <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold flex items-center gap-2 text-white">
                     <Clock className="w-5 h-5 text-neon-purple" />
-                    <span>شوهدت مؤخراً</span>
+                    <span>{isAr ? "شوهدت مؤخراً" : "Recently Viewed"}</span>
                 </h3>
                 {tools.length > 0 && (
                     <Button
@@ -75,7 +78,7 @@ const RecentlyViewedTools = () => {
                         onClick={clearRecent}
                         className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 gap-2 text-xs"
                     >
-                        <Trash2 className="w-3 h-3" /> مسح السجل
+                        <Trash2 className="w-3 h-3" /> {isAr ? "مسح السجل" : "Clear history"}
                     </Button>
                 )}
             </div>
@@ -100,10 +103,10 @@ const RecentlyViewedTools = () => {
                 </div>
             ) : (
                 <div className="text-center py-8 bg-white/5 rounded-xl border border-white/5 border-dashed">
-                    <p className="text-gray-400 text-sm">لم تقم باستعراض أي أدوات مؤخراً.</p>
+                    <p className="text-gray-400 text-sm">{isAr ? "لم تقم باستعراض أي أدوات مؤخراً." : "You have not viewed any tools recently."}</p>
                     <Button variant="link" asChild className="text-neon-purple mt-2">
                         <Link to="/" className="gap-2">
-                            تصفح الأدوات <ArrowRight className="w-4 h-4" />
+                            {isAr ? "تصفح الأدوات" : "Browse tools"} <ArrowRight className={`w-4 h-4 ${isAr ? "rotate-180" : ""}`} />
                         </Link>
                     </Button>
                 </div>
