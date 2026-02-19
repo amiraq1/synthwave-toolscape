@@ -40,25 +40,29 @@ interface AddToolModalProps {
 }
 
 const categories = [
-  'توليد نصوص',
-  'توليد صور وفيديو',
-  'مساعدات إنتاجية',
-  'صناعة محتوى',
-  'تطوير وبرمجة',
-  'تعليم وبحث',
-  'أخرى'
+  { value: 'توليد نصوص', label: 'Text Generation' },
+  { value: 'توليد صور وفيديو', label: 'Image & Video Generation' },
+  { value: 'مساعدات إنتاجية', label: 'Productivity Assistants' },
+  { value: 'صناعة محتوى', label: 'Content Creation' },
+  { value: 'تطوير وبرمجة', label: 'Development & Coding' },
+  { value: 'تعليم وبحث', label: 'Education & Research' },
+  { value: 'أخرى', label: 'Other' },
 ];
-const pricingTypes = ['مجاني', 'مدفوع', 'تجربة مجانية'];
+const pricingTypes = [
+  { value: 'مجاني', label: 'Free' },
+  { value: 'مدفوع', label: 'Paid' },
+  { value: 'تجربة مجانية', label: 'Free Trial' },
+];
 
 const formSchema = z.object({
-  title: z.string().min(2, 'الاسم قصير جداً'),
-  description: z.string().min(10, 'الوصف قصير جداً').max(500),
-  url: z.string().url('رابط غير صحيح'),
-  image_url: z.string().url('رابط غير صحيح').optional().or(z.literal('')),
-  category: z.string().min(1, 'مطلوب'),
+  title: z.string().min(2, 'Name is too short'),
+  description: z.string().min(10, 'Description is too short').max(500),
+  url: z.string().url('Invalid URL'),
+  image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  category: z.string().min(1, 'Required'),
   pricing_type: z.string(),
-  features: z.array(z.object({ value: z.string().min(1, 'مطلوب') })).optional(),
-  screenshots: z.array(z.object({ value: z.string().url('رابط غير صحيح') })).optional(),
+  features: z.array(z.object({ value: z.string().min(1, 'Required') })).optional(),
+  screenshots: z.array(z.object({ value: z.string().url('Invalid URL') })).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -106,7 +110,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     const name = form.getValues('title');
 
     if (!url || !name) {
-      toast.error('المعلومات ناقصة', { description: 'يرجى إدخال اسم الأداة ورابطها أولاً' });
+      toast.error('Missing information', { description: 'Please enter tool name and URL first' });
       return;
     }
 
@@ -132,11 +136,11 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
           replaceFeatures(newFeatures);
         }
 
-        toast.success('تم جلب البيانات بنجاح! 🪄');
+        toast.success('Data fetched successfully! 🪄');
       }
     } catch (err: unknown) {
       console.error(err);
-      toast.error('فشل التعبئة التلقائية', { description: 'تأكد من الرابط أو حاول يدوياً' });
+      toast.error('Auto-fill failed', { description: 'Check the URL or fill manually' });
     } finally {
       setIsAutoFilling(false);
     }
@@ -148,7 +152,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     const currentDesc = form.getValues('description');
 
     if (!currentTitle.trim() || !currentDesc.trim()) {
-      toast.error('أدخل الاسم والوصف أولاً');
+      toast.error('Enter title and description first');
       return;
     }
 
@@ -160,10 +164,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
       if (data?.enhancedDescription) {
         form.setValue('description', data.enhancedDescription, { shouldValidate: true });
-        toast.success('✨ تم التحسين');
+        toast.success('✨ Description improved');
       }
     } catch {
-      toast.error('فشل التحسين');
+      toast.error('Enhancement failed');
     } finally {
       setIsEnhancing(false);
     }
@@ -187,23 +191,23 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success('🎉 تم الإضافة بنجاح');
+      toast.success('🎉 Tool added successfully');
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       onOpenChange(false);
     },
-    onError: () => toast.error('خطأ', { description: 'فشل الحفظ' }),
+    onError: () => toast.error('Error', { description: 'Save failed' }),
   });
 
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-xs p-6 text-center" dir="rtl">
+        <DialogContent className="sm:max-w-xs p-6 text-center" dir="ltr">
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <LogIn className="w-6 h-6 text-primary" />
           </div>
-          <DialogTitle className="text-xl font-bold mb-2">تسجيل الدخول</DialogTitle>
-          <DialogDescription className="mb-6">يجب تسجيل الدخول لإضافة أدوات.</DialogDescription>
-          <Button onClick={() => { onOpenChange(false); navigate('/auth'); }} className="w-full">تسجيل الدخول</Button>
+          <DialogTitle className="text-xl font-bold mb-2">Login Required</DialogTitle>
+          <DialogDescription className="mb-6">You need to be logged in to add tools.</DialogDescription>
+          <Button onClick={() => { onOpenChange(false); navigate('/auth'); }} className="w-full">Login</Button>
         </DialogContent>
       </Dialog>
     );
@@ -211,14 +215,14 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
+      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="ltr">
 
         <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-bold">إضافة أداة جديدة</DialogTitle>
+            <DialogTitle className="text-lg font-bold">Add New Tool</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
-            أدخل الاسم والرابط، ثم استخدم "تعبئة ذكية" لجلب البيانات تلقائياً.
+            Enter name and URL, then use "Smart Fill" to fetch details automatically.
           </DialogDescription>
         </DialogHeader>
 
@@ -231,8 +235,8 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                 <div className="flex gap-2 items-end">
                   <FormField control={form.control} name="title" render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel className="text-xs">اسم الأداة (انجليزي)</FormLabel>
-                      <FormControl><Input placeholder="مثال: ChatGPT" {...field} className="h-9 bg-background/50" /></FormControl>
+                      <FormLabel className="text-xs">Tool Name (English)</FormLabel>
+                      <FormControl><Input placeholder="Example: ChatGPT" {...field} className="h-9 bg-background/50" /></FormControl>
                     </FormItem>
                   )} />
 
@@ -243,13 +247,13 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                     size="sm"
                     className="bg-neon-purple hover:bg-neon-purple/90 text-white h-9 px-3 gap-2 min-w-[120px]"
                   >
-                    {isAutoFilling ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Wand2 className="w-4 h-4" /> تعبئة ذكية</>}
+                    {isAutoFilling ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Wand2 className="w-4 h-4" /> Smart Fill</>}
                   </Button>
                 </div>
 
                 <FormField control={form.control} name="url" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> رابط الموقع</FormLabel>
+                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> Website URL</FormLabel>
                     <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-9 bg-background/50" /></FormControl>
                   </FormItem>
                 )} />
@@ -260,20 +264,20 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                 <div className="grid grid-cols-2 gap-3">
                   <FormField control={form.control} name="category" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">التصنيف</FormLabel>
+                      <FormLabel className="text-xs">Category</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue placeholder="اختر" /></SelectTrigger></FormControl>
-                        <SelectContent>{categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                        <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                        <SelectContent>{categories.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                       </Select>
                     </FormItem>
                   )} />
 
                   <FormField control={form.control} name="pricing_type" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">السعر</FormLabel>
+                      <FormLabel className="text-xs">Pricing</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue /></SelectTrigger></FormControl>
-                        <SelectContent>{pricingTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                        <SelectContent>{pricingTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
                       </Select>
                     </FormItem>
                   )} />
@@ -281,7 +285,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
                 <FormField control={form.control} name="image_url" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> رابط الشعار (اختياري)</FormLabel>
+                    <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Logo URL (optional)</FormLabel>
                     <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
                   </FormItem>
                 )} />
@@ -291,12 +295,12 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem>
                   <div className="flex justify-between items-center">
-                    <FormLabel className="text-xs">الوصف</FormLabel>
+                    <FormLabel className="text-xs">Description</FormLabel>
                     <Button type="button" variant="ghost" size="sm" onClick={enhanceDescription} disabled={isEnhancing} className="h-6 px-2 text-[10px] text-neon-purple hover:bg-neon-purple/10">
-                      {isEnhancing ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Sparkles className="w-3 h-3 mr-1" /> تحسين AI</>}
+                      {isEnhancing ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Sparkles className="w-3 h-3 mr-1" /> AI Enhance</>}
                     </Button>
                   </div>
-                  <FormControl><Textarea placeholder="وصف مختصر..." {...field} className="min-h-[80px] bg-background/50 resize-none text-sm" /></FormControl>
+                  <FormControl><Textarea placeholder="Short description..." {...field} className="min-h-[80px] bg-background/50 resize-none text-sm" /></FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
               )} />
@@ -304,13 +308,13 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               {/* Features */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <FormLabel className="text-xs text-muted-foreground">المميزات</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Features</FormLabel>
                   <Button type="button" variant="ghost" size="sm" onClick={() => appendFeature({ value: '' })} className="h-6 w-6 p-0"><Plus className="w-4 h-4" /></Button>
                 </div>
                 {featureFields.map((field, index) => (
                   <div key={field.id} className="flex gap-2">
                     <FormField control={form.control} name={`features.${index}.value`} render={({ field }) => (
-                      <Input placeholder={`ميزة ${index + 1}`} {...field} className="h-8 bg-background/50 text-xs" />
+                      <Input placeholder={`Feature ${index + 1}`} {...field} className="h-8 bg-background/50 text-xs" />
                     )} />
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(index)} className="h-8 w-8 text-destructive"><X className="w-4 h-4" /></Button>
                   </div>
@@ -322,9 +326,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
         </div>
 
         <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">إلغاء</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">Cancel</Button>
           <Button type="submit" form="add-tool-form" disabled={mutation.isPending} className="flex-1 h-9 bg-primary hover:bg-primary/90">
-            {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
+            {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
           </Button>
         </DialogFooter>
 

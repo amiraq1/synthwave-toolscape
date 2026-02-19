@@ -6,31 +6,31 @@ import { useSEO } from '@/hooks/useSEO';
 
 const About = () => {
     useSEO({
-        title: 'حول نبض - دليل أدوات الذكاء الاصطناعي',
-        description: 'تعرف على نبض، الدليل العربي الشامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك.',
-        keywords: 'نبض، حول، دليل الذكاء الاصطناعي، أدوات AI، من نحن',
+        title: 'About Nabd - AI Tools Directory',
+        description: 'Learn about Nabd, a curated platform for discovering the best AI tools for work and creativity.',
+        keywords: 'Nabd, about, AI tools directory, AI tools, who we are',
     });
 
     const features = [
         {
             icon: Target,
-            title: 'مهمتنا',
-            description: 'تسهيل اكتشاف أدوات الذكاء الاصطناعي للمستخدم العربي وتوفير دليل شامل ومحدث.',
+            title: 'Our Mission',
+            description: 'Make AI tool discovery faster, clearer, and more reliable for everyone.',
         },
         {
             icon: Users,
-            title: 'لمن نبض؟',
-            description: 'للمبدعين، رواد الأعمال، المطورين، الكتّاب، المصممين، وكل من يريد تعزيز إنتاجيته.',
+            title: 'Who Is Nabd For?',
+            description: 'Creators, founders, developers, writers, designers, and teams that want higher output.',
         },
         {
             icon: Zap,
-            title: 'لماذا نبض؟',
-            description: 'نقدم تصنيفات دقيقة، تقييمات حقيقية، ومعلومات محدثة عن أحدث أدوات AI.',
+            title: 'Why Nabd?',
+            description: 'Accurate categories, practical comparisons, and continuously updated AI tool coverage.',
         },
     ];
 
     return (
-        <div className="min-h-screen bg-background" dir="rtl">
+        <div className="min-h-screen bg-background" dir="ltr">
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -40,8 +40,8 @@ const About = () => {
                 <div className="container mx-auto max-w-5xl px-4 py-4">
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5" />
-                            العودة للرئيسية
+                            <ArrowRight className="h-5 w-5 rotate-180" />
+                            Back to Home
                         </Button>
                     </Link>
                 </div>
@@ -57,10 +57,10 @@ const About = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        حول نبض
+                        About Nabd
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                        نبض هو دليلك الذكي لاكتشاف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك.
+                        Nabd is your smart guide to discovering the AI tools that can transform how you work and create.
                     </p>
                 </section>
 
@@ -82,34 +82,33 @@ const About = () => {
 
                 {/* Story Section */}
                 <section className="glass rounded-3xl p-8 md:p-12 space-y-6">
-                    <h2 className="text-3xl font-bold text-foreground">قصتنا</h2>
+                    <h2 className="text-3xl font-bold text-foreground">Our Story</h2>
                     <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                         <p>
-                            بدأ نبض كفكرة بسيطة: توفير مكان واحد يجمع أفضل أدوات الذكاء الاصطناعي للمستخدم العربي.
+                            Nabd started with a simple idea: one place to find the best AI tools without the noise.
                         </p>
                         <p>
-                            مع انتشار أدوات AI بشكل سريع، أصبح من الصعب متابعة كل جديد وتحديد الأدوات المناسبة لاحتياجاتك.
-                            هنا يأتي دور نبض - نقوم بالبحث والتقييم نيابة عنك.
+                            As AI products evolve rapidly, it becomes harder to track what is actually useful.
+                            Nabd does that research and curation work for you.
                         </p>
                         <p>
-                            نؤمن بأن الذكاء الاصطناعي يجب أن يكون متاحاً للجميع، ونسعى لتقديم محتوى عربي عالي الجودة
-                            يساعدك في اتخاذ قرارات مدروسة.
+                            We believe AI should be accessible and practical. Our goal is to help you make better, faster decisions.
                         </p>
                     </div>
                 </section>
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <h2 className="text-2xl font-bold text-foreground">هل أنت مستعد لاستكشاف أدوات المستقبل؟</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Ready to explore the future of AI tools?</h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         <Link to="/">
                             <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                                تصفح الأدوات
+                                Browse Tools
                             </Button>
                         </Link>
                         <Link to="/contact">
                             <Button size="lg" variant="outline">
-                                تواصل معنا
+                                Contact Us
                             </Button>
                         </Link>
                     </div>
@@ -119,7 +118,7 @@ const About = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 نبض AI. جميع الحقوق محفوظة.</p>
+                    <p>© 2024 Nabd AI. All rights reserved.</p>
                 </div>
             </footer>
         </div>

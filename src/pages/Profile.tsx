@@ -40,7 +40,8 @@ interface Review {
 const Profile = () => {
     const { session, signOut, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
     const queryClient = useQueryClient();
 
     // 1. Fetch Profile
@@ -114,10 +115,10 @@ const Profile = () => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }
-            toast.error("فشل تحديث البيانات، تمت استعادة البيانات السابقة.");
+            toast.error("Update failed. Previous data has been restored.");
         },
         onSuccess: () => {
-            toast.success("تم تحديث البروفايل بنجاح ✅");
+            toast.success("Profile updated successfully ✅");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
@@ -168,19 +169,19 @@ const Profile = () => {
     if (isError) return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4" role="main">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md">
-                <h2 className="text-xl font-bold text-red-400 mb-2">عذراً، حدث خطأ ما</h2>
-                <p className="text-gray-400 mb-6">لم نتمكن من تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                <h2 className="text-xl font-bold text-red-400 mb-2">Something went wrong</h2>
+                <p className="text-gray-400 mb-6">We could not load your profile. Please try again later.</p>
                 <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400">
-                    تحديث الصفحة
+                    Refresh page
                 </Button>
             </div>
         </div>
     );
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl" dir="rtl" role="main">
+        <div className="container mx-auto px-4 py-8 max-w-5xl" dir={isAr ? "rtl" : "ltr"} role="main">
             <Helmet>
-                <title>{t('profile.title')} | نبض AI</title>
+                <title>{t('profile.title')} | Nabd AI</title>
             </Helmet>
 
             {/* الهيدر الشخصي */}
@@ -195,16 +196,16 @@ const Profile = () => {
 
                         {/* تلميح سريع لتغيير الصورة */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer text-xs text-white" onClick={() => document.getElementById('settings-tab')?.click()}>
-                            تغيير
+                            {isAr ? "تغيير" : "Change"}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex-1 text-center md:text-right space-y-2">
+                <div className={`flex-1 text-center ${isAr ? "md:text-right" : "md:text-left"} space-y-2`}>
                     <h1 className="text-3xl font-bold text-white">{profile?.display_name || t('profile.title')}</h1>
                     <p className="text-gray-400 font-mono text-sm">{session?.user.email}</p>
 
-                    <div className="flex justify-center md:justify-start gap-4 mt-4 pt-2 border-t border-white/10 text-sm text-gray-500">
+                    <div className={`flex justify-center ${isAr ? "md:justify-start" : "md:justify-end"} gap-4 mt-4 pt-2 border-t border-white/10 text-sm text-gray-500`}>
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
                             <Heart className="w-3.5 h-3.5 fill-current" /> {bookmarks.length} {t('profile.library')}
                         </span>
@@ -227,7 +228,7 @@ const Profile = () => {
                 <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8 p-1 rounded-xl">
                     <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple rounded-lg">{t('profile.library')}</TabsTrigger>
                     <TabsTrigger value="recent" className="data-[state=active]:bg-neon-purple gap-2 rounded-lg">
-                        <Clock className="w-4 h-4" /> <span className="hidden sm:inline">الأخيرة</span>
+                        <Clock className="w-4 h-4" /> <span className="hidden sm:inline">{isAr ? "الأخيرة" : "Recent"}</span>
                     </TabsTrigger>
                     <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple rounded-lg">{t('profile.reviews')}</TabsTrigger>
                     <TabsTrigger value="settings" id="settings-tab" className="data-[state=active]:bg-neon-purple rounded-lg">{t('profile.settings')}</TabsTrigger>
@@ -245,7 +246,7 @@ const Profile = () => {
                         <div className="text-center py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
                             <Heart className="w-12 h-12 mx-auto text-gray-600 mb-4" />
                             <p className="text-gray-400">{t('profile.no_bookmarks')}</p>
-                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">تصفح الأدوات</Button>
+                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">{isAr ? "تصفح الأدوات" : "Browse tools"}</Button>
                         </div>
                     )}
                 </TabsContent>
@@ -272,14 +273,14 @@ const Profile = () => {
                                     <p className="text-gray-300 mb-4 leading-relaxed">"{review.comment}"</p>
                                     <div className="text-xs text-gray-500 flex items-center gap-2">
                                         <Clock className="w-3 h-3" />
-                                        تم النشر: {new Date(review.created_at).toLocaleDateString('ar-EG')}
+                                        {isAr ? "تم النشر:" : "Published:"} {new Date(review.created_at).toLocaleDateString(isAr ? 'ar-EG' : 'en-US')}
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <div className="text-center py-20 text-gray-500 bg-white/5 rounded-2xl border border-dashed border-white/10">
                                 <MessageSquare className="w-12 h-12 mx-auto text-gray-600 mb-4" />
-                                <p>لا توجد مراجعات حتى الآن.</p>
+                                <p>{isAr ? "لا توجد مراجعات حتى الآن." : "No reviews yet."}</p>
                             </div>
                         )}
                     </div>
@@ -295,7 +296,7 @@ const Profile = () => {
                         <div className="space-y-8">
                             {/* تغيير الاسم */}
                             <div className="space-y-2">
-                                <Label className="text-gray-300">الاسم الكامل</Label>
+                                <Label className="text-gray-300">{isAr ? "الاسم الكامل" : "Full Name"}</Label>
                                 <Input
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
@@ -305,7 +306,7 @@ const Profile = () => {
 
                             {/* تغيير الصورة */}
                             <div className="space-y-4">
-                                <Label className="text-gray-300 block">الصورة الرمزية</Label>
+                                <Label className="text-gray-300 block">{isAr ? "الصورة الرمزية" : "Avatar"}</Label>
                                 {session?.user.id && (
                                     <div className="bg-black/20 p-6 rounded-xl border border-white/10">
                                         <AvatarUpload

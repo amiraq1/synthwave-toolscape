@@ -35,6 +35,7 @@ import { getToolImageUrl } from '@/utils/imageUrl';
 import { translateFeature } from '@/utils/featureTranslations';
 import { getSupabaseFunctionsBaseUrl } from '@/utils/supabaseUrl';
 import { toast } from 'sonner';
+import { getCategoryLabel, getPricingLabel } from '@/utils/localization';
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,12 +56,14 @@ const ToolDetails = () => {
 
   const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
   const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
+  const displayCategory = tool ? getCategoryLabel(tool.category, isAr) : undefined;
+  const displayPricing = tool ? getPricingLabel(tool.pricing_type, isAr) : undefined;
   const safeImageUrl = tool ? (getToolImageUrl(tool.image_url, tool.url) ?? undefined) : undefined;
 
   useSEO({
     title: displayTitle,
     description: displayDescription ? `${displayDescription.slice(0, 150)}...` : undefined,
-    keywords: tool ? `${displayTitle}, ${tool.category}, أدوات ذكاء اصطناعي, AI tools` : undefined,
+    keywords: tool ? `${displayTitle}, ${displayCategory}, AI tools, software tools` : undefined,
     ogTitle: displayTitle,
     ogDescription: displayDescription,
     ogImage: safeImageUrl,
@@ -73,8 +76,8 @@ const ToolDetails = () => {
     description: displayDescription || tool.description,
     url: tool.url,
     image: safeImageUrl,
-    category: tool.category,
-    pricingType: tool.pricing_type,
+    category: displayCategory || tool.category,
+    pricingType: displayPricing || tool.pricing_type,
     rating: tool.average_rating,
     reviewCount: tool.reviews_count,
     faq: tool.faqs?.map(f => ({
@@ -212,12 +215,12 @@ const ToolDetails = () => {
                 <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center transition-colors hover:bg-white/10">
                   <DollarSign className="w-6 h-6 mb-2 text-green-400" />
                   <span className="text-xs text-gray-500 mb-1">{isAr ? "نظام التسعير" : "Pricing"}</span>
-                  <span className="font-semibold text-white">{tool.pricing_type}</span>
+                  <span className="font-semibold text-white">{displayPricing}</span>
                 </div>
                 <div className="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col items-center justify-center text-center transition-colors hover:bg-white/10">
                   <Tag className="w-6 h-6 mb-2 text-blue-400" />
                   <span className="text-xs text-gray-500 mb-1">{isAr ? "التصنيف" : "Category"}</span>
-                  <span className="font-semibold text-white">{tool.category}</span>
+                  <span className="font-semibold text-white">{displayCategory}</span>
                 </div>
               </div>
 

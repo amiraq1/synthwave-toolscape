@@ -14,21 +14,21 @@ const Bookmarks = () => {
     // Redirect to auth if not logged in
     if (!user) {
         return (
-            <div className="min-h-screen bg-background flex flex-col" dir="rtl">
+            <div className="min-h-screen bg-background flex flex-col" dir="ltr">
                 <main className="flex-1 container mx-auto max-w-7xl px-4 py-20 flex flex-col items-center justify-center">
                     <div className="text-center space-y-4">
                         <div className="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Heart className="w-10 h-10 text-rose-500" />
                         </div>
-                        <h1 className="text-3xl font-bold">المفضلة</h1>
+                        <h1 className="text-3xl font-bold">Bookmarks</h1>
                         <p className="text-muted-foreground max-w-md mx-auto">
-                            سجل دخولك لحفظ أدواتك المفضلة والوصول إليها بسهولة
+                            Sign in to save your favorite tools and access them anytime.
                         </p>
                         <Button
                             onClick={() => navigate('/auth')}
                             className="mt-6 bg-gradient-to-r from-neon-purple to-neon-blue"
                         >
-                            تسجيل الدخول
+                            Login
                         </Button>
                     </div>
                 </main>
@@ -37,7 +37,7 @@ const Bookmarks = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background flex flex-col" dir="rtl">
+        <div className="min-h-screen bg-background flex flex-col" dir="ltr">
             <main className="flex-1 container mx-auto max-w-7xl px-4 py-8">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
@@ -45,8 +45,8 @@ const Bookmarks = () => {
                         <Heart className="w-6 h-6 text-rose-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold gradient-text">المفضلة</h1>
-                        <p className="text-muted-foreground">الأدوات التي قمت بحفظها</p>
+                        <h1 className="text-3xl font-bold gradient-text">Bookmarks</h1>
+                        <p className="text-muted-foreground">Tools you saved</p>
                     </div>
                 </div>
 
@@ -55,7 +55,7 @@ const Bookmarks = () => {
                     <div className="flex justify-center items-center py-20 min-h-[400px]">
                         <div className="flex flex-col items-center gap-4">
                             <Loader2 className="h-12 w-12 animate-spin text-neon-purple" />
-                            <span className="text-muted-foreground animate-pulse">جاري تحميل المفضلة...</span>
+                            <span className="text-muted-foreground animate-pulse">Loading bookmarks...</span>
                         </div>
                     </div>
                 )}
@@ -66,8 +66,8 @@ const Bookmarks = () => {
                         <div className="bg-destructive/10 p-4 rounded-full mb-4">
                             <Heart className="h-8 w-8 text-destructive" />
                         </div>
-                        <p className="text-xl font-bold text-destructive mb-2">حدث خطأ</p>
-                        <p className="text-muted-foreground">فشل في تحميل المفضلة</p>
+                        <p className="text-xl font-bold text-destructive mb-2">Error</p>
+                        <p className="text-muted-foreground">Failed to load bookmarks</p>
                     </div>
                 )}
 
@@ -77,9 +77,9 @@ const Bookmarks = () => {
                         <div className="w-20 h-20 bg-muted/50 rounded-2xl flex items-center justify-center mb-6">
                             <Heart className="w-10 h-10 text-muted-foreground/50" />
                         </div>
-                        <p className="text-xl font-semibold text-foreground">لا توجد أدوات محفوظة</p>
+                        <p className="text-xl font-semibold text-foreground">No saved tools yet</p>
                         <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
-                            اضغط على أيقونة القلب في أي أداة لإضافتها للمفضلة
+                            Tap the heart icon on any tool to save it here.
                         </p>
                         <Button
                             onClick={() => navigate('/')}
@@ -87,7 +87,7 @@ const Bookmarks = () => {
                             className="mt-6 gap-2"
                         >
                             <Search className="w-4 h-4" />
-                            استكشاف الأدوات
+                            Explore Tools
                         </Button>
                     </div>
                 )}

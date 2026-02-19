@@ -26,6 +26,7 @@ import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
 import { useTranslation } from 'react-i18next';
 import { getToolImageUrl } from '@/utils/imageUrl';
+import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 
 interface ToolCardProps {
   tool: Tool;
@@ -70,6 +71,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const isSponsored = tool.is_sponsored === true;
   const supportsArabic = tool.supports_arabic === true;
+  const pricingTier = getPricingTier(tool.pricing_type);
 
   // Logic for badges
   const isNew = useMemo(() => {
@@ -117,7 +119,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
               ? "bg-neon-purple text-white shadow-neon-purple/20 scale-100 opacity-100"
               : "bg-black/40 text-gray-300 hover:bg-neon-purple hover:text-white"
           )}
-          title={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
+          title={isCompared ? (isAr ? "إزالة من المقارنة" : "Remove from comparison") : (isAr ? "إضافة للمقارنة" : "Add to comparison")}
           aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
         >
           <Scale className="w-4 h-4" />
@@ -134,12 +136,12 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
       <div className="absolute top-3 right-12 z-10 flex gap-2">
         {isSponsored && (
           <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-[10px] px-2 py-0.5 border-0 gap-1">
-            <Crown className="w-3 h-3" /> ممول
+            <Crown className="w-3 h-3" /> {isAr ? "ممول" : "Sponsored"}
           </Badge>
         )}
         {isNew && !isSponsored && (
           <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold text-[10px] px-2 py-0.5 border-0 gap-1 animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.5)]">
-            <Clock className="w-3 h-3" /> جديد
+            <Clock className="w-3 h-3" /> {isAr ? "جديد" : "New"}
           </Badge>
         )}
       </div>
@@ -203,20 +205,20 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
           {/* المميزات (Badges) */}
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20">
-              {tool.category}
+              {getCategoryLabel(tool.category, isAr)}
             </Badge>
             <Badge variant="outline" className={cn(
               "border hover:bg-opacity-20 transition-colors",
-              tool.pricing_type === 'مجاني' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                tool.pricing_type === 'مدفوع' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
-                  tool.pricing_type === 'تجربة مجانية' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+              pricingTier === 'free' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                pricingTier === 'paid' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
+                  pricingTier === 'trial' || pricingTier === 'freemium' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                     'bg-gray-500/10 text-gray-400 border-gray-500/20'
             )}>
-              {tool.pricing_type}
+              {getPricingLabel(tool.pricing_type, isAr)}
             </Badge>
             {supportsArabic && (
               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1">
-                <Languages className="w-3 h-3" /> عربي
+                <Languages className="w-3 h-3" /> {isAr ? "عربي" : "Arabic Support"}
               </Badge>
             )}
           </div>

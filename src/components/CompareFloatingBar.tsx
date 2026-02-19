@@ -3,11 +3,14 @@ import { Button } from "@/components/ui/button";
 import { X, ArrowLeft, Scale } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const CompareFloatingBar = () => {
     const { selectedTools, clearCompare } = useCompare();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(false);
+    const { i18n } = useTranslation();
+    const isAr = i18n.language === "ar";
 
     // إخفاء الشريط إذا كنا في صفحة المقارنة نفسها أو القائمة فارغة
     useEffect(() => {
@@ -35,9 +38,11 @@ const CompareFloatingBar = () => {
                         </span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-white">المقارنة نشطة</span>
+                        <span className="text-sm font-bold text-white">{isAr ? "المقارنة نشطة" : "Comparison Active"}</span>
                         <span className="text-xs text-gray-400">
-                            {selectedTools.length === 1 ? "اختر أداة أخرى للمقارنة" : `${selectedTools.length} أدوات محددة`}
+                            {selectedTools.length === 1
+                                ? (isAr ? "اختر أداة أخرى للمقارنة" : "Select one more tool to compare")
+                                : (isAr ? `${selectedTools.length} أدوات محددة` : `${selectedTools.length} tools selected`)}
                         </span>
                     </div>
                 </div>
@@ -49,7 +54,7 @@ const CompareFloatingBar = () => {
                         size="icon"
                         onClick={clearCompare}
                         className="text-gray-400 hover:text-red-400 hover:bg-red-400/10"
-                        aria-label="إلغاء المقارنة"
+                        aria-label={isAr ? "إلغاء المقارنة" : "Clear comparison"}
                     >
                         <X className="w-5 h-5" />
                     </Button>
@@ -60,7 +65,7 @@ const CompareFloatingBar = () => {
                             className="bg-neon-purple hover:bg-neon-purple/80 text-white font-bold px-6 shadow-[0_0_20px_rgba(124,58,237,0.3)]"
                             disabled={selectedTools.length < 2} // لا تسمح بالذهاب إذا كانت أداة واحدة
                         >
-                            مقارنة <ArrowLeft className="w-4 h-4 mr-2" />
+                            {isAr ? "مقارنة" : "Compare"} <ArrowLeft className={`w-4 h-4 ${isAr ? "mr-2" : "ml-2 rotate-180"}`} />
                         </Button>
                     </Link>
                 </div>

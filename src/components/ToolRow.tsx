@@ -8,6 +8,7 @@ import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { getToolImageUrl } from '@/utils/imageUrl';
+import { getCategoryLabel } from '@/utils/localization';
 
 interface ToolRowProps {
     tool: Tool;
@@ -138,7 +139,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                 <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold text-foreground truncate">{displayTitle}</h3>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
-                        {tool.category}
+                        {getCategoryLabel(tool.category, isAr)}
                     </span>
                 </div>
                 <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">

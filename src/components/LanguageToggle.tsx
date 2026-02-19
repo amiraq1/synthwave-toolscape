@@ -23,10 +23,10 @@ const LanguageToggle = () => {
             size="sm"
             onClick={toggleLang}
             className="gap-2 font-bold"
-            aria-label="تغيير اللغة"
+            aria-label="Change language"
         >
             <Languages className="w-4 h-4" />
-            {i18n.language === "ar" ? "EN" : "عربي"}
+            {i18n.language === "ar" ? "EN" : "AR"}
         </Button>
     );
 };

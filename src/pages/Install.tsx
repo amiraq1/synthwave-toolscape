@@ -50,7 +50,7 @@ const Install = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="rtl" role="main">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="ltr" role="main">
       {/* Background gradient orbs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -63,8 +63,8 @@ const Install = () => {
               <Activity className="h-12 w-12 text-white" />
             </div>
             <h1 className="text-3xl">
-              <span className="font-extrabold gradient-text">نبض</span>
-              <span className="font-medium text-foreground/80 mr-1">AI</span>
+              <span className="font-extrabold gradient-text">Nabd</span>
+              <span className="font-medium text-foreground/80 ml-1">AI</span>
             </h1>
           </div>
 
@@ -72,41 +72,41 @@ const Install = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-center gap-2 text-emerald-400">
                 <CheckCircle className="h-6 w-6" />
-                <span className="text-xl font-semibold">التطبيق مثبت!</span>
+                <span className="text-xl font-semibold">App Installed!</span>
               </div>
               <p className="text-muted-foreground">
-                يمكنك الآن استخدام نبض AI من الشاشة الرئيسية
+                You can now launch Nabd AI directly from your home screen.
               </p>
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                العودة للرئيسية
+                Back to Home
               </Button>
             </div>
           ) : isIOS ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">ثبت التطبيق على جهازك</span>
+                <span className="text-xl font-semibold">Install the App</span>
               </div>
 
-              <div className="space-y-4 text-right">
+              <div className="space-y-4 text-left">
                 <p className="text-muted-foreground">
-                  لتثبيت التطبيق على iPhone أو iPad:
+                  To install on iPhone or iPad:
                 </p>
                 <ol className="space-y-3 text-foreground">
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">1</span>
-                    <span>اضغط على أيقونة المشاركة <Share className="inline h-4 w-4 mx-1" /> في أسفل المتصفح</span>
+                    <span>Tap the Share icon <Share className="inline h-4 w-4 mx-1" /> at the bottom of Safari</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">2</span>
-                    <span>مرر للأسفل واختر "إضافة إلى الشاشة الرئيسية"</span>
+                    <span>Scroll down and choose "Add to Home Screen"</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">3</span>
-                    <span>اضغط "إضافة" في الزاوية العليا</span>
+                    <span>Tap "Add" in the top corner</span>
                   </li>
                 </ol>
               </div>
@@ -116,18 +116,18 @@ const Install = () => {
                 variant="outline"
                 className="w-full py-6 text-lg border-border/50"
               >
-                العودة للرئيسية
+                Back to Home
               </Button>
             </div>
           ) : deferredPrompt ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Download className="h-6 w-6" />
-                <span className="text-xl font-semibold">ثبت التطبيق</span>
+                <span className="text-xl font-semibold">Install App</span>
               </div>
 
               <p className="text-muted-foreground">
-                ثبت نبض AI على جهازك للوصول السريع والعمل بدون إنترنت
+                Install Nabd AI for faster access and offline support.
               </p>
 
               <div className="space-y-3">
@@ -136,7 +136,7 @@ const Install = () => {
                   className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg gap-2"
                 >
                   <Download className="h-5 w-5" />
-                  تثبيت التطبيق
+                  Install
                 </Button>
 
                 <Button
@@ -144,7 +144,7 @@ const Install = () => {
                   variant="outline"
                   className="w-full py-6 text-lg border-border/50"
                 >
-                  ليس الآن
+                  Not Now
                 </Button>
               </div>
             </div>
@@ -152,18 +152,18 @@ const Install = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">تصفح الآن</span>
+                <span className="text-xl font-semibold">Continue in Browser</span>
               </div>
 
               <p className="text-muted-foreground">
-                يمكنك تثبيت التطبيق من قائمة المتصفح أو استخدامه مباشرة
+                You can install later from the browser menu or continue now.
               </p>
 
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                استكشف الأدوات
+                Explore Tools
               </Button>
             </div>
           )}

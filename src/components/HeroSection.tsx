@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles, Command, Cpu, Globe, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { useToolsStats } from '@/hooks/useToolsCount';
+import { useTranslation } from 'react-i18next';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -13,6 +14,8 @@ interface HeroSectionProps {
 const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }: HeroSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { data: stats } = useToolsStats();
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
 
   const formatCount = (n: number) => {
     if (n >= 1000) return `+${Math.floor(n / 100) * 100}`;
@@ -122,26 +125,27 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
           </span>
           <span className="text-sm font-cairo font-bold text-slate-200 tracking-normal flex gap-2 items-center">
-            المساعد الذكي v4.0: <span className="text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]">متصل</span>
+            {isAr ? "المساعد الذكي v4.0:" : "Smart Assistant v4.0:"}{" "}
+            <span className="text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]">{isAr ? "متصل" : "Online"}</span>
           </span>
         </div>
 
         {/* Typography: The Statement */}
         <div className="space-y-6 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-[1.15] text-center">
-            نبض{' '}
+            {isAr ? 'نبض' : 'Nabd'}{' '}
             <span className="relative inline-block">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple via-violet-400 to-neon-cyan animate-pulse-slow">
-                الذكاء
+                {isAr ? 'الذكاء' : 'AI'}
               </span>
               {/* تأثير توهج خلف النص */}
               <div className="absolute inset-0 bg-neon-purple/20 blur-xl -z-10 animate-pulse" />
             </span>{' '}
-            الاصطناعي
+            {isAr ? 'الاصطناعي' : 'Toolscape'}
           </h1>
           <p className="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
-            محرك البحث العربي الأول لأدوات الذكاء الاصطناعي.
-            <span className="block mt-2 text-slate-500 text-lg">اكتشف، قارن، وابنِ المستقبل.</span>
+            {isAr ? 'محرك البحث العربي الأول لأدوات الذكاء الاصطناعي.' : 'A high-signal discovery engine for AI tools.'}
+            <span className="block mt-2 text-slate-500 text-lg">{isAr ? 'اكتشف، قارن، وابنِ المستقبل.' : 'Discover, compare, and build faster.'}</span>
           </p>
         </div>
 
@@ -161,7 +165,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
               onSearch={onSearchChange}
               className="flex-1 bg-transparent border-none shadow-none text-lg text-white placeholder:text-slate-500 focus:ring-0 px-0 py-4 h-auto"
               inputClassName="bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:text-slate-500 h-12"
-              placeholder="ابحث عن أداة (مثلاً: ChatGPT, كتابة محتوى...)"
+              placeholder={isAr ? "ابحث عن أداة (مثلاً: ChatGPT, كتابة محتوى...)" : "Search for a tool (e.g. ChatGPT, video editor...)"}
             />
 
             <Button
@@ -171,19 +175,19 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
               size="icon"
               className="h-12 w-12 rounded-xl bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg shadow-neon-purple/20 transition-all hover:scale-105"
             >
-              <ArrowRight className="w-6 h-6 rotate-180" />
+              <ArrowRight className={`w-6 h-6 ${isAr ? 'rotate-180' : ''}`} />
             </Button>
           </div>
 
           {/* Quick Tags underneath */}
           <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-slate-500 font-cairo">
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#برمجة</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">{isAr ? "#برمجة" : "#coding"}</span>
             <span className="text-slate-700">•</span>
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#تصميم</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">{isAr ? "#تصميم" : "#design"}</span>
             <span className="text-slate-700">•</span>
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#إنتاجية</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">{isAr ? "#إنتاجية" : "#productivity"}</span>
             <span className="text-slate-700">•</span>
-            <span className="hover:text-neon-purple cursor-pointer transition-colors">#كتابة</span>
+            <span className="hover:text-neon-purple cursor-pointer transition-colors">{isAr ? "#كتابة" : "#writing"}</span>
           </div>
         </div>
 
@@ -195,14 +199,14 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             <span className="text-3xl font-black text-white font-mono tracking-tighter tabular-nums">
               {stats ? formatCount(stats.total_tools) : '—'}
             </span>
-            <span className="text-sm text-slate-400 font-cairo font-medium">أداة ذكية</span>
+            <span className="text-sm text-slate-400 font-cairo font-medium">{isAr ? "أداة ذكية" : "AI Tools"}</span>
           </div>
 
           {/* Stat 2: Bilingual */}
           <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
             <Globe className="w-6 h-6 text-slate-500 group-hover:text-neon-cyan transition-colors" />
             <span className="text-3xl font-black text-white font-mono tracking-tighter">AR/EN</span>
-            <span className="text-sm text-slate-400 font-cairo font-medium">دعم ثنائي اللغة</span>
+            <span className="text-sm text-slate-400 font-cairo font-medium">{isAr ? "دعم ثنائي اللغة" : "Bilingual Support"}</span>
           </div>
 
           {/* Stat 3: Free Tools */}
@@ -211,14 +215,14 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             <span className="text-3xl font-black text-white font-mono tracking-tighter tabular-nums">
               {stats?.free_tools ? formatCount(stats.free_tools) : '—'}
             </span>
-            <span className="text-sm text-slate-400 font-cairo font-medium">أداة مجانية</span>
+            <span className="text-sm text-slate-400 font-cairo font-medium">{isAr ? "أداة مجانية" : "Free Tools"}</span>
           </div>
 
           {/* Stat 4: Performance */}
           <div className="flex flex-col items-center space-y-2 group cursor-default transition-transform hover:-translate-y-1 duration-300">
             <Zap className="w-6 h-6 text-slate-500 group-hover:text-yellow-400 transition-colors" />
-            <span className="text-3xl font-black text-white font-cairo tracking-tight">سريع</span>
-            <span className="text-sm text-slate-400 font-cairo font-medium">أداء فوري</span>
+            <span className="text-3xl font-black text-white font-cairo tracking-tight">{isAr ? "سريع" : "Fast"}</span>
+            <span className="text-sm text-slate-400 font-cairo font-medium">{isAr ? "أداء فوري" : "Instant Experience"}</span>
           </div>
         </div>
 

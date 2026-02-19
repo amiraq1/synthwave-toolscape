@@ -9,23 +9,23 @@ const WorkflowBuilder = () => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center" role="main">
             <Helmet>
-                <title>بناء الوكلاء | نبض AI</title>
-                <meta name="description" content="قم ببناء وتخصيص وكلاء الذكاء الاصطناعي الخاصين بك بسهولة." />
+                <title>Workflow Builder | Nabd AI</title>
+                <meta name="description" content="Build and customize your own AI agents with a visual workflow builder." />
             </Helmet>
 
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 max-w-md w-full backdrop-blur-sm">
                 <Construction className="w-16 h-16 text-neon-purple mx-auto mb-6" />
-                <h1 className="text-3xl font-bold mb-2">قريباً</h1>
+                <h1 className="text-3xl font-bold mb-2">Coming Soon</h1>
                 <p className="text-gray-400 mb-8">
-                    نحن نعمل على بناء أداة إنشاء الوكلاء. ستكون متاحة قريباً!
+                    We are building a next-generation AI agent workflow tool. It will be available soon.
                 </p>
 
                 <Button
                     onClick={() => navigate('/')}
                     className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white"
                 >
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                    العودة للرئيسية
+                    <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
+                    Back to Home
                 </Button>
             </div>
         </div>

@@ -17,44 +17,44 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
     {
-        question: 'ما هو نبض AI؟',
-        answer: 'نبض هو دليل عربي شامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك من خلال تصنيفات واضحة وتقييمات حقيقية.',
+        question: 'What is Nabd AI?',
+        answer: 'Nabd is a curated directory for top AI tools. It helps you discover the right products through clear categories and practical comparisons.',
     },
     {
-        question: 'هل أدوات الذكاء الاصطناعي مجانية؟',
-        answer: 'تختلف الأدوات في التسعير. بعضها مجاني بالكامل، وبعضها مدفوع، والبعض الآخر يقدم نسخة مجانية محدودة مع خيارات مدفوعة للميزات المتقدمة. نوضح نوع التسعير لكل أداة في دليلنا.',
+        question: 'Are AI tools free?',
+        answer: 'Pricing varies. Some tools are fully free, others are paid, and many offer freemium or trial plans. We show pricing type for each listing.',
     },
     {
-        question: 'كيف أختار أداة الذكاء الاصطناعي المناسبة لي؟',
-        answer: 'حدد احتياجك أولاً (نصوص، صور، فيديو، برمجة، إنتاجية)، ثم استخدم فلتر التصنيفات في موقعنا. اقرأ وصف الأداة وتقييمات المستخدمين لاتخاذ قرار مدروس.',
+        question: 'How do I choose the right AI tool?',
+        answer: 'Start with your use case (text, image, video, coding, productivity). Then filter by category, compare features, and review user ratings.',
     },
     {
-        question: 'هل يمكنني إضافة أداة جديدة للدليل؟',
-        answer: 'نعم! يمكنك اقتراح أداة جديدة من خلال زر "أضف أداة" في الصفحة الرئيسية. سيتم مراجعة الأداة قبل إضافتها للدليل.',
+        question: 'Can I suggest a new tool?',
+        answer: 'Yes. Use the "Add Tool" action on the homepage. Submissions are reviewed before publishing.',
     },
     {
-        question: 'كيف يتم تقييم الأدوات؟',
-        answer: 'يمكن للمستخدمين المسجلين تقييم الأدوات من 1 إلى 5 نجوم وكتابة مراجعات. نظهر متوسط التقييمات وعدد المراجعات لكل أداة.',
+        question: 'How are tools rated?',
+        answer: 'Signed-in users can rate from 1 to 5 stars and leave reviews. We display average score and review count for each tool.',
     },
     {
-        question: 'ما هي تصنيفات الأدوات المتاحة؟',
-        answer: 'نصنف الأدوات إلى: نصوص (ChatGPT، Claude Sonnet 4.5، Claude 3.5)، صور (Midjourney، DALL-E)، فيديو (Sora، Runway)، برمجة (GitHub Copilot)، وإنتاجية (Notion AI، Jasper).',
+        question: 'What categories are available?',
+        answer: 'Popular categories include text, image, video, coding, productivity, and education-oriented tools.',
     },
     {
-        question: 'هل الموقع متاح كتطبيق؟',
-        answer: 'نعم! نبض هو تطبيق ويب تقدمي (PWA). يمكنك تثبيته على هاتفك أو جهازك من صفحة التثبيت للوصول السريع والاستخدام بدون إنترنت.',
+        question: 'Is Nabd available as an app?',
+        answer: 'Yes. Nabd supports PWA installation, so you can add it to your device and use core pages faster.',
     },
     {
-        question: 'كيف أتواصل مع فريق نبض؟',
-        answer: 'يمكنك التواصل معنا عبر صفحة "اتصل بنا" أو إرسال بريد إلكتروني إلى contact@amiraq.org. نسعد بالإجابة على استفساراتك واقتراحاتك.',
+        question: 'How can I contact the Nabd team?',
+        answer: 'Use the contact page or send an email to contact@amiraq.org.',
     },
 ];
 
 const FAQ = () => {
     useSEO({
-        title: 'الأسئلة الشائعة - نبض AI',
-        description: 'إجابات على الأسئلة الشائعة حول نبض AI ودليل أدوات الذكاء الاصطناعي. تعرف على كيفية استخدام الموقع واختيار الأدوات المناسبة.',
-        keywords: 'أسئلة شائعة، نبض، دليل الذكاء الاصطناعي، مساعدة، FAQ',
+        title: 'FAQ - Nabd AI',
+        description: 'Answers to common questions about Nabd AI and how to discover the right AI tools.',
+        keywords: 'FAQ, Nabd, AI tools directory, help',
     });
 
     // Add FAQ Schema
@@ -89,7 +89,7 @@ const FAQ = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-background" dir="rtl">
+        <div className="min-h-screen bg-background" dir="ltr">
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -99,8 +99,8 @@ const FAQ = () => {
                 <div className="container mx-auto max-w-5xl px-4 py-4">
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5" />
-                            العودة للرئيسية
+                            <ArrowRight className="h-5 w-5 rotate-180" />
+                            Back to Home
                         </Button>
                     </Link>
                 </div>
@@ -116,10 +116,10 @@ const FAQ = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        الأسئلة الشائعة
+                        Frequently Asked Questions
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                        إجابات سريعة على الأسئلة الأكثر شيوعاً حول نبض وأدوات الذكاء الاصطناعي.
+                        Quick answers about Nabd and AI tool discovery.
                     </p>
                 </section>
 
@@ -132,7 +132,7 @@ const FAQ = () => {
                                 value={`item-${index}`}
                                 className="border border-border/50 rounded-xl px-6 data-[state=open]:bg-card/50"
                             >
-                                <AccordionTrigger className="text-right hover:no-underline py-5">
+                                <AccordionTrigger className="text-left hover:no-underline py-5">
                                     <span className="text-lg font-medium text-foreground">{item.question}</span>
                                 </AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
@@ -145,10 +145,10 @@ const FAQ = () => {
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <p className="text-muted-foreground">لم تجد إجابة لسؤالك؟</p>
+                    <p className="text-muted-foreground">Still need help?</p>
                     <Link to="/contact">
                         <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                            تواصل معنا
+                            Contact Us
                         </Button>
                     </Link>
                 </section>
@@ -157,7 +157,7 @@ const FAQ = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 نبض AI. جميع الحقوق محفوظة.</p>
+                    <p>© 2024 Nabd AI. All rights reserved.</p>
                 </div>
             </footer>
         </div>

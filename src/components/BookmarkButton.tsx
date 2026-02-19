@@ -23,8 +23,8 @@ const BookmarkButton = ({ toolId, className }: BookmarkButtonProps) => {
       }}
       disabled={isMutating && false} // We don't want to disable, we want it to feel instant
       aria-pressed={isSaved}
-      aria-label={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
-      title={isSaved ? "إزالة من المفضلة" : "حفظ في المفضلة"}
+      aria-label={isSaved ? "Remove from bookmarks" : "Save to bookmarks"}
+      title={isSaved ? "Remove from bookmarks" : "Save to bookmarks"}
     >
       <Bookmark
         className={`w-5 h-5 transition-all duration-300 ${isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"

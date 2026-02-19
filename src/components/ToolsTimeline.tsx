@@ -1,11 +1,11 @@
 import { useMemo, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
-import 'dayjs/locale/ar';
+import 'dayjs/locale/en';
 import ToolCard from './ToolCard';
 import type { Tool } from '@/hooks/useTools';
 import { CalendarDays, Loader2, Sparkles } from 'lucide-react';
 
-dayjs.locale('ar');
+dayjs.locale('en');
 
 interface ToolsTimelineProps {
     tools: Tool[];
@@ -28,7 +28,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
             const dateStr = tool.release_date || tool.created_at;
             const date = dayjs(dateStr);
 
-            let groupKey = "أدوات أخرى";
+            let groupKey = "Other Tools";
             let sortValue = 0;
 
             if (dateStr && date.isValid()) {
@@ -72,16 +72,16 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
     if (!tools.length && !isFetchingNextPage) {
         return (
             <div className="text-center py-20 text-muted-foreground animate-fade-in">
-                <p className="text-lg">لا توجد أدوات لعرضها حالياً.</p>
+                <p className="text-lg">No tools available right now.</p>
             </div>
         );
     }
 
     return (
-        <div className="relative space-y-12 pb-10" dir="rtl">
+        <div className="relative space-y-12 pb-10" dir="ltr">
 
             {/* Avant-Garde Timeline Line */}
-            <div className="absolute top-0 bottom-0 right-6 md:right-8 w-[2px] bg-gradient-to-b from-neon-purple/50 via-neon-blue/20 to-transparent hidden md:block opacity-50 shadow-[0_0_10px_rgba(139,92,246,0.2)]" />
+            <div className="absolute top-0 bottom-0 left-6 md:left-8 w-[2px] bg-gradient-to-b from-neon-purple/50 via-neon-blue/20 to-transparent hidden md:block opacity-50 shadow-[0_0_10px_rgba(139,92,246,0.2)]" />
 
             {timelineGroups.map((group, groupIndex) => (
                 <div
@@ -94,7 +94,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                     <div className="sticky top-[80px] z-20 mb-8 flex items-center">
 
                         {/* Glowing Node */}
-                        <div className="hidden md:flex items-center justify-center absolute right-6 md:right-8 translate-x-1/2">
+                        <div className="hidden md:flex items-center justify-center absolute left-6 md:left-8 -translate-x-1/2">
                             <div className="w-5 h-5 rounded-full bg-[#0f0f1a] border-2 border-neon-purple shadow-[0_0_15px_rgba(139,92,246,0.8)] relative z-10">
                                 <div className="absolute inset-0 bg-neon-purple rounded-full animate-ping opacity-30" />
                                 <div className="absolute inset-0 bg-neon-purple rounded-full opacity-20 blur-sm" />
@@ -102,7 +102,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                         </div>
 
                         {/* Date Capsule */}
-                        <div className="flex items-center gap-3 bg-[#0f0f1a]/85 backdrop-blur-xl border border-white/20 px-6 py-2.5 rounded-full shadow-lg mr-0 md:mr-16 transition-all hover:border-neon-purple/50 hover:shadow-neon-purple/20 group ring-1 ring-white/10">
+                        <div className="flex items-center gap-3 bg-[#0f0f1a]/85 backdrop-blur-xl border border-white/20 px-6 py-2.5 rounded-full shadow-lg ml-0 md:ml-16 transition-all hover:border-neon-purple/50 hover:shadow-neon-purple/20 group ring-1 ring-white/10">
                             <CalendarDays className="w-5 h-5 text-neon-purple group-hover:scale-110 transition-transform duration-300" />
                             <h2 className="text-lg font-bold text-white capitalize tracking-wide font-mono">
                                 {group.key}
@@ -114,7 +114,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                     </div>
 
                     {/* Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pr-0 md:pr-16 pl-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pl-0 md:pl-16 pr-4">
                         {group.items.map((tool, index) => (
                             <ToolCard
                                 key={tool.id}
@@ -131,7 +131,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                 {isFetchingNextPage ? (
                     <div className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-white/5 border border-white/5">
                         <Loader2 className="w-8 h-8 text-neon-purple animate-spin" />
-                        <p className="text-slate-400 text-sm animate-pulse font-mono">جاري استدعاء المزيد من البيانات...</p>
+                        <p className="text-slate-400 text-sm animate-pulse font-mono">Loading more data...</p>
                     </div>
                 ) : hasNextPage ? (
                     <span className="text-slate-300 text-xs uppercase tracking-widest">Scroll for more</span>
@@ -140,7 +140,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                         <div className="w-16 h-1 bg-gradient-to-r from-transparent via-neon-purple to-transparent rounded-full opacity-50" />
                         <div className="flex items-center gap-2 text-slate-400 text-sm bg-[#0f0f1a] border border-white/10 px-6 py-3 rounded-full shadow-lg">
                             <Sparkles className="w-4 h-4 text-neon-cyan" />
-                            <span>اكتمل الأرشيف. تم عرض {tools.length} أداة.</span>
+                            <span>Archive complete. Displayed {tools.length} tools.</span>
                         </div>
                     </div>
                 )}

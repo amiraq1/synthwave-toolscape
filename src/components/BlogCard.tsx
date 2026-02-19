@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import dayjs from "dayjs";
-import 'dayjs/locale/ar';
-dayjs.locale('ar');
+import 'dayjs/locale/en';
+dayjs.locale('en');
 
 interface BlogPost {
     id: string;
@@ -47,12 +47,12 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{dayjs(post.created_at).locale('ar').format("D MMMM YYYY")}</span>
+                        <span>{dayjs(post.created_at).locale('en').format("D MMMM YYYY")}</span>
                     </div>
                     {post.reading_time && (
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{post.reading_time} دقيقة</span>
+                            <span>{post.reading_time} min read</span>
                         </div>
                     )}
                     {typeof post.views_count === 'number' && (
@@ -81,8 +81,8 @@ const BlogCard = ({ post }: BlogCardProps) => {
                     to={`/blog/${post.id}`}
                     className="inline-flex items-center gap-2 text-neon-purple font-semibold text-sm transition-all group/link"
                 >
-                    <span>قراءة المزيد</span>
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-[-5px]" />
+                    <span>Read more</span>
+                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-[5px]" />
                 </Link>
             </div>
         </article>

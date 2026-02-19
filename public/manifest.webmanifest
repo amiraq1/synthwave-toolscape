@@ -1,13 +1,13 @@
 {
-  "name": "نبض - دليل أدوات الذكاء الاصطناعي",
-  "short_name": "نبض AI",
-  "description": "دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية",
+  "name": "Nabd AI - AI Tools Directory",
+  "short_name": "Nabd AI",
+  "description": "Discover and compare the best AI tools in one place",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#13111c",
   "theme_color": "#7c3aed",
-  "dir": "rtl",
-  "lang": "ar",
+  "dir": "ltr",
+  "lang": "en",
   "icons": [
     {
       "src": "/pwa-192x192.webp",

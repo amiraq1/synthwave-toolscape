@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from 'react-i18next';
+import { getCategoryLabel, getPricingLabel } from '@/utils/localization';
 
 export type PricingFilter = 'all' | 'مجاني' | 'مدفوع';
 export type SortOption = 'newest' | 'rating' | 'popular';
@@ -22,16 +23,16 @@ interface CategoryFiltersProps {
   onSortChange?: (sort: SortOption) => void;
 }
 
-const pricingOptions: { value: PricingFilter; label: string }[] = [
-  { value: 'all', label: 'الكل' },
-  { value: 'مجاني', label: 'مجاني' },
-  { value: 'مدفوع', label: 'مدفوع' },
+const pricingOptions: { value: PricingFilter }[] = [
+  { value: 'all' },
+  { value: 'مجاني' },
+  { value: 'مدفوع' },
 ];
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: 'newest', label: 'الأحدث' },
-  { value: 'rating', label: 'الأعلى تقييماً' },
-  { value: 'popular', label: 'الأكثر شعبية' },
+const sortOptions: { value: SortOption; ar: string; en: string }[] = [
+  { value: 'newest', ar: 'الأحدث', en: 'Newest' },
+  { value: 'rating', ar: 'الأعلى تقييماً', en: 'Highest Rated' },
+  { value: 'popular', ar: 'الأكثر شعبية', en: 'Most Popular' },
 ];
 
 const CategoryFilters = ({
@@ -43,21 +44,21 @@ const CategoryFilters = ({
   onSortChange,
 }: CategoryFiltersProps) => {
   const { t, i18n } = useTranslation();
+  const isAr = i18n.language === 'ar';
 
-  // Dynamic Pricing Function because we need t()
   const pOptions = [
     { value: 'all', label: t('filters.all') },
-    { value: 'مجاني', label: 'مجاني' },
-    { value: 'مدفوع', label: 'مدفوع' },
+    { value: 'مجاني', label: getPricingLabel('مجاني', isAr) },
+    { value: 'مدفوع', label: getPricingLabel('مدفوع', isAr) },
   ];
 
   const currentPricingLabel = pOptions.find(p => p.value === pricing)?.label || t('filters.all');
-  const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.label || 'الأحدث';
+  const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.[isAr ? 'ar' : 'en'] || (isAr ? 'الأحدث' : 'Newest');
 
   return (
     <div className="space-y-4 py-6 sm:py-8 px-4" dir={i18n.dir()}>
       {/* Category Tabs */}
-      <nav aria-label="تصفية حسب الفئات" className="flex flex-wrap justify-center gap-2 sm:gap-3">
+      <nav aria-label={isAr ? "تصفية حسب الفئات" : "Filter by categories"} className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {categories.map((category) => {
           // Simple Icon mapping based on category name
           let icon = null;
@@ -84,7 +85,7 @@ const CategoryFilters = ({
               )}
             >
               {icon}
-              {category}
+              {getCategoryLabel(category, isAr)}
             </button>
           )
         })}
@@ -95,7 +96,7 @@ const CategoryFilters = ({
         <div className="flex flex-wrap justify-center items-center gap-3">
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <SlidersHorizontal className="w-4 h-4" />
-            <span className="hidden sm:inline">تصفية:</span>
+            <span className="hidden sm:inline">{isAr ? "تصفية:" : "Filter:"}</span>
           </div>
 
           {/* Pricing Filter */}
@@ -124,7 +125,7 @@ const CategoryFilters = ({
                       pricing === option.value && "bg-neon-purple/10 text-neon-purple"
                     )}
                   >
-                    {option.label}
+                    {option.value === "all" ? t("filters.all") : getPricingLabel(option.value, isAr)}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -143,7 +144,7 @@ const CategoryFilters = ({
                     sortBy !== 'newest' && "border-neon-purple/50 text-neon-purple"
                   )}
                 >
-                  ترتيب: {currentSortLabel}
+                  {isAr ? "ترتيب:" : "Sort:"} {currentSortLabel}
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -157,7 +158,7 @@ const CategoryFilters = ({
                       sortBy === option.value && "bg-neon-purple/10 text-neon-purple"
                     )}
                   >
-                    {option.label}
+                    {option[isAr ? "ar" : "en"]}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

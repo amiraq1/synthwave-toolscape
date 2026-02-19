@@ -13,11 +13,11 @@ export function PwaUpdateToast() {
             const updateSW = registerSW({
                 // 1. عند وجود تحديث جديد (نسخة جديدة من التطبيق)
                 onNeedRefresh() {
-                    toast("تحديث جديد متوفر", {
-                        description: "تم تحميل نسخة جديدة من التطبيق. انقر للتحديث.",
+                    toast("Update available", {
+                        description: "A new version has been downloaded. Click to update.",
                         duration: Infinity, // التنبيه لا يختفي حتى يتفاعل المستخدم معه
                         action: {
-                            label: "تحديث الآن",
+                            label: "Update now",
                             onClick: () => {
                                 // true تعني: قم بتحديث الصفحة وتحميل النسخة الجديدة
                                 updateSW(true)
@@ -25,7 +25,7 @@ export function PwaUpdateToast() {
                         },
                         // خيار للإغلاق إذا لم يرغب المستخدم في التحديث فوراً
                         cancel: {
-                            label: "لاحقاً",
+                            label: "Later",
                             onClick: () => { },
                         },
                     })
@@ -33,7 +33,7 @@ export function PwaUpdateToast() {
 
                 // 2. عندما يصبح التطبيق جاهزاً للعمل بدون إنترنت (Offline)
                 onOfflineReady() {
-                    toast.success("التطبيق جاهز للعمل بدون إنترنت", {
+                    toast.success("App is ready for offline use", {
                         duration: 3000,
                     })
                 },

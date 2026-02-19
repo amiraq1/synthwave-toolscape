@@ -8,6 +8,7 @@ import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
 import { X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 const LivePulse = lazy(() => import("@/components/LivePulse"));
 const TrendingTools = lazy(() => import("@/components/TrendingTools"));
@@ -15,10 +16,15 @@ const RecommendedForYou = lazy(() => import("@/components/RecommendedForYou"));
 const ToolsTimeline = lazy(() => import("@/components/ToolsTimeline"));
 
 const Index = () => {
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
+
   // SEO — single source of truth (no duplicate Helmet)
   useSEO({
-    title: "الرئيسية",
-    description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.",
+    title: isAr ? "الرئيسية" : "Home",
+    description: isAr
+      ? "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026."
+      : "Nabd AI is your complete directory for discovering and comparing the best AI tools in 2026.",
     ogType: "website",
   });
 
@@ -103,13 +109,13 @@ const Index = () => {
 
   useStructuredData({
     type: "itemList",
-    name: "أدوات الذكاء الاصطناعي",
-    description: "قائمة بأفضل أدوات الذكاء الاصطناعي",
+    name: isAr ? "أدوات الذكاء الاصطناعي" : "AI Tools",
+    description: isAr ? "قائمة بأفضل أدوات الذكاء الاصطناعي" : "List of top AI tools",
     items: structuredDataItems,
   });
 
   return (
-    <div className="relative min-h-screen bg-[#0f0f1a] overflow-x-hidden font-cairo text-right selection:bg-neon-purple selection:text-white" dir="rtl">
+    <div className={`relative min-h-screen bg-[#0f0f1a] overflow-x-hidden font-cairo selection:bg-neon-purple selection:text-white ${isAr ? "text-right" : "text-left"}`} dir={isAr ? "rtl" : "ltr"}>
 
       {/* Avant-Garde Backgrounds */}
       <div className="fixed -top-[20%] right-[20%] w-[60vw] h-[60vw] bg-neon-purple/5 rounded-full blur-[180px] pointer-events-none" />
@@ -118,9 +124,9 @@ const Index = () => {
       {/* Skip link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-[#111827] focus:text-white focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple"
+        className={`sr-only focus:not-sr-only focus:fixed focus:top-3 ${isAr ? "focus:right-3" : "focus:left-3"} focus:z-[100] focus:rounded-xl focus:bg-[#111827] focus:text-white focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple`}
       >
-        تخطّي إلى المحتوى
+        {isAr ? "تخطّي إلى المحتوى" : "Skip to content"}
       </a>
 
       {showEnhancements && (
@@ -136,7 +142,7 @@ const Index = () => {
       >
 
         {/* Section 1: Hero & Primary Search */}
-        <section aria-label="البحث والاستكشاف" className="flex flex-col items-center text-center space-y-8 mb-4">
+        <section aria-label={isAr ? "البحث والاستكشاف" : "Search and discovery"} className="flex flex-col items-center text-center space-y-8 mb-4">
           <HeroSection
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -171,7 +177,7 @@ const Index = () => {
                   className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-red-400 bg-black/40 px-4 py-2 rounded-full border border-white/10 hover:border-red-500/30 transition-all shadow-lg hover:shadow-red-500/10"
                 >
                   <X className="w-3 h-3" />
-                  مسح جميع الفلاتر
+                  {isAr ? "مسح جميع الفلاتر" : "Clear all filters"}
                 </button>
               </div>
             )}
@@ -183,7 +189,7 @@ const Index = () => {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
               <span className="w-1.5 h-6 bg-neon-purple rounded-full"></span>
-              الأدوات المتاحة
+              {isAr ? "الأدوات المتاحة" : "Available Tools"}
             </h2>
 
             {/* Search Status Badge */}
@@ -191,7 +197,7 @@ const Index = () => {
               <div className="flex items-center gap-2 animate-in fade-in zoom-in-95">
                 <Badge variant="secondary" className="bg-white/5 text-slate-400 gap-2">
                   <Search className="w-3 h-3" />
-                  نتائج البحث
+                  {isAr ? "نتائج البحث" : "Search Results"}
                 </Badge>
               </div>
             )}
@@ -241,9 +247,9 @@ const Index = () => {
               <div className="p-4 rounded-full bg-white/5 text-slate-500">
                 <Search className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-300">لم يتم العثور على نتائج</h3>
-              <p className="text-slate-500 max-w-sm">جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات.</p>
-              <button type="button" onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">عرض كل الأدوات</button>
+              <h3 className="text-xl font-bold text-slate-300">{isAr ? "لم يتم العثور على نتائج" : "No results found"}</h3>
+              <p className="text-slate-500 max-w-sm">{isAr ? "جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات." : "Try different keywords or remove filters to see more tools."}</p>
+              <button type="button" onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">{isAr ? "عرض كل الأدوات" : "Show all tools"}</button>
             </div>
           )}
         </section>

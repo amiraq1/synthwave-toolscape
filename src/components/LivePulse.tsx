@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Star, Zap } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import 'dayjs/locale/ar';
+import 'dayjs/locale/en';
 
 dayjs.extend(relativeTime);
-dayjs.locale('ar');
+dayjs.locale('en');
 
 interface Activity {
     type: "review" | "new_tool";
@@ -50,13 +50,13 @@ const LivePulse = () => {
             const feed: Activity[] = [
                 ...(reviews || []).map((r) => ({
                     type: "review" as const,
-                    text: `تقييم جديد على ${r.tools?.title || "أداة"}`,
+                    text: `New rating on ${r.tools?.title || "a tool"}`,
                     icon: <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />,
                     time: r.created_at,
                 })),
                 ...(newTools || []).map((t) => ({
                     type: "new_tool" as const,
-                    text: `✨ أداة جديدة: ${t.title}`,
+                    text: `✨ New tool: ${t.title}`,
                     icon: <Zap className="w-3 h-3 text-neon-purple fill-neon-purple" />,
                     time: t.created_at,
                 })),
@@ -75,7 +75,7 @@ const LivePulse = () => {
             <div className="container mx-auto flex items-center gap-2">
                 <div className="flex items-center gap-1 text-white text-xs font-bold px-3 py-1 bg-neon-purple/30 rounded-full shrink-0">
                     <div className="w-2 h-2 rounded-full bg-neon-purple" />
-                    نبض مباشر
+                    Live Pulse
                 </div>
 
                 {/* شريط متحرك (Marquee) */}
@@ -86,7 +86,7 @@ const LivePulse = () => {
                                 {item.icon}
                                 <span>{item.text}</span>
                                 <span className="text-slate-300 text-[10px]">
-                                    ({dayjs(item.time).locale('ar').fromNow()})
+                                    ({dayjs(item.time).locale('en').fromNow()})
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-slate-500 ml-4" />
                             </div>

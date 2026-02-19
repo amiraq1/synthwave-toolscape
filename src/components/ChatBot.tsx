@@ -18,7 +18,7 @@ type Message = {
 export default function ChatBot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "assistant", content: "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟ 🤖" }
+        { role: "assistant", content: "Hi! I am your AI assistant. How can I help you find the right tools today? 🤖" }
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +38,8 @@ export default function ChatBot() {
 
         // 1. التحقق من الإنترنت
         if (!navigator.onLine) {
-            toast.error("لا يوجد اتصال بالإنترنت", {
-                description: "المساعد الذكي يحتاج للإنترنت ليعمل.",
+            toast.error("No internet connection", {
+                description: "The assistant needs internet access to respond.",
                 icon: <WifiOff className="w-4 h-4" />,
             });
             return;
@@ -61,7 +61,7 @@ export default function ChatBot() {
             if (error) throw error;
 
             if (!data?.reply) {
-                throw new Error("لم تصل إجابة من السيرفر");
+                throw new Error("No response returned from server");
             }
 
             // إضافة رد المساعد
@@ -70,7 +70,7 @@ export default function ChatBot() {
         } catch (error: unknown) {
             console.error("Chat Error Details:", error);
 
-            let errorMessage = "حدث خطأ أثناء الاتصال";
+            let errorMessage = "Connection error occurred";
             if (error instanceof Error) {
                 errorMessage = error.message;
             } else if (typeof error === "object" && error !== null && "message" in error) {
@@ -80,10 +80,10 @@ export default function ChatBot() {
                 }
             }
 
-            toast.error("فشل الاتصال بالمساعد", {
+            toast.error("Assistant connection failed", {
                 description: errorMessage,
                 action: {
-                    label: "إعادة المحاولة",
+                    label: "Retry",
                     onClick: () => setInputValue(userMessage),
                 },
             });
@@ -99,7 +99,7 @@ export default function ChatBot() {
                 <Button
                     onClick={() => setIsOpen(true)}
                     className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-neon-purple hover:bg-neon-purple/80 z-50 animate-bounce"
-                    aria-label="فتح المساعد الذكي"
+                    aria-label="Open assistant"
                 >
                     <MessageCircle className="h-8 w-8 text-white" />
                 </Button>
@@ -117,14 +117,14 @@ export default function ChatBot() {
                                 <AvatarFallback className="bg-primary text-primary-foreground"><Bot className="w-5 h-5" /></AvatarFallback>
                             </Avatar>
                             <div>
-                                <span className="block font-bold">المساعد الذكي</span>
+                                <span className="block font-bold">AI Assistant</span>
                                 <span className="text-xs text-green-500 flex items-center gap-1">
                                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                    متصل الآن
+                                    Online now
                                 </span>
                             </div>
                         </CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full" aria-label="إغلاق نافذة المساعد">
+                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full" aria-label="Close assistant">
                             <X className="h-4 w-4" />
                         </Button>
                     </CardHeader>
@@ -179,7 +179,7 @@ export default function ChatBot() {
                             <Input
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="اسأل عن أداة..."
+                                placeholder="Ask about a tool..."
                                 className="flex-1 bg-background focus-visible:ring-neon-purple"
                                 disabled={isLoading}
                             />
@@ -188,7 +188,7 @@ export default function ChatBot() {
                                 size="icon"
                                 disabled={isLoading || !inputValue.trim()}
                                 className="bg-primary hover:bg-primary/90 transition-all"
-                                aria-label="إرسال الرسالة"
+                                aria-label="Send message"
                             >
                                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                             </Button>

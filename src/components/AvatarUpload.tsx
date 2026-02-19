@@ -23,7 +23,7 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
             setUploading(true);
 
             if (!event.target.files || event.target.files.length === 0) {
-                throw new Error("يجب اختيار صورة أولاً.");
+                throw new Error("Please select an image first.");
             }
 
             const file = event.target.files[0];
@@ -39,16 +39,15 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
 
             if (uploadError) throw uploadError;
 
-            // الحصول على الرابط العام
             const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
             setAvatarUrl(data.publicUrl);
             onUpload(data.publicUrl);
-            toast.success("تم تحديث الصورة بنجاح! 📸");
+            toast.success("Avatar updated successfully 📸");
 
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'فشل الرفع';
-            toast.error("فشل الرفع", {
+            const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+            toast.error("Upload failed", {
                 description: errorMessage,
             });
         } finally {
@@ -79,7 +78,7 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
             <div className="relative">
                 <Button variant="outline" size="sm" className="gap-2 cursor-pointer z-0">
                     <Upload className="w-4 h-4" />
-                    {uploading ? "جاري الرفع..." : "تغيير الصورة"}
+                    {uploading ? "Uploading..." : "Change Avatar"}
                 </Button>
                 <input
                     type="file"

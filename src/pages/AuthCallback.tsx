@@ -31,7 +31,7 @@ const AuthCallback = () => {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : "تعذّر إكمال تسجيل الدخول");
+          setError(err instanceof Error ? err.message : "Unable to complete sign-in");
         }
         return;
       }
@@ -52,11 +52,11 @@ const AuthCallback = () => {
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="rtl" role="main">
-        <h1 className="text-2xl font-bold mb-3">فشل تسجيل الدخول</h1>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="ltr" role="main">
+        <h1 className="text-2xl font-bold mb-3">Sign-in failed</h1>
         <p className="text-muted-foreground mb-6">{error}</p>
         <Button onClick={() => navigate("/auth")} className="bg-neon-purple hover:bg-neon-purple/80">
-          العودة لصفحة الدخول
+          Back to login
         </Button>
       </div>
     );

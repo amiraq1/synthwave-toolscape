@@ -5,6 +5,7 @@ import type { Tool } from '@/hooks/useTools';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToolCardSkeleton } from '@/components/skeletons/ToolCardSkeleton';
+import { getCategoryLabel } from '@/utils/localization';
 
 interface ToolsGridProps {
   tools: Tool[];
@@ -35,20 +36,21 @@ const ToolsGrid = ({
     if (isLoading) return;
 
     const count = tools.length;
+    const displayCategory = getCategoryLabel(activeCategory, isAr);
     let message = '';
 
     if (searchQuery && activeCategory !== 'الكل') {
       message = isAr
-        ? (count === 0 ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}` : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`)
-        : (count === 0 ? `No results for "${searchQuery}" in ${activeCategory}` : `Found ${count} tools for "${searchQuery}" in ${activeCategory}`);
+        ? (count === 0 ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${displayCategory}` : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${displayCategory}`)
+        : (count === 0 ? `No results for "${searchQuery}" in ${displayCategory}` : `Found ${count} tools for "${searchQuery}" in ${displayCategory}`);
     } else if (searchQuery) {
       message = isAr
         ? (count === 0 ? `لا توجد نتائج للبحث "${searchQuery}"` : `تم العثور على ${count} أداة للبحث "${searchQuery}"`)
         : (count === 0 ? `No results for "${searchQuery}"` : `Found ${count} tools for "${searchQuery}"`);
     } else if (activeCategory !== 'الكل') {
       message = isAr
-        ? (count === 0 ? `لا توجد أدوات في فئة ${activeCategory}` : `عرض ${count} أداة في فئة ${activeCategory}`)
-        : (count === 0 ? `No tools in ${activeCategory}` : `Showing ${count} tools in ${activeCategory}`);
+        ? (count === 0 ? `لا توجد أدوات في فئة ${displayCategory}` : `عرض ${count} أداة في فئة ${displayCategory}`)
+        : (count === 0 ? `No tools in ${displayCategory}` : `Showing ${count} tools in ${displayCategory}`);
     } else {
       message = isAr ? `عرض ${count} أداة` : `Showing ${count} tools`;
     }

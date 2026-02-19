@@ -76,13 +76,13 @@ export default defineConfig(({ mode }) => {
 
       // 3. PWA Configuration
       VitePWA({
-        registerType: 'prompt', // يظهر زر التحديث للمستخدم بدلاً من التحديث التلقائي
+        registerType: 'prompt', // show update prompt instead of auto-refresh
         injectRegister: null, // Prevent render-blocking - we manually register SW after page load
         includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
         manifest: {
-          name: 'نبض AI',
-          short_name: 'Nabdh AI',
-          description: 'دليلك الشامل لأدوات الذكاء الاصطناعي',
+          name: 'Nabd AI',
+          short_name: 'Nabd AI',
+          description: 'Your complete guide to AI tools',
           theme_color: '#0f0f1a',
           background_color: '#0f0f1a',
           display: 'standalone',

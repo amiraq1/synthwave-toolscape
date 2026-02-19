@@ -52,25 +52,25 @@ const Settings = () => {
       .eq("id", session.user.id);
 
     if (error) {
-      toast.error("فشل التحديث", {
+      toast.error("Update failed", {
         description: error.message,
       });
     } else {
-      toast.success("تم حفظ البيانات! ✅");
+      toast.success("Profile saved successfully ✅");
     }
     setUpdating(false);
   };
 
-  if (!session) return <div className="p-10 text-center" role="main">يرجى تسجيل الدخول.</div>;
+  if (!session) return <div className="p-10 text-center" role="main">Please sign in first.</div>;
   if (loading) return <div className="flex justify-center mt-20" role="main"><Loader2 className="animate-spin" /></div>;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl" role="main">
-      <h1 className="text-3xl font-bold mb-8 text-white">إعدادات الحساب</h1>
+    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="ltr" role="main">
+      <h1 className="text-3xl font-bold mb-8 text-white">Account Settings</h1>
 
-      <Card className="bg-white/5 border-white/10 text-right">
+      <Card className="bg-white/5 border-white/10 text-left">
         <CardHeader>
-          <CardTitle>الملف الشخصي</CardTitle>
+          <CardTitle>Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={updateProfile} className="space-y-8">
@@ -87,18 +87,18 @@ const Settings = () => {
             {/* 2. الاسم والبريد */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">البريد الإلكتروني</Label>
-                <Input id="email" value={session.user.email} disabled className="bg-black/20 text-gray-400 text-right" />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" value={session.user.email} disabled className="bg-black/20 text-gray-400 text-left" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">الاسم الكامل</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="كيف تحب أن نناديك؟"
-                  className="text-right"
+                  placeholder="How should we call you?"
+                  className="text-left"
                 />
               </div>
             </div>
@@ -109,7 +109,7 @@ const Settings = () => {
               className="w-full bg-neon-purple hover:bg-neon-purple/80"
               disabled={updating}
             >
-              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 ml-2" /> حفظ التغييرات</>}
+              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
             </Button>
 
           </form>

@@ -18,7 +18,7 @@ const NotFound = () => {
   return (
     <div
       className="flex min-h-[80vh] items-center justify-center px-4"
-      dir="rtl"
+      dir="ltr"
       role="main"
     >
       {/* Background Orb */}
@@ -36,12 +36,11 @@ const NotFound = () => {
         </div>
 
         <h1 className="text-2xl md:text-3xl font-bold text-white -mt-8">
-          الصفحة غير موجودة
+          Page Not Found
         </h1>
 
         <p className="text-muted-foreground leading-relaxed max-w-sm mx-auto">
-          يبدو أن هذا الرابط لم يعد متاحًا أو تم نقله. لا تقلق — يمكنك
-          العودة واستكشاف أدوات الذكاء الاصطناعي من الصفحة الرئيسية.
+          This link is unavailable or has moved. You can head back and explore AI tools from the homepage.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -51,7 +50,7 @@ const NotFound = () => {
           >
             <Link to="/">
               <Home className="w-4 h-4" />
-              العودة للرئيسية
+              Back to Home
             </Link>
           </Button>
 
@@ -61,8 +60,8 @@ const NotFound = () => {
             className="border-white/10 hover:border-neon-purple/50 hover:text-neon-purple gap-2 h-12 rounded-xl"
           >
             <Link to="/blog">
-              تصفح المدونة
-              <ArrowRight className="w-4 h-4 rotate-180" />
+              Browse Blog
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>

@@ -139,8 +139,8 @@ const AppContent = () => {
 
   const handleAddClick = () => {
     if (!user) {
-      toast.error("يجب تسجيل الدخول للمشاركة", {
-        description: "سجل دخولك لإضافة أداة جديدة",
+      toast.error("Login required", {
+        description: "Please sign in to submit a new tool",
       });
       return;
     }
