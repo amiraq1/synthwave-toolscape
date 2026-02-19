@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolCard from './ToolCard';
+import ToolRow from './ToolRow';
 import type { Tool } from '@/hooks/useTools';
-import { Loader2 } from 'lucide-react';
+import { LayoutGrid, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToolCardSkeleton } from '@/components/skeletons/ToolCardSkeleton';
 import { getCategoryLabel } from '@/utils/localization';
@@ -29,8 +30,21 @@ const ToolsGrid = ({
   onFetchNextPage
 }: ToolsGridProps) => {
   const [announcement, setAnnouncement] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
+
+  useEffect(() => {
+    const savedMode = window.localStorage.getItem('toolsViewMode');
+    if (savedMode === 'grid' || savedMode === 'list') {
+      setViewMode(savedMode);
+    }
+  }, []);
+
+  const handleViewModeChange = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+    window.localStorage.setItem('toolsViewMode', mode);
+  };
 
   useEffect(() => {
     if (isLoading) return;
@@ -114,15 +128,48 @@ const ToolsGrid = ({
         {announcement}
       </div>
 
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8"
-        role="list"
-        dir={isAr ? "rtl" : "ltr"}
-      >
-        {tools.map((tool, index) => (
-          <ToolCard key={tool.id} tool={tool} index={index} />
-        ))}
+      <div className={`mb-4 flex items-center justify-end gap-2 ${isAr ? "flex-row-reverse" : ""}`} dir={isAr ? "rtl" : "ltr"}>
+        <Button
+          type="button"
+          variant={viewMode === 'grid' ? 'secondary' : 'outline'}
+          size="sm"
+          onClick={() => handleViewModeChange('grid')}
+          className="gap-2"
+          aria-label={isAr ? 'عرض شبكي' : 'Grid view'}
+        >
+          <LayoutGrid className="h-4 w-4" />
+          {isAr ? 'شبكي' : 'Grid'}
+        </Button>
+        <Button
+          type="button"
+          variant={viewMode === 'list' ? 'secondary' : 'outline'}
+          size="sm"
+          onClick={() => handleViewModeChange('list')}
+          className="gap-2"
+          aria-label={isAr ? 'عرض قائمة' : 'List view'}
+        >
+          <List className="h-4 w-4" />
+          {isAr ? 'قائمة' : 'List'}
+        </Button>
       </div>
+
+      {viewMode === 'grid' ? (
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8"
+          role="list"
+          dir={isAr ? "rtl" : "ltr"}
+        >
+          {tools.map((tool, index) => (
+            <ToolCard key={tool.id} tool={tool} index={index} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3 px-1 sm:px-4 pb-8" role="list" dir={isAr ? "rtl" : "ltr"}>
+          {tools.map((tool) => (
+            <ToolRow key={tool.id} tool={tool} />
+          ))}
+        </div>
+      )}
 
       {/* Load More Button */}
       {hasNextPage && (

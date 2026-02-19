@@ -18,6 +18,8 @@
     "tools:restore:apply": "node scripts/restore-tools-from-backup.js --backup-dir=backups --apply",
     "tools:dead-links:dry": "node scripts/delete-dead-links.js --dry-run --timeout-ms=12000 --concurrency=24 --retries=1 --backup-dir=backups",
     "tools:dead-links:apply": "node scripts/delete-dead-links.js --apply --timeout-ms=12000 --concurrency=24 --retries=1 --backup-dir=backups",
+    "tools:import:public-apis": "node scripts/import-public-apis.js",
+    "tools:publish:from-source": "node scripts/publish-tools-from-source.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
