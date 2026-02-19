@@ -213,17 +213,17 @@ const resources = {
   },
 } as const;
 
-i18n.use(LanguageDetector).use(initReactI18next).init({
-  resources,
-  fallbackLng: "ar",
-  supportedLngs: ["ar", "en"],
-  detection: {
-    order: ["localStorage"],
-    caches: ["localStorage"],
-  },
-  interpolation: {
-    escapeValue: false,
-  },
-});
+  i18n.use(LanguageDetector).use(initReactI18next).init({
+    resources,
+    fallbackLng: "ar",
+    supportedLngs: ["ar", "en"],
+    detection: {
+      order: ["localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage"],
+    },
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
 export default i18n;
