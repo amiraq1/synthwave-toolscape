@@ -110,7 +110,7 @@ export const getToolImageUrl = (
   const valid = getValidImageUrl(imageUrl);
   if (valid) return valid;
 
-  const { fallbackToFavicon = false, faviconSize = 64 } = options;
+  const { fallbackToFavicon = true, faviconSize = 128 } = options;
   if (!fallbackToFavicon) return null;
 
   const hostname = getHostname(toolUrl);

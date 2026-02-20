@@ -178,7 +178,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
               ))
             ) : tools.length > 0 ? (
               tools.map((tool) => {
-                const imageUrl = getToolImageUrl(tool.image_url, tool.url, { fallbackToFavicon: false });
+                const imageUrl = getToolImageUrl(tool.image_url, tool.url);
                 return (
                   <TableRow key={tool.id}>
                     <TableCell>

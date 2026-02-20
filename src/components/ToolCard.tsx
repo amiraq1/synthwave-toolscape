@@ -97,7 +97,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   };
 
   // Unified image resolver: explicit image_url first, then favicon fallback from tool.url.
-  const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url, { fallbackToFavicon: false });
+  const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url);
   const showResolvedImage = !!resolvedImageUrl;
 
   return (
