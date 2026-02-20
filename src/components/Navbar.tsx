@@ -104,8 +104,9 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="Bookmarks">
                 <Heart className="w-5 h-5" />
               </Button>
-              <LanguageToggle />
             </div>
+
+            <LanguageToggle />
 
             {session ? (
               <DropdownMenu>

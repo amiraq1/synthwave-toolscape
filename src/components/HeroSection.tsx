@@ -132,7 +132,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
 
         {/* Typography: The Statement */}
         <div className="space-y-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-[1.15] text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white tracking-tight mb-6 leading-[1.15] text-center">
             {isAr ? 'نبض' : 'Nabd'}{' '}
             <span className="relative inline-block">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple via-violet-400 to-neon-cyan animate-pulse-slow">
@@ -143,7 +143,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             </span>{' '}
             {isAr ? 'الاصطناعي' : 'Toolscape'}
           </h1>
-          <p className="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed px-4">
             {isAr ? 'محرك البحث العربي الأول لأدوات الذكاء الاصطناعي.' : 'A high-signal discovery engine for AI tools.'}
             <span className="block mt-2 text-slate-500 text-lg">{isAr ? 'اكتشف، قارن، وابنِ المستقبل.' : 'Discover, compare, and build faster.'}</span>
           </p>
@@ -155,7 +155,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-purple rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-500 animate-gradient-x" />
 
           <div className="relative bg-[#0f0f1a]/80 backdrop-blur-xl rounded-2xl border border-white/10 p-2 flex items-center shadow-2xl">
-            <div className="pl-4 pr-3 text-slate-400">
+            <div className="hidden sm:block pl-4 pr-3 text-slate-400">
               <Command className="w-6 h-6" />
             </div>
 
@@ -164,7 +164,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
               onChange={onSearchChange}
               onSearch={onSearchChange}
               className="flex-1 bg-transparent border-none shadow-none text-lg text-white placeholder:text-slate-500 focus:ring-0 px-0 py-4 h-auto"
-              inputClassName="bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:text-slate-500 h-12"
+              inputClassName="bg-transparent border-none focus:ring-0 text-base sm:text-xl font-medium placeholder:text-slate-500 h-12"
               placeholder={isAr ? "ابحث عن أداة (مثلاً: ChatGPT, كتابة محتوى...)" : "Search for a tool (e.g. ChatGPT, video editor...)"}
             />
 

@@ -147,7 +147,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
       </div>
 
       {/* 2. المحتوى */}
-      <div className="p-6 flex flex-col h-full">
+      <div className="p-4 sm:p-6 flex flex-col h-full">
         <Link to={`/tool/${tool.id}`} className="flex flex-col flex-grow" aria-label={`View details for ${displayTitle}`}>
 
           {/* العنوان والأيقونة */}
