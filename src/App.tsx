@@ -11,7 +11,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
+import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
 import { useAuth } from "@/context/AuthContext";
+import { useIdleLoad } from "@/hooks/useIdleLoad";
+import { useTranslation } from "react-i18next";
 const PwaUpdateToast = lazy(() => import("@/components/pwa-update-toast").then(m => ({ default: m.PwaUpdateToast })));
 import Index from "./pages/Index"; // Eager load Home for better LCP
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
@@ -83,8 +86,10 @@ const AppContent = () => {
   const { user } = useAuth();
 
   const location = useLocation(); // Get current location
+  const { i18n } = useTranslation();
+  const isAr = i18n.language === "ar";
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [showDeferredUi, setShowDeferredUi] = useState(false);
+  const showDeferredUi = useIdleLoad(12000);
 
   // Initialize analytics (deferred)
   useEffect(() => {
@@ -111,31 +116,7 @@ const AppContent = () => {
     };
   }, [location]);
 
-  useEffect(() => {
-    let activated = false;
 
-    const activateDeferredUi = () => {
-      if (activated) return;
-      activated = true;
-      setShowDeferredUi(true);
-      window.removeEventListener("pointerdown", activateDeferredUi);
-      window.removeEventListener("keydown", activateDeferredUi);
-      window.removeEventListener("scroll", activateDeferredUi);
-    };
-
-    window.addEventListener("pointerdown", activateDeferredUi, { passive: true });
-    window.addEventListener("keydown", activateDeferredUi);
-    window.addEventListener("scroll", activateDeferredUi, { passive: true });
-
-    const timeoutId = window.setTimeout(activateDeferredUi, 12000);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.removeEventListener("pointerdown", activateDeferredUi);
-      window.removeEventListener("keydown", activateDeferredUi);
-      window.removeEventListener("scroll", activateDeferredUi);
-    };
-  }, []);
 
   const handleAddClick = () => {
     if (!user) {
@@ -149,32 +130,40 @@ const AppContent = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
+      <a
+        href="#main-content"
+        className={`sr-only focus:not-sr-only focus:fixed focus:top-3 focus:z-[9999] focus:rounded-xl focus:bg-glass focus:backdrop-blur-xl focus:text-neon-cyan focus:px-6 focus:py-3 focus:font-bold focus:shadow-2xl focus:ring-2 focus:ring-neon-purple outline-none ${isAr ? "focus:right-3" : "focus:left-3"}`}
+      >
+        {isAr ? "تخطّ إلى المحتوى الأساسي" : "Skip to main content"}
+      </a>
       <Navbar onAddClick={handleAddClick} />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/tools" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/tool/:id" element={<ToolDetails />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/install" element={<Install />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
-          <Route path="/bookmarks" element={<Bookmarks />} />
-          <Route path="/library" element={<Bookmarks />} />
-          <Route path="/compare" element={<ComparePage />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/workflow/new" element={<WorkflowBuilder />} />
-          <Route path="/agents" element={<AgentsMarketplace />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      <GlobalErrorBoundary isAr={isAr}>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/tools" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/tool/:id" element={<ToolDetails />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/install" element={<Install />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/library" element={<Bookmarks />} />
+            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/workflow/new" element={<WorkflowBuilder />} />
+            <Route path="/agents" element={<AgentsMarketplace />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </GlobalErrorBoundary>
 
       <Footer />
 

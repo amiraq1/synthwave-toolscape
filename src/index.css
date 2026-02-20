@@ -107,21 +107,42 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   }
 
-  /* Optimized Glow Effect - subtle and performant */
+  /* الحل الطليعي والهندسي لتأثيرات التوهج 100% GPU */
   .card-glow {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 0.3s ease;
+    position: relative;
+    z-index: 1;
+    /* التسريع العتادي للحواف */
+    transform: translateZ(0); 
+    will-change: transform;
+  }
+
+  /* صنع الظل في طبقة سفلى مخفية (أرخص هندسياً بألف مرة من تحريك الظل مباشرة) */
+  .card-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.4);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    opacity: 0;
+    z-index: -1;
+    /* نحن نحرك الشفافية فقط، وهذا لا يجبر المتصفح على رسم الشاشة من جديد */
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  }
+
+  .card-glow:hover::after {
+    opacity: 1;
   }
 
   .card-glow:hover {
-    box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.2);
     transform: translateY(-4px);
-    border-color: rgba(139, 92, 246, 0.3);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card-glow:active {
     transform: scale(0.98);
+    transition: transform 0.1s ease;
   }
 
   /* Gradient text utility */

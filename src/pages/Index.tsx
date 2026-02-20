@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { useIdleLoad } from "@/hooks/useIdleLoad";
 import HeroSection from "@/components/HeroSection";
 import CategoryFilters from "@/components/CategoryFilters";
 import ToolsGrid from "@/components/ToolsGrid";
@@ -31,34 +32,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
-  const [showEnhancements, setShowEnhancements] = useState(false);
-
-  useEffect(() => {
-    let activated = false;
-
-    const activateEnhancements = () => {
-      if (activated) return;
-      activated = true;
-      setShowEnhancements(true);
-      window.removeEventListener("pointerdown", activateEnhancements);
-      window.removeEventListener("keydown", activateEnhancements);
-      window.removeEventListener("scroll", activateEnhancements);
-    };
-
-    // Mount decorative widgets on first user intent (or after a quiet timeout).
-    window.addEventListener("pointerdown", activateEnhancements, { passive: true });
-    window.addEventListener("keydown", activateEnhancements);
-    window.addEventListener("scroll", activateEnhancements, { passive: true });
-
-    const timeoutId = window.setTimeout(activateEnhancements, 12000);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      window.removeEventListener("pointerdown", activateEnhancements);
-      window.removeEventListener("keydown", activateEnhancements);
-      window.removeEventListener("scroll", activateEnhancements);
-    };
-  }, []);
+  const showEnhancements = useIdleLoad(12000);
 
   const clearFilters = () => {
     setSelectedPersona("all");
@@ -121,13 +95,7 @@ const Index = () => {
       <div className="fixed -top-[20%] right-[20%] w-[60vw] h-[60vw] bg-neon-purple/5 rounded-full blur-[180px] pointer-events-none" />
       <div className="fixed bottom-[10%] -left-[10%] w-[50vw] h-[50vw] bg-neon-blue/5 rounded-full blur-[180px] pointer-events-none" />
 
-      {/* Skip link */}
-      <a
-        href="#main-content"
-        className={`sr-only focus:not-sr-only focus:fixed focus:top-3 ${isAr ? "focus:right-3" : "focus:left-3"} focus:z-[100] focus:rounded-xl focus:bg-[#111827] focus:text-white focus:px-4 focus:py-2 focus:shadow focus:ring-2 focus:ring-neon-purple`}
-      >
-        {isAr ? "تخطّي إلى المحتوى" : "Skip to content"}
-      </a>
+
 
       {showEnhancements && (
         <Suspense fallback={null}>
