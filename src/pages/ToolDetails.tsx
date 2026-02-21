@@ -38,7 +38,7 @@ import { getSupabaseFunctionsBaseUrl } from '@/utils/supabaseUrl';
 import { toast } from 'sonner';
 import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 import { cn } from '@/lib/utils';
-import BookmarkButton from './BookmarkButton';
+import BookmarkButton from '@/components/BookmarkButton';
 
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
