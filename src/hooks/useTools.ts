@@ -57,15 +57,17 @@ interface UseToolsParams {
   searchQuery?: string;
   selectedPersona?: string;
   category?: Category;
+  sortBy?: string;
 }
 
 export const useTools = (params: UseToolsParams = {}) => {
   const searchQuery = params.searchQuery || "";
   const selectedPersona = params.selectedPersona || "all";
   const category: Category = params.category || "الكل";
+  const sortBy = params.sortBy || "trending";
 
   return useInfiniteQuery({
-    queryKey: ["tools", selectedPersona, searchQuery, category],
+    queryKey: ["tools", selectedPersona, searchQuery, category, sortBy],
 
     queryFn: async ({ pageParam = 0 }) => {
       // Keep initial DOM lighter for faster first render and lower layout cost.
@@ -116,9 +118,37 @@ export const useTools = (params: UseToolsParams = {}) => {
         // 'أخرى' is handled by exclusion or just showing general things if not strict
       }
 
-      // Sorting
-      // Prioritize Featured, then Newest
-      query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false });
+      // Sorting dynamically based on selected option
+      if (params.sortBy) {
+        switch (params.sortBy) {
+          case 'trending':
+            // Trending prioritizes featured first, then trending score
+            query = query.order('is_featured', { ascending: false })
+              .order('trending_score', { ascending: false, nullsFirst: false })
+              .order('created_at', { ascending: false });
+            break;
+          case 'newest':
+            query = query.order('created_at', { ascending: false });
+            break;
+          case 'top_rated':
+            query = query.order('average_rating', { ascending: false, nullsFirst: false })
+              .order('reviews_count', { ascending: false, nullsFirst: false });
+            break;
+          case 'popular':
+          case 'fastest': // Using fastest as popular for now
+            query = query.order('views_count', { ascending: false, nullsFirst: false })
+              .order('clicks_count', { ascending: false, nullsFirst: false });
+            break;
+          case 'alphabetical':
+            query = query.order('title', { ascending: true });
+            break;
+          default:
+            query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false });
+        }
+      } else {
+        // Default sorting
+        query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false });
+      }
 
       // Pagination
       const { data, error, count } = await query.range(from, to);

@@ -33,26 +33,26 @@ interface ToolCardProps {
   index?: number;
 }
 
-// Category icons mapping
-const categoryIcons: Record<string, React.ElementType> = {
-  'نصوص': Type,
-  'صور': ImageIcon,
-  'فيديو': Video,
-  'برمجة': Code,
-  'إنتاجية': Zap,
-  'صوت': Music,
-  'الكل': LayoutGrid
+// Category aesthetic mappings (Tailwind syntax)
+const categoryAesthetics: Record<string, { icon: React.ElementType, ring: string, glow: string }> = {
+  'نصوص': { icon: Type, ring: 'border-blue-500/30 group-hover:border-blue-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]' },
+  'صور': { icon: ImageIcon, ring: 'border-fuchsia-500/30 group-hover:border-fuchsia-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(217,70,239,0.3)]' },
+  'فيديو': { icon: Video, ring: 'border-rose-500/30 group-hover:border-rose-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(244,63,94,0.3)]' },
+  'برمجة': { icon: Code, ring: 'border-emerald-500/30 group-hover:border-emerald-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.3)]' },
+  'إنتاجية': { icon: Zap, ring: 'border-amber-500/30 group-hover:border-amber-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.3)]' },
+  'صوت': { icon: Music, ring: 'border-cyan-500/30 group-hover:border-cyan-400', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.3)]' },
+  'الكل': { icon: LayoutGrid, ring: 'border-neon-purple/30 group-hover:border-neon-purple', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)]' }
 };
 
 const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => {
   const safeRating = typeof rating === 'number' && !Number.isNaN(rating) ? rating : 0;
-  const safeCount = typeof count === 'number' && !Number.isNaN(count) ? count : 0;
+
+  if (safeRating === 0) return null;
 
   return (
-    <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-md border border-white/5 backdrop-blur-sm">
-      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-      <span className="text-sm font-semibold tabular-nums text-white/90">{safeRating.toFixed(1)}</span>
-      <span className="text-xs text-white/40 hidden sm:inline">({safeCount})</span>
+    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/5 bg-black/20 text-white/90">
+      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+      <span className="text-xs font-bold tabular-nums tracking-wider">{safeRating.toFixed(1)}</span>
     </div>
   );
 };
@@ -61,6 +61,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
+
   const isCompared = selectedTools.includes(String(tool.id));
   const { t, i18n } = useTranslation();
   const isAr = i18n.language === 'ar';
@@ -68,181 +69,194 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
   const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
 
-  const CategoryIcon = categoryIcons[tool.category] || Sparkles;
+  // Fallbacks logic
+  let extractedCategoryKey = 'الكل';
+  if (tool.category) {
+    if (tool.category.includes('نصوص')) extractedCategoryKey = 'نصوص';
+    else if (tool.category.includes('صور')) extractedCategoryKey = 'صور';
+    else if (tool.category.includes('فيديو')) extractedCategoryKey = 'فيديو';
+    else if (tool.category.includes('برمجة')) extractedCategoryKey = 'برمجة';
+    else if (tool.category.includes('إنتاجية')) extractedCategoryKey = 'إنتاجية';
+    else if (tool.category.includes('صوت')) extractedCategoryKey = 'صوت';
+  }
+
+  const aesthetic = categoryAesthetics[extractedCategoryKey] || categoryAesthetics['الكل'];
+  const CategoryIcon = aesthetic.icon;
+
   const isSponsored = tool.is_sponsored === true;
   const supportsArabic = tool.supports_arabic === true;
   const pricingTier = getPricingTier(tool.pricing_type);
 
-  // Logic for badges
+  // Newness check
   const isNew = useMemo(() => {
     if (!tool.created_at) return false;
-    const createdDate = new Date(tool.created_at);
-    // Tool is new if created within last 30 days
-    const daysSinceCreation = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysSinceCreation = Math.floor((Date.now() - new Date(tool.created_at).getTime()) / (1000 * 60 * 60 * 24));
     return daysSinceCreation <= 30;
   }, [tool.created_at]);
 
   const handleCompareClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isCompared) {
-      removeFromCompare(String(tool.id));
-    } else {
-      addToCompare(String(tool.id));
-    }
+    isCompared ? removeFromCompare(String(tool.id)) : addToCompare(String(tool.id));
   };
 
-  const handleMouseEnter = () => {
-    prefetchTool(String(tool.id));
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // let the link handle navigation, but ensure we don't trigger wrapper clicks if any
+    recordClick(String(tool.id));
   };
 
-  // Unified image resolver: explicit image_url first, then favicon fallback from tool.url.
   const resolvedImageUrl = getToolImageUrl(tool.image_url, tool.url);
   const showResolvedImage = !!resolvedImageUrl;
 
   return (
     <div
-      className="group relative bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-neon-purple/50 flex flex-col h-full gradient-border premium-glow card-spotlight gpu-accelerated"
-      onMouseEnter={handleMouseEnter}
-      style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
+      className={cn(
+        "group relative flex flex-col h-full bg-[#0a0a14] rounded-2xl transition-all duration-500 gpu-accelerated overflow-visible",
+        "border border-white/5 hover:border-white/20 select-none",
+        aesthetic.glow,
+        // Slide up stagger animation on mount
+        "animate-slide-up opacity-0"
+      )}
+      onMouseEnter={() => prefetchTool(String(tool.id))}
+      style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, animationFillMode: 'forwards' }}
     >
+      {/* 
+        Abstract Background Layer
+        Using pure CSS radial gradients instead of heavy DOM nodes or blurs to save Main Thread execution time.
+      */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-white opacity-[0.02] group-hover:opacity-[0.05] rounded-full blur-2xl transition-opacity duration-700" />
+        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
+        {/* Noise overlay */}
+        <div className="absolute inset-0 opacity-[0.015] bg-[url('/noise.png')] mix-blend-overlay" />
+      </div>
 
-      {/* 1. الجزء العلوي (أزرار التحكم) */}
-      <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-
-        {/* زر المقارنة ⚖️ */}
+      {/* Floating Action Buttons (Outside normal flow/absolute) */}
+      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
         <button
           onClick={handleCompareClick}
           className={cn(
-            "p-2 rounded-full backdrop-blur-md transition-all shadow-lg",
+            "p-2 rounded-xl backdrop-blur-md transition-all shadow-[0_4px_16px_rgba(0,0,0,0.5)] border",
             isCompared
-              ? "bg-neon-purple text-white shadow-neon-purple/20 scale-100 opacity-100"
-              : "bg-black/40 text-gray-300 hover:bg-neon-purple hover:text-white"
+              ? "bg-neon-purple text-white border-neon-purple/50 glow-purple"
+              : "bg-black/60 text-slate-400 hover:text-white border-white/10 hover:border-white/30"
           )}
-          title={isCompared ? (isAr ? "إزالة من المقارنة" : "Remove from comparison") : (isAr ? "إضافة للمقارنة" : "Add to comparison")}
-          aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
+          title={isCompared ? (isAr ? "إزالة من المقارنة" : "Remove comparison") : (isAr ? "إضافة للمقارنة" : "Compare")}
+          aria-label="Compare"
         >
           <Scale className="w-4 h-4" />
         </button>
-
       </div>
 
-      {/* زر المفضلة الثابت (يظهر دائماً) ❤️ */}
-      <div className="absolute top-3 left-3 z-20">
-        <BookmarkButton toolId={String(tool.id)} className="bg-black/40 hover:bg-black/60 text-white border-none" />
+      <div className="absolute top-4 left-4 z-20">
+        <BookmarkButton
+          toolId={String(tool.id)}
+          className="bg-black/60 text-slate-400 border border-white/10 hover:border-white/30 rounded-xl p-2 shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+        />
       </div>
 
-      {/* Badges - New / Sponsored */}
-      <div className="absolute top-3 right-12 z-10 flex gap-2">
+      {/* Badges (Top) */}
+      <div className={cn("absolute top-0 z-10 flex gap-2 -translate-y-1/2", isAr ? "right-6" : "left-6")}>
         {isSponsored && (
-          <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-[10px] px-2 py-0.5 border-0 gap-1">
-            <Crown className="w-3 h-3" /> {isAr ? "ممول" : "Sponsored"}
-          </Badge>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-600 to-orange-500 text-black font-extrabold text-[10px] uppercase tracking-wider shadow-[0_4px_12px_rgba(245,158,11,0.4)]">
+            <Crown className="w-3 h-3" strokeWidth={3} /> {isAr ? "ممول" : "Sponsored"}
+          </div>
         )}
         {isNew && !isSponsored && (
-          <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold text-[10px] px-2 py-0.5 border-0 gap-1 animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.5)]">
-            <Clock className="w-3 h-3" /> {isAr ? "جديد" : "New"}
-          </Badge>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neon-cyan text-black font-extrabold text-[10px] uppercase tracking-wider shadow-[0_4px_12px_rgba(6,182,212,0.4)]">
+            <Sparkles className="w-3 h-3" strokeWidth={3} /> {isAr ? "جديد" : "New"}
+          </div>
         )}
       </div>
 
-      {/* 2. المحتوى */}
-      <div className="p-4 sm:p-6 flex flex-col h-full">
-        <Link to={`/tool/${tool.id}`} className="flex flex-col flex-grow" aria-label={`View details for ${displayTitle}`}>
+      {/* Main Content Area (Clickable) */}
+      <Link
+        to={`/tool/${tool.id}`}
+        className="flex flex-col flex-grow p-5 sm:p-6 z-10 focus-visible:outline-none focus:ring-2 focus:ring-neon-purple/50 rounded-2xl"
+        aria-label={`View details for ${displayTitle}`}
+      >
+        {/* Header: Identity Group */}
+        <div className="flex gap-4 items-start mb-5 mt-2">
 
-          {/* العنوان والأيقونة */}
-          <div className="flex justify-between items-start mb-4 pl-4 mt-6">
-            <div className="flex items-center gap-3">
-              <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center border transition-all duration-500 group-hover:scale-105 overflow-hidden",
-                showResolvedImage
-                  ? "bg-white/5 border-white/10"
-                  : "bg-neon-purple/10 border-neon-purple/20 group-hover:border-neon-purple/50"
-              )}>
-                {/* Resolved image (manual image_url or tool favicon fallback) */}
-                {showResolvedImage ? (
-                  <ImageWithFallback
-                    src={resolvedImageUrl}
-                    alt={displayTitle}
-                    width={100}
-                    className="w-full h-full p-1.5 object-contain"
-                    priority={index < 6}
-                    aspectRatio="square"
-                  />
-                ) : null}
-
-                {/* Fallback: First Letter or Category Icon */}
-                <div className={cn(
-                  "fallback-icon flex items-center justify-center w-full h-full",
-                  showResolvedImage ? "hidden" : "flex"
-                )}>
-                  {tool.title ? (
-                    <span className="text-xl font-bold text-neon-purple">
-                      {tool.title.charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
-                    <CategoryIcon className="w-6 h-6 text-neon-purple opacity-70" />
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-white group-hover:text-neon-purple transition-colors line-clamp-1">
-                  {displayTitle}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
-                </div>
-              </div>
+          {/* Asymmetric Avatar Placement */}
+          <div className={cn(
+            "relative shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center p-0.5 transition-transform duration-500 group-hover:scale-[1.05] group-hover:-rotate-2 bg-[#05050a]",
+            "border", aesthetic.ring,
+            "shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
+          )}>
+            <div className="w-full h-full rounded-xl overflow-hidden bg-white/[0.02] flex items-center justify-center relative">
+              {showResolvedImage ? (
+                <ImageWithFallback
+                  src={resolvedImageUrl}
+                  alt={displayTitle}
+                  width={160}
+                  className="w-full h-full p-2 object-contain"
+                  priority={index < 6}
+                  aspectRatio="square"
+                />
+              ) : (
+                <CategoryIcon className={cn("w-6 h-6 opacity-60", aesthetic.ring.split(' ')[0].replace('border-', 'text-'))} />
+              )}
             </div>
           </div>
 
-          {/* الوصف */}
-          <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2">
-            {displayDescription}
-          </p>
-
-          {/* المميزات (Badges) */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20">
-              {getCategoryLabel(tool.category, isAr)}
-            </Badge>
-            <Badge variant="outline" className={cn(
-              "border hover:bg-opacity-20 transition-colors",
-              pricingTier === 'free' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                pricingTier === 'paid' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
-                  pricingTier === 'trial' || pricingTier === 'freemium' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
-            )}>
-              {getPricingLabel(tool.pricing_type, isAr)}
-            </Badge>
-            {supportsArabic && (
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1">
-                <Languages className="w-3 h-3" /> {isAr ? "عربي" : "Arabic Support"}
-              </Badge>
-            )}
+          {/* Title & Micro-metrics */}
+          <div className="flex flex-col pt-1">
+            <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight mb-1.5">
+              {displayTitle}
+            </h3>
+            <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
           </div>
-
-          {/* الفوتر: زر التفاصيل */}
-        </Link>
-        <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
-          <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
-            <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
-            AI Powered
-          </span>
-          <button
-            type="button"
-            className="min-h-[44px] min-w-[44px] px-3 py-2 inline-flex items-center gap-1.5 rounded-md font-medium transition-colors text-gray-200 hover:text-neon-purple focus:outline-none focus:ring-2 focus:ring-neon-purple"
-            onClick={() => {
-              window.open(tool.url, '_blank', 'noopener,noreferrer');
-              recordClick(String(tool.id));
-            }}
-            aria-label={`visit ${displayTitle}`}
-          >
-            {t('tools.visit')} <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
         </div>
+
+        {/* Description: High legibility formatting */}
+        <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2 max-w-[95%] group-hover:text-slate-300 transition-colors">
+          {displayDescription}
+        </p>
+
+        {/* Metadata Badges: Semantic styling without generic badge borders */}
+        <div className="flex flex-wrap gap-2 mt-auto mb-5">
+          <span className="px-2 py-1 text-xs font-semibold rounded-md bg-white/5 text-slate-300 border border-white/5">
+            {getCategoryLabel(tool.category, isAr)}
+          </span>
+          <span className={cn(
+            "px-2 py-1 text-xs font-bold rounded-md border",
+            pricingTier === 'free' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              pricingTier === 'paid' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
+                pricingTier === 'trial' || pricingTier === 'freemium' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                  'bg-slate-800 text-slate-400 border-slate-700'
+          )}>
+            {getPricingLabel(tool.pricing_type, isAr)}
+          </span>
+          {supportsArabic && (
+            <span className="px-2 py-1 text-xs font-semibold rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center gap-1">
+              <Languages className="w-3 h-3" /> {isAr ? "عربي" : "Arabic"}
+            </span>
+          )}
+        </div>
+      </Link>
+
+      {/* Action Footer: Integrated organically, not sectioned off */}
+      <div className="z-10 px-5 pb-5 pt-0">
+        <a
+          href={tool.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleActionClick}
+          className={cn(
+            "flex w-full items-center justify-between px-4 py-3 rounded-xl transition-all duration-300",
+            "bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.05] group-hover:border-white/10 text-slate-400 group-hover:text-white"
+          )}
+          aria-label={`visit ${displayTitle}`}
+        >
+          <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+            <Zap className="w-3.5 h-3.5 text-slate-500 group-hover:text-neon-purple transition-colors" />
+            {t('tools.visit')}
+          </span>
+          <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+        </a>
       </div>
+
     </div>
   );
 });

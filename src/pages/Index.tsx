@@ -10,6 +10,8 @@ import { useStructuredData } from "@/hooks/useStructuredData";
 import { X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+import { ToolsSorter, type SortOption } from "@/components/ToolsSorter";
 
 const LivePulse = lazy(() => import("@/components/LivePulse"));
 const TrendingTools = lazy(() => import("@/components/TrendingTools"));
@@ -29,9 +31,13 @@ const Index = () => {
     ogType: "website",
   });
 
+  const [searchParams] = useSearchParams();
+  const initialSort = (searchParams.get('sort') as SortOption) || 'trending';
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("الكل");
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
+  const [sortBy, setSortBy] = useState<SortOption>(initialSort);
   const showEnhancements = useIdleLoad(12000);
 
   const clearFilters = () => {
@@ -51,7 +57,8 @@ const Index = () => {
   } = useTools({
     searchQuery,
     selectedPersona,
-    category: activeCategory
+    category: activeCategory,
+    sortBy: sortBy
   });
 
   const tools = useMemo(() => {
@@ -173,6 +180,10 @@ const Index = () => {
 
           <div className="bg-card/20 backdrop-blur-sm border border-white/5 rounded-2xl p-2 sm:p-4 hover:border-white/10 transition-colors">
             <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+          </div>
+
+          <div className="flex justify-start sm:justify-end animate-in fade-in zoom-in-95">
+            <ToolsSorter onSortChange={setSortBy} isArabic={isAr} />
           </div>
         </section>
 
