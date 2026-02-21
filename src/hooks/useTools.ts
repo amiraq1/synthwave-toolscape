@@ -122,9 +122,9 @@ export const useTools = (params: UseToolsParams = {}) => {
       if (params.sortBy) {
         switch (params.sortBy) {
           case 'trending':
-            // Trending prioritizes featured first, then trending score
+            // Trending prioritizes featured first, then clicks
             query = query.order('is_featured', { ascending: false })
-              .order('trending_score', { ascending: false, nullsFirst: false })
+              .order('clicks_count', { ascending: false, nullsFirst: false })
               .order('created_at', { ascending: false });
             break;
           case 'newest':

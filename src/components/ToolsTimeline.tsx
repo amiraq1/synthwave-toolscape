@@ -117,7 +117,7 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pl-0 md:pl-16 pr-4">
                         {group.items.map((tool, index) => (
                             <ToolCard
-                                key={tool.id}
+                                key={`${tool.id}-${group.key}-${index}`}
                                 tool={tool}
                                 index={index}
                             />

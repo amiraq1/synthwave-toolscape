@@ -9,7 +9,6 @@ interface TrendingTool {
     id: number;
     title: string;
     clicks_count: number;
-    trending_score: number;
 }
 
 const TrendingTools = () => {
@@ -22,9 +21,8 @@ const TrendingTools = () => {
         queryFn: async () => {
             const { data, error } = await (supabase
                 .from("tools")
-                .select("id, title, clicks_count, trending_score, created_at") as any)
+                .select("id, title, clicks_count, created_at") as any)
                 .eq("is_published", true)
-                .order("trending_score", { ascending: false, nullsFirst: false })
                 .order("clicks_count", { ascending: false, nullsFirst: false })
                 .limit(10);
 
@@ -35,8 +33,7 @@ const TrendingTools = () => {
             return data.map((tool: any) => ({
                 id: tool.id,
                 title: tool.title,
-                clicks_count: tool.clicks_count ?? 0,
-                trending_score: tool.trending_score ?? 0
+                clicks_count: tool.clicks_count ?? 0
             })) as TrendingTool[];
         },
         staleTime: 1000 * 60 * 10, // 10 minutes cache
