@@ -1,37 +1,32 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Code, Palette, PenTool, GraduationCap, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
 
 // تعريف الوظائف وتصنيفاتها
 export const PERSONAS = [
-    { id: "all", label: "الكل", label_en: "All", icon: LayoutGrid, categories: [] as string[] },
+    { id: "all", label: "الكل", icon: LayoutGrid, categories: [] as string[] },
     {
         id: "developer",
         label: "مبرمج",
-        label_en: "Developer",
         icon: Code,
         categories: ["برمجة", "أدوات تطوير", "كود", "Code", "Development"]
     },
     {
         id: "designer",
         label: "مصمم",
-        label_en: "Designer",
         icon: Palette,
         categories: ["صور", "فيديو", "تصميم", "Image", "Video", "Design", "Art"]
     },
     {
         id: "marketer",
         label: "مسوق/كاتب",
-        label_en: "Marketer/Writer",
         icon: PenTool,
         categories: ["تسويق", "كتابة", "SEO", "Marketing", "Copywriting", "Social Media", "نصوص"]
     },
     {
         id: "student",
         label: "طالب/باحث",
-        label_en: "Student/Researcher",
         icon: GraduationCap,
         categories: ["تعليم", "بحث", "إنتاجية", "تلخيص", "Education", "Research", "Productivity", "دراسة وطلاب"]
     },
@@ -64,16 +59,13 @@ interface PersonaFilterProps {
 }
 
 const PersonaFilter = ({ currentPersona, onSelect, counts }: PersonaFilterProps) => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
-
     return (
-        <div className="flex flex-wrap justify-center gap-3 my-8" dir={isAr ? "rtl" : "ltr"}>
+        <div className="flex flex-wrap justify-center gap-3 my-8" dir="rtl">
             {PERSONAS.map((persona) => {
                 const Icon = persona.icon;
                 const isActive = currentPersona === persona.id;
                 const count = counts ? counts[persona.id] : 0;
-                const label = isAr ? persona.label : persona.label_en;
+                const label = persona.label;
 
                 return (
                     <button

@@ -3,7 +3,6 @@ import { ArrowLeft, Sparkles, Command, Cpu, Globe, Zap, Search } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { useToolsStats } from '@/hooks/useToolsCount';
-import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface HeroSectionProps {
@@ -16,8 +15,6 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
   const containerRef = useRef<HTMLDivElement>(null);
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const { data: stats } = useToolsStats();
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
   const formatCount = (n: number) => {
     if (n >= 1000) return `+${Math.floor(n / 100) * 100}`;
@@ -124,8 +121,8 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
           </span>
           <span className="text-xs font-semibold text-slate-300 tracking-wider flex gap-1.5 items-center uppercase">
-            {isAr ? "محرك نبض:" : "Nabd Engine:"}{" "}
-            <span className="text-emerald-400 font-bold drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">{isAr ? "نشط" : "Online"}</span>
+            محرك نبض:{" "}
+            <span className="text-emerald-400 font-bold drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">نشط</span>
           </span>
         </div>
 
@@ -133,21 +130,21 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
         <div className="space-y-6 max-w-4xl mx-auto z-10">
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight mb-2 leading-[1.1]">
             <span className="text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              {isAr ? 'منصة' : 'The'}{' '}
+              منصة{' '}
             </span>
             <span className="relative inline-block px-1 overflow-visible">
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-neon-purple via-violet-300 to-neon-cyan drop-shadow-[0_0_15px_rgba(188,19,254,0.4)]">
-                {isAr ? 'الذكاء' : 'AI'}
+                الذكاء
               </span>
             </span>{' '}
             <span className="text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              {isAr ? 'الاصطناعي' : 'Nexus'}
+              الاصطناعي
             </span>
           </h1>
           <p className="text-lg md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed px-4 text-balance">
-            {isAr ? 'محرك البحث والمقارنة الأكثر تقدماً للمطورين وصناع المحتوى.' : 'The most advanced discovery & comparison engine.'}
+            محرك البحث والمقارنة الأكثر تقدماً للمطورين وصناع المحتوى.
             <span className="block mt-2 text-slate-500 font-normal">
-              {isAr ? 'اكتشف، قارن، وابنِ المستقبل فوراً.' : 'Discover, compare, and build the future.'}
+              اكتشف، قارن، وابنِ المستقبل فوراً.
             </span>
           </p>
         </div>
@@ -182,7 +179,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
                 onSearch={onSearchChange}
                 className="w-full bg-transparent border-none shadow-none text-white focus:ring-0 p-0 m-0"
                 inputClassName="w-full bg-transparent border-none focus:ring-0 text-base sm:text-[1.1rem] font-medium placeholder:text-slate-600 h-14 p-0 shadow-none ring-0 outline-none"
-                placeholder={isAr ? "ابحث عن أي أداة ذكاء اصطناعي..." : "Search for any AI tool..."}
+                placeholder="ابحث عن أي أداة ذكاء اصطناعي..."
               />
             </div>
 
@@ -193,8 +190,8 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
               className="relative h-[56px] px-6 sm:px-8 rounded-xl bg-neon-purple hover:bg-white text-white hover:text-black shadow-[0_0_20px_rgba(188,19,254,0.3)] transition-all duration-300 font-bold overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-2 tracking-widest text-sm uppercase">
-                {isAr ? "بحث" : "Scan"}
-                <ArrowLeft className={cn("w-4 h-4", isAr ? "" : "rotate-180")} />
+                بحث
+                <ArrowLeft className="w-4 h-4" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[200%] hover:translate-x-[200%] transition-transform duration-1000 ease-out" />
             </Button>
@@ -213,10 +210,10 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
         {/* HUD Status Bar (Bottom Stats) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl pt-8 relative z-10">
           {[
-            { icon: Cpu, val: stats ? formatCount(stats.total_tools) : '—', lbl: isAr ? "أداة ذكية" : "AI Tools", col: "group-hover:text-neon-purple", glow: "group-hover:shadow-[0_0_20px_rgba(188,19,254,0.2)]" },
-            { icon: Globe, val: "AR/EN", lbl: isAr ? "دعم كامل" : "Full Support", col: "group-hover:text-neon-cyan", glow: "group-hover:shadow-[0_0_20px_rgba(6,182,212,0.2)]" },
-            { icon: Sparkles, val: stats?.free_tools ? formatCount(stats.free_tools) : '—', lbl: isAr ? "مجانية" : "Free Tools", col: "group-hover:text-amber-400", glow: "group-hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]" },
-            { icon: Zap, val: isAr ? "فائق" : "Ultra", lbl: isAr ? "سرعة الاستجابة" : "Speed", col: "group-hover:text-rose-400", glow: "group-hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]" },
+            { icon: Cpu, val: stats ? formatCount(stats.total_tools) : '—', lbl: "أداة ذكية", col: "group-hover:text-neon-purple", glow: "group-hover:shadow-[0_0_20px_rgba(188,19,254,0.2)]" },
+            { icon: Globe, val: "AR", lbl: "دعم عربي حصري", col: "group-hover:text-neon-cyan", glow: "group-hover:shadow-[0_0_20px_rgba(6,182,212,0.2)]" },
+            { icon: Sparkles, val: stats?.free_tools ? formatCount(stats.free_tools) : '—', lbl: "مجانية", col: "group-hover:text-amber-400", glow: "group-hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]" },
+            { icon: Zap, val: "فائق", lbl: "سرعة الاستجابة", col: "group-hover:text-rose-400", glow: "group-hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]" },
           ].map((stat, i) => (
             <div key={i} className={cn("flex flex-col items-center justify-center space-y-2 p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-md transition-all duration-300 hover:bg-white/[0.04] hover:-translate-y-1 group", stat.glow)}>
               <stat.icon className={cn("w-5 h-5 text-slate-500 transition-colors", stat.col)} />

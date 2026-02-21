@@ -9,7 +9,6 @@ import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
 import { X, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { ToolsSorter, type SortOption } from "@/components/ToolsSorter";
 
@@ -19,15 +18,10 @@ const RecommendedForYou = lazy(() => import("@/components/RecommendedForYou"));
 const ToolsTimeline = lazy(() => import("@/components/ToolsTimeline"));
 
 const Index = () => {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
-
   // SEO — single source of truth (no duplicate Helmet)
   useSEO({
-    title: isAr ? "الرئيسية" : "Home",
-    description: isAr
-      ? "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026."
-      : "Nabd AI is your complete directory for discovering and comparing the best AI tools in 2026.",
+    title: "الرئيسية",
+    description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.",
     ogType: "website",
   });
 
@@ -90,14 +84,13 @@ const Index = () => {
 
   useStructuredData({
     type: "itemList",
-    name: isAr ? "أدوات الذكاء الاصطناعي" : "AI Tools",
-    description: isAr ? "قائمة بأفضل أدوات الذكاء الاصطناعي" : "List of top AI tools",
+    name: "أدوات الذكاء الاصطناعي",
+    description: "قائمة بأفضل أدوات الذكاء الاصطناعي",
     items: structuredDataItems,
   });
 
   return (
-    <div className={`relative min-h-screen bg-[#0f0f1a] overflow-x-hidden font-cairo selection:bg-neon-purple selection:text-white ${isAr ? "text-right" : "text-left"}`} dir={isAr ? "rtl" : "ltr"}>
-
+    <div className={`relative min-h-screen bg-[#0f0f1a] overflow-x-hidden font-cairo selection:bg-neon-purple selection:text-white text-right`} dir="rtl">
       {/* Avant-Garde Backgrounds */}
       <div className="fixed -top-[20%] right-[20%] w-[60vw] h-[60vw] bg-neon-purple/5 rounded-full blur-[180px] pointer-events-none" />
       <div className="fixed bottom-[10%] -left-[10%] w-[50vw] h-[50vw] bg-neon-blue/5 rounded-full blur-[180px] pointer-events-none" />
@@ -117,7 +110,7 @@ const Index = () => {
       >
 
         {/* Section 1: Hero & Primary Search */}
-        <section aria-label={isAr ? "البحث والاستكشاف" : "Search and discovery"} className="flex flex-col items-center text-center space-y-8 mb-4">
+        <section aria-label="البحث والاستكشاف" className="flex flex-col items-center text-center space-y-8 mb-4">
           <HeroSection
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -152,7 +145,7 @@ const Index = () => {
                   className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-red-400 bg-black/40 px-4 py-2 rounded-full border border-white/10 hover:border-red-500/30 transition-all shadow-lg hover:shadow-red-500/10"
                 >
                   <X className="w-3 h-3" />
-                  {isAr ? "مسح جميع الفلاتر" : "Clear all filters"}
+                  مسح جميع الفلاتر
                 </button>
               </div>
             )}
@@ -164,7 +157,7 @@ const Index = () => {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
               <span className="w-1.5 h-6 bg-neon-purple rounded-full"></span>
-              {isAr ? "الأدوات المتاحة" : "Available Tools"}
+              الأدوات المتاحة
             </h2>
 
             {/* Search Status Badge */}
@@ -172,7 +165,7 @@ const Index = () => {
               <div className="flex items-center gap-2 animate-in fade-in zoom-in-95">
                 <Badge variant="secondary" className="bg-white/5 text-slate-400 gap-2">
                   <Search className="w-3 h-3" />
-                  {isAr ? "نتائج البحث" : "Search Results"}
+                  نتائج البحث
                 </Badge>
               </div>
             )}
@@ -183,7 +176,7 @@ const Index = () => {
           </div>
 
           <div className="flex justify-start sm:justify-end animate-in fade-in zoom-in-95">
-            <ToolsSorter onSortChange={setSortBy} isArabic={isAr} />
+            <ToolsSorter onSortChange={setSortBy} isArabic={true} />
           </div>
         </section>
 
@@ -226,9 +219,9 @@ const Index = () => {
               <div className="p-4 rounded-full bg-white/5 text-slate-500">
                 <Search className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-300">{isAr ? "لم يتم العثور على نتائج" : "No results found"}</h3>
-              <p className="text-slate-500 max-w-sm">{isAr ? "جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات." : "Try different keywords or remove filters to see more tools."}</p>
-              <button type="button" onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">{isAr ? "عرض كل الأدوات" : "Show all tools"}</button>
+              <h3 className="text-xl font-bold text-slate-300">لم يتم العثور على نتائج</h3>
+              <p className="text-slate-500 max-w-sm">جرب تغيير مصطلحات البحث أو إزالة بعض الفلاتر لرؤية المزيد من الأدوات.</p>
+              <button type="button" onClick={clearFilters} className="text-neon-purple hover:underline underline-offset-4">عرض كل الأدوات</button>
             </div>
           )}
         </section>

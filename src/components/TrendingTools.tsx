@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Flame, MousePointerClick, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
 interface TrendingTool {
@@ -12,9 +11,6 @@ interface TrendingTool {
 }
 
 const TrendingTools = () => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
-
     // جلب البيانات عبر react-query لأداء أعلى مع Caching
     const { data: tools = [], isLoading } = useQuery({
         queryKey: ["trending_tools_ticker"],
@@ -48,7 +44,7 @@ const TrendingTools = () => {
         <div
             className="w-full bg-[#0f0f1a]/80 border-y border-white/5 backdrop-blur-2xl py-2 relative overflow-hidden z-30 shadow-[0_4px_30px_rgba(0,0,0,0.5)] flex items-center"
             role="marquee"
-            aria-label={isAr ? "الأدوات الأكثر شهرة واستخدام" : "Most popular and trending tools"}
+            aria-label="الأدوات الأكثر شهرة واستخدام"
         >
             {/* Ambient Lighting Layer */}
             <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
@@ -59,14 +55,14 @@ const TrendingTools = () => {
                 {/* Fixed Label: Hot & Trending */}
                 <div className={cn(
                     "relative flex items-center gap-2 text-orange-400 font-bold whitespace-nowrap z-40 bg-[#0f0f1a] shadow-[0_0_20px_20px_rgba(15,15,26,1)] px-4 sm:px-6 py-1",
-                    isAr ? "flex-row-reverse rounded-r-full ml-auto" : "rounded-l-full mr-auto"
+                    "flex-row-reverse rounded-r-full ml-auto"
                 )}>
                     <div className="relative flex items-center justify-center w-6 h-6 shrink-0">
                         <Flame className="w-5 h-5 fill-orange-500 animate-fire drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
                         <div className="absolute inset-0 bg-orange-600 blur-xl opacity-40 animate-pulse" />
                     </div>
                     <span className="hidden sm:inline-block text-sm sm:text-base tracking-wide font-bold uppercase bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">
-                        {isAr ? "الأكثر شهرة واستخدام" : "Trending Now"}
+                        الأكثر شهرة واستخدام
                     </span>
                     {/* Visual Separator */}
                     <div className="h-5 w-[1px] bg-white/10 mx-2 hidden sm:block" />
@@ -80,7 +76,7 @@ const TrendingTools = () => {
                     <div
                         className={cn(
                             "flex w-max items-center gap-8 sm:gap-12 group hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] transform-gpu",
-                            isAr ? "animate-marquee-slow-rtl" : "animate-marquee-slow"
+                            "animate-marquee-slow-rtl"
                         )}
                         style={{ width: 'max-content' }}
                     >

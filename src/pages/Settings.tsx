@@ -8,11 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import AvatarUpload from "@/components/AvatarUpload";
 import { Loader2, Save } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const Settings = () => {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
   const { session } = useAuth();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -55,25 +52,25 @@ const Settings = () => {
       .eq("id", session.user.id);
 
     if (error) {
-      toast.error(isAr ? "فشل التحديث" : "Update failed", {
+      toast.error("فشل التحديث", {
         description: error.message,
       });
     } else {
-      toast.success(isAr ? "تم حفظ الملف الشخصي بنجاح ✅" : "Profile saved successfully ✅");
+      toast.success("تم حفظ الملف الشخصي بنجاح ✅");
     }
     setUpdating(false);
   };
 
-  if (!session) return <div className="p-10 text-center" role="main">{isAr ? "يرجى تسجيل الدخول أولاً." : "Please sign in first."}</div>;
+  if (!session) return <div className="p-10 text-center" role="main">يرجى تسجيل الدخول أولاً.</div>;
   if (loading) return <div className="flex justify-center mt-20" role="main"><Loader2 className="animate-spin" /></div>;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl" dir={isAr ? "rtl" : "ltr"} role="main">
-      <h1 className="text-3xl font-bold mb-8 text-white">{isAr ? "إعدادات الحساب" : "Account Settings"}</h1>
+    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl" role="main">
+      <h1 className="text-3xl font-bold mb-8 text-white">إعدادات الحساب</h1>
 
-      <Card className={`bg-white/5 border-white/10 ${isAr ? "text-right" : "text-left"}`}>
+      <Card className="bg-white/5 border-white/10 text-right">
         <CardHeader>
-          <CardTitle>{isAr ? "الملف الشخصي" : "Profile"}</CardTitle>
+          <CardTitle>الملف الشخصي</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={updateProfile} className="space-y-8">
@@ -90,18 +87,18 @@ const Settings = () => {
             {/* 2. الاسم والبريد */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">{isAr ? "البريد الإلكتروني" : "Email"}</Label>
+                <Label htmlFor="email">البريد الإلكتروني</Label>
                 <Input id="email" value={session.user.email} disabled className="bg-black/20 text-gray-400 text-left" dir="ltr" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">{isAr ? "الاسم الكامل" : "Full Name"}</Label>
+                <Label htmlFor="fullName">الاسم الكامل</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder={isAr ? "كيف نفضل أن نناديك؟" : "How should we call you?"}
-                  className={isAr ? "text-right" : "text-left"}
+                  placeholder="كيف تفضل أن نناديك؟"
+                  className="text-right"
                 />
               </div>
             </div>
@@ -112,7 +109,7 @@ const Settings = () => {
               className="w-full bg-neon-purple hover:bg-neon-purple/80"
               disabled={updating}
             >
-              {updating ? <Loader2 className="animate-spin" /> : <><Save className={`w-4 h-4 ${isAr ? "ml-2" : "mr-2"}`} /> {isAr ? "حفظ التغييرات" : "Save Changes"}</>}
+              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 ml-2" /> حفظ التغييرات</>}
             </Button>
 
           </form>

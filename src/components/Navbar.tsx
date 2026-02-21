@@ -16,7 +16,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { getValidImageUrl } from "@/utils/imageUrl";
-import LanguageToggle from "@/components/LanguageToggle";
 
 interface NavbarProps {
   onAddClick: () => void;
@@ -31,11 +30,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Tools", path: "/tools", icon: Wrench },
-    { name: "Agents", path: "/agents", icon: Bot },
-    { name: "Builder", path: "/workflow/new", icon: GitBranch, badge: "New" },
-    { name: "Blog", path: "/blog", icon: BookOpen },
+    { name: "الرئيسية", path: "/", icon: Home },
+    { name: "الأدوات", path: "/tools", icon: Wrench },
+    { name: "الوكلاء", path: "/agents", icon: Bot },
+    { name: "بناء وكيل", path: "/workflow/new", icon: GitBranch, badge: "جديد" },
+    { name: "المدونة", path: "/blog", icon: BookOpen },
   ];
 
   const handleLogout = async () => {
@@ -43,7 +42,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 glass-pro font-cairo transition-all duration-300">
+    <nav className="fixed top-0 w-full z-50 glass-pro font-cairo transition-all duration-300" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
@@ -84,7 +83,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               className="hidden sm:flex bg-neon-purple hover:bg-neon-purple/80 text-white border-0"
               onClick={onAddClick}
             >
-              <Plus className="w-4 h-4 mr-2" /> Add Tool
+              <Plus className="w-4 h-4 ml-2" /> إضافة أداة
             </Button>
 
             <Button
@@ -92,26 +91,26 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               variant="ghost"
               className="sm:hidden text-neon-purple"
               onClick={onAddClick}
-              aria-label="Add tool"
+              aria-label="إضافة أداة"
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
             </Button>
 
             <div className="hidden sm:flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="Search website">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="البحث">
                 <Search className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="Bookmarks">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="المحفوظات">
                 <Heart className="w-5 h-5" />
               </Button>
             </div>
 
-            <LanguageToggle />
+
 
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="Account menu">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="قائمة الحساب">
                     <Avatar className="h-9 w-9 border border-white/10">
                       <AvatarImage
                         src={userAvatarUrl}
@@ -135,40 +134,40 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                       </p>
                     </div>
                   </div>
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10 flex items-center gap-2" dir="rtl">
                     <Link to="/profile">
-                      <User className="mr-2 h-4 w-4" /> Profile
+                      <User className="h-4 w-4" /> حسابي
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10 flex items-center gap-2" dir="rtl">
                     <Link to="/admin">
-                      <LayoutDashboard className="mr-2 h-4 w-4 text-neon-cyan" /> Admin Dashboard
+                      <LayoutDashboard className="h-4 w-4 text-neon-cyan" /> لوحة التحكم
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10 text-red-400" onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                  <DropdownMenuItem className="cursor-pointer hover:bg-white/10 text-red-400 flex items-center gap-2" onClick={handleLogout} dir="rtl">
+                    <LogOut className="h-4 w-4" /> تسجيل الخروج
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10 gap-2" aria-label="Login">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10 gap-2" aria-label="تسجيل الدخول">
                   <User className="w-4 h-4" />
-                  <span className="hidden xs:inline">Login</span>
+                  <span className="hidden xs:inline">تسجيل الدخول</span>
                 </Button>
               </Link>
             )}
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden text-white ml-1" aria-label="Menu">
+                <Button variant="ghost" size="icon" className="lg:hidden text-white mr-1" aria-label="القائمة">
                   <Menu className="w-6 h-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="bg-[#1a1a2e] border-l border-white/10 text-white w-[300px] sm:w-[400px]">
+              <SheetContent side="right" className="bg-[#1a1a2e] border-r border-white/10 text-white w-[300px] sm:w-[400px]" dir="rtl">
                 <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation menu</SheetTitle>
-                  <SheetDescription className="sr-only">Quick links to tools and key pages</SheetDescription>
+                  <SheetTitle className="sr-only">قائمة التنقل</SheetTitle>
+                  <SheetDescription className="sr-only">روابط سريعة لأهم الأقسام</SheetDescription>
                 </SheetHeader>
 
                 <div className="flex flex-col gap-6 mt-8 h-full">
@@ -193,7 +192,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                         <link.icon className="w-5 h-5" />
                         {link.name}
                         {link.badge && (
-                          <span className="ml-auto bg-neon-purple/20 text-neon-purple text-xs px-2 py-0.5 rounded-full border border-neon-purple/30">
+                          <span className="mr-auto bg-neon-purple/20 text-neon-purple text-xs px-2 py-0.5 rounded-full border border-neon-purple/30">
                             {link.badge}
                           </span>
                         )}
@@ -205,10 +204,10 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
                   <div className="flex flex-col gap-2">
                     <Link to="/about" onClick={() => setIsOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white flex items-center gap-3">
-                      <Info className="w-5 h-5" /> About
+                      <Info className="w-5 h-5" /> من نحن
                     </Link>
                     <Link to="/faq" onClick={() => setIsOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white flex items-center gap-3">
-                      <HelpCircle className="w-5 h-5" /> FAQ
+                      <HelpCircle className="w-5 h-5" /> الأسئلة الشائعة
                     </Link>
                   </div>
 
@@ -224,7 +223,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                           </Avatar>
                           <div className="flex flex-col">
                             <span className="text-sm font-bold text-white max-w-[180px] truncate">
-                              {session.user.user_metadata.full_name || "User"}
+                              {session.user.user_metadata.full_name || "مستخدم"}
                             </span>
                             <span className="text-xs text-gray-400 max-w-[180px] truncate">
                               {session.user.email}
@@ -238,14 +237,14 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                             onClick={() => setIsOpen(false)}
                             className="px-4 py-2.5 rounded-lg bg-white/5 text-white hover:bg-neon-purple hover:text-white transition-colors flex items-center gap-3 text-sm font-medium"
                           >
-                            <User className="w-4 h-4" /> Profile
+                            <User className="w-4 h-4" /> حسابي
                           </Link>
                           <Link
                             to="/admin"
                             onClick={() => setIsOpen(false)}
                             className="px-4 py-2.5 rounded-lg bg-white/5 text-neon-cyan hover:bg-neon-cyan hover:text-black transition-colors flex items-center gap-3 text-sm font-medium"
                           >
-                            <LayoutDashboard className="w-4 h-4" /> Admin Dashboard
+                            <LayoutDashboard className="w-4 h-4" /> لوحة التحكم
                           </Link>
                           <button
                             onClick={() => {
@@ -254,7 +253,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                             }}
                             className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-left"
                           >
-                            <LogOut className="w-4 h-4" /> Logout
+                            <LogOut className="w-4 h-4" /> تسجيل الخروج
                           </button>
                         </div>
                       </>
@@ -264,7 +263,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                         onClick={() => setIsOpen(false)}
                         className="px-4 py-3 rounded-xl bg-neon-purple text-white text-center font-bold shadow-lg shadow-neon-purple/20 flex items-center justify-center gap-2"
                       >
-                        <User className="w-5 h-5" /> Login
+                        <User className="w-5 h-5" /> تسجيل الدخول
                       </Link>
                     )}
                   </div>

@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTranslation } from 'react-i18next';
 import { getCategoryLabel, getPricingLabel } from '@/utils/localization';
 
 export type PricingFilter = 'all' | 'مجاني' | 'مدفوع';
@@ -29,10 +28,10 @@ const pricingOptions: { value: PricingFilter }[] = [
   { value: 'مدفوع' },
 ];
 
-const sortOptions: { value: SortOption; ar: string; en: string }[] = [
-  { value: 'newest', ar: 'الأحدث', en: 'Newest' },
-  { value: 'rating', ar: 'الأعلى تقييماً', en: 'Highest Rated' },
-  { value: 'popular', ar: 'الأكثر شعبية', en: 'Most Popular' },
+const sortOptions: { value: SortOption; ar: string }[] = [
+  { value: 'newest', ar: 'الأحدث' },
+  { value: 'rating', ar: 'الأعلى تقييماً' },
+  { value: 'popular', ar: 'الأكثر شعبية' },
 ];
 
 const CategoryFilters = ({
@@ -43,22 +42,20 @@ const CategoryFilters = ({
   sortBy = 'newest',
   onSortChange,
 }: CategoryFiltersProps) => {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
   const pOptions = [
-    { value: 'all', label: t('filters.all') },
-    { value: 'مجاني', label: getPricingLabel('مجاني', isAr) },
-    { value: 'مدفوع', label: getPricingLabel('مدفوع', isAr) },
+    { value: 'all', label: 'الكل' },
+    { value: 'مجاني', label: getPricingLabel('مجاني', true) },
+    { value: 'مدفوع', label: getPricingLabel('مدفوع', true) },
   ];
 
-  const currentPricingLabel = pOptions.find(p => p.value === pricing)?.label || t('filters.all');
-  const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.[isAr ? 'ar' : 'en'] || (isAr ? 'الأحدث' : 'Newest');
+  const currentPricingLabel = pOptions.find(p => p.value === pricing)?.label || 'الكل';
+  const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.ar || 'الأحدث';
 
   return (
-    <div className="space-y-4 py-6 sm:py-8 px-4" dir={i18n.dir()}>
+    <div className="space-y-4 py-6 sm:py-8 px-4" dir="rtl">
       {/* Category Tabs */}
-      <nav aria-label={isAr ? "تصفية حسب الفئات" : "Filter by categories"} className="flex flex-wrap justify-center gap-2 sm:gap-3">
+      <nav aria-label="تصفية حسب الفئات" className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {categories.map((category) => {
           // Simple Icon mapping based on category name
           let icon = null;
@@ -85,7 +82,7 @@ const CategoryFilters = ({
               )}
             >
               {icon}
-              {getCategoryLabel(category, isAr)}
+              {getCategoryLabel(category, true)}
             </button>
           )
         })}
@@ -96,7 +93,7 @@ const CategoryFilters = ({
         <div className="flex flex-wrap justify-center items-center gap-3">
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <SlidersHorizontal className="w-4 h-4" />
-            <span className="hidden sm:inline">{isAr ? "تصفية:" : "Filter:"}</span>
+            <span className="hidden sm:inline">تصفية:</span>
           </div>
 
           {/* Pricing Filter */}
@@ -125,7 +122,7 @@ const CategoryFilters = ({
                       pricing === option.value && "bg-neon-purple/10 text-neon-purple"
                     )}
                   >
-                    {option.value === "all" ? t("filters.all") : getPricingLabel(option.value, isAr)}
+                    {option.value === "all" ? "الكل" : getPricingLabel(option.value, true)}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -144,7 +141,7 @@ const CategoryFilters = ({
                     sortBy !== 'newest' && "border-neon-purple/50 text-neon-purple"
                   )}
                 >
-                  {isAr ? "ترتيب:" : "Sort:"} {currentSortLabel}
+                  ترتيب: {currentSortLabel}
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -158,7 +155,7 @@ const CategoryFilters = ({
                       sortBy === option.value && "bg-neon-purple/10 text-neon-purple"
                     )}
                   >
-                    {option[isAr ? "ar" : "en"]}
+                    {option.ar}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

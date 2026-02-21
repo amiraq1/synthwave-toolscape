@@ -9,49 +9,13 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useSEO } from '@/hooks/useSEO';
-import { useTranslation } from 'react-i18next';
 
 interface FAQItem {
     question: string;
     answer: string;
 }
 
-const faqDataEn: FAQItem[] = [
-    {
-        question: 'What is Nabd AI?',
-        answer: 'Nabd is a curated directory for top AI tools. It helps you discover the right products through clear categories and practical comparisons.',
-    },
-    {
-        question: 'Are AI tools free?',
-        answer: 'Pricing varies. Some tools are fully free, others are paid, and many offer freemium or trial plans. We show pricing type for each listing.',
-    },
-    {
-        question: 'How do I choose the right AI tool?',
-        answer: 'Start with your use case (text, image, video, coding, productivity). Then filter by category, compare features, and review user ratings.',
-    },
-    {
-        question: 'Can I suggest a new tool?',
-        answer: 'Yes. Use the "Add Tool" action on the homepage. Submissions are reviewed before publishing.',
-    },
-    {
-        question: 'How are tools rated?',
-        answer: 'Signed-in users can rate from 1 to 5 stars and leave reviews. We display average score and review count for each tool.',
-    },
-    {
-        question: 'What categories are available?',
-        answer: 'Popular categories include text, image, video, coding, productivity, and education-oriented tools.',
-    },
-    {
-        question: 'Is Nabd available as an app?',
-        answer: 'Yes. Nabd supports PWA installation, so you can add it to your device and use core pages faster.',
-    },
-    {
-        question: 'How can I contact the Nabd team?',
-        answer: 'Use the contact page or send an email to contact@amiraq.org.',
-    },
-];
-
-const faqDataAr: FAQItem[] = [
+const faqData: FAQItem[] = [
     {
         question: 'ما هي منصة نبض AI؟',
         answer: 'نبض دليل منتقى لأفضل أدوات الذكاء الاصطناعي، يساعدك على اكتشاف الأنسب عبر تصنيفات واضحة ومقارنات عملية.',
@@ -87,16 +51,10 @@ const faqDataAr: FAQItem[] = [
 ];
 
 const FAQ = () => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
-    const faqData = isAr ? faqDataAr : faqDataEn;
-
     useSEO({
-        title: isAr ? 'الأسئلة الشائعة - نبض AI' : 'FAQ - Nabd AI',
-        description: isAr
-            ? 'إجابات عن الأسئلة الأكثر شيوعاً حول نبض AI وكيفية اكتشاف أدوات الذكاء الاصطناعي المناسبة.'
-            : 'Answers to common questions about Nabd AI and how to discover the right AI tools.',
-        keywords: isAr ? 'الأسئلة الشائعة، نبض، دليل أدوات الذكاء الاصطناعي، مساعدة' : 'FAQ, Nabd, AI tools directory, help',
+        title: 'الأسئلة الشائعة - نبض AI',
+        description: 'إجابات عن الأسئلة الأكثر شيوعاً حول نبض AI وكيفية اكتشاف أدوات الذكاء الاصطناعي المناسبة.',
+        keywords: 'الأسئلة الشائعة، نبض، دليل أدوات الذكاء الاصطناعي، مساعدة',
     });
 
     // Add FAQ Schema
@@ -131,7 +89,7 @@ const FAQ = () => {
     }, [faqData]);
 
     return (
-        <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
+        <div className="min-h-screen bg-background" dir="rtl">
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -141,8 +99,8 @@ const FAQ = () => {
                 <div className="container mx-auto max-w-5xl px-4 py-4">
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className={`h-5 w-5 ${isAr ? "" : "rotate-180"}`} />
-                            {isAr ? "العودة للرئيسية" : "Back to Home"}
+                            <ArrowRight className="h-5 w-5" />
+                            العودة للرئيسية
                         </Button>
                     </Link>
                 </div>
@@ -158,10 +116,10 @@ const FAQ = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        {isAr ? "الأسئلة الشائعة" : "Frequently Asked Questions"}
+                        الأسئلة الشائعة
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                        {isAr ? "إجابات سريعة حول نبض واكتشاف أدوات الذكاء الاصطناعي." : "Quick answers about Nabd and AI tool discovery."}
+                        إجابات سريعة حول نبض واكتشاف أدوات الذكاء الاصطناعي.
                     </p>
                 </section>
 
@@ -174,7 +132,7 @@ const FAQ = () => {
                                 value={`item-${index}`}
                                 className="border border-border/50 rounded-xl px-6 data-[state=open]:bg-card/50"
                             >
-                                <AccordionTrigger className={`${isAr ? "text-right" : "text-left"} hover:no-underline py-5`}>
+                                <AccordionTrigger className="text-right hover:no-underline py-5">
                                     <span className="text-lg font-medium text-foreground">{item.question}</span>
                                 </AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
@@ -187,10 +145,10 @@ const FAQ = () => {
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <p className="text-muted-foreground">{isAr ? "ما زلت بحاجة إلى مساعدة؟" : "Still need help?"}</p>
+                    <p className="text-muted-foreground">ما زلت بحاجة إلى مساعدة؟</p>
                     <Link to="/contact">
                         <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                            {isAr ? "تواصل معنا" : "Contact Us"}
+                            تواصل معنا
                         </Button>
                     </Link>
                 </section>
@@ -199,7 +157,7 @@ const FAQ = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>{isAr ? "© 2024 نبض AI. جميع الحقوق محفوظة." : "© 2024 Nabd AI. All rights reserved."}</p>
+                    <p>© 2026 نبض AI. جميع الحقوق محفوظة.</p>
                 </div>
             </footer>
         </div>

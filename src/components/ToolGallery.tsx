@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } 
 import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isValidImageUrl } from "@/utils/imageUrl";
-import { useTranslation } from "react-i18next";
 
 interface ToolGalleryProps {
     title: string;
@@ -18,8 +17,6 @@ interface ToolGalleryProps {
  * ✅ Progressive image loading
  */
 const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
     const validImages = images.filter(isValidImageUrl);
 
     // صور افتراضية للتجربة إذا لم تكن هناك صور حقيقية في قاعدة البيانات
@@ -74,10 +71,10 @@ const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
                 {/* نافذة التكبير (Modal) */}
                 <DialogContent className="max-w-4xl bg-black/90 border-white/10 p-1">
                     <DialogTitle className="sr-only">
-                        {isAr ? `معرض صور ${title}` : `${title} Image Gallery`}
+                        {`معرض صور ${title} `}
                     </DialogTitle>
                     <DialogDescription className="sr-only">
-                        {isAr ? "عرض مكبر للصورة المختارة من معرض الأداة" : "Expanded view for the selected gallery image"}
+                        عرض مكبر للصورة المختارة من معرض الأداة
                     </DialogDescription>
                     <img
                         src={mainImage}
@@ -103,7 +100,7 @@ const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
                     >
                         <img
                             src={img}
-                            alt={`Screenshot ${idx + 1}`}
+                            alt={`Screenshot ${idx + 1} `}
                             className="w-full h-full object-cover"
                             loading="lazy"
                             decoding="async"

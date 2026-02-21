@@ -13,10 +13,8 @@ import {
   LayoutGrid,
   Crown,
   Languages,
-  Clock,
   Scale
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
@@ -24,7 +22,6 @@ import { cn } from '@/lib/utils';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
-import { useTranslation } from 'react-i18next';
 import { getToolImageUrl } from '@/utils/imageUrl';
 import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 
@@ -63,11 +60,9 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
 
   const isCompared = selectedTools.includes(String(tool.id));
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
-  const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-  const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
+  const displayTitle = tool.title;
+  const displayDescription = tool.description;
 
   // Fallbacks logic
   let extractedCategoryKey = 'الكل';
@@ -97,7 +92,11 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
   const handleCompareClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    isCompared ? removeFromCompare(String(tool.id)) : addToCompare(String(tool.id));
+    if (isCompared) {
+      removeFromCompare(String(tool.id));
+    } else {
+      addToCompare(String(tool.id));
+    }
   };
 
   const handleActionClick = (e: React.MouseEvent) => {
@@ -125,14 +124,14 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
         Using pure CSS radial gradients instead of heavy DOM nodes or blurs to save Main Thread execution time.
       */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-white opacity-[0.02] group-hover:opacity-[0.05] rounded-full blur-2xl transition-opacity duration-700" />
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute -top-24 -end-24 w-48 h-48 bg-white opacity-[0.02] group-hover:opacity-[0.05] rounded-full blur-2xl transition-opacity duration-700" />
+        <div className="absolute bottom-0 start-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
         {/* Noise overlay */}
         <div className="absolute inset-0 opacity-[0.015] bg-[url('/noise.png')] mix-blend-overlay" />
       </div>
 
       {/* Floating Action Buttons (Outside normal flow/absolute) */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+      <div className="absolute top-4 end-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
         <button
           onClick={handleCompareClick}
           className={cn(
@@ -141,14 +140,14 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
               ? "bg-neon-purple text-white border-neon-purple/50 glow-purple"
               : "bg-black/60 text-slate-400 hover:text-white border-white/10 hover:border-white/30"
           )}
-          title={isCompared ? (isAr ? "إزالة من المقارنة" : "Remove comparison") : (isAr ? "إضافة للمقارنة" : "Compare")}
-          aria-label="Compare"
+          title={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
+          aria-label={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
         >
           <Scale className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute top-4 start-4 z-20">
         <BookmarkButton
           toolId={String(tool.id)}
           className="bg-black/60 text-slate-400 border border-white/10 hover:border-white/30 rounded-xl p-2 shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
@@ -156,15 +155,15 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
       </div>
 
       {/* Badges (Top) */}
-      <div className={cn("absolute top-0 z-10 flex gap-2 -translate-y-1/2", isAr ? "right-6" : "left-6")}>
+      <div className={cn("absolute top-0 z-10 flex gap-2 -translate-y-1/2", "start-6")}>
         {isSponsored && (
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-600 to-orange-500 text-black font-extrabold text-[10px] uppercase tracking-wider shadow-[0_4px_12px_rgba(245,158,11,0.4)]">
-            <Crown className="w-3 h-3" strokeWidth={3} /> {isAr ? "ممول" : "Sponsored"}
+            <Crown className="w-3 h-3" strokeWidth={3} /> ممول
           </div>
         )}
         {isNew && !isSponsored && (
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neon-cyan text-black font-extrabold text-[10px] uppercase tracking-wider shadow-[0_4px_12px_rgba(6,182,212,0.4)]">
-            <Sparkles className="w-3 h-3" strokeWidth={3} /> {isAr ? "جديد" : "New"}
+            <Sparkles className="w-3 h-3" strokeWidth={3} /> جديد
           </div>
         )}
       </div>
@@ -173,7 +172,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
       <Link
         to={`/tool/${tool.id}`}
         className="flex flex-col flex-grow p-5 sm:p-6 z-10 focus-visible:outline-none focus:ring-2 focus:ring-neon-purple/50 rounded-2xl"
-        aria-label={`View details for ${displayTitle}`}
+        aria-label={`تصفح أداة ${displayTitle}`}
       >
         {/* Header: Identity Group */}
         <div className="flex gap-4 items-start mb-5 mt-2">
@@ -217,7 +216,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
         {/* Metadata Badges: Semantic styling without generic badge borders */}
         <div className="flex flex-wrap gap-2 mt-auto mb-5">
           <span className="px-2 py-1 text-xs font-semibold rounded-md bg-white/5 text-slate-300 border border-white/5">
-            {getCategoryLabel(tool.category, isAr)}
+            {getCategoryLabel(tool.category, true)}
           </span>
           <span className={cn(
             "px-2 py-1 text-xs font-bold rounded-md border",
@@ -226,11 +225,11 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
                 pricingTier === 'trial' || pricingTier === 'freemium' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                   'bg-slate-800 text-slate-400 border-slate-700'
           )}>
-            {getPricingLabel(tool.pricing_type, isAr)}
+            {getPricingLabel(tool.pricing_type, true)}
           </span>
           {supportsArabic && (
             <span className="px-2 py-1 text-xs font-semibold rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center gap-1">
-              <Languages className="w-3 h-3" /> {isAr ? "عربي" : "Arabic"}
+              <Languages className="w-3 h-3" /> عربي
             </span>
           )}
         </div>
@@ -247,13 +246,13 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
             "flex w-full items-center justify-between px-4 py-3 rounded-xl transition-all duration-300",
             "bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.05] group-hover:border-white/10 text-slate-400 group-hover:text-white"
           )}
-          aria-label={`visit ${displayTitle}`}
+          aria-label={`تفضل بزيارة ${displayTitle}`}
         >
           <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
             <Zap className="w-3.5 h-3.5 text-slate-500 group-hover:text-neon-purple transition-colors" />
-            {t('tools.visit')}
+            زيارة
           </span>
-          <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+          <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5 ltr:group-hover:translate-x-0.5 transition-all" />
         </a>
       </div>
 

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   ExternalLink,
@@ -44,9 +43,6 @@ const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
-
   const { data: tool, isLoading, error } = useTool(id);
   const { recordClick } = useClickTracking();
   const { addToRecent } = useRecentlyViewed();
@@ -57,15 +53,15 @@ const ToolDetails = () => {
     }
   }, [tool?.id, addToRecent]);
 
-  const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
-  const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
-  const displayCategory = tool ? getCategoryLabel(tool.category, isAr) : undefined;
-  const displayPricing = tool ? getPricingLabel(tool.pricing_type, isAr) : undefined;
+  const displayTitle = tool?.title;
+  const displayDescription = tool?.description;
+  const displayCategory = tool ? getCategoryLabel(tool.category, true) : undefined;
+  const displayPricing = tool ? getPricingLabel(tool.pricing_type, true) : undefined;
   const pricingTier = tool ? getPricingTier(tool.pricing_type) : undefined;
   const safeImageUrl = tool ? (getToolImageUrl(tool.image_url, tool.url) ?? undefined) : undefined;
 
   useSEO({
-    title: displayTitle ? `${displayTitle} - AI Tool` : 'Tool Details',
+    title: displayTitle ? `${displayTitle} - أداة ذكاء اصطناعي` : 'تفاصيل الأداة',
     description: displayDescription ? `${displayDescription.slice(0, 150)}...` : undefined,
     keywords: tool ? `${displayTitle}, ${displayCategory}, AI tools, software tools, artificial intelligence` : undefined,
     ogTitle: displayTitle,
@@ -111,7 +107,7 @@ const ToolDetails = () => {
       }
     } catch {
       navigator.clipboard.writeText(window.location.href);
-      toast.success(isAr ? "تم نسخ الرابط" : "Link copied to clipboard");
+      toast.success("تم نسخ الرابط");
     }
   };
 
@@ -126,15 +122,15 @@ const ToolDetails = () => {
 
   if (error || !tool) {
     return (
-      <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center gap-6 relative" dir={isAr ? "rtl" : "ltr"}>
+      <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center gap-6 relative" dir="rtl">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] mix-blend-overlay" />
         <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl text-center shadow-2xl">
           <p className="text-2xl text-rose-500 font-bold mb-4 drop-shadow-[0_0_10px_rgba(244,63,94,0.4)]">
-            {isAr ? "عذراً، الأداة غير موجودة" : "404 - Tool Not Found"}
+            عذراً، الأداة غير موجودة
           </p>
           <Button onClick={() => navigate('/')} className="bg-white/10 hover:bg-white/20 text-white border border-white/10 gap-2 px-8 h-12 rounded-xl transition-all hover:scale-105">
-            {isAr ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            {isAr ? "العودة للقاعدة الرئيسية" : "Return to Nexus"}
+            <ChevronRight className="h-4 w-4" />
+            العودة للقاعدة الرئيسية
           </Button>
         </div>
       </div>
@@ -147,7 +143,7 @@ const ToolDetails = () => {
     : "";
 
   return (
-    <div className="min-h-screen bg-[#050508] relative selection:bg-neon-purple/30 selection:text-white" dir={isAr ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-[#050508] relative selection:bg-neon-purple/30 selection:text-white" dir="rtl">
       <Helmet>
         <title>{`${displayTitle} | Nabd AI`}</title>
         <meta name="description" content={displayDescription} />
@@ -158,8 +154,8 @@ const ToolDetails = () => {
 
       {/* Abstract Atmosphere & Light Blooms */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-[800px] h-[600px] bg-neon-purple/10 rounded-full blur-[150px] opacity-50 mix-blend-screen" />
-        <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-neon-cyan/5 rounded-full blur-[120px] mix-blend-screen" />
+        <div className="absolute top-0 end-1/4 w-[800px] h-[600px] bg-neon-purple/10 rounded-full blur-[150px] opacity-50 mix-blend-screen" />
+        <div className="absolute top-[20%] start-[-10%] w-[600px] h-[600px] bg-neon-cyan/5 rounded-full blur-[120px] mix-blend-screen" />
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.015] mix-blend-overlay" />
       </div>
 
@@ -171,8 +167,8 @@ const ToolDetails = () => {
             variant="ghost"
             className="gap-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl h-12 px-4 transition-all hover:-translate-x-1"
           >
-            <ArrowRight className={cn("h-5 w-5", !isAr && "rotate-180")} />
-            <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">{isAr ? "رجوع" : "Back"}</span>
+            <ArrowRight className="h-5 w-5 rtl:rotate-180" />
+            <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">رجوع</span>
           </Button>
 
           <div className="flex items-center gap-2">
@@ -204,7 +200,7 @@ const ToolDetails = () => {
               {tool.is_featured && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500/20 to-orange-500/10 text-amber-400 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                   <Sparkles className="w-3.5 h-3.5" />
-                  {isAr ? "مميز" : "Featured"}
+                  مميز
                 </div>
               )}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/5 text-slate-300 border border-white/10">
@@ -240,7 +236,7 @@ const ToolDetails = () => {
               )}>
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <DollarSign className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-widest font-bold">{isAr ? "الترخيص" : "License"}</span>
+                  <span className="text-xs uppercase tracking-widest font-bold">الترخيص</span>
                 </div>
                 <span className={cn(
                   "font-black text-xl tracking-tight",
@@ -253,7 +249,7 @@ const ToolDetails = () => {
               <div className="p-5 rounded-2xl bg-[#0a0a14] border border-white/10 flex flex-col items-start justify-center shadow-lg hover:bg-[#101018] transition-colors">
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <Tag className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-widest font-bold">{isAr ? "البيئة" : "Ecosystem"}</span>
+                  <span className="text-xs uppercase tracking-widest font-bold">البيئة</span>
                 </div>
                 <span className="font-black text-xl text-white tracking-tight line-clamp-1">{displayCategory}</span>
               </div>
@@ -270,8 +266,8 @@ const ToolDetails = () => {
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-black group-hover:text-white transition-colors" />
-                  {isAr ? "تشغيل عبر الموقع الرسمي" : "Launch Official Interface"}
-                  <ExternalLink className={cn("h-5 w-5 transition-transform group-hover:translate-x-1", isAr ? "mr-2" : "ml-2")} />
+                  تشغيل عبر الموقع الرسمي
+                  <ExternalLink className="h-5 w-5 transition-transform rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1 ms-2" />
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-out" />
               </Button>
@@ -297,7 +293,7 @@ const ToolDetails = () => {
                   <div className="p-2 rounded-xl bg-neon-purple/20 border border-neon-purple/50">
                     <Sparkles className="text-neon-purple w-5 h-5" />
                   </div>
-                  {isAr ? "القدرات الرئيسية" : "Core Capabilities"}
+                  القدرات الرئيسية
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {tool.features.map((feature: string, idx: number) => (
@@ -305,7 +301,7 @@ const ToolDetails = () => {
                       <div className="mt-0.5 w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:bg-neon-purple/20 group-hover:border-neon-purple/40 transition-colors">
                         <Check className="w-3.5 h-3.5 text-emerald-400 group-hover:text-neon-purple transition-colors" />
                       </div>
-                      <span className="text-slate-300 font-medium leading-relaxed group-hover:text-white transition-colors">{isAr ? translateFeature(feature) : feature}</span>
+                      <span className="text-slate-300 font-medium leading-relaxed group-hover:text-white transition-colors">{translateFeature(feature)}</span>
                     </div>
                   ))}
                 </div>
@@ -319,16 +315,16 @@ const ToolDetails = () => {
                   <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-500/50">
                     <Lightbulb className="text-amber-400 w-5 h-5" />
                   </div>
-                  {isAr ? "قاعدة المعرفة" : "Knowledge Base"}
+                  قاعدة المعرفة
                 </h3>
                 <Accordion type="single" collapsible className="space-y-4">
                   {tool.faqs.map((faq, idx) => (
                     <AccordionItem key={idx} value={`faq-${idx}`} className="border border-white/10 bg-black/40 rounded-2xl px-2 overflow-hidden data-[state=open]:border-neon-cyan/50 transition-colors">
-                      <AccordionTrigger className="px-4 py-5 hover:no-underline text-[1.05rem] font-bold text-white text-right [&>svg]:text-neon-cyan gap-4">
+                      <AccordionTrigger className="px-4 py-5 hover:no-underline text-[1.05rem] font-bold text-white text-start [&>svg]:text-neon-cyan gap-4">
                         {faq.question}
                       </AccordionTrigger>
                       <AccordionContent className="px-4 pb-5 pt-1 text-slate-400 leading-relaxed text-base font-medium">
-                        <div className="pl-4 border-l-2 border-neon-cyan/50 rtl:pl-0 rtl:pr-4 rtl:border-l-0 rtl:border-r-2 gap-4">
+                        <div className="ps-4 border-s-2 border-neon-cyan/50 gap-4">
                           {faq.answer}
                         </div>
                       </AccordionContent>
@@ -346,19 +342,17 @@ const ToolDetails = () => {
                 <Share2 className="w-6 h-6 text-slate-400" />
               </div>
               <h4 className="font-black text-2xl text-white mb-3">
-                {isAr ? "توسيع النطاق؟" : "Extend the Network?"}
+                توسيع النطاق؟
               </h4>
               <p className="text-base text-slate-400 mb-8 leading-relaxed font-medium">
-                {isAr
-                  ? "قم بتعزيز قدرات فريقك المعرفية عبر مشاركة نقطة المعالجة هذه."
-                  : "Boost your team's capabilities by sharing this processor node."}
+                قم بتعزيز قدرات فريقك المعرفية عبر مشاركة نقطة المعالجة هذه.
               </p>
               <Button
                 className="w-full h-14 text-white uppercase font-bold tracking-widest gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all font-mono shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
                 onClick={handleShare}
               >
                 <Share2 className="w-4 h-4" />
-                {isAr ? "مشاركة الإحداثيات" : "Broadcast Link"}
+                مشاركة الإحداثيات
               </Button>
             </div>
           </div>
@@ -368,14 +362,14 @@ const ToolDetails = () => {
         <div className="border-t border-white/5 pt-16">
           <div className="flex items-center gap-3 mb-8 px-2">
             <div className="h-8 w-1.5 bg-neon-purple rounded-full" />
-            <h2 className="text-3xl font-black tracking-tight text-white">{isAr ? "رادار الأدوات المشابهة" : "Similar Nodes"}</h2>
+            <h2 className="text-3xl font-black tracking-tight text-white">رادار الأدوات المشابهة</h2>
           </div>
           <SimilarTools currentToolId={tool.id} category={tool.category} />
         </div>
       </main>
 
       {/* Mobile Sticky Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#050508]/80 backdrop-blur-3xl border-t border-white/10 md:hidden z-50 safe-area-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+      <div className="fixed bottom-0 inset-inline-0 p-4 bg-[#050508]/80 backdrop-blur-3xl border-t border-white/10 md:hidden z-50 safe-area-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <div className="flex gap-3 max-w-7xl mx-auto">
           <Button
             onClick={() => {
@@ -384,8 +378,8 @@ const ToolDetails = () => {
             }}
             className="flex-1 bg-white text-black hover:bg-neon-purple hover:text-white glow-purple uppercase tracking-widest font-black h-14 rounded-xl transition-all"
           >
-            <Zap className={cn("w-4 h-4", isAr ? "ml-2" : "mr-2")} />
-            {isAr ? "تشغيل عبر الموقع رسمي" : "Launch"}
+            <Zap className={cn("w-4 h-4", "me-2")} />
+            تشغيل عبر الموقع الرسمي
           </Button>
         </div>
       </div>

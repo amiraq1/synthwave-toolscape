@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
-import { useTranslation } from "react-i18next";
-
 export default function ScrollToTopButton() {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
     const [isVisible, setIsVisible] = useState(false);
 
     // مراقبة التمرير لإظهار/إخفاء الزر
@@ -33,7 +29,7 @@ export default function ScrollToTopButton() {
     return (
         <button
             onClick={scrollToTop}
-            aria-label={isAr ? "العودة لأعلى الصفحة" : "Back to top"}
+            aria-label="العودة لأعلى الصفحة"
             className={`
         fixed bottom-8 left-4 z-50 
         inline-flex h-10 w-10 items-center justify-center rounded-full p-0 

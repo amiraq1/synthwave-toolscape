@@ -3,11 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import PageLoader from "@/components/PageLoader";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
 
 const AuthCallback = () => {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +31,7 @@ const AuthCallback = () => {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : (isAr ? "تعذر إكمال تسجيل الدخول" : "Unable to complete sign-in"));
+          setError(err instanceof Error ? err.message : "تعذر إكمال تسجيل الدخول");
         }
         return;
       }
@@ -51,15 +48,15 @@ const AuthCallback = () => {
     return () => {
       isMounted = false;
     };
-  }, [navigate, location.search, isAr]);
+  }, [navigate, location.search]);
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir={isAr ? "rtl" : "ltr"} role="main">
-        <h1 className="text-2xl font-bold mb-3">{isAr ? "فشل تسجيل الدخول" : "Sign-in failed"}</h1>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6" dir="rtl" role="main">
+        <h1 className="text-2xl font-bold mb-3">فشل تسجيل الدخول</h1>
         <p className="text-muted-foreground mb-6">{error}</p>
         <Button onClick={() => navigate("/auth")} className="bg-neon-purple hover:bg-neon-purple/80">
-          {isAr ? "العودة لتسجيل الدخول" : "Back to login"}
+          العودة لتسجيل الدخول
         </Button>
       </div>
     );
