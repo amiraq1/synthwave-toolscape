@@ -1,7 +1,5 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
 
 interface CompareContextType {
     selectedTools: string[];
@@ -14,7 +12,6 @@ interface CompareContextType {
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
 export const CompareProvider = ({ children }: { children: ReactNode }) => {
-    const { i18n } = useTranslation();
 
     // Safe localStorage read with try-catch for corrupted data
     const [selectedTools, setSelectedTools] = useState<string[]>(() => {
@@ -32,18 +29,16 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
     }, [selectedTools]);
 
     const addToCompare = (id: string) => {
-        const currentIsAr = i18n.language === 'ar';
-
         if (selectedTools.includes(id)) {
-            toast.error(currentIsAr ? "هذه الأداة موجودة في القائمة بالفعل" : "This tool is already in the list");
+            toast.error("هذه الأداة موجودة في القائمة بالفعل");
             return;
         }
         if (selectedTools.length >= 3) {
-            toast.error(currentIsAr ? "يمكنك مقارنة 3 أدوات كحد أقصى" : "You can compare up to 3 tools max");
+            toast.error("يمكنك مقارنة 3 أدوات كحد أقصى");
             return;
         }
         setSelectedTools([...selectedTools, id]);
-        toast.success(currentIsAr ? "تمت الإضافة للمقارنة ⚖️" : "Added to compare ⚖️");
+        toast.success("تمت الإضافة للمقارنة ⚖️");
     };
 
     const removeFromCompare = (id: string) => {

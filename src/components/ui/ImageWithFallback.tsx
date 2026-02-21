@@ -3,7 +3,6 @@ import { ImageOff } from "lucide-react";
 import { optimizeImage } from "@/utils/imageOptimizer";
 import { isValidImageUrl } from "@/utils/imageUrl";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 
 interface ImageWithFallbackProps {
     src?: string | null;
@@ -32,8 +31,6 @@ const ImageWithFallback = ({
     priority = false,
     aspectRatio = "auto"
 }: ImageWithFallbackProps) => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -66,7 +63,7 @@ const ImageWithFallback = ({
                 className
             )}>
                 <ImageOff className="w-8 h-8 text-gray-600 mb-2" />
-                <span className="text-xs text-gray-500 font-cairo">{isAr ? "لا توجد صورة" : "No image"}</span>
+                <span className="text-xs text-gray-500 font-cairo">لا توجد صورة</span>
             </div>
         );
     }

@@ -1,12 +1,8 @@
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
 import { Bot, Mail, Database, Play, Loader2, Settings } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const CustomNode = ({ data, selected }: NodeProps) => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
-
     // تحديد الأيقونة واللون بناءً على نوع العقدة (محفوظ في data.type أو slug)
     const label = String(data.label || "");
     const lowerLabel = label.toLowerCase();
@@ -28,7 +24,7 @@ const CustomNode = ({ data, selected }: NodeProps) => {
         <div className={`
       relative min-w-[250px] rounded-xl bg-[#1a1a2e] border-2 transition-all duration-300 shadow-xl overflow-hidden
       ${selected ? 'border-neon-purple shadow-[0_0_20px_rgba(124,58,237,0.4)]' : 'border-white/10 hover:border-white/30'}
-    `} dir={isAr ? "rtl" : "ltr"}>
+    `} dir="rtl">
 
             {/* 1. نقاط التوصيل (Handles) */}
             {/* نقطة الدخول (يسار) - لا تظهر للمحفزات */}
@@ -55,12 +51,12 @@ const CustomNode = ({ data, selected }: NodeProps) => {
                     </div>
                     <div>
                         <h3 className="text-xs font-bold opacity-90 uppercase tracking-wider">
-                            {isAgent ? (isAr ? 'وكيل ذكي' : 'AI Agent') : isTrigger ? (isAr ? 'محفز' : 'Trigger') : (isAr ? 'إجراء' : 'Action')}
+                            {isAgent ? 'وكيل ذكي' : isTrigger ? 'محفز' : 'إجراء'}
                         </h3>
                         <p className="text-sm font-bold leading-none">{label}</p>
                     </div>
                 </div>
-                <button className="opacity-70 hover:opacity-100 hover:bg-white/20 p-1 rounded transition-all" aria-label={isAr ? "إعدادات العقدة" : "Node settings"}>
+                <button className="opacity-70 hover:opacity-100 hover:bg-white/20 p-1 rounded transition-all" aria-label="إعدادات العقدة">
                     <Settings className="w-4 h-4" />
                 </button>
             </div>
@@ -72,20 +68,20 @@ const CustomNode = ({ data, selected }: NodeProps) => {
                     {data.status === 'running' ? (
                         <div className="flex items-center gap-2 text-xs text-yellow-400">
                             <Loader2 className="w-3 h-3 animate-spin" />
-                            <span>{isAr ? "جاري المعالجة..." : "Processing..."}</span>
+                            <span>جاري المعالجة...</span>
                         </div>
                     ) : data.status === 'completed' ? (
                         <div className="flex items-center gap-2 text-xs text-green-400">
                             <div className="w-2 h-2 rounded-full bg-green-400" />
-                            <span>{isAr ? "مكتمل" : "Completed"}</span>
+                            <span>مكتمل</span>
                         </div>
                     ) : (
-                        <div className="text-xs text-gray-500">{isAr ? "جاهز للعمل" : "Ready"}</div>
+                        <div className="text-xs text-gray-500">جاهز للعمل</div>
                     )}
 
                     {/* زر تشغيل مصغر للتجربة */}
                     {isAgent && (
-                        <button className="p-1.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors" aria-label={isAr ? "تشغيل تجريبي" : "Test run"}>
+                        <button className="p-1.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors" aria-label="تشغيل تجريبي">
                             <Play className="w-3 h-3 fill-current" />
                         </button>
                     )}

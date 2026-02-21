@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import type { Tool } from "@/types";
-import { useTranslation } from "react-i18next";
 
 interface EditDraftDialogProps {
   tool: Partial<Tool> | null;
@@ -16,9 +15,6 @@ interface EditDraftDialogProps {
 }
 
 const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogProps) => {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -44,7 +40,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
     if (!tool) return;
     const numericToolId = Number(tool.id);
     if (!Number.isFinite(numericToolId)) {
-      toast.error(t("admin.dialog.invalidId"));
+      toast.error("رقم تعريف الأداة غير صالح");
       return;
     }
 
@@ -62,11 +58,11 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
       .eq("id", numericToolId);
 
     if (error) {
-      toast.error(t("admin.dialog.updateFailed"), {
+      toast.error("فشل في التحديث", {
         description: error.message,
       });
     } else {
-      toast.success(t("admin.dialog.updateSuccess"));
+      toast.success("تم التحديث بنجاح");
       onUpdate();
       onClose();
     }
@@ -75,15 +71,15 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-right" dir={isAr ? "rtl" : "ltr"}>
+      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-right" dir="rtl">
         <DialogHeader>
-          <DialogTitle>{t("admin.dialog.title", { title: formData.title })}</DialogTitle>
+          <DialogTitle>تعديل {formData.title}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">{t("admin.dialog.labels.toolName")}</label>
+              <label className="text-xs text-gray-400 mb-1 block">اسم الأداة</label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -91,7 +87,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
               />
             </div>
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">{t("admin.dialog.labels.url")}</label>
+              <label className="text-xs text-gray-400 mb-1 block">رابط الوصول</label>
               <Input
                 value={formData.url}
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
@@ -103,7 +99,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">{t("admin.dialog.labels.category")}</label>
+              <label className="text-xs text-gray-400 mb-1 block">التصنيف</label>
               <Input
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -111,7 +107,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
               />
             </div>
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">{t("admin.dialog.labels.pricing")}</label>
+              <label className="text-xs text-gray-400 mb-1 block">نوع التسعير</label>
               <Input
                 value={formData.pricing_type}
                 onChange={(e) => setFormData({ ...formData, pricing_type: e.target.value })}
@@ -121,7 +117,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
           </div>
 
           <div>
-            <label className="text-xs text-gray-400 mb-1 block">{t("admin.dialog.labels.description")}</label>
+            <label className="text-xs text-gray-400 mb-1 block">الوصف الموجز</label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -132,10 +128,10 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={onClose} className="bg-transparent border-white/10 hover:bg-white/5">
-            {t("admin.dialog.cancel")}
+            إلغاء
           </Button>
           <Button onClick={handleSave} disabled={loading} className="bg-green-600 hover:bg-green-700">
-            {loading ? t("admin.dialog.saving") : t("admin.dialog.save")}
+            {loading ? "جاري الحفظ..." : "حفظ التعديلات"}
           </Button>
         </DialogFooter>
       </DialogContent>

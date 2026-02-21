@@ -1,8 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslation } from "react-i18next";
 
-const NavbarSkeleton = ({ isAr }: { isAr: boolean }) => (
-  <nav className="sticky top-0 z-50 glass border-b border-border/50" dir={isAr ? "rtl" : "ltr"}>
+const NavbarSkeleton = () => (
+  <nav className="sticky top-0 z-50 glass border-b border-border/50" dir="rtl">
     <div className="container mx-auto max-w-7xl px-4 py-3 sm:py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -21,8 +20,8 @@ const NavbarSkeleton = ({ isAr }: { isAr: boolean }) => (
   </nav>
 );
 
-const HeroSkeleton = ({ isAr }: { isAr: boolean }) => (
-  <section className="relative py-12 sm:py-16 md:py-20 px-4 text-center overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+const HeroSkeleton = () => (
+  <section className="relative py-12 sm:py-16 md:py-20 px-4 text-center overflow-hidden" dir="rtl">
     <div className="absolute top-0 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-neon-purple/20 rounded-full blur-[100px] sm:blur-[150px] -z-10 animate-pulse" />
     <div className="absolute bottom-0 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-neon-blue/20 rounded-full blur-[100px] sm:blur-[150px] -z-10 animate-pulse" />
 
@@ -40,7 +39,7 @@ const HeroSkeleton = ({ isAr }: { isAr: boolean }) => (
       <div className="relative max-w-2xl mx-auto mt-6 sm:mt-8 md:mt-10">
         <div className="glass-card rounded-xl sm:rounded-2xl p-1.5 sm:p-2 border border-neon-purple/20">
           <div className="relative flex items-center">
-            <Skeleton className={`absolute ${isAr ? "right-3 sm:right-4" : "left-3 sm:left-4"} h-5 w-5 sm:h-6 sm:w-6 rounded bg-muted/40`} />
+            <Skeleton className="absolute right-3 sm:right-4 h-5 w-5 sm:h-6 sm:w-6 rounded bg-muted/40" />
             <Skeleton className="w-full h-12 sm:h-14 rounded-lg bg-muted/20" />
           </div>
         </div>
@@ -49,11 +48,11 @@ const HeroSkeleton = ({ isAr }: { isAr: boolean }) => (
   </section>
 );
 
-const CategoryFiltersSkeleton = ({ isAr }: { isAr: boolean }) => (
+const CategoryFiltersSkeleton = () => (
   <section
     className="mb-4 sm:mb-6 rounded-2xl border bg-card/50 px-3 sm:px-4 py-3 sm:py-4"
-    dir={isAr ? "rtl" : "ltr"}
-    aria-label={isAr ? "تحميل فلاتر التصنيفات" : "Loading category filters"}
+    dir="rtl"
+    aria-label="تحميل فلاتر التصنيفات"
   >
     <div className="flex flex-wrap gap-2 justify-center">
       {[90, 60, 75, 60, 70, 80].map((width, index) => (
@@ -67,12 +66,12 @@ const CategoryFiltersSkeleton = ({ isAr }: { isAr: boolean }) => (
   </section>
 );
 
-const ToolCardSkeleton = ({ index = 0, isAr }: { index?: number; isAr: boolean }) => (
+const ToolCardSkeleton = ({ index = 0 }: { index?: number }) => (
   <article
     className="glass-card flex flex-col h-full rounded-xl p-5 animate-pulse"
     style={{ animationDelay: `${Math.min(index, 6) * 50}ms` }}
-    dir={isAr ? "rtl" : "ltr"}
-    aria-label={isAr ? "جاري تحميل الأداة" : "Loading tool"}
+    dir="rtl"
+    aria-label="جاري تحميل الأداة"
   >
     <div className="flex items-start gap-4 mb-4">
       <Skeleton className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl shrink-0 bg-gradient-to-br from-neon-purple/20 to-neon-blue/20" />
@@ -97,21 +96,21 @@ const ToolCardSkeleton = ({ index = 0, isAr }: { index?: number; isAr: boolean }
   </article>
 );
 
-const ToolsGridSkeleton = ({ count = 6, isAr }: { count?: number; isAr: boolean }) => (
+const ToolsGridSkeleton = ({ count = 6 }: { count?: number }) => (
   <section
     className="rounded-2xl border bg-card/30 px-3 sm:px-4 py-3 sm:py-4"
-    aria-label={isAr ? "جاري تحميل الأدوات" : "Loading tools"}
+    aria-label="جاري تحميل الأدوات"
   >
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {Array.from({ length: count }).map((_, index) => (
-        <ToolCardSkeleton key={index} index={index} isAr={isAr} />
+        <ToolCardSkeleton key={index} index={index} />
       ))}
     </div>
   </section>
 );
 
-const FooterSkeleton = ({ isAr }: { isAr: boolean }) => (
-  <footer className="border-t border-border/50 py-6 mt-8" dir={isAr ? "rtl" : "ltr"}>
+const FooterSkeleton = () => (
+  <footer className="border-t border-border/50 py-6 mt-8" dir="rtl">
     <div className="container mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <Skeleton className="h-4 w-48 rounded bg-muted/30" />
       <div className="flex gap-4">
@@ -124,29 +123,26 @@ const FooterSkeleton = ({ isAr }: { isAr: boolean }) => (
 );
 
 const HomePageSkeleton = () => {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
-
   return (
     <div
       className="min-h-screen bg-background flex flex-col overflow-x-hidden"
       role="main"
       aria-busy="true"
-      aria-label={isAr ? "جاري تحميل الصفحة الرئيسية" : "Loading home page"}
+      aria-label="جاري تحميل الصفحة الرئيسية"
     >
-      <NavbarSkeleton isAr={isAr} />
+      <NavbarSkeleton />
 
       <main className="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <section aria-label={isAr ? "جاري تحميل المقدمة" : "Loading hero section"} className="mb-4 sm:mb-6">
-          <HeroSkeleton isAr={isAr} />
+        <section aria-label="جاري تحميل المقدمة" className="mb-4 sm:mb-6">
+          <HeroSkeleton />
         </section>
 
-        <CategoryFiltersSkeleton isAr={isAr} />
-        <ToolsGridSkeleton count={6} isAr={isAr} />
+        <CategoryFiltersSkeleton />
+        <ToolsGridSkeleton count={6} />
         <div className="h-6 sm:h-8" />
       </main>
 
-      <FooterSkeleton isAr={isAr} />
+      <FooterSkeleton />
     </div>
   );
 };

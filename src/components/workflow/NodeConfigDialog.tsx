@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { Bot, Mail, Save } from "lucide-react";
 import type { WorkflowNodeData } from "@/types";
-import { useTranslation } from "react-i18next";
 
 interface NodeConfigDialogProps {
     node: Node | null;
@@ -23,8 +22,6 @@ interface NodeConfigDialogProps {
 }
 
 export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: NodeConfigDialogProps) {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === "ar";
     const [data, setData] = useState<WorkflowNodeData>({ label: '' });
     const [activeTab, setActiveTab] = useState("general");
 
@@ -54,30 +51,30 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[600px] bg-[#1a1a2e] border-white/10 text-white font-cairo" dir={isAr ? "rtl" : "ltr"}>
+            <DialogContent className="sm:max-w-[600px] bg-[#1a1a2e] border-white/10 text-white font-cairo" dir="rtl">
 
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl">
                         {isAgent && <Bot className="w-6 h-6 text-neon-purple" />}
                         {isTrigger && <Mail className="w-6 h-6 text-blue-400" />}
-                        {isAr ? "الإعدادات:" : "Settings:"} {node.data.label}
+                        الإعدادات: {node.data.label}
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                        {isAr ? "قم بتخصيص سلوك هذه الخطوة بدقة." : "Customize this step behavior with precision."}
+                        قم بتخصيص سلوك هذه الخطوة بدقة.
                     </DialogDescription>
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
                     <TabsList className={`grid w-full bg-black/20 ${tabsCount === 1 ? "grid-cols-1" : tabsCount === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
-                        <TabsTrigger value="general">{isAr ? "⚙️ عام" : "⚙️ General"}</TabsTrigger>
-                        {isAgent && <TabsTrigger value="prompt">{isAr ? "🧠 الذكاء (Prompt)" : "🧠 AI Prompt"}</TabsTrigger>}
-                        {isTrigger && <TabsTrigger value="config">{isAr ? "🔌 الاتصال" : "🔌 Connection"}</TabsTrigger>}
+                        <TabsTrigger value="general">⚙️ عام</TabsTrigger>
+                        {isAgent && <TabsTrigger value="prompt">🧠 الذكاء (Prompt)</TabsTrigger>}
+                        {isTrigger && <TabsTrigger value="config">🔌 الاتصال</TabsTrigger>}
                     </TabsList>
 
                     {/* تبويب: عام */}
                     <TabsContent value="general" className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <Label>{isAr ? "اسم العقدة (للتوضيح فقط)" : "Node Name (for clarity only)"}</Label>
+                            <Label>اسم العقدة (للتوضيح فقط)</Label>
                             <Input
                                 value={data.label || ''}
                                 onChange={e => setData({ ...data, label: e.target.value })}
@@ -85,7 +82,7 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
                             />
                         </div>
                         <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-sm text-blue-300">
-                            {isAr ? "ℹ️ معرف العقدة:" : "ℹ️ Node ID:"} <span className="font-mono bg-black/20 px-1 rounded">{node.id}</span>
+                            ℹ️ معرف العقدة: <span className="font-mono bg-black/20 px-1 rounded">{node.id}</span>
                         </div>
                     </TabsContent>
 
@@ -93,22 +90,20 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
                     <TabsContent value="prompt" className="space-y-4 py-4">
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <Label>{isAr ? "تعليمات الوكيل (System Prompt)" : "Agent Instructions (System Prompt)"}</Label>
+                                <Label>تعليمات الوكيل (System Prompt)</Label>
                                 <div className="flex gap-2">
-                                    <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-neon-purple cursor-pointer hover:bg-white/20" title={isAr ? "سيتم استبداله بمحتوى الإيميل" : "Will be replaced with the email content"}>{"{{body}}"}</span>
+                                    <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-neon-purple cursor-pointer hover:bg-white/20" title="سيتم استبداله بمحتوى الإيميل">{"{{body}}"}</span>
                                     <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-neon-purple cursor-pointer hover:bg-white/20">{"{{subject}}"}</span>
                                 </div>
                             </div>
                             <Textarea
                                 value={data.customPrompt || ''}
                                 onChange={e => setData({ ...data, customPrompt: e.target.value })}
-                                placeholder={isAr ? "أنت خبير في... الرجاء الرد على: {{body}}" : "You are an expert in... Please respond to: {{body}}"}
+                                placeholder="أنت خبير في... الرجاء الرد على: {{body}}"
                                 className="bg-black/20 border-white/10 min-h-[200px] font-mono text-sm leading-relaxed"
                             />
                             <p className="text-xs text-gray-500">
-                                {isAr
-                                    ? "استخدم المتغيرات أعلاه لدمج البيانات القادمة من الخطوات السابقة ديناميكياً."
-                                    : "Use the variables above to dynamically inject data from previous steps."}
+                                استخدم المت المتغيرات أعلاه لدمج البيانات القادمة من الخطوات السابقة ديناميكياً.
                             </p>
                         </div>
                     </TabsContent>
@@ -116,7 +111,7 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
                     {/* تبويب: الاتصال (للمحفزات) */}
                     <TabsContent value="config" className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <Label>{isAr ? "مزود الخدمة" : "Provider"}</Label>
+                            <Label>مزود الخدمة</Label>
                             <Select
                                 value={data.provider || 'gmail'}
                                 onValueChange={v => setData({ ...data, provider: v })}
@@ -132,17 +127,17 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
                         </div>
                         <div className="flex items-center gap-2 mt-4">
                             <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                            <span className="text-sm text-green-400">{isAr ? "متصل بنجاح (حساب تجريبي)" : "Connected successfully (demo account)"}</span>
+                            <span className="text-sm text-green-400">متصل بنجاح (حساب تجريبي)</span>
                         </div>
                     </TabsContent>
                 </Tabs>
 
                 <DialogFooter className="mt-6 flex justify-between sm:justify-between w-full border-t border-white/10 pt-4">
                     <Button variant="ghost" onClick={onClose} className="hover:bg-red-500/10 hover:text-red-400">
-                        {isAr ? "إلغاء" : "Cancel"}
+                        إلغاء
                     </Button>
                     <Button onClick={handleSave} className="bg-neon-purple hover:bg-neon-purple/80 min-w-[100px]">
-                        <Save className={`w-4 h-4 ${isAr ? "ml-2" : "mr-2"}`} /> {isAr ? "حفظ التعديلات" : "Save Changes"}
+                        <Save className="w-4 h-4 ml-2" /> حفظ التعديلات
                     </Button>
                 </DialogFooter>
 

@@ -24,7 +24,6 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
-import { useTranslation } from 'react-i18next';
 
 // تعريف الواجهات
 interface UserWithRole {
@@ -45,8 +44,6 @@ interface AdminUserRpcResponse {
 
 const AdminUsersTable = () => {
   const { user: currentUser } = useAuth();
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // 🔍 إضافة حالة للبحث
@@ -74,14 +71,14 @@ const AdminUsersTable = () => {
     } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
-        : (isAr ? 'فشل في جلب المستخدمين' : 'Failed to fetch users');
-      toast.error(isAr ? 'خطأ' : 'Error', {
+        : 'فشل في جلب المستخدمين';
+      toast.error('خطأ', {
         description: errorMessage,
       });
     } finally {
       setIsLoading(false);
     }
-  }, [isAr]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -108,18 +105,16 @@ const AdminUsersTable = () => {
       });
       if (error) throw error;
 
-      toast.success(isAr ? 'تم التحديث' : 'Updated', {
-        description: isAr
-          ? `تم تحديث صلاحيات ${user.display_name || user.email}`
-          : `Updated permissions for ${user.display_name || user.email}`,
+      toast.success('تم التحديث', {
+        description: `تم تحديث صلاحيات ${user.display_name || user.email}`,
       });
 
       fetchUsers(); // تحديث القائمة
     } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
-        : (isAr ? 'فشل في تحديث الصلاحيات' : 'Failed to update permissions');
-      toast.error(isAr ? 'خطأ' : 'Error', {
+        : 'فشل في تحديث الصلاحيات';
+      toast.error('خطأ', {
         description: errorMessage,
       });
     } finally {
@@ -135,21 +130,21 @@ const AdminUsersTable = () => {
         return (
           <Badge className="bg-red-500/20 text-red-400 border-red-500/30 gap-1 hover:bg-red-500/30">
             <ShieldCheck className="h-3 w-3" />
-            {isAr ? 'مدير' : 'Admin'}
+            مدير
           </Badge>
         );
       case 'moderator':
         return (
           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 gap-1 hover:bg-amber-500/30">
             <Shield className="h-3 w-3" />
-            {isAr ? 'مشرف' : 'Moderator'}
+            مشرف
           </Badge>
         );
       default:
         return (
           <Badge variant="secondary" className="bg-white/10 text-gray-400 gap-1">
             <User className="h-3 w-3" />
-            {isAr ? 'مستخدم' : 'User'}
+            مستخدم
           </Badge>
         );
     }
@@ -172,20 +167,20 @@ const AdminUsersTable = () => {
             <Shield className="w-5 h-5 text-neon-purple" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-200">{isAr ? 'إدارة المستخدمين' : 'User Management'}</h2>
+            <h2 className="text-lg font-bold text-gray-200">إدارة المستخدمين</h2>
             <p className="text-xs text-gray-500">
-              {isAr ? `إدارة الصلاحيات والأدوار (${users.length})` : `Manage roles and permissions (${users.length})`}
+              إدارة الصلاحيات والأدوار ({users.length})
             </p>
           </div>
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 ${isAr ? 'right-3' : 'left-3'}`} />
+          <Search className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 right-3`} />
           <Input
-            placeholder={isAr ? 'بحث بالاسم أو البريد...' : 'Search by name or email...'}
+            placeholder="بحث بالاسم أو البريد..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`${isAr ? 'pr-9' : 'pl-9'} bg-black/40 border-white/10 focus-visible:ring-neon-purple/50`}
+            className={`pr-9 bg-black/40 border-white/10 focus-visible:ring-neon-purple/50`}
           />
         </div>
       </div>
@@ -195,10 +190,10 @@ const AdminUsersTable = () => {
         <Table>
           <TableHeader className="bg-white/5">
             <TableRow className="hover:bg-transparent border-white/5">
-              <TableHead className={isAr ? 'text-right' : 'text-left'}>{isAr ? 'المستخدم' : 'User'}</TableHead>
-              <TableHead className={isAr ? 'text-right' : 'text-left'}>{isAr ? 'الصلاحية' : 'Role'}</TableHead>
-              <TableHead className={isAr ? 'text-right' : 'text-left'}>{isAr ? 'تاريخ التسجيل' : 'Joined'}</TableHead>
-              <TableHead className={isAr ? 'text-right' : 'text-left'}>{isAr ? 'الإجراءات' : 'Actions'}</TableHead>
+              <TableHead className="text-right">المستخدم</TableHead>
+              <TableHead className="text-right">الصلاحية</TableHead>
+              <TableHead className="text-right">تاريخ التسجيل</TableHead>
+              <TableHead className="text-right">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -211,14 +206,14 @@ const AdminUsersTable = () => {
                         {user.display_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?'}
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-200">{user.display_name || (isAr ? 'بدون اسم' : 'No name')}</p>
+                        <p className="font-medium text-sm text-gray-200">{user.display_name || 'بدون اسم'}</p>
                         <p className="text-xs text-gray-500">{user.email}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>{getRoleBadge(user.role)}</TableCell>
-                  <TableCell className={`text-sm text-gray-500 dir-ltr ${isAr ? 'text-right' : 'text-left'}`}>
-                    {new Date(user.created_at).toLocaleDateString(isAr ? 'ar-EG' : 'en-GB')}
+                  <TableCell className={`text-sm text-gray-500 dir-ltr text-right`}>
+                    {new Date(user.created_at).toLocaleDateString('ar-EG')}
                   </TableCell>
                   <TableCell>
                     {user.id !== currentUser?.id ? (
@@ -229,7 +224,7 @@ const AdminUsersTable = () => {
                             variant="ghost"
                             className="h-8 w-8 text-gray-400 hover:text-red-400 hover:bg-red-500/10"
                             onClick={() => setRoleChangeUser({ user, newRole: 'admin' })}
-                            title={isAr ? 'ترقية لمدير' : 'Promote to admin'}
+                            title="ترقية لمدير"
                           >
                             <ShieldCheck className="h-4 w-4" />
                           </Button>
@@ -240,7 +235,7 @@ const AdminUsersTable = () => {
                             variant="ghost"
                             className="h-8 w-8 text-gray-400 hover:text-amber-400 hover:bg-amber-500/10"
                             onClick={() => setRoleChangeUser({ user, newRole: 'moderator' })}
-                            title={isAr ? 'ترقية لمشرف' : 'Promote to moderator'}
+                            title="ترقية لمشرف"
                           >
                             <Shield className="h-4 w-4" />
                           </Button>
@@ -251,7 +246,7 @@ const AdminUsersTable = () => {
                             variant="ghost"
                             className="h-8 w-8 text-gray-400 hover:text-white hover:bg-white/10"
                             onClick={() => setRoleChangeUser({ user, newRole: null })}
-                            title={isAr ? 'إزالة الصلاحيات' : 'Remove role'}
+                            title="إزالة الصلاحيات"
                           >
                             <ShieldX className="h-4 w-4" />
                           </Button>
@@ -259,7 +254,7 @@ const AdminUsersTable = () => {
                       </div>
                     ) : (
                       <Badge variant="outline" className="border-white/10 text-gray-500 text-xs font-normal">
-                        {isAr ? 'حسابك الحالي' : 'Current account'}
+                        حسابك الحالي
                       </Badge>
                     )}
                   </TableCell>
@@ -270,7 +265,7 @@ const AdminUsersTable = () => {
                 <TableCell colSpan={4} className="h-32 text-center text-gray-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <User className="w-8 h-8 opacity-20" />
-                    <p>{isAr ? 'لا يوجد مستخدمين مطابقين للبحث' : 'No users match your search'}</p>
+                    <p>لا يوجد مستخدمين مطابقين للبحث</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -281,39 +276,35 @@ const AdminUsersTable = () => {
 
       {/* نافذة تأكيد تغيير الصلاحية */}
       <AlertDialog open={!!roleChangeUser} onOpenChange={(open) => !open && setRoleChangeUser(null)}>
-        <AlertDialogContent className="border-neon-purple/20 bg-black/90 backdrop-blur-xl">
+        <AlertDialogContent className="border-neon-purple/20 bg-black/90 backdrop-blur-xl" dir="rtl">
           <AlertDialogHeader>
-            <AlertDialogTitle>{isAr ? 'تغيير صلاحيات المستخدم' : 'Change User Role'}</AlertDialogTitle>
+            <AlertDialogTitle>تغيير صلاحيات المستخدم</AlertDialogTitle>
             <AlertDialogDescription>
               {roleChangeUser?.newRole ? (
                 <>
-                  {isAr ? 'هل أنت متأكد من ترقية' : 'Are you sure you want to promote'} <b>{roleChangeUser.user.display_name}</b> {isAr ? 'إلى رتبة' : 'to'}
+                  هل أنت متأكد من ترقية <b>{roleChangeUser.user.display_name}</b> إلى رتبة
                   <span className={`mx-1 font-bold ${roleChangeUser.newRole === 'admin' ? 'text-red-400' : 'text-amber-400'}`}>
-                    {roleChangeUser.newRole === 'admin' ? (isAr ? 'مدير' : 'Admin') : (isAr ? 'مشرف' : 'Moderator')}
+                    {roleChangeUser.newRole === 'admin' ? 'مدير' : 'مشرف'}
                   </span>
-                  {isAr
-                    ? '؟ سيمنحه هذا صلاحيات واسعة في النظام.'
-                    : '? This will grant broad system permissions.'}
+                  ؟ سيمنحه هذا صلاحيات واسعة في النظام.
                 </>
               ) : (
                 <>
-                  {isAr
-                    ? <>هل أنت متأكد من إزالة جميع الصلاحيات الإدارية من <b>{roleChangeUser?.user.display_name}</b>؟ سيعود ليصبح مستخدماً عادياً.</>
-                    : <>Are you sure you want to remove all elevated permissions from <b>{roleChangeUser?.user.display_name}</b>? They will become a regular user.</>}
+                  هل أنت متأكد من إزالة جميع الصلاحيات الإدارية من <b>{roleChangeUser?.user.display_name}</b>؟ سيعود ليصبح مستخدماً عادياً.
                 </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="border-white/10 hover:bg-white/5 hover:text-white">
-              {isAr ? 'إلغاء' : 'Cancel'}
+              إلغاء
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRoleChange}
               disabled={isUpdating}
               className="bg-neon-purple hover:bg-neon-purple/80 text-white"
             >
-              {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : (isAr ? 'تأكيد التغيير' : 'Confirm change')}
+              {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'تأكيد التغيير'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

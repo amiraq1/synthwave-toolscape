@@ -5,7 +5,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Send, X, Loader2, Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 
 interface Message {
   role: "user" | "assistant";
@@ -13,16 +12,11 @@ interface Message {
 }
 
 const ChatWidget = () => {
-  const { i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
-
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: isAr
-        ? "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟"
-        : "Hi! I'm your AI assistant. How can I help you find the right tools today?",
+      content: "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟",
     },
   ]);
   const [input, setInput] = useState("");
@@ -40,12 +34,10 @@ const ChatWidget = () => {
       if (prev.length !== 1 || prev[0].role !== "assistant") return prev;
       return [{
         role: "assistant",
-        content: isAr
-          ? "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟"
-          : "Hi! I'm your AI assistant. How can I help you find the right tools today?",
+        content: "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟",
       }];
     });
-  }, [isAr]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,9 +66,7 @@ const ChatWidget = () => {
         ...prev,
         {
           role: "assistant",
-          content: isAr
-            ? "عذراً، واجهت مشكلة في الاتصال. حاول مرة أخرى لاحقاً."
-            : "Sorry, I had a connection issue. Please try again later.",
+          content: "عذراً، واجهت مشكلة في الاتصال. حاول مرة أخرى لاحقاً.",
         },
       ]);
     } finally {
@@ -85,7 +75,7 @@ const ChatWidget = () => {
   };
 
   return (
-    <div className={`fixed bottom-4 ${isAr ? "left-4" : "right-4"} z-50 flex flex-col items-start gap-4`} dir={isAr ? "rtl" : "ltr"}>
+    <div className={`fixed bottom-4 left-4 z-50 flex flex-col items-start gap-4`} dir="rtl">
       <div
         className={cn(
           "w-[90vw] sm:w-[350px] h-[500px] bg-background/95 backdrop-blur-xl border border-neon-purple/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300",
@@ -98,10 +88,10 @@ const ChatWidget = () => {
               <Bot className="w-5 h-5 text-neon-purple" />
             </div>
             <div>
-              <h3 className="font-bold text-sm">{isAr ? "المساعد الذكي" : "AI Assistant"}</h3>
+              <h3 className="font-bold text-sm">المساعد الذكي</h3>
               <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                {isAr ? "متصل الآن" : "Online now"}
+                متصل الآن
               </p>
             </div>
           </div>
@@ -159,17 +149,17 @@ const ChatWidget = () => {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isAr ? "اسأل عن أداة..." : "Ask about a tool..."}
+              placeholder="اسأل عن أداة..."
               className="bg-background/50 border-white/10 focus-visible:ring-neon-purple/50"
               disabled={isLoading}
-              dir={isAr ? "rtl" : "ltr"}
+              dir="rtl"
             />
             <Button
               type="submit"
               size="icon"
               className="bg-neon-purple hover:bg-neon-purple/80 text-white shrink-0"
               disabled={isLoading || !input.trim()}
-              aria-label={isAr ? "إرسال" : "Send"}
+              aria-label="إرسال"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
@@ -184,7 +174,7 @@ const ChatWidget = () => {
           "rounded-full h-14 w-14 shadow-lg transition-all duration-300 hover:scale-105 z-50",
           isOpen ? "bg-muted text-muted-foreground rotate-90" : "bg-gradient-to-r from-neon-purple to-neon-blue text-white animate-pulse-slow"
         )}
-        aria-label={isAr ? "فتح المساعد" : "Open assistant"}
+        aria-label="فتح المساعد"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-7 h-7" />}
       </Button>

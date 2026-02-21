@@ -28,7 +28,6 @@ import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
 import { getToolImageUrl } from "@/utils/imageUrl";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 
 interface AdminToolsTableProps {
@@ -39,9 +38,6 @@ interface AdminToolsTableProps {
 type ToolUpdate = Database["public"]["Tables"]["tools"]["Update"];
 
 const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language === "ar";
-
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 10;
@@ -105,9 +101,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").delete().eq("id", deleteId);
 
     if (error) {
-      toast.error(t("admin.table.toastDeleteFailed"));
+      toast.error("حدث خطأ أثناء الحذف");
     } else {
-      toast.success(t("admin.table.toastDeleteSuccess"));
+      toast.success("تم الحذف بنجاح");
       handleUpdate();
     }
     setDeleteId(null);
@@ -118,9 +114,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error(t("admin.table.toastError"));
+      toast.error("حدث خطأ أثناء التحديث");
     } else {
-      toast.success(tool.is_featured ? t("admin.table.toastUnfeatured") : t("admin.table.toastFeatured"));
+      toast.success(tool.is_featured ? "تم إزالة التمييز بنجاح" : "تم تمييز الأداة بنجاح");
       handleUpdate();
     }
   };
@@ -130,9 +126,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error(t("admin.table.toastError"));
+      toast.error("حدث خطأ أثناء التحديث");
     } else {
-      toast.success(tool.is_published ? t("admin.table.toastHidden") : t("admin.table.toastPublished"));
+      toast.success(tool.is_published ? "تم إخفاء الأداة بنجاح" : "تم نشر الأداة بنجاح");
       handleUpdate();
     }
   };
@@ -148,7 +144,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
         <Search className="w-5 h-5 text-gray-400" />
         <Input
-          placeholder={t("admin.table.search")}
+          placeholder="ابحث عن أداة..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-none bg-transparent focus-visible:ring-0"
@@ -160,11 +156,11 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
         <Table>
           <TableHeader className="bg-white/5">
             <TableRow>
-              <TableHead className="w-[80px]">Image</TableHead>
-              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.tool")}</TableHead>
-              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.status")}</TableHead>
-              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.category")}</TableHead>
-              <TableHead className={isAr ? "text-right" : "text-left"}>{t("admin.table.actions")}</TableHead>
+              <TableHead className="w-[80px]">الصورة</TableHead>
+              <TableHead className="text-right">الأداة</TableHead>
+              <TableHead className="text-right">الحالة</TableHead>
+              <TableHead className="text-right">التصنيف</TableHead>
+              <TableHead className="text-right">تعديل/حذف</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -202,11 +198,11 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                               : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 w-fit"
                           }
                         >
-                          {tool.is_published ? t("admin.table.statusPublished") : t("admin.table.statusDraft")}
+                          {tool.is_published ? "منشور" : "مسودة"}
                         </Badge>
                         {tool.is_featured && (
                           <Badge variant="outline" className="border-purple-500/50 text-purple-400 w-fit text-[10px]">
-                            {t("admin.table.featured")}
+                            مميز
                           </Badge>
                         )}
                       </div>
@@ -220,36 +216,36 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>{t("admin.table.actions")}</DropdownMenuLabel>
+                        <DropdownMenuContent align="end" dir="rtl">
+                          <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleEdit(tool)}>
-                            <Edit className="mr-2 h-4 w-4" /> {t("admin.table.actionEdit")}
+                            <Edit className="ml-2 h-4 w-4" /> تعديل الأداة
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => togglePublished(tool)}>
                             {tool.is_published ? (
                               <>
-                                <XCircle className="mr-2 h-4 w-4" /> {t("admin.table.actionHide")}
+                                <XCircle className="ml-2 h-4 w-4" /> إخفاء الأداة
                               </>
                             ) : (
                               <>
-                                <CheckCircle className="mr-2 h-4 w-4" /> {t("admin.table.actionPublish")}
+                                <CheckCircle className="ml-2 h-4 w-4" /> نشر الأداة
                               </>
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
-                            <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? t("admin.table.actionUnfeature") : t("admin.table.actionFeature")}
+                            <Sparkles className="ml-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز الأداة"}
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="mr-2 h-4 w-4" /> {t("admin.table.actionVisit")}
+                              <ExternalLink className="ml-2 h-4 w-4" /> زيارة الرابط
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => setDeleteId(Number(tool.id))}
-                            className="text-red-600 focus:text-red-600"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-600/10"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" /> {t("admin.table.actionDelete")}
+                            <Trash2 className="ml-2 h-4 w-4" /> حذف الأداة
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -260,7 +256,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  {t("admin.table.empty")}
+                  لاتوجد أدوات متاحة
                 </TableCell>
               </TableRow>
             )}
@@ -269,9 +265,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between px-2">
+      <div className="flex items-center justify-between px-2" dir="rtl">
         <div className="text-sm text-gray-500">
-          {t("admin.table.showing", { shown: tools.length, total: totalCount })}
+          عرض {tools.length} أداة من أصل {totalCount} أدوات
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -284,7 +280,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <span className="text-sm text-gray-400">
-            Page {page + 1} of {totalPages || 1}
+            صفحة {page + 1} من {totalPages || 1}
           </span>
           <Button
             variant="outline"
@@ -299,17 +295,17 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent dir="rtl">
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("admin.table.deleteDialogTitle")}</AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("admin.table.deleteDialogDescription")}
+              سيتم مسح الأداة نهائيًا ولا يمكن التراجع عن هذا الإجراء
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("admin.table.deleteDialogCancel")}</AlertDialogCancel>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              {t("admin.table.deleteDialogConfirm")}
+              حذف
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
