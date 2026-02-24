@@ -19,7 +19,7 @@ const PwaUpdateToast = lazy(() => import("@/components/pwa-update-toast").then(m
 import Index from "./pages/Index"; // Eager load Home for better LCP
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
 
-function lazyWithRetry<T extends ComponentType<any>>(
+function lazyWithRetry<T extends ComponentType<object>>(
   importFn: () => Promise<{ default: T }>,
   retryKey: string,
 ) {

@@ -21,7 +21,7 @@ import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
-import { useCompare } from '@/context/CompareContext';
+import { useCompare } from '@/hooks/useCompare';
 import { getToolImageUrl } from '@/utils/imageUrl';
 import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 
@@ -41,7 +41,7 @@ const categoryAesthetics: Record<string, { icon: React.ElementType, ring: string
   'الكل': { icon: LayoutGrid, ring: 'border-neon-purple/30 group-hover:border-neon-purple', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.3)]' }
 };
 
-const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => {
+const SimpleRating = ({ rating }: { rating?: number | null }) => {
   const safeRating = typeof rating === 'number' && !Number.isNaN(rating) ? rating : 0;
 
   if (safeRating === 0) return null;
@@ -204,7 +204,7 @@ const ToolCard = memo(({ tool, index = 0 }: ToolCardProps) => {
             <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors line-clamp-1 leading-tight mb-1.5">
               {displayTitle}
             </h3>
-            <SimpleRating rating={tool.average_rating} count={tool.reviews_count} />
+            <SimpleRating rating={tool.average_rating} />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import type { Tool } from './useTools';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tool } from "./useTools";
 
 interface SemanticSearchOptions {
     query: string;
@@ -30,6 +31,9 @@ export interface SearchResponse {
     error?: string;
 }
 
+const MIN_QUERY_LENGTH = 2;
+const INTERACTIVE_STALE_TIME_MS = 1000 * 45;
+
 const EMPTY_SEARCH_RESPONSE: SearchResponse = {
     tools: [],
     posts: [],
@@ -37,50 +41,122 @@ const EMPTY_SEARCH_RESPONSE: SearchResponse = {
     semantic: false,
 };
 
-// Renamed to force HMR update and break old cache references
+const buildSafeResponse = (data?: Partial<SearchResponse> | null): SearchResponse => ({
+    tools: data?.tools ?? [],
+    posts: data?.posts ?? [],
+    count: data?.count ?? (data?.tools?.length ?? 0),
+    semantic: Boolean(data?.semantic),
+    error: data?.error,
+});
+
 export const useSemanticSearchFixed = ({
     query,
     limit = 15,
     enabled = true,
+    includeBlog = true,
 }: SemanticSearchOptions) => {
+    const normalizedQuery = query.trim();
+    const isEnabled = enabled && normalizedQuery.length >= MIN_QUERY_LENGTH;
+
     return useQuery<SearchResponse>({
-        queryKey: ['semantic-search-fixed', query, limit], // New key
+        queryKey: ["semantic-search", normalizedQuery, limit, includeBlog],
+        enabled: isEnabled,
+        staleTime: INTERACTIVE_STALE_TIME_MS,
         queryFn: async () => {
-            return EMPTY_SEARCH_RESPONSE;
+            try {
+                const { data, error } = await supabase.functions.invoke<Partial<SearchResponse>>("search", {
+                    body: {
+                        query: normalizedQuery,
+                        limit,
+                        include_blog: includeBlog,
+                    },
+                });
+
+                if (error) {
+                    console.error("Semantic search invoke error:", error);
+                    return EMPTY_SEARCH_RESPONSE;
+                }
+
+                return buildSafeResponse(data);
+            } catch (invokeError) {
+                console.error("Semantic search unexpected error:", invokeError);
+                return EMPTY_SEARCH_RESPONSE;
+            }
         },
-        enabled: false,
-        staleTime: Infinity,
     });
 };
 
 export const useHybridSearch = (
     query: string,
     clientSideResultsCount: number,
-    minResultsThreshold: number = 3
+    minResultsThreshold: number = 3,
 ) => {
+    const normalizedQuery = query.trim();
+    const shouldUseSemantic = normalizedQuery.length >= MIN_QUERY_LENGTH && clientSideResultsCount < minResultsThreshold;
+
+    const semanticQuery = useSemanticSearchFixed({
+        query: normalizedQuery,
+        enabled: shouldUseSemantic,
+        limit: 15,
+        includeBlog: true,
+    });
+
     return {
-        semanticTools: [],
-        semanticPosts: [],
-        isSemanticLoading: false,
-        isSemanticError: false,
-        semanticError: null,
-        isSemantic: false,
-        shouldUseSemantic: false,
+        semanticTools: shouldUseSemantic ? semanticQuery.data?.tools ?? [] : [],
+        semanticPosts: shouldUseSemantic ? semanticQuery.data?.posts ?? [] : [],
+        isSemanticLoading: shouldUseSemantic ? semanticQuery.isLoading : false,
+        isSemanticError: shouldUseSemantic ? semanticQuery.isError : false,
+        semanticError: shouldUseSemantic ? semanticQuery.error : null,
+        isSemantic: shouldUseSemantic && Boolean(semanticQuery.data?.semantic),
+        shouldUseSemantic,
     };
 };
 
 export const useSimilarTools = (toolId: number | string | undefined, limit = 5) => {
+    const numericToolId = Number(toolId);
+    const isEnabled = Number.isFinite(numericToolId) && numericToolId > 0;
+
     return useQuery<Tool[]>({
-        queryKey: ['similar-tools-fixed', toolId, limit],
+        queryKey: ["similar-tools", numericToolId, limit],
+        enabled: isEnabled,
+        staleTime: 1000 * 60,
         queryFn: async () => {
-            return [];
+            try {
+                const { data: currentTool, error: currentToolError } = await supabase
+                    .from("tools")
+                    .select("category")
+                    .eq("id", numericToolId)
+                    .maybeSingle();
+
+                if (currentToolError || !currentTool?.category) {
+                    if (currentToolError) {
+                        console.error("Unable to fetch current tool for similar search:", currentToolError);
+                    }
+                    return [];
+                }
+
+                const { data: similarTools, error: similarToolsError } = await supabase
+                    .from("tools")
+                    .select("*")
+                    .eq("is_published", true)
+                    .eq("category", currentTool.category)
+                    .neq("id", numericToolId)
+                    .limit(limit);
+
+                if (similarToolsError) {
+                    console.error("Unable to fetch similar tools:", similarToolsError);
+                    return [];
+                }
+
+                return (similarTools as Tool[]) ?? [];
+            } catch (error) {
+                console.error("Unexpected similar tools error:", error);
+                return [];
+            }
         },
-        enabled: false,
-        staleTime: Infinity,
     });
 };
 
-// Backup export for files I might miss, but deprecated
 export const useSemanticSearch = useSemanticSearchFixed;
 
 export default useSemanticSearchFixed;

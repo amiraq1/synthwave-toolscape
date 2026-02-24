@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { ArrowLeft, Sparkles, Command, Cpu, Globe, Zap, Search } from 'lucide-react';
+import { ArrowLeft, Sparkles, Cpu, Globe, Zap, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { useToolsStats } from '@/hooks/useToolsCount';

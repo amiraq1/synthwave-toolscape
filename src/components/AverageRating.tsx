@@ -4,14 +4,14 @@ interface AverageRatingProps {
   rating?: number;
   count?: number;
   toolId?: number;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const AverageRating = ({ rating, count, size = 'sm' }: AverageRatingProps) => {
   if (rating === undefined || rating === null) return null;
 
-  const iconSize = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
-  const textSize = size === 'sm' ? 'text-sm' : 'text-base';
+  const iconSize = size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-5 w-5' : 'h-6 w-6';
+  const textSize = size === 'sm' ? 'text-sm' : size === 'md' ? 'text-base' : 'text-lg';
 
   return (
     <div className="flex items-center gap-1" dir="ltr">

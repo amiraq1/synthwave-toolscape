@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
 import {
     Dialog,
     DialogContent,
@@ -13,7 +14,7 @@ import {
     DialogTitle,
     DialogDescription,
     DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
     Form,
     FormControl,
@@ -22,12 +23,12 @@ import {
     FormLabel,
     FormMessage,
     FormDescription,
-} from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Loader2, Image as ImageIcon } from 'lucide-react';
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Loader2, Image as ImageIcon } from "lucide-react";
 
 interface Post {
     id: string;
@@ -48,94 +49,94 @@ interface PostDialogProps {
 }
 
 const formSchema = z.object({
-    title: z.string().min(3, 'Title is too short').max(200),
+    title: z.string().min(3, "Title is too short").max(200),
     slug: z.string().optional(),
-    content: z.string().min(20, 'Content is too short'),
-    excerpt: z.string().max(300, 'Excerpt is too long').optional(),
-    image_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+    content: z.string().min(20, "Content is too short"),
+    excerpt: z.string().max(300, "Excerpt is too long").optional(),
+    image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
     is_published: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Helper function to generate slug from title
-const generateSlug = (title: string): string => {
-    return title
+const generateSlug = (title: string): string =>
+    title
         .toLowerCase()
-        .replace(/[^\u0621-\u064Aa-z0-9\s-]/g, '') // Keep Arabic, English, numbers
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+        .replace(/[^\u0621-\u064Aa-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
         .trim();
-};
 
 const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
     const { user } = useAuth();
+    const { i18n } = useTranslation();
+    const isAr = i18n.language.startsWith("ar");
     const queryClient = useQueryClient();
-    const [imagePreview, setImagePreview] = useState<string>('');
+    const [imagePreview, setImagePreview] = useState("");
     const [imageError, setImageError] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-
-    const isEditMode = !!postToEdit;
+    const isEditMode = Boolean(postToEdit);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
-            slug: '',
-            content: '',
-            excerpt: '',
-            image_url: '',
+            title: "",
+            slug: "",
+            content: "",
+            excerpt: "",
+            image_url: "",
             is_published: true,
         },
     });
 
-    // Pre-fill form when editing
     useEffect(() => {
-        if (open && postToEdit) {
+        if (!open) return;
+
+        if (postToEdit) {
             form.reset({
                 title: postToEdit.title,
-                slug: postToEdit.slug || '',
+                slug: postToEdit.slug || "",
                 content: postToEdit.content,
-                excerpt: postToEdit.excerpt || '',
-                image_url: postToEdit.image_url || '',
+                excerpt: postToEdit.excerpt || "",
+                image_url: postToEdit.image_url || "",
                 is_published: postToEdit.is_published,
             });
-            setImagePreview(postToEdit.image_url || '');
-        } else if (open) {
-            form.reset({
-                title: '',
-                slug: '',
-                content: '',
-                excerpt: '',
-                image_url: '',
-                is_published: true,
-            });
-            setImagePreview('');
+            setImagePreview(postToEdit.image_url || "");
+            setImageError(false);
+            return;
         }
+
+        form.reset({
+            title: "",
+            slug: "",
+            content: "",
+            excerpt: "",
+            image_url: "",
+            is_published: true,
+        });
+        setImagePreview("");
+        setImageError(false);
     }, [open, postToEdit, form]);
 
-    // Watch image URL for preview
-    const watchedImageUrl = form.watch('image_url');
+    const watchedImageUrl = form.watch("image_url");
     useEffect(() => {
-        if (watchedImageUrl) {
-            setImagePreview(watchedImageUrl);
-            setImageError(false);
-        } else {
-            setImagePreview('');
+        if (!watchedImageUrl) {
+            setImagePreview("");
+            return;
         }
+
+        setImagePreview(watchedImageUrl);
+        setImageError(false);
     }, [watchedImageUrl]);
 
     const mutation = useMutation({
         mutationFn: async (values: FormValues) => {
-            // Generate slug if empty
-            const finalSlug = values.slug || generateSlug(values.title) + '-' + Date.now().toString(36);
-
+            const finalSlug = values.slug || `${generateSlug(values.title)}-${Date.now().toString(36)}`;
             if (!user?.id) throw new Error("User not authenticated");
 
             if (isEditMode && postToEdit) {
-                // Update existing post
                 const { error } = await supabase
-                    .from('posts')
+                    .from("posts")
                     .update({
                         title: values.title,
                         slug: finalSlug,
@@ -144,43 +145,49 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                         image_url: values.image_url || null,
                         is_published: values.is_published,
                     })
-                    .eq('id', postToEdit.id);
+                    .eq("id", postToEdit.id);
+
                 if (error) throw error;
-            } else {
-                // Create new post
-                const { error } = await supabase.from('posts').insert({
-                    title: values.title,
-                    slug: finalSlug,
-                    content: values.content,
-                    excerpt: values.excerpt || null,
-                    image_url: values.image_url || null,
-                    is_published: values.is_published,
-                    author_id: user.id,
-                });
-                if (error) throw error;
+                return;
             }
+
+            const { error } = await supabase.from("posts").insert({
+                title: values.title,
+                slug: finalSlug,
+                content: values.content,
+                excerpt: values.excerpt || null,
+                image_url: values.image_url || null,
+                is_published: values.is_published,
+                author_id: user.id,
+            });
+
+            if (error) throw error;
         },
         onSuccess: () => {
-            toast.success(isEditMode
-                ? '✅ تم التحديث'
-                : '🎉 تم النشر');
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            toast.success(
+                isEditMode
+                    ? (isAr ? "تم تحديث المقال بنجاح" : "Post updated successfully")
+                    : (isAr ? "تم نشر المقال بنجاح" : "Post published successfully"),
+            );
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
             onOpenChange(false);
             form.reset();
         },
         onError: (error: Error) => {
-            toast.error('خطأ', {
-                description: error?.message || (isEditMode
-                    ? 'فشل التحديث'
-                    : 'فشل النشر'),
+            toast.error(isAr ? "حدث خطأ" : "Something went wrong", {
+                description:
+                    error.message ||
+                    (isEditMode
+                        ? (isAr ? "فشل تحديث المقال" : "Failed to update post")
+                        : (isAr ? "فشل نشر المقال" : "Failed to publish post")),
             });
         },
     });
 
     const handleAutoSlug = () => {
-        const title = form.getValues('title');
-        if (title) {
-            form.setValue('slug', generateSlug(title));
+        const title = form.getValues("title");
+        if (title.trim()) {
+            form.setValue("slug", generateSlug(title));
         }
     };
 
@@ -190,96 +197,89 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
 
         try {
             setIsUploading(true);
-            const fileExt = file.name.split('.').pop();
+            const fileExt = file.name.split(".").pop();
             const fileName = `${crypto.randomUUID()}.${fileExt}`;
-            const filePath = `${fileName}`;
 
-            const { error: uploadError } = await supabase.storage
-                .from('blog_images')
-                .upload(filePath, file);
-
+            const { error: uploadError } = await supabase.storage.from("blog_images").upload(fileName, file);
             if (uploadError) throw uploadError;
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('blog_images')
-                .getPublicUrl(filePath);
+            const {
+                data: { publicUrl },
+            } = supabase.storage.from("blog_images").getPublicUrl(fileName);
 
-            form.setValue('image_url', publicUrl);
+            form.setValue("image_url", publicUrl);
             setImagePreview(publicUrl);
             setImageError(false);
-
-            toast.success("تم الرفع بنجاح");
+            toast.success(isAr ? "تم رفع الصورة بنجاح" : "Image uploaded successfully");
         } catch (error) {
-            console.error('Upload error:', error);
-            const errorMessage = error instanceof Error ? error.message : (isAr ? 'فشل الرفع' : 'Upload failed');
-            toast.error(isAr ? "فشل الرفع" : "Upload failed", {
-                description: errorMessage,
-            });
+            console.error("Upload error:", error);
+            const message = error instanceof Error ? error.message : (isAr ? "فشل رفع الصورة" : "Upload failed");
+            toast.error(isAr ? "فشل رفع الصورة" : "Upload failed", { description: message });
         } finally {
             setIsUploading(false);
-            e.target.value = '';
+            e.target.value = "";
         }
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
-
-                {/* Fixed Header */}
+            <DialogContent
+                className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl"
+                dir="rtl"
+            >
                 <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
                     <DialogTitle className="text-lg font-bold">
-                        {isEditMode
-                            ? 'تعديل المقال'
-                            : 'إضافة مقال جديد'}
+                        {isEditMode ? "تعديل المقال" : "إضافة مقال جديد"}
                     </DialogTitle>
                     <DialogDescription className="text-xs">
-                        {isEditMode
-                            ? 'قم بتعديل بيانات المقال'
-                            : 'شارك معرفتك مع المجتمع'}
+                        {isEditMode ? "قم بتعديل بيانات المقال" : "شارك معرفتك مع المجتمع"}
                     </DialogDescription>
                 </DialogHeader>
 
-                {/* Scrollable Form Body */}
                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     <Form {...form}>
                         <form id="post-form" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} className="space-y-4 pb-4">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs">عنوان المقال *</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="عنوان جذاب للمقال..." {...field} className="h-10 bg-background/50" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
 
-                            {/* Title */}
-                            <FormField control={form.control} name="title" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-xs">عنوان المقال *</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="عنوان جذاب للمقال..." {...field} className="h-10 bg-background/50" />
-                                    </FormControl>
-                                    <FormMessage className="text-[10px]" />
-                                </FormItem>
-                            )} />
+                            <FormField
+                                control={form.control}
+                                name="slug"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs flex items-center justify-between">
+                                            <span>الرابط المختصر (Slug)</span>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={handleAutoSlug}
+                                                className="h-6 text-xs text-neon-purple"
+                                            >
+                                                توليد تلقائي
+                                            </Button>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="my-post-title" dir="ltr" {...field} className="h-8 bg-background/50 font-mono text-sm" />
+                                        </FormControl>
+                                        <FormDescription className="text-[10px]">
+                                            يُستخدم في رابط URL. اتركه فارغًا للتوليد التلقائي.
+                                        </FormDescription>
+                                    </FormItem>
+                                )}
+                            />
 
-                            {/* Slug */}
-                            <FormField control={form.control} name="slug" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-xs flex items-center justify-between">
-                                        <span>الرابط المختصر (Slug)</span>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={handleAutoSlug}
-                                            className="h-6 text-xs text-neon-purple"
-                                        >
-                                            توليد تلقائي
-                                        </Button>
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="my-post-title" dir="ltr" {...field} className="h-8 bg-background/50 font-mono text-sm" />
-                                    </FormControl>
-                                    <FormDescription className="text-[10px]">
-                                        يُستخدم في رابط URL. اتركه فارغاً للتوليد التلقائي.
-                                    </FormDescription>
-                                </FormItem>
-                            )} />
-
-                            {/* Image Upload & URL */}
                             <div className="space-y-4 border border-white/5 bg-muted/10 p-4 rounded-xl">
                                 <FormItem>
                                     <FormLabel className="text-xs">رفع صورة من الجهاز</FormLabel>
@@ -299,92 +299,97 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                                     </div>
                                 </FormItem>
 
-                                <FormField control={form.control} name="image_url" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-xs flex items-center gap-1">
-                                            <ImageIcon className="w-3 h-3" /> صورة الغلاف
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
-                                        </FormControl>
-                                        <FormMessage className="text-[10px]" />
+                                <FormField
+                                    control={form.control}
+                                    name="image_url"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs flex items-center gap-1">
+                                                <ImageIcon className="w-3 h-3" /> صورة الغلاف
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" />
+                                            </FormControl>
+                                            <FormMessage className="text-[10px]" />
 
-                                        {/* Image Preview */}
-                                        <div className="mt-2 rounded-lg overflow-hidden border border-white/10 bg-muted/20 aspect-video flex items-center justify-center">
-                                            {imagePreview && !imageError ? (
-                                                <img
-                                                    src={imagePreview}
-                                                    alt="معاينة"
-                                                    className="w-full h-full object-cover"
-                                                    onError={() => setImageError(true)}
-                                                />
-                                            ) : (
-                                                <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
-                                                    <ImageIcon className="w-8 h-8 opacity-30" />
-                                                    <span>{imageError
-                                                        ? 'رابط الصورة غير صحيح'
-                                                        : 'معاينة الصورة'}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </FormItem>
-                                )} />
+                                            <div className="mt-2 rounded-lg overflow-hidden border border-white/10 bg-muted/20 aspect-video flex items-center justify-center">
+                                                {imagePreview && !imageError ? (
+                                                    <img
+                                                        src={imagePreview}
+                                                        alt="معاينة"
+                                                        className="w-full h-full object-cover"
+                                                        onError={() => setImageError(true)}
+                                                    />
+                                                ) : (
+                                                    <div className="text-muted-foreground text-xs flex flex-col items-center gap-2">
+                                                        <ImageIcon className="w-8 h-8 opacity-30" />
+                                                        <span>{imageError ? "رابط الصورة غير صالح" : "معاينة الصورة"}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
 
-                            {/* Excerpt */}
-                            <FormField control={form.control} name="excerpt" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-xs">ملخص قصير</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="ملخص مختصر يظهر في قائمة المقالات..."
-                                            {...field}
-                                            className="min-h-[60px] bg-background/50 resize-none text-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-[10px]" />
-                                </FormItem>
-                            )} />
+                            <FormField
+                                control={form.control}
+                                name="excerpt"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs">ملخص قصير</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="ملخص مختصر يظهر في قائمة المقالات..."
+                                                {...field}
+                                                className="min-h-[60px] bg-background/50 resize-none text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
 
-                            {/* Content */}
-                            <FormField control={form.control} name="content" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-xs">المحتوى *</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="اكتب محتوى المقال هنا..."
-                                            {...field}
-                                            className="min-h-[200px] bg-background/50 resize-none text-sm"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-[10px]" />
-                                </FormItem>
-                            )} />
+                            <FormField
+                                control={form.control}
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs">المحتوى *</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="اكتب محتوى المقال هنا..."
+                                                {...field}
+                                                className="min-h-[200px] bg-background/50 resize-none text-sm"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
 
-                            {/* Is Published Switch */}
-                            <FormField control={form.control} name="is_published" render={({ field }) => (
-                                <FormItem className="flex items-center justify-between rounded-lg border border-white/10 p-3 bg-muted/10">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-sm">نشر المقال</FormLabel>
-                                        <FormDescription className="text-xs">
-                                            عند التفعيل، سيظهر المقال للجميع
-                                        </FormDescription>
-                                    </div>
-                                    <FormControl>
-                                        <Switch
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )} />
-
+                            <FormField
+                                control={form.control}
+                                name="is_published"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center justify-between rounded-lg border border-white/10 p-3 bg-muted/10">
+                                        <div className="space-y-0.5">
+                                            <FormLabel className="text-sm">نشر المقال</FormLabel>
+                                            <FormDescription className="text-xs">
+                                                عند التفعيل، سيظهر المقال للجميع
+                                            </FormDescription>
+                                        </div>
+                                        <FormControl>
+                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                         </form>
                     </Form>
-                </div >
+                </div>
 
-                {/* Fixed Footer */}
-                < DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2" >
+                <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">
                         إلغاء
                     </Button>
@@ -396,16 +401,15 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
                     >
                         {mutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : isEditMode ? (
+                            "حفظ التعديلات"
                         ) : (
-                            isEditMode
-                                ? 'حفظ التعديلات'
-                                : 'نشر المقال'
+                            "نشر المقال"
                         )}
                     </Button>
-                </DialogFooter >
-
-            </DialogContent >
-        </Dialog >
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 };
 

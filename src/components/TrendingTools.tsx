@@ -10,14 +10,20 @@ interface TrendingTool {
     clicks_count: number;
 }
 
+interface TrendingToolRow {
+    id: number | string;
+    title: string | null;
+    clicks_count: number | null;
+}
+
 const TrendingTools = () => {
     // جلب البيانات عبر react-query لأداء أعلى مع Caching
     const { data: tools = [], isLoading } = useQuery({
         queryKey: ["trending_tools_ticker"],
         queryFn: async () => {
-            const { data, error } = await (supabase
+            const { data, error } = await supabase
                 .from("tools")
-                .select("id, title, clicks_count, created_at") as any)
+                .select("*")
                 .eq("is_published", true)
                 .order("clicks_count", { ascending: false, nullsFirst: false })
                 .limit(10);
@@ -26,11 +32,12 @@ const TrendingTools = () => {
                 console.error("Error fetching trending tools:", error);
                 throw error;
             }
-            return data.map((tool: any) => ({
-                id: tool.id,
-                title: tool.title,
-                clicks_count: tool.clicks_count ?? 0
-            })) as TrendingTool[];
+            const rows = (data ?? []) as unknown as TrendingToolRow[];
+            return rows.map((tool): TrendingTool => ({
+                id: Number(tool.id),
+                title: tool.title ?? "",
+                clicks_count: tool.clicks_count ?? 0,
+            }));
         },
         staleTime: 1000 * 60 * 10, // 10 minutes cache
     });

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useCompare } from "@/context/CompareContext";
+import { useCompare } from "@/hooks/useCompare";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { X, Check, ArrowRight, Plus, Loader2 } from "lucide-react";

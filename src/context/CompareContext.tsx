@@ -1,19 +1,8 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { toast } from "sonner";
-
-interface CompareContextType {
-    selectedTools: string[];
-    addToCompare: (id: string) => void;
-    removeFromCompare: (id: string) => void;
-    clearCompare: () => void;
-    setCompareList: (ids: string[]) => void;
-}
-
-const CompareContext = createContext<CompareContextType | undefined>(undefined);
+import { CompareContext } from "@/context/compare-context";
 
 export const CompareProvider = ({ children }: { children: ReactNode }) => {
-
-    // Safe localStorage read with try-catch for corrupted data
     const [selectedTools, setSelectedTools] = useState<string[]>(() => {
         try {
             const saved = localStorage.getItem("compare_tools");
@@ -30,19 +19,21 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
 
     const addToCompare = (id: string) => {
         if (selectedTools.includes(id)) {
-            toast.error("هذه الأداة موجودة في القائمة بالفعل");
+            toast.error("هذه الأداة موجودة بالفعل في قائمة المقارنة");
             return;
         }
+
         if (selectedTools.length >= 3) {
             toast.error("يمكنك مقارنة 3 أدوات كحد أقصى");
             return;
         }
-        setSelectedTools([...selectedTools, id]);
-        toast.success("تمت الإضافة للمقارنة ⚖️");
+
+        setSelectedTools((prev) => [...prev, id]);
+        toast.success("تمت الإضافة إلى المقارنة");
     };
 
     const removeFromCompare = (id: string) => {
-        setSelectedTools(selectedTools.filter((itemId) => itemId !== id));
+        setSelectedTools((prev) => prev.filter((itemId) => itemId !== id));
     };
 
     const setCompareList = (ids: string[]) => {
@@ -60,10 +51,4 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </CompareContext.Provider>
     );
-};
-
-export const useCompare = () => {
-    const context = useContext(CompareContext);
-    if (!context) throw new Error("useCompare must be used within a CompareProvider");
-    return context;
 };

@@ -216,7 +216,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" dir="rtl">
+                        <DropdownMenuContent align="end" className="text-right">
                           <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleEdit(tool)}>
                             <Edit className="ml-2 h-4 w-4" /> تعديل الأداة

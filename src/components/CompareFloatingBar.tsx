@@ -1,4 +1,4 @@
-import { useCompare } from "@/context/CompareContext";
+import { useCompare } from "@/hooks/useCompare";
 import { Button } from "@/components/ui/button";
 import { X, ArrowLeft, Scale } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";

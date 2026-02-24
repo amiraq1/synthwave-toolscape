@@ -12,7 +12,6 @@ import {
   Check,
   Share2,
   Calendar,
-  ChevronLeft,
   ChevronRight,
   Zap
 } from 'lucide-react';
