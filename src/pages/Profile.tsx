@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,10 +112,10 @@ const Profile = () => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }
-            toast.error("Update failed. Previous data has been restored.");
+            toast.error("فشل التحديث. تم استعادة البيانات السابقة.");
         },
         onSuccess: () => {
-            toast.success("Profile updated successfully ✅");
+            toast.success("Profile updated successfully âœ…");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
@@ -127,7 +127,7 @@ const Profile = () => {
         updateProfileMutation.mutate({ display_name: fullName, avatar_url: avatarUrl });
     };
 
-    // حساب الإحصائيات
+    // ط­ط³ط§ط¨ ط§ظ„ط¥ط­طµط§ط¦ظٹط§طھ
     const userStats = useMemo(() => {
         const averageRating = reviews.length > 0
             ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -166,10 +166,10 @@ const Profile = () => {
     if (isError) return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4" role="main">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md">
-                <h2 className="text-xl font-bold text-red-400 mb-2">Something went wrong</h2>
-                <p className="text-gray-400 mb-6">We could not load your profile. Please try again later.</p>
+                <h2 className="text-xl font-bold text-red-400 mb-2">حدث خطأ ما</h2>
+                <p className="text-gray-400 mb-6">لم نتمكن من تحميل ملفك الشخصي. يرجى المحاولة مرة أخرى لاحقاً.</p>
                 <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400">
-                    Refresh page
+                    تحديث الصفحة
                 </Button>
             </div>
         </div>
@@ -178,10 +178,10 @@ const Profile = () => {
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl" dir="rtl" role="main">
             <Helmet>
-                <title>الملف الشخصي | Nabd AI</title>
+                <title>ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ | Nabd AI</title>
             </Helmet>
 
-            {/* الهيدر الشخصي */}
+            {/* ط§ظ„ظ‡ظٹط¯ط± ط§ظ„ط´ط®طµظٹ */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8 flex flex-col md:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-neon-purple to-neon-blue p-1 relative group">
                     <div className="w-full h-full rounded-full bg-black overflow-hidden flex items-center justify-center relative">
@@ -191,47 +191,47 @@ const Profile = () => {
                             <span className="text-3xl font-bold text-white">{profile?.display_name?.[0] || session?.user.email?.[0]?.toUpperCase()}</span>
                         )}
 
-                        {/* تلميح سريع لتغيير الصورة */}
+                        {/* طھظ„ظ…ظٹط­ ط³ط±ظٹط¹ ظ„طھط؛ظٹظٹط± ط§ظ„طµظˆط±ط© */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer text-xs text-white" onClick={() => document.getElementById('settings-tab')?.click()}>
-                            تغيير
+                            طھط؛ظٹظٹط±
                         </div>
                     </div>
                 </div>
 
                 <div className={`flex-1 text-center md:text-right space-y-2`}>
-                    <h1 className="text-3xl font-bold text-white">{profile?.display_name || "الملف الشخصي"}</h1>
+                    <h1 className="text-3xl font-bold text-white">{profile?.display_name || "ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ"}</h1>
                     <p className="text-gray-400 font-mono text-sm">{session?.user.email}</p>
 
                     <div className={`flex justify-center md:justify-start gap-4 mt-4 pt-2 border-t border-white/10 text-sm text-gray-500`}>
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-                            <Heart className="w-3.5 h-3.5 fill-current" /> {bookmarks.length} المحفوظات
+                            <Heart className="w-3.5 h-3.5 fill-current" /> {bookmarks.length} ط§ظ„ظ…ط­ظپظˆط¸ط§طھ
                         </span>
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            <MessageSquare className="w-3.5 h-3.5" /> {reviews.length} المراجعات
+                            <MessageSquare className="w-3.5 h-3.5" /> {reviews.length} ط§ظ„ظ…ط±ط§ط¬ط¹ط§طھ
                         </span>
                     </div>
                 </div>
 
                 <Button variant="destructive" onClick={() => { signOut(); navigate('/'); }} className="gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20">
-                    <LogOut className="w-4 h-4" /> تسجيل الخروج
+                    <LogOut className="w-4 h-4" /> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬
                 </Button>
             </div>
 
-            {/* بطاقات الإحصائيات */}
+            {/* ط¨ط·ط§ظ‚ط§طھ ط§ظ„ط¥ط­طµط§ط¦ظٹط§طھ */}
             <UserStatsCards stats={userStats} />
 
-            {/* التبويبات والمحتوى */}
+            {/* ط§ظ„طھط¨ظˆظٹط¨ط§طھ ظˆط§ظ„ظ…ط­طھظˆظ‰ */}
             <Tabs defaultValue="bookmarks" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8 p-1 rounded-xl">
-                    <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple rounded-lg">المحفوظات</TabsTrigger>
+                    <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple rounded-lg">ط§ظ„ظ…ط­ظپظˆط¸ط§طھ</TabsTrigger>
                     <TabsTrigger value="recent" className="data-[state=active]:bg-neon-purple gap-2 rounded-lg">
-                        <Clock className="w-4 h-4" /> <span className="hidden sm:inline">الأخيرة</span>
+                        <Clock className="w-4 h-4" /> <span className="hidden sm:inline">ط§ظ„ط£ط®ظٹط±ط©</span>
                     </TabsTrigger>
-                    <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple rounded-lg">المراجعات</TabsTrigger>
-                    <TabsTrigger value="settings" id="settings-tab" className="data-[state=active]:bg-neon-purple rounded-lg">الإعدادات</TabsTrigger>
+                    <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple rounded-lg">ط§ظ„ظ…ط±ط§ط¬ط¹ط§طھ</TabsTrigger>
+                    <TabsTrigger value="settings" id="settings-tab" className="data-[state=active]:bg-neon-purple rounded-lg">ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ</TabsTrigger>
                 </TabsList>
 
-                {/* 1. تبويب المفضلة */}
+                {/* 1. طھط¨ظˆظٹط¨ ط§ظ„ظ…ظپط¶ظ„ط© */}
                 <TabsContent value="bookmarks" className="animate-in fade-in space-y-6">
                     {bookmarks.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -242,18 +242,18 @@ const Profile = () => {
                     ) : (
                         <div className="text-center py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
                             <Heart className="w-12 h-12 mx-auto text-gray-600 mb-4" />
-                            <p className="text-gray-400">لا توجد أدوات محفوظة حتى الآن.</p>
-                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">تصفح الأدوات</Button>
+                            <p className="text-gray-400">ظ„ط§ طھظˆط¬ط¯ ط£ط¯ظˆط§طھ ظ…ط­ظپظˆط¸ط© ط­طھظ‰ ط§ظ„ط¢ظ†.</p>
+                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">طھطµظپط­ ط§ظ„ط£ط¯ظˆط§طھ</Button>
                         </div>
                     )}
                 </TabsContent>
 
-                {/* 2. تبويب الأدوات المشاهدة مؤخراً */}
+                {/* 2. طھط¨ظˆظٹط¨ ط§ظ„ط£ط¯ظˆط§طھ ط§ظ„ظ…ط´ط§ظ‡ط¯ط© ظ…ط¤ط®ط±ط§ظ‹ */}
                 <TabsContent value="recent" className="animate-in fade-in space-y-6">
                     <RecentlyViewedTools />
                 </TabsContent>
 
-                {/* 3. تبويب المراجعات */}
+                {/* 3. طھط¨ظˆظٹط¨ ط§ظ„ظ…ط±ط§ط¬ط¹ط§طھ */}
                 <TabsContent value="reviews" className="animate-in fade-in space-y-6">
                     <div className="space-y-4">
                         {reviews.length > 0 ? (
@@ -263,37 +263,37 @@ const Profile = () => {
                                         <h3 className="font-bold text-white text-lg">{review.tools?.title}</h3>
                                         <div className="flex text-yellow-400 text-sm gap-0.5">
                                             {Array.from({ length: 5 }).map((_, i) => (
-                                                <span key={i}>{i < review.rating ? "★" : "☆"}</span>
+                                                <span key={i}>{i < review.rating ? "âک…" : "âک†"}</span>
                                             ))}
                                         </div>
                                     </div>
                                     <p className="text-gray-300 mb-4 leading-relaxed">"{review.comment}"</p>
                                     <div className="text-xs text-gray-500 flex items-center gap-2">
                                         <Clock className="w-3 h-3" />
-                                        تم النشر: {new Date(review.created_at).toLocaleDateString('ar-EG')}
+                                        طھظ… ط§ظ„ظ†ط´ط±: {new Date(review.created_at).toLocaleDateString('ar-EG')}
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <div className="text-center py-20 text-gray-500 bg-white/5 rounded-2xl border border-dashed border-white/10">
                                 <MessageSquare className="w-12 h-12 mx-auto text-gray-600 mb-4" />
-                                <p>لا توجد مراجعات حتى الآن.</p>
+                                <p>ظ„ط§ طھظˆط¬ط¯ ظ…ط±ط§ط¬ط¹ط§طھ ط­طھظ‰ ط§ظ„ط¢ظ†.</p>
                             </div>
                         )}
                     </div>
                 </TabsContent>
 
-                {/* 4. تبويب الإعدادات */}
+                {/* 4. طھط¨ظˆظٹط¨ ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ */}
                 <TabsContent value="settings" className="animate-in fade-in space-y-6">
                     <div className="bg-white/5 p-8 rounded-2xl border border-white/10 max-w-2xl mx-auto">
                         <h2 className="text-xl font-bold text-white mb-8 flex items-center gap-2 pb-4 border-b border-white/10">
-                            <Settings className="w-5 h-5 text-neon-purple" /> الإعدادات
+                            <Settings className="w-5 h-5 text-neon-purple" /> ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ
                         </h2>
 
                         <div className="space-y-8">
-                            {/* تغيير الاسم */}
+                            {/* طھط؛ظٹظٹط± ط§ظ„ط§ط³ظ… */}
                             <div className="space-y-2">
-                                <Label className="text-gray-300">الاسم الكامل</Label>
+                                <Label className="text-gray-300">ط§ظ„ط§ط³ظ… ط§ظ„ظƒط§ظ…ظ„</Label>
                                 <Input
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
@@ -301,9 +301,9 @@ const Profile = () => {
                                 />
                             </div>
 
-                            {/* تغيير الصورة */}
+                            {/* طھط؛ظٹظٹط± ط§ظ„طµظˆط±ط© */}
                             <div className="space-y-4">
-                                <Label className="text-gray-300 block">الصورة الرمزية</Label>
+                                <Label className="text-gray-300 block">ط§ظ„طµظˆط±ط© ط§ظ„ط±ظ…ط²ظٹط©</Label>
                                 {session?.user.id && (
                                     <div className="bg-black/20 p-6 rounded-xl border border-white/10">
                                         <AvatarUpload
@@ -320,7 +320,7 @@ const Profile = () => {
                                 disabled={updateProfileMutation.isPending}
                                 className="w-full bg-neon-purple hover:bg-neon-purple/80 h-12 text-lg mt-4 shadow-lg shadow-neon-purple/20"
                             >
-                                {updateProfileMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "حفظ التغييرات"}
+                                {updateProfileMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "ط­ظپط¸ ط§ظ„طھط؛ظٹظٹط±ط§طھ"}
                             </Button>
                         </div>
                     </div>
@@ -331,3 +331,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

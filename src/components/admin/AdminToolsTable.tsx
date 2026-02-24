@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,9 +101,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").delete().eq("id", deleteId);
 
     if (error) {
-      toast.error("حدث خطأ أثناء الحذف");
+      toast.error("ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط§ظ„ط­ط°ظپ");
     } else {
-      toast.success("تم الحذف بنجاح");
+      toast.success("طھظ… ط§ظ„ط­ط°ظپ ط¨ظ†ط¬ط§ط­");
       handleUpdate();
     }
     setDeleteId(null);
@@ -114,9 +114,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error("ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط§ظ„طھط­ط¯ظٹط«");
     } else {
-      toast.success(tool.is_featured ? "تم إزالة التمييز بنجاح" : "تم تمييز الأداة بنجاح");
+      toast.success(tool.is_featured ? "طھظ… ط¥ط²ط§ظ„ط© ط§ظ„طھظ…ظٹظٹط² ط¨ظ†ط¬ط§ط­" : "طھظ… طھظ…ظٹظٹط² ط§ظ„ط£ط¯ط§ط© ط¨ظ†ط¬ط§ط­");
       handleUpdate();
     }
   };
@@ -126,9 +126,9 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
     const { error } = await supabase.from("tools").update(updatePayload).eq("id", Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error("ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط§ظ„طھط­ط¯ظٹط«");
     } else {
-      toast.success(tool.is_published ? "تم إخفاء الأداة بنجاح" : "تم نشر الأداة بنجاح");
+      toast.success(tool.is_published ? "طھظ… ط¥ط®ظپط§ط، ط§ظ„ط£ط¯ط§ط© ط¨ظ†ط¬ط§ط­" : "طھظ… ظ†ط´ط± ط§ظ„ط£ط¯ط§ط© ط¨ظ†ط¬ط§ط­");
       handleUpdate();
     }
   };
@@ -144,7 +144,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
         <Search className="w-5 h-5 text-gray-400" />
         <Input
-          placeholder="ابحث عن أداة..."
+          placeholder="ط§ط¨ط­ط« ط¹ظ† ط£ط¯ط§ط©..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-none bg-transparent focus-visible:ring-0"
@@ -156,11 +156,11 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
         <Table>
           <TableHeader className="bg-white/5">
             <TableRow>
-              <TableHead className="w-[80px]">الصورة</TableHead>
-              <TableHead className="text-right">الأداة</TableHead>
-              <TableHead className="text-right">الحالة</TableHead>
-              <TableHead className="text-right">التصنيف</TableHead>
-              <TableHead className="text-right">تعديل/حذف</TableHead>
+              <TableHead className="w-[80px]">ط§ظ„طµظˆط±ط©</TableHead>
+              <TableHead className="text-right">ط§ظ„ط£ط¯ط§ط©</TableHead>
+              <TableHead className="text-right">ط§ظ„ط­ط§ظ„ط©</TableHead>
+              <TableHead className="text-right">ط§ظ„طھطµظ†ظٹظپ</TableHead>
+              <TableHead className="text-right">طھط¹ط¯ظٹظ„/ط­ط°ظپ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -198,11 +198,11 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                               : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 w-fit"
                           }
                         >
-                          {tool.is_published ? "منشور" : "مسودة"}
+                          {tool.is_published ? "ظ…ظ†ط´ظˆط±" : "ظ…ط³ظˆط¯ط©"}
                         </Badge>
                         {tool.is_featured && (
                           <Badge variant="outline" className="border-purple-500/50 text-purple-400 w-fit text-[10px]">
-                            مميز
+                            ظ…ظ…ظٹط²
                           </Badge>
                         )}
                       </div>
@@ -212,32 +212,32 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
+                            <span className="sr-only">القائمة</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="text-right">
-                          <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
+                          <DropdownMenuLabel>ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleEdit(tool)}>
-                            <Edit className="ml-2 h-4 w-4" /> تعديل الأداة
+                            <Edit className="ml-2 h-4 w-4" /> طھط¹ط¯ظٹظ„ ط§ظ„ط£ط¯ط§ط©
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => togglePublished(tool)}>
                             {tool.is_published ? (
                               <>
-                                <XCircle className="ml-2 h-4 w-4" /> إخفاء الأداة
+                                <XCircle className="ml-2 h-4 w-4" /> ط¥ط®ظپط§ط، ط§ظ„ط£ط¯ط§ط©
                               </>
                             ) : (
                               <>
-                                <CheckCircle className="ml-2 h-4 w-4" /> نشر الأداة
+                                <CheckCircle className="ml-2 h-4 w-4" /> ظ†ط´ط± ط§ظ„ط£ط¯ط§ط©
                               </>
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
-                            <Sparkles className="ml-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز الأداة"}
+                            <Sparkles className="ml-2 h-4 w-4" /> {tool.is_featured ? "ط¥ط²ط§ظ„ط© ط§ظ„طھظ…ظٹظٹط²" : "طھظ…ظٹظٹط² ط§ظ„ط£ط¯ط§ط©"}
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="ml-2 h-4 w-4" /> زيارة الرابط
+                              <ExternalLink className="ml-2 h-4 w-4" /> ط²ظٹط§ط±ط© ط§ظ„ط±ط§ط¨ط·
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
@@ -245,7 +245,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
                             onClick={() => setDeleteId(Number(tool.id))}
                             className="text-red-600 hover:text-red-700 hover:bg-red-600/10"
                           >
-                            <Trash2 className="ml-2 h-4 w-4" /> حذف الأداة
+                            <Trash2 className="ml-2 h-4 w-4" /> ط­ط°ظپ ط§ظ„ط£ط¯ط§ط©
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -256,7 +256,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  لاتوجد أدوات متاحة
+                  ظ„ط§طھظˆط¬ط¯ ط£ط¯ظˆط§طھ ظ…طھط§ط­ط©
                 </TableCell>
               </TableRow>
             )}
@@ -267,7 +267,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       {/* Pagination Controls */}
       <div className="flex items-center justify-between px-2" dir="rtl">
         <div className="text-sm text-gray-500">
-          عرض {tools.length} أداة من أصل {totalCount} أدوات
+          ط¹ط±ط¶ {tools.length} ط£ط¯ط§ط© ظ…ظ† ط£طµظ„ {totalCount} ط£ط¯ظˆط§طھ
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -280,7 +280,7 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <span className="text-sm text-gray-400">
-            صفحة {page + 1} من {totalPages || 1}
+            طµظپط­ط© {page + 1} ظ…ظ† {totalPages || 1}
           </span>
           <Button
             variant="outline"
@@ -297,15 +297,15 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent dir="rtl">
           <AlertDialogHeader>
-            <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
+            <AlertDialogTitle>ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯طں</AlertDialogTitle>
             <AlertDialogDescription>
-              سيتم مسح الأداة نهائيًا ولا يمكن التراجع عن هذا الإجراء
+              ط³ظٹطھظ… ظ…ط³ط­ ط§ظ„ط£ط¯ط§ط© ظ†ظ‡ط§ط¦ظٹظ‹ط§ ظˆظ„ط§ ظٹظ…ظƒظ† ط§ظ„طھط±ط§ط¬ط¹ ط¹ظ† ظ‡ط°ط§ ط§ظ„ط¥ط¬ط±ط§ط،
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>ط¥ظ„ط؛ط§ط،</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              حذف
+              ط­ط°ظپ
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -324,3 +324,4 @@ const AdminToolsTable = ({ onUpdate }: AdminToolsTableProps) => {
 };
 
 export default AdminToolsTable;
+

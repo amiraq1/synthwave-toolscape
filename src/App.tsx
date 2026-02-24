@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState, useEffect, type ComponentType } from "react";
+﻿import { Suspense, lazy, useState, useEffect, type ComponentType } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -120,8 +120,8 @@ const AppContent = () => {
 
   const handleAddClick = () => {
     if (!user) {
-      toast.error("Login required", {
-        description: "Please sign in to submit a new tool",
+      toast.error("تسجيل الدخول مطلوب", {
+        description: "يرجى تسجيل الدخول لإضافة أداة جديدة",
       });
       return;
     }
@@ -134,7 +134,7 @@ const AppContent = () => {
         href="#main-content"
         className={`sr-only focus:not-sr-only focus:fixed focus:top-3 focus:z-[9999] focus:rounded-xl focus:bg-glass focus:backdrop-blur-xl focus:text-neon-cyan focus:px-6 focus:py-3 focus:font-bold focus:shadow-2xl focus:ring-2 focus:ring-neon-purple outline-none ${isAr ? "focus:right-3" : "focus:left-3"}`}
       >
-        {isAr ? "تخطّ إلى المحتوى الأساسي" : "Skip to main content"}
+        {isAr ? "طھط®ط·ظ‘ ط¥ظ„ظ‰ ط§ظ„ظ…ط­طھظˆظ‰ ط§ظ„ط£ط³ط§ط³ظٹ" : "تخطّ إلى المحتوى الأساسي"}
       </a>
       <Navbar onAddClick={handleAddClick} />
       <GlobalErrorBoundary isAr={isAr}>
