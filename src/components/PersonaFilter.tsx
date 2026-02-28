@@ -1,6 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Code, Palette, PenTool, GraduationCap, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
 
 // تعريف الوظائف وتصنيفاتها
@@ -63,16 +63,14 @@ interface PersonaFilterProps {
 }
 
 const PersonaFilter = ({ currentPersona, onSelect, counts }: PersonaFilterProps) => {
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
 
     return (
-        <div className="flex flex-wrap justify-center gap-3 my-8" dir={isAr ? "rtl" : "ltr"}>
+        <div className="flex flex-wrap justify-center gap-3 my-8" dir="rtl">
             {PERSONAS.map((persona) => {
                 const Icon = persona.icon;
                 const isActive = currentPersona === persona.id;
                 const count = counts ? counts[persona.id] : 0;
-                const label = isAr ? persona.label : persona.label_en;
+                const label = persona.label;
 
                 return (
                     <button

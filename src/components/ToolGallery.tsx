@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +66,11 @@ const ToolGallery = ({ title, images = [] }: ToolGalleryProps) => {
                 </DialogTrigger>
 
                 {/* نافذة التكبير (Modal) */}
-                <DialogContent className="max-w-4xl bg-black/90 border-white/10 p-1">
+                <DialogContent className="max-w-4xl bg-black/90 border-white/10 p-1" aria-describedby={undefined}>
+                    {/* عناصر مساعدة للوصول (Screen Readers) مخفية بصرياً لتجنب تغيير التصميم */}
+                    <DialogTitle className="sr-only">تكبير صورة: {title}</DialogTitle>
+                    <DialogDescription className="sr-only">صورة مكبرة لأداة {title}</DialogDescription>
+
                     <img
                         src={mainImage}
                         alt={title}

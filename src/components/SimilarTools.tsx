@@ -14,7 +14,6 @@ const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
 
     useEffect(() => {
         const fetchSimilar = async () => {
@@ -28,7 +27,7 @@ const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
                 .eq("is_published", true)
                 .limit(3);
 
-            if (data) setTools(data);
+            if (data) setTools(data as unknown as Tool[]);
             setLoading(false);
         };
 
@@ -38,10 +37,10 @@ const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
     if (loading || tools.length === 0) return null;
 
     return (
-        <div className="mt-16 pt-10 border-t border-white/10" dir={isAr ? "rtl" : "ltr"}>
+        <div className="mt-16 pt-10 border-t border-white/10" dir="rtl">
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-white">
                 <Sparkles className="text-neon-purple" />
-                {isAr ? "أدوات مشابهة قد تعجبك" : "Similar tools you may like"}
+                أدوات مشابهة قد تعجبك
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

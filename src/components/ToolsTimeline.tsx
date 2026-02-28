@@ -98,10 +98,9 @@ const ToolsTimeline = ({ tools, onFetchNextPage, hasNextPage, isFetchingNextPage
                         </div>
                     </div>
 
-                    {/* شبكة أدوات هذا الشهر */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pr-0 md:pr-16 pl-4">
                         {groupedTools[monthKey].map((tool, i) => (
-                            <ToolCard key={tool.id} tool={tool} index={i} />
+                            <ToolCard key={`${monthKey}-${tool.id}-${i}`} tool={tool} index={i} />
                         ))}
                     </div>
                 </div>

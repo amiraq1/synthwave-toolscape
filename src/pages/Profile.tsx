@@ -97,18 +97,18 @@ const Profile = () => {
             if (error) throw error;
             return updates;
         },
-        onMutate: async (newProfile) => {
+        onMutate: async (newProfile): Promise<{ previousProfile?: ProfileData }> => {
             await queryClient.cancelQueries({ queryKey: ['profile', session?.user.id] });
-            const previousProfile = queryClient.getQueryData(['profile', session?.user.id]);
+            const previousProfile = queryClient.getQueryData<ProfileData>(['profile', session?.user.id]);
 
-            queryClient.setQueryData(['profile', session?.user.id], (old: any) => ({
-                ...old,
+            queryClient.setQueryData(['profile', session?.user.id], (old: ProfileData | undefined) => ({
+                ...(old || {}),
                 ...newProfile
             }));
 
             return { previousProfile };
         },
-        onError: (err, newProfile, context: any) => {
+        onError: (err, newProfile, context: { previousProfile?: ProfileData } | undefined) => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }

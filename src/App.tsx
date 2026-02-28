@@ -29,8 +29,6 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Bookmarks = lazy(() => import("./pages/Bookmarks"));
 const ComparePage = lazy(() => import("./pages/Compare"));
 const Profile = lazy(() => import("./pages/Profile"));
-const WorkflowBuilder = lazy(() => import("./pages/WorkflowBuilder"));
-const AgentsMarketplace = lazy(() => import("./pages/AgentsMarketplace"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy Load Components
@@ -87,8 +85,6 @@ const AppContent = () => {
           <Route path="/library" element={<Bookmarks />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/workflow/new" element={<WorkflowBuilder />} />
-          <Route path="/agents" element={<AgentsMarketplace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

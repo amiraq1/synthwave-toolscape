@@ -146,7 +146,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-xs p-6 text-center" dir="rtl">
+        <DialogContent className="sm:max-w-xs p-6 text-center" dir="rtl" aria-describedby={undefined}>
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <LogIn className="w-6 h-6 text-primary" />
           </div>
@@ -160,7 +160,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
+      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl" aria-describedby={undefined}>
 
         {/* Fixed Header */}
         <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">

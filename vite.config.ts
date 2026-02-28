@@ -14,11 +14,11 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     {
       name: 'defer-css',
-      apply: 'build',
-      transformIndexHtml(html) {
+      apply: 'build' as const,
+      transformIndexHtml(html: string) {
         return html.replace(
           /<link\s+rel="stylesheet"([^>]*?)>/g,
-          (match, attrs) => {
+          (match: string, attrs: string) => {
             const hrefMatch = attrs.match(/href="([^"]+)"/);
             if (!hrefMatch) return match;
 
@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => ({
       open: true,
       gzipSize: true,
       filename: "stats.html"
-    }) as any,
+    }) as import("vite").PluginOption,
 
     // 3. PWA Configuration
     VitePWA({

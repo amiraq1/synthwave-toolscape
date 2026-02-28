@@ -241,7 +241,7 @@ const PostDialog = ({ open, onOpenChange, postToEdit }: PostDialogProps) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl">
+            <DialogContent className="sm:max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl" aria-describedby={undefined}>
 
                 {/* Fixed Header */}
                 <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">

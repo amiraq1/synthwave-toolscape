@@ -65,10 +65,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
   const isCompared = selectedTools.includes(String(tool.id));
   const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
-  const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-  const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
+  const displayTitle = tool.title;
+  const displayDescription = tool.description;
 
   const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const isSponsored = tool.is_sponsored === true;
@@ -148,7 +147,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               : "bg-black/40 text-gray-300 hover:bg-neon-purple hover:text-white"
           )}
           title={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
-          aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
+          aria-label={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
         >
           <Scale className="w-4 h-4" />
         </button>
@@ -175,7 +174,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
       </div>
 
       {/* 2. المحتوى */}
-      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={`View details for ${displayTitle}`}>
+      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={`عرض تفاصيل ${displayTitle}`}>
         <div className="p-6 flex flex-col h-full">
 
           {/* العنوان والأيقونة */}
@@ -284,16 +283,18 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
               AI Powered
             </span>
-            <a
-              href={tool.url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <span
               className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleExternalClick(e);
+                window.open(tool.url, '_blank');
+              }}
               aria-label={`visit ${displayTitle}`}
             >
               {t('tools.visit')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-            </a>
+            </span>
           </div>
         </div>
       </Link>

@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import ToolCard from "@/components/ToolCard";
 import { Sparkles } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import type { Tool } from "@/types";
 
 interface BookmarkWithTool {
@@ -15,8 +14,6 @@ const RecommendedForYou = () => {
     const { session } = useAuth();
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
 
     useEffect(() => {
         const fetchRecommendations = async () => {
@@ -58,7 +55,7 @@ const RecommendedForYou = () => {
                 .eq("is_published", true)
                 .limit(4);
 
-            if (recommendations) setTools(recommendations);
+            if (recommendations) setTools(recommendations as unknown as Tool[]);
             setLoading(false);
         };
 
@@ -69,7 +66,7 @@ const RecommendedForYou = () => {
     if (!session || tools.length === 0) return null;
 
     return (
-        <div className="container mx-auto px-4 mb-12 animate-fade-in" dir={isAr ? "rtl" : "ltr"}>
+        <div className="container mx-auto px-4 mb-12 animate-fade-in" dir="rtl">
             <div className="bg-gradient-to-r from-neon-purple/10 to-blue-500/10 border border-neon-purple/20 rounded-2xl p-6 md:p-8">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="bg-neon-purple/20 p-2 rounded-full">
@@ -77,13 +74,10 @@ const RecommendedForYou = () => {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-white">
-                            {isAr ? "مختار لك خصيصاً" : "Recommended for You"}
+                            مختار لك خصيصاً
                         </h2>
                         <p className="text-gray-400 text-sm">
-                            {isAr
-                                ? "بناءً على الأدوات التي قمت بحفظها في مكتبتك"
-                                : "Based on the tools you've saved to your library"
-                            }
+                            بناءً على الأدوات التي قمت بحفظها في مكتبتك
                         </p>
                     </div>
                 </div>

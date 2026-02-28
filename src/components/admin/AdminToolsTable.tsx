@@ -54,7 +54,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   const toggleFeatured = async (tool: Tool) => {
     const { error } = await supabase
       .from('tools')
-      .update({ is_featured: !tool.is_featured } as any)
+      .update({ is_featured: !tool.is_featured } as Record<string, unknown>)
       .eq('id', Number(tool.id));
 
     if (error) {
@@ -66,10 +66,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   };
 
   const togglePublished = async (tool: Tool) => {
-    // @ts-ignore
     const { error } = await supabase
       .from('tools')
-      .update({ is_published: !tool.is_published })
+      .update({ is_published: !tool.is_published } as Record<string, unknown>)
       .eq('id', Number(tool.id));
 
     if (error) {

@@ -1,13 +1,12 @@
+/// <reference types="vite-plugin-pwa/client" />
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import './i18n';
 
-// تأجيل تحميل i18n وdayjs - ليس ضروري للعرض الأولي
-const loadI18nAndDate = async () => {
-    // تحميل i18n
-    await import('./i18n');
-
+// تأجيل تحميل dayjs - ليس ضروري للعرض الأولي
+const loadDate = async () => {
     // تحميل dayjs وإعداداته
     const dayjs = (await import('dayjs')).default;
     const relativeTime = (await import('dayjs/plugin/relativeTime')).default;
@@ -17,8 +16,7 @@ const loadI18nAndDate = async () => {
     dayjs.locale('ar');
 };
 
-// تحميل الترجمات فوراً لكن بشكل غير متزامن
-loadI18nAndDate();
+loadDate();
 
 // دالة لتهيئة Sentry فقط عندما يكون المتصفح "مرتاحاً"
 // TODO: إعادة تفعيل Sentry بعد حل المشاكل
@@ -55,6 +53,7 @@ createRoot(document.getElementById('root')!).render(
 const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
         try {
+            // @ts-expect-error: Virtual module created by vite-plugin-pwa
             const { registerSW } = await import('virtual:pwa-register');
             registerSW({
                 immediate: false,

@@ -24,7 +24,6 @@ const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
   const { data: tool, isLoading, error } = useTool(id);
   const { recordClick } = useClickTracking();
@@ -37,8 +36,8 @@ const ToolDetails = () => {
     }
   }, [tool?.id, addToRecent]);
 
-  const displayTitle = tool ? (isAr ? tool.title : (tool.title_en || tool.title)) : undefined;
-  const displayDescription = tool ? (isAr ? tool.description : (tool.description_en || tool.description)) : undefined;
+  const displayTitle = tool ? tool.title : undefined;
+  const displayDescription = tool ? tool.description : undefined;
 
   useSEO({
     title: displayTitle,
@@ -81,13 +80,13 @@ const ToolDetails = () => {
 
   if (error || !tool) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir={isAr ? "rtl" : "ltr"}>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir="rtl">
         <p className="text-2xl text-destructive">
-          {isAr ? "لم يتم العثور على الأداة" : "Tool not found"}
+          لم يتم العثور على الأداة
         </p>
         <Button onClick={() => navigate('/')} variant="outline" className="gap-2">
-          <ArrowRight className={cn("h-4 w-4", !isAr && "rotate-180")} />
-          {isAr ? "العودة للرئيسية" : "Back to Home"}
+          <ArrowRight className="h-4 w-4" />
+          العودة للرئيسية
         </Button>
       </div>
     );
@@ -99,7 +98,7 @@ const ToolDetails = () => {
   const ogImageUrl = tool ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle || "")}&category=${encodeURIComponent(tool.category)}` : "";
 
   return (
-    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-background" dir="rtl">
       <Helmet>
         <title>{displayTitle} | نبض AI</title>
         <meta name="description" content={displayDescription} />
@@ -128,8 +127,8 @@ const ToolDetails = () => {
             variant="ghost"
             className="gap-2 text-muted-foreground hover:text-foreground"
           >
-            <ArrowRight className={cn("h-5 w-5", !isAr && "rotate-180")} />
-            {isAr ? "العودة للرئيسية" : "Back to Home"}
+            <ArrowRight className="h-5 w-5" />
+            العودة للرئيسية
           </Button>
         </div>
       </header>
@@ -160,19 +159,19 @@ const ToolDetails = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <DollarSign className="w-5 h-5 mx-auto mb-1 text-green-400" />
-                <span className="text-xs text-gray-400 block">{isAr ? "السعر" : "Price"}</span>
+                <span className="text-xs text-gray-400 block">السعر</span>
                 <span className="font-bold text-sm text-white">{tool.pricing_type}</span>
               </div>
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <Tag className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-                <span className="text-xs text-gray-400 block">{isAr ? "التصنيف" : "Category"}</span>
+                <span className="text-xs text-gray-400 block">التصنيف</span>
                 <span className="font-bold text-sm text-white">{tool.category}</span>
               </div>
               {tool.is_featured && (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                   <Sparkles className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
-                  <span className="text-xs text-gray-400 block">{isAr ? "الحالة" : "Status"}</span>
-                  <span className="font-bold text-sm text-yellow-400">{isAr ? "⭐ مميز" : "⭐ Featured"}</span>
+                  <span className="text-xs text-gray-400 block">الحالة</span>
+                  <span className="font-bold text-sm text-yellow-400">⭐ مميز</span>
                 </div>
               )}
             </div>
@@ -187,12 +186,12 @@ const ToolDetails = () => {
                 className="flex-1 bg-neon-purple text-white text-center py-3 rounded-xl font-bold hover:bg-neon-purple/80 transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)] flex items-center justify-center gap-2"
               >
                 <ExternalLink className="h-5 w-5" />
-                {isAr ? "زيارة الموقع الرسمي" : "Visit Official Website"}
+                زيارة الموقع الرسمي
               </a>
             </div>
             {tool.pricing_type !== 'مجاني' && (
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                {isAr ? "* قد يتطلب التسجيل بطاقة ائتمان" : "* May require credit card for signup"}
+                * قد يتطلب التسجيل بطاقة ائتمان
               </p>
             )}
           </div>
@@ -208,7 +207,7 @@ const ToolDetails = () => {
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="flex items-center gap-2 font-bold text-white text-lg">
                       <Check className="text-neon-purple w-5 h-5" />
-                      {isAr ? "المميزات الرئيسية" : "Key Features"}
+                      المميزات الرئيسية
                     </span>
                   </AccordionTrigger>
                   <AccordionContent className="pb-4 text-gray-300">
@@ -230,7 +229,7 @@ const ToolDetails = () => {
               <div className="border border-white/10 rounded-xl bg-white/5 overflow-hidden p-4">
                 <h3 className="flex items-center gap-2 font-bold text-white text-lg mb-4">
                   <Lightbulb className="text-neon-purple w-5 h-5" />
-                  {isAr ? "الأسئلة الشائعة" : "FAQ"}
+                  الأسئلة الشائعة
                 </h3>
                 <Accordion type="single" collapsible className="space-y-2">
                   {tool.faqs.map((faq, idx) => (
@@ -259,7 +258,7 @@ const ToolDetails = () => {
             {/* Review Promo Removed */}
 
             <div className="bg-black/40 rounded-xl p-6 border border-white/5 text-center">
-              <p className="text-gray-500 text-sm">{isAr ? "مساحة إعلانية" : "Ad Space"}</p>
+              <p className="text-gray-500 text-sm">مساحة إعلانية</p>
             </div>
           </div>
         </div>

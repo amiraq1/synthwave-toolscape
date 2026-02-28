@@ -6,7 +6,7 @@ import BookmarkButton from './BookmarkButton';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
+
 
 interface ToolRowProps {
     tool: Tool;
@@ -55,16 +55,13 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const prefetchTool = usePrefetchTool();
     const [imageError, setImageError] = useState(false);
     const [faviconError, setFaviconError] = useState(false);
-    const { t, i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
-
     // Category styling
     const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
     const CategoryIcon = categoryIcons[tool.category] || Sparkles;
 
     // Content Display
-    const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-    const displayDescription = isAr ? tool.description : (tool.description_en || tool.description);
+    const displayTitle = tool.title;
+    const displayDescription = tool.description;
 
     // Memoize favicon URL
     const faviconUrl = useMemo(() => {
@@ -120,8 +117,8 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         min-h-[72px]
         group
       "
-            dir={isAr ? "rtl" : "ltr"}
-            aria-label={isAr ? `عرض تفاصيل ${displayTitle}` : `View details for ${displayTitle}`}
+            dir="rtl"
+            aria-label={`عرض تفاصيل ${displayTitle}`}
         >
             {/* Icon/Logo - Glassmorphism Style with 3-layer fallback */}
             <div
@@ -160,7 +157,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             </div>
 
             {/* Content */}
-            <div className={`flex-1 min-w-0 ${!isAr ? "text-left" : ""}`}>
+            <div className={`flex-1 min-w-0`}>
                 <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold text-foreground truncate">{displayTitle}</h3>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
@@ -182,11 +179,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             {/* Arrow */}
             <div className="flex items-center gap-2">
                 <BookmarkButton toolId={tool.id} className="h-8 w-8 rounded-full" />
-                {isAr ? (
-                    <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
-                ) : (
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
-                )}
+                <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
             </div>
         </div>
     );

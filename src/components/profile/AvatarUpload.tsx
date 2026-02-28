@@ -70,9 +70,9 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
                 }
                 toast.success("تم رفع الصورة بنجاح");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error uploading avatar:", error);
-            toast.error("فشل رفع الصورة: " + error.message);
+            toast.error("فشل رفع الصورة: " + (error instanceof Error ? error.message : "Unknown error"));
         } finally {
             setUploading(false);
         }

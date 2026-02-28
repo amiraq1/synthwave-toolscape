@@ -29,7 +29,6 @@ const ToolsGrid = ({
 }: ToolsGridProps) => {
   const [announcement, setAnnouncement] = useState('');
   const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
 
   useEffect(() => {
     if (isLoading) return;
@@ -38,28 +37,22 @@ const ToolsGrid = ({
     let message = '';
 
     if (searchQuery && activeCategory !== 'الكل') {
-      message = isAr
-        ? (count === 0 ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}` : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`)
-        : (count === 0 ? `No results for "${searchQuery}" in ${activeCategory}` : `Found ${count} tools for "${searchQuery}" in ${activeCategory}`);
+      message = count === 0 ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}` : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`;
     } else if (searchQuery) {
-      message = isAr
-        ? (count === 0 ? `لا توجد نتائج للبحث "${searchQuery}"` : `تم العثور على ${count} أداة للبحث "${searchQuery}"`)
-        : (count === 0 ? `No results for "${searchQuery}"` : `Found ${count} tools for "${searchQuery}"`);
+      message = count === 0 ? `لا توجد نتائج للبحث "${searchQuery}"` : `تم العثور على ${count} أداة للبحث "${searchQuery}"`;
     } else if (activeCategory !== 'الكل') {
-      message = isAr
-        ? (count === 0 ? `لا توجد أدوات في فئة ${activeCategory}` : `عرض ${count} أداة في فئة ${activeCategory}`)
-        : (count === 0 ? `No tools in ${activeCategory}` : `Showing ${count} tools in ${activeCategory}`);
+      message = count === 0 ? `لا توجد أدوات في فئة ${activeCategory}` : `عرض ${count} أداة في فئة ${activeCategory}`;
     } else {
-      message = isAr ? `عرض ${count} أداة` : `Showing ${count} tools`;
+      message = `عرض ${count} أداة`;
     }
 
     setAnnouncement(message);
-  }, [tools.length, searchQuery, activeCategory, isLoading, isAr]);
+  }, [tools.length, searchQuery, activeCategory, isLoading]);
 
   // Loading State
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8" dir={isAr ? "rtl" : "ltr"}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8" dir="rtl">
         {Array.from({ length: 6 }).map((_, i) => (
           <ToolCardSkeleton key={i} />
         ))}
@@ -70,15 +63,15 @@ const ToolsGrid = ({
   // Error State
   if (error) {
     return (
-      <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir={isAr ? "rtl" : "ltr"}>
+      <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir="rtl">
         <div className="bg-destructive/10 p-4 rounded-full mb-4">
           <Loader2 className="h-8 w-8 text-destructive" />
         </div>
         <p className="text-xl font-bold text-destructive mb-2">
-          {isAr ? "حدث خطأ في تحميل البيانات" : "Error loading data"}
+          حدث خطأ في تحميل البيانات
         </p>
         <p className="text-muted-foreground">
-          {isAr ? "يرجى التحقق من الاتصال والمحاولة مرة أخرى" : "Please check your connection and try again"}
+          يرجى التحقق من الاتصال والمحاولة مرة أخرى
         </p>
       </div>
     );
@@ -91,15 +84,15 @@ const ToolsGrid = ({
         <div role="status" aria-live="polite" className="sr-only">
           {announcement}
         </div>
-        <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir={isAr ? "rtl" : "ltr"}>
+        <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir="rtl">
           <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4 text-3xl grayscale opacity-50">
             🔍
           </div>
           <p className="text-xl font-semibold text-foreground">
-            {isAr ? "لم يتم العثور على أدوات" : "No tools found"}
+            لم يتم العثور على أدوات
           </p>
           <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
-            {isAr ? "جرب البحث بكلمات مختلفة أو تغيير التصنيف المختار." : "Try different keywords or change the selected category."}
+            جرب البحث بكلمات مختلفة أو تغيير التصنيف المختار.
           </p>
         </div>
       </>
@@ -115,7 +108,7 @@ const ToolsGrid = ({
       <div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-1 sm:px-4 pb-8"
         role="list"
-        dir={isAr ? "rtl" : "ltr"}
+        dir="rtl"
       >
         {tools.map((tool, index) => (
           <ToolCard key={tool.id} tool={tool} index={index} />
@@ -139,10 +132,10 @@ const ToolsGrid = ({
             {isFetchingNextPage ? (
               <>
                 <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                {isAr ? "جاري التحميل..." : "Loading..."}
+                جاري التحميل...
               </>
             ) : (
-              isAr ? 'عرض المزيد من الأدوات' : 'Load More Tools'
+              'عرض المزيد من الأدوات'
             )}
           </Button>
         </div>

@@ -65,7 +65,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-right" dir="rtl">
+            <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-right" dir="rtl" aria-describedby={undefined}>
                 <DialogHeader className="text-right">
                     <DialogTitle className="text-right">تعديل ومراجعة: {formData.title}</DialogTitle>
                 </DialogHeader>

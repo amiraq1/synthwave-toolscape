@@ -63,7 +63,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
 
                 if (diffDays <= 180) { // Approx 6 months
                     const key = date.toLocaleString('en-US', { month: 'short' });
-                    if (months.hasOwnProperty(key)) {
+                    if (Object.prototype.hasOwnProperty.call(months, key)) {
                         months[key]++;
                     }
                 }

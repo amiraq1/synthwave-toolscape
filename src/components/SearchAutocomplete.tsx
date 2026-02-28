@@ -23,8 +23,7 @@ const SearchAutocomplete = ({
     inputClassName,
     placeholder
 }: SearchAutocompleteProps) => {
-    const { t, i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
+    const { t } = useTranslation();
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     // Internal state if uncontrolled, or sync with props
@@ -71,12 +70,12 @@ const SearchAutocomplete = ({
         (document.activeElement as HTMLElement)?.blur();
     };
 
-    const Arrow = isAr ? ArrowLeft : ArrowRight;
+    const Arrow = ArrowLeft;
 
     return (
         <div ref={wrapperRef} className={cn("relative w-full z-50", className)}>
             <form onSubmit={handleFullSearch} className="relative group">
-                <div className={`absolute inset-y-0 ${isAr ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center pointer-events-none z-10`}>
+                <div className={`absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none z-10`}>
                     {isLoading ? (
                         <Loader2 className="w-5 h-5 text-neon-purple animate-spin" />
                     ) : (
@@ -89,13 +88,12 @@ const SearchAutocomplete = ({
 
                 <input
                     type="text"
-                    dir={isAr ? "rtl" : "ltr"}
+                    dir="rtl"
                     className={cn(
-                        "w-full bg-white/5 border border-white/10 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/50 focus:bg-white/10 transition-all duration-300 shadow-inner",
-                        isAr ? 'pr-12 pl-12' : 'pl-12 pr-12',
+                        "w-full bg-white/5 border border-white/10 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/50 focus:bg-white/10 transition-all duration-300 shadow-inner px-12",
                         inputClassName
                     )}
-                    placeholder={placeholder || t('search.placeholder')}
+                    placeholder={placeholder || "ابحث عن أدوات الذكاء الاصطناعي..."}
                     value={query}
                     onChange={(e) => handleChange(e.target.value)}
                     onFocus={() => {
@@ -106,12 +104,12 @@ const SearchAutocomplete = ({
                 />
 
                 {/* Keyboard Shortcut Hint or Enter Icon */}
-                <div className={`absolute inset-y-0 ${isAr ? 'left-0 pl-4' : 'right-0 pr-4'} flex items-center`}>
+                <div className={`absolute inset-y-0 left-0 pl-4 flex items-center`}>
                     {query.length > 0 ? (
                         <button
                             type="submit"
                             className="p-1 hover:bg-white/10 rounded-full transition-colors group/btn"
-                            title={t('search.submit')}
+                            title="بحث عن الأدوات"
                         >
                             <Arrow className="w-5 h-5 text-muted-foreground/60 group-hover/btn:text-neon-purple transition-colors" />
                         </button>
@@ -128,13 +126,13 @@ const SearchAutocomplete = ({
             {showSuggestions && query.length >= 2 && (
                 <div
                     className="absolute top-full left-0 right-0 mt-3 bg-[#0a0a16]/95 border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-300 ring-1 ring-white/5"
-                    dir={isAr ? "rtl" : "ltr"}
+                    dir="rtl"
                 >
                     {/* Header */}
                     <div className="px-4 py-3 bg-white/5 border-b border-white/5 flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                             <Sparkles className="w-3 h-3 text-neon-purple" />
-                            {isLoading ? (isAr ? "جاري التفكير..." : "Thinking...") : (isAr ? "اقتراحات ذكية" : "AI Suggestions")}
+                            {isLoading ? "جاري التفكير..." : "اقتراحات ذكية"}
                         </span>
                         {isLoading && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
                     </div>
@@ -143,9 +141,9 @@ const SearchAutocomplete = ({
                         <>
                             <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
                                 {suggestions.map((tool) => {
-                                    const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
+                                    const displayTitle = tool.title;
                                     // Calculate display description
-                                    const desc = isAr ? tool.description : (tool.description_en || tool.description);
+                                    const desc = tool.description;
 
                                     return (
                                         <Link
@@ -187,7 +185,7 @@ const SearchAutocomplete = ({
                                 onClick={() => handleFullSearch()}
                             >
                                 <span className="text-sm text-neon-purple group-hover:text-neon-cyan transition-colors flex items-center justify-center gap-2">
-                                    {isAr ? "عرض كل النتائج" : "View All Results"}
+                                    عرض كل النتائج
                                     <Arrow className="w-4 h-4" />
                                 </span>
                             </button>
@@ -196,10 +194,10 @@ const SearchAutocomplete = ({
                         !isLoading && (
                             <div className="p-8 text-center">
                                 <p className="text-muted-foreground text-sm">
-                                    {isAr ? "لا توجد نتائج مطابقة تماماً" : "No direct matches found"}
+                                    لا توجد نتائج مطابقة تماماً
                                 </p>
                                 <button onClick={() => handleFullSearch()} className="text-neon-purple text-xs mt-2 hover:underline">
-                                    {isAr ? "بحث شامل في الدليل" : "Search entire directory"}
+                                    بحث شامل في الدليل
                                 </button>
                             </div>
                         )

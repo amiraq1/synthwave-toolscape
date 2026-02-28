@@ -80,12 +80,11 @@ const resources = {
 };
 
 i18n
-    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         resources,
-        lng: "ar", // اللغة الافتراضية
-        fallbackLng: "en",
+        lng: "ar", // إجبار اللغة العربية
+        fallbackLng: "ar",
         interpolation: {
             escapeValue: false
         }
