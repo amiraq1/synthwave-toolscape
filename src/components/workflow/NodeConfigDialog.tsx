@@ -120,8 +120,8 @@ export default function NodeConfigDialog({ node, isOpen, onClose, onSave }: Node
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a2e] text-white border-white/10">
-                                    <SelectItem value="gmail">Google Gmail</SelectItem>
-                                    <SelectItem value="outlook">Microsoft Outlook</SelectItem>
+                                    <SelectItem value="gmail">جيميل (Google)</SelectItem>
+                                    <SelectItem value="outlook">أوتلوك (Microsoft)</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

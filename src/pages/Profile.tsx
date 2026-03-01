@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,7 +115,7 @@ const Profile = () => {
             toast.error("فشل التحديث. تم استعادة البيانات السابقة.");
         },
         onSuccess: () => {
-            toast.success("Profile updated successfully âœ…");
+            toast.success("تم تحديث الملف الشخصي بنجاح ✅");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
@@ -178,7 +178,7 @@ const Profile = () => {
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl" dir="rtl" role="main">
             <Helmet>
-                <title>ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ | Nabd AI</title>
+                <title>ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ | نبض AI</title>
             </Helmet>
 
             {/* ط§ظ„ظ‡ظٹط¯ط± ط§ظ„ط´ط®طµظٹ */}
@@ -331,4 +331,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
 

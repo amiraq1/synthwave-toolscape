@@ -21,13 +21,13 @@ const PageLoader = () => {
                     <AlertCircle className="w-12 h-12 text-red-500 relative z-10" />
                 </div>
                 <p className="mt-4 text-gray-400 text-sm font-cairo">
-                    Loading is taking longer than expected. Please refresh the page.
+                    التحميل يستغرق وقتًا أطول من المتوقع. يرجى تحديث الصفحة.
                 </p>
                 <button
                     onClick={() => window.location.reload()}
                     className="mt-4 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
                 >
-                    Refresh Page
+                    تحديث الصفحة
                 </button>
             </div>
         );
@@ -40,7 +40,7 @@ const PageLoader = () => {
                 <Loader2 className="w-12 h-12 text-neon-purple animate-spin relative z-10" />
             </div>
             <p className="mt-4 text-gray-400 text-sm animate-pulse font-cairo">
-                Loading Nabd AI...
+                جارٍ تحميل نبض AI...
             </p>
         </div>
     );

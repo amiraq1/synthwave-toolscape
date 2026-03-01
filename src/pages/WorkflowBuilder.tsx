@@ -9,7 +9,7 @@ const WorkflowBuilder = () => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center" role="main" dir="rtl">
             <Helmet>
-                <title>Workflow Builder | Nabd AI</title>
+                <title>منشئ سير العمل | نبض AI</title>
                 <meta name="description" content="ابنِ وخصص وكلاء الذكاء الاصطناعي باستخدام منشئ مرئي لسير العمل." />
             </Helmet>
 

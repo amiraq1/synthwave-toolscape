@@ -99,7 +99,7 @@ const AnalyticsWidget = () => {
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
-                                <span className="text-gray-400">Edge Functions</span>
+                                <span className="text-gray-400">وظائف الحافة</span>
                                 <span className="text-emerald-400 flex items-center gap-1">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> نشط
                                 </span>

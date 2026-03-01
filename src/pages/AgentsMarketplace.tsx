@@ -9,7 +9,7 @@ const AgentsMarketplace = () => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center" role="main" dir="rtl">
             <Helmet>
-                <title>Agents Marketplace | Nabd AI</title>
+                <title>سوق الوكلاء | نبض AI</title>
                 <meta name="description" content="تصفح واستخدم وكلاء ذكاء اصطناعي جاهزين للتشغيل." />
             </Helmet>
 

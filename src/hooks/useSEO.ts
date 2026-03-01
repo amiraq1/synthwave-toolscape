@@ -11,7 +11,7 @@ interface SEOProps {
   ogType?: string;
   canonical?: string;
   noIndex?: boolean;
-  lang?: 'ar' | 'en';
+  lang?: 'ar';
   toolName?: string; // For dynamic OG image generation
 }
 
@@ -54,7 +54,7 @@ export const useSEO = ({
 
     // Set document language attribute
     document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = 'rtl';
 
     // Helper to set or create meta tag
     const setMetaTag = (name: string, content: string, isProperty = false) => {
@@ -111,7 +111,7 @@ export const useSEO = ({
     setMetaTag('og:image:height', '630', true);
     setMetaTag('og:type', ogType, true);
     setMetaTag('og:site_name', 'نبض AI', true);
-    setMetaTag('og:locale', lang === 'ar' ? 'ar_SA' : 'en_US', true);
+    setMetaTag('og:locale', 'ar_SA', true);
 
     // Twitter tags
     setMetaTag('twitter:card', 'summary_large_image');
@@ -127,7 +127,6 @@ export const useSEO = ({
     // Hreflang tags for language alternatives
     const currentPath = window.location.pathname;
     setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'ar');
-    setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'en');
     setLinkTag('alternate', `${SITE_URL}${currentPath}`, 'x-default');
 
     // Cleanup function to reset to defaults when unmounting

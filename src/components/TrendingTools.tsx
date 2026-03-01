@@ -92,7 +92,7 @@ const TrendingTools = () => {
                                 key={`${tool.id}-${index}`}
                                 to={`/tool/${tool.id}`}
                                 className="flex items-center gap-2 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
-                                aria-label={`${tool.title} - ${tool.clicks_count} views`}
+                                aria-label={`${tool.title} - ${tool.clicks_count} مشاهدة`}
                             >
                                 <div className="flex items-center gap-2 group/item">
                                     <Activity className="w-3.5 h-3.5 text-orange-500/50 group-hover/item:text-orange-400 transition-colors" />

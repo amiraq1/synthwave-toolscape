@@ -1,4 +1,4 @@
-﻿import { Suspense, lazy, useState, useEffect, type ComponentType } from "react";
+import { Suspense, lazy, useState, useEffect, type ComponentType } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -132,9 +132,9 @@ const AppContent = () => {
     <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
       <a
         href="#main-content"
-        className={`sr-only focus:not-sr-only focus:fixed focus:top-3 focus:z-[9999] focus:rounded-xl focus:bg-glass focus:backdrop-blur-xl focus:text-neon-cyan focus:px-6 focus:py-3 focus:font-bold focus:shadow-2xl focus:ring-2 focus:ring-neon-purple outline-none ${isAr ? "focus:right-3" : "focus:left-3"}`}
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[9999] focus:rounded-xl focus:bg-glass focus:backdrop-blur-xl focus:text-neon-cyan focus:px-6 focus:py-3 focus:font-bold focus:shadow-2xl focus:ring-2 focus:ring-neon-purple outline-none"
       >
-        {isAr ? "طھط®ط·ظ‘ ط¥ظ„ظ‰ ط§ظ„ظ…ط­طھظˆظ‰ ط§ظ„ط£ط³ط§ط³ظٹ" : "تخطّ إلى المحتوى الأساسي"}
+        تخطَّ إلى المحتوى الأساسي
       </a>
       <Navbar onAddClick={handleAddClick} />
       <GlobalErrorBoundary isAr={isAr}>

@@ -59,10 +59,10 @@ export default function Sidebar() {
                             <Brain className="w-5 h-5 text-red-500 animate-pulse" />
                         </div>
                         <div>
-                            <span className="block text-sm font-bold text-gray-200 group-hover:text-white">UltraThink</span>
+                            <span className="block text-sm font-bold text-gray-200 group-hover:text-white">ألترا ثينك</span>
                             <span className="block text-[10px] text-gray-500">منطق واستنتاج عميق</span>
                         </div>
-                        <span className="mr-auto text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/30">PRO</span>
+                        <span className="mr-auto text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/30">احترافي</span>
                     </div>
 
                     {/* مستشار الأدوات (الجديد) */}
@@ -107,7 +107,7 @@ export default function Sidebar() {
                         </div>
                         <div>
                             <span className="block text-sm font-bold text-gray-200 group-hover:text-white">مستشار التصميم</span>
-                            <span className="block text-[10px] text-gray-500">UI/UX وألوان</span>
+                            <span className="block text-[10px] text-gray-500">واجهات وتجربة مستخدم وألوان</span>
                         </div>
                     </div>
 

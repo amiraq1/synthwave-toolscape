@@ -23,6 +23,12 @@ if (typeof window !== "undefined" && !window.localStorage.getItem("i18nextLng"))
     window.localStorage.setItem("i18nextLng", "ar");
 }
 
+if (typeof document !== "undefined") {
+    document.documentElement.lang = "ar";
+    document.documentElement.dir = "rtl";
+    document.body.dir = "rtl";
+}
+
 // Production-safe Error Boundary
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
@@ -40,11 +46,11 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
                 <div style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                     minHeight: '100vh', background: '#0f0f1a', color: 'white', fontFamily: 'system-ui, sans-serif',
-                    direction: 'ltr', padding: '2rem', textAlign: 'center'
+                    direction: 'rtl', padding: '2rem', textAlign: 'center'
                 }}>
                     <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
-                    <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Unexpected error occurred</h1>
-                    <p style={{ color: '#94a3b8', marginBottom: '1.5rem', maxWidth: '400px' }}>Please refresh the page and try again.</p>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>حدث خطأ غير متوقع</h1>
+                    <p style={{ color: '#94a3b8', marginBottom: '1.5rem', maxWidth: '400px' }}>يرجى تحديث الصفحة ثم المحاولة مرة أخرى.</p>
                     <button
                         onClick={() => window.location.reload()}
                         style={{
@@ -52,7 +58,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
                             padding: '0.75rem 2rem', fontSize: '1rem', cursor: 'pointer', fontFamily: 'inherit'
                         }}
                     >
-                        Reload Page
+                        تحديث الصفحة
                     </button>
                 </div>
             );

@@ -56,7 +56,7 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
     e.stopPropagation();
 
     if (!session) {
-      toast.error("Sign in to bookmark posts 🔐");
+      toast.error("سجّل الدخول لحفظ المقالات");
       return;
     }
 
@@ -72,7 +72,7 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
         if (error) throw error;
 
         setIsSaved(false);
-        toast("Removed from bookmarks");
+        toast("تمت الإزالة من المحفوظات");
       } else {
         const { error } = await supabase
           .from("post_bookmarks")
@@ -81,12 +81,12 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
         if (error) throw error;
 
         setIsSaved(true);
-        toast.success("Saved to your library 📚");
+        toast.success("تم الحفظ في مكتبتك");
       }
     } catch (err) {
       console.error("Post bookmark toggle error:", err);
-      const msg = err instanceof Error ? err.message : "Something went wrong. Please try again.";
-      toast.error("Error", {
+      const msg = err instanceof Error ? err.message : "حدث خطأ غير متوقع. حاول مرة أخرى.";
+      toast.error("خطأ", {
         description: msg,
       });
     } finally {
@@ -102,7 +102,7 @@ const PostBookmarkButton = ({ postId, className }: PostBookmarkButtonProps) => {
       onClick={toggleSave}
       disabled={loading}
       aria-pressed={isSaved}
-      title={isSaved ? "Remove from bookmarks" : "Save to bookmarks"}
+      title={isSaved ? "إزالة من المحفوظات" : "حفظ في المحفوظات"}
     >
       <Bookmark
         className={`w-5 h-5 transition-all ${isSaved ? "fill-neon-purple text-neon-purple scale-110" : "text-gray-400"

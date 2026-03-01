@@ -61,7 +61,7 @@ export const ToolsSorter: React.FC<ToolsSorterProps> = ({ className, onSortChang
                 className
             )}
             role="radiogroup"
-            aria-label="Sort AI Tools"
+            aria-label="ترتيب أدوات الذكاء الاصطناعي"
         >
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('/noise.png')]" />
 
@@ -76,7 +76,7 @@ export const ToolsSorter: React.FC<ToolsSorterProps> = ({ className, onSortChang
                             onClick={() => handleSortSelect(option.id)}
                             role="radio"
                             aria-checked={isActive}
-                            aria-label={`Sort by ${isArabic ? option.labelAr : option.label}`}
+                            aria-label={`ترتيب حسب ${isArabic ? option.labelAr : option.label}`}
                             className={cn(
                                 "relative flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors duration-300 ease-out z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple/50 flex-shrink-0 cursor-pointer",
                                 isActive

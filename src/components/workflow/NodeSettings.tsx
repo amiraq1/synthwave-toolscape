@@ -75,15 +75,15 @@ export default function NodeSettings({ node, onClose, onSave }: NodeSettingsProp
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a2e] text-white border-white/10">
-                                    <SelectItem value="gmail">Gmail</SelectItem>
-                                    <SelectItem value="outlook">Outlook</SelectItem>
-                                    <SelectItem value="imap">IMAP Custom</SelectItem>
+                                    <SelectItem value="gmail">جيميل</SelectItem>
+                                    <SelectItem value="outlook">أوتلوك</SelectItem>
+                                    <SelectItem value="imap">IMAP مخصص</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-gray-300">التصفية (Filter)</Label>
+                            <Label className="text-gray-300">التصفية</Label>
                             <Input
                                 placeholder="غير المقروء فقط: نعم"
                                 disabled

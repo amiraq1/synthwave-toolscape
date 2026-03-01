@@ -36,7 +36,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
     const categoryData = useMemo(() => {
         const counts: Record<string, number> = {};
         tools.forEach(tool => {
-            const cat = tool.category || 'Other';
+            const cat = tool.category || 'أخرى';
             counts[cat] = (counts[cat] || 0) + 1;
         });
 
@@ -52,7 +52,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
 
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            const key = d.toLocaleString('en-US', { month: 'short' });
+            const key = d.toLocaleString('ar-EG', { month: 'short' });
             months[key] = 0;
         }
 
@@ -63,7 +63,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays <= 180) {
-                    const key = date.toLocaleString('en-US', { month: 'short' });
+                    const key = date.toLocaleString('ar-EG', { month: 'short' });
                     // eslint-disable-next-line no-prototype-builtins
                     if (months.hasOwnProperty(key)) {
                         months[key]++;
@@ -78,7 +78,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
     }, [tools]);
 
     if (!tools || tools.length === 0) {
-        return <div className="text-center p-4 text-gray-500">No data available for charts</div>;
+        return <div className="text-center p-4 text-gray-500">لا توجد بيانات كافية لعرض المخططات</div>;
     }
 
     return (

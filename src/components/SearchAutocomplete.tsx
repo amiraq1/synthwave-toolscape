@@ -213,13 +213,13 @@ const SearchAutocomplete = ({
                     aria-autocomplete="list"
                     aria-expanded={shouldShowDropdown}
                     aria-controls={listboxId}
-                    aria-label={placeholder || (isAr ? "بحث..." : "Search...")}
+                    aria-label={placeholder || "بحث..."}
                     className={cn(
                         "w-full bg-white/5 border border-white/10 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-neon-purple/50 focus:bg-white/10 transition-all duration-300 shadow-inner",
                         "pr-12 pl-12",
                         inputClassName,
                     )}
-                    placeholder={placeholder || (isAr ? "ابحث عن أداة..." : "Search tools...")}
+                    placeholder={placeholder || "ابحث عن أداة..."}
                     value={query}
                     onChange={(e) => handleChange(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -236,7 +236,7 @@ const SearchAutocomplete = ({
                         <button
                             type="submit"
                             className="p-1 hover:bg-white/10 rounded-full transition-colors group/btn"
-                            title={isAr ? "تأكيد البحث" : "Run search"}
+                            title="تأكيد البحث"
                         >
                             <Arrow className="w-5 h-5 text-muted-foreground/60 group-hover/btn:text-neon-purple transition-colors" />
                         </button>
@@ -260,8 +260,8 @@ const SearchAutocomplete = ({
                         <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                             <Sparkles className="w-3 h-3 text-neon-purple" />
                             {isLoading && query.length >= 2
-                                ? (isAr ? "جارٍ البحث..." : "Searching...")
-                                : (isAr ? "اقتراحات البحث" : "Search suggestions")}
+                                ? "جارٍ البحث..."
+                                : "اقتراحات البحث"}
                         </span>
                         {isLoading && query.length >= 2 && <Loader2 className="w-3 h-3 animate-spin text-neon-purple" />}
                     </div>
@@ -270,7 +270,7 @@ const SearchAutocomplete = ({
                         {keywordSuggestions.length > 0 && (
                             <div className="py-3 px-4 border-b border-white/5">
                                 <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground/60 font-bold">
-                                    {isAr ? "كلمات مقترحة" : "Suggested keywords"}
+                                    كلمات مقترحة
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {keywordSuggestions.map((keyword, idx) => (
@@ -298,7 +298,7 @@ const SearchAutocomplete = ({
                         {suggestions.length > 0 && (
                             <div className="py-2">
                                 <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold">
-                                    {isAr ? "الأدوات" : "Tools"}
+                                    الأدوات
                                 </div>
                                 {suggestions.map((tool, i) => {
                                     const flatIdx = keywordSuggestions.length + i;
@@ -348,7 +348,7 @@ const SearchAutocomplete = ({
                             <div className="py-2 border-t border-white/5">
                                 <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground/50 font-bold flex items-center gap-1">
                                     <BookOpen className="w-3 h-3" />
-                                    {isAr ? "من المدونة" : "From blog"}
+                                    من المدونة
                                 </div>
                                 {blogPosts.map((post, i) => {
                                     const flatIdx = keywordSuggestions.length + suggestions.length + i;
@@ -383,17 +383,17 @@ const SearchAutocomplete = ({
                                     <AlertCircle className="w-6 h-6 text-muted-foreground/40" />
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">
-                                    {isAr ? "لم نجد نتائج مطابقة" : "No matching results found"}
+                                    لم نجد نتائج مطابقة
                                 </p>
                                 <p className="text-xs text-muted-foreground/60 mt-2 max-w-[200px] mx-auto">
-                                    {isAr ? "جرّب كلمات عامة مثل تصميم أو برمجة" : "Try broader keywords like design or coding"}
+                                    جرّب كلمات عامة مثل تصميم أو برمجة
                                 </p>
                                 <button
                                     type="button"
                                     onClick={() => handleFullSearch()}
                                     className="mt-6 px-6 py-2 bg-neon-purple/10 hover:bg-neon-purple/20 text-neon-purple text-xs rounded-full transition-all border border-neon-purple/20"
                                 >
-                                    {isAr ? "بحث شامل في الدليل" : "Search full directory"}
+                                    بحث شامل في الدليل
                                 </button>
                             </div>
                         )}
@@ -406,7 +406,7 @@ const SearchAutocomplete = ({
                             onClick={() => handleFullSearch()}
                         >
                             <span className="text-sm text-neon-purple group-hover:text-neon-cyan transition-colors flex items-center justify-center gap-2">
-                                {isAr ? "عرض كل النتائج" : "Show all results"}
+                                عرض كل النتائج
                                 <Arrow className="w-4 h-4" />
                             </span>
                         </button>

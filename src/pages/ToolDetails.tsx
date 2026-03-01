@@ -60,7 +60,7 @@ const ToolDetails = () => {
   const safeImageUrl = tool ? (getToolImageUrl(tool.image_url, tool.url) ?? undefined) : undefined;
 
   useSEO({
-    title: displayTitle ? `${displayTitle} - أداة ذكاء اصطناعي` : 'تفاصيل الأداة',
+    title: displayTitle ? `${displayTitle} - ط£ط¯ط§ط© ط°ظƒط§ط، ط§طµط·ظ†ط§ط¹ظٹ` : 'طھظپط§طµظٹظ„ ط§ظ„ط£ط¯ط§ط©',
     description: displayDescription ? `${displayDescription.slice(0, 150)}...` : undefined,
     keywords: tool ? `${displayTitle}, ${displayCategory}, AI tools, software tools, artificial intelligence` : undefined,
     ogTitle: displayTitle,
@@ -106,7 +106,7 @@ const ToolDetails = () => {
       }
     } catch {
       navigator.clipboard.writeText(window.location.href);
-      toast.success("تم نسخ الرابط");
+      toast.success("طھظ… ظ†ط³ط® ط§ظ„ط±ط§ط¨ط·");
     }
   };
 
@@ -125,11 +125,11 @@ const ToolDetails = () => {
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] mix-blend-overlay" />
         <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl text-center shadow-2xl">
           <p className="text-2xl text-rose-500 font-bold mb-4 drop-shadow-[0_0_10px_rgba(244,63,94,0.4)]">
-            عذراً، الأداة غير موجودة
+            ط¹ط°ط±ط§ظ‹طŒ ط§ظ„ط£ط¯ط§ط© ط؛ظٹط± ظ…ظˆط¬ظˆط¯ط©
           </p>
           <Button onClick={() => navigate('/')} className="bg-white/10 hover:bg-white/20 text-white border border-white/10 gap-2 px-8 h-12 rounded-xl transition-all hover:scale-105">
             <ChevronRight className="h-4 w-4" />
-            العودة للقاعدة الرئيسية
+            ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ظ‚ط§ط¹ط¯ط© ط§ظ„ط±ط¦ظٹط³ظٹط©
           </Button>
         </div>
       </div>
@@ -144,7 +144,7 @@ const ToolDetails = () => {
   return (
     <div className="min-h-screen bg-[#050508] relative selection:bg-neon-purple/30 selection:text-white" dir="rtl">
       <Helmet>
-        <title>{`${displayTitle} | Nabd AI`}</title>
+        <title>{`${displayTitle} | نبض AI`}</title>
         <meta name="description" content={displayDescription} />
         <meta property="og:image" content={ogImageUrl} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -167,7 +167,7 @@ const ToolDetails = () => {
             className="gap-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl h-12 px-4 transition-all hover:-translate-x-1"
           >
             <ArrowRight className="h-5 w-5 rtl:rotate-180" />
-            <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">رجوع</span>
+            <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">ط±ط¬ظˆط¹</span>
           </Button>
 
           <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ const ToolDetails = () => {
               {tool.is_featured && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500/20 to-orange-500/10 text-amber-400 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                   <Sparkles className="w-3.5 h-3.5" />
-                  مميز
+                  ظ…ظ…ظٹط²
                 </div>
               )}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/5 text-slate-300 border border-white/10">
@@ -235,7 +235,7 @@ const ToolDetails = () => {
               )}>
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <DollarSign className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-widest font-bold">الترخيص</span>
+                  <span className="text-xs uppercase tracking-widest font-bold">ط§ظ„طھط±ط®ظٹطµ</span>
                 </div>
                 <span className={cn(
                   "font-black text-xl tracking-tight",
@@ -248,7 +248,7 @@ const ToolDetails = () => {
               <div className="p-5 rounded-2xl bg-[#0a0a14] border border-white/10 flex flex-col items-start justify-center shadow-lg hover:bg-[#101018] transition-colors">
                 <div className="flex items-center gap-2 mb-2 text-slate-500">
                   <Tag className="w-4 h-4" />
-                  <span className="text-xs uppercase tracking-widest font-bold">البيئة</span>
+                  <span className="text-xs uppercase tracking-widest font-bold">ط§ظ„ط¨ظٹط¦ط©</span>
                 </div>
                 <span className="font-black text-xl text-white tracking-tight line-clamp-1">{displayCategory}</span>
               </div>
@@ -265,7 +265,7 @@ const ToolDetails = () => {
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-black group-hover:text-white transition-colors" />
-                  تشغيل عبر الموقع الرسمي
+                  طھط´ط؛ظٹظ„ ط¹ط¨ط± ط§ظ„ظ…ظˆظ‚ط¹ ط§ظ„ط±ط³ظ…ظٹ
                   <ExternalLink className="h-5 w-5 transition-transform rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1 ms-2" />
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-out" />
@@ -292,7 +292,7 @@ const ToolDetails = () => {
                   <div className="p-2 rounded-xl bg-neon-purple/20 border border-neon-purple/50">
                     <Sparkles className="text-neon-purple w-5 h-5" />
                   </div>
-                  القدرات الرئيسية
+                  ط§ظ„ظ‚ط¯ط±ط§طھ ط§ظ„ط±ط¦ظٹط³ظٹط©
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {tool.features.map((feature: string, idx: number) => (
@@ -314,7 +314,7 @@ const ToolDetails = () => {
                   <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-500/50">
                     <Lightbulb className="text-amber-400 w-5 h-5" />
                   </div>
-                  قاعدة المعرفة
+                  ظ‚ط§ط¹ط¯ط© ط§ظ„ظ…ط¹ط±ظپط©
                 </h3>
                 <Accordion type="single" collapsible className="space-y-4">
                   {tool.faqs.map((faq, idx) => (
@@ -341,17 +341,17 @@ const ToolDetails = () => {
                 <Share2 className="w-6 h-6 text-slate-400" />
               </div>
               <h4 className="font-black text-2xl text-white mb-3">
-                توسيع النطاق؟
+                طھظˆط³ظٹط¹ ط§ظ„ظ†ط·ط§ظ‚طں
               </h4>
               <p className="text-base text-slate-400 mb-8 leading-relaxed font-medium">
-                قم بتعزيز قدرات فريقك المعرفية عبر مشاركة نقطة المعالجة هذه.
+                ظ‚ظ… ط¨طھط¹ط²ظٹط² ظ‚ط¯ط±ط§طھ ظپط±ظٹظ‚ظƒ ط§ظ„ظ…ط¹ط±ظپظٹط© ط¹ط¨ط± ظ…ط´ط§ط±ظƒط© ظ†ظ‚ط·ط© ط§ظ„ظ…ط¹ط§ظ„ط¬ط© ظ‡ط°ظ‡.
               </p>
               <Button
                 className="w-full h-14 text-white uppercase font-bold tracking-widest gap-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all font-mono shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
                 onClick={handleShare}
               >
                 <Share2 className="w-4 h-4" />
-                مشاركة الإحداثيات
+                ظ…ط´ط§ط±ظƒط© ط§ظ„ط¥ط­ط¯ط§ط«ظٹط§طھ
               </Button>
             </div>
           </div>
@@ -361,7 +361,7 @@ const ToolDetails = () => {
         <div className="border-t border-white/5 pt-16">
           <div className="flex items-center gap-3 mb-8 px-2">
             <div className="h-8 w-1.5 bg-neon-purple rounded-full" />
-            <h2 className="text-3xl font-black tracking-tight text-white">رادار الأدوات المشابهة</h2>
+            <h2 className="text-3xl font-black tracking-tight text-white">ط±ط§ط¯ط§ط± ط§ظ„ط£ط¯ظˆط§طھ ط§ظ„ظ…ط´ط§ط¨ظ‡ط©</h2>
           </div>
           <SimilarTools currentToolId={tool.id} category={tool.category} />
         </div>
@@ -378,7 +378,7 @@ const ToolDetails = () => {
             className="flex-1 bg-white text-black hover:bg-neon-purple hover:text-white glow-purple uppercase tracking-widest font-black h-14 rounded-xl transition-all"
           >
             <Zap className={cn("w-4 h-4", "me-2")} />
-            تشغيل عبر الموقع الرسمي
+            طھط´ط؛ظٹظ„ ط¹ط¨ط± ط§ظ„ظ…ظˆظ‚ط¹ ط§ظ„ط±ط³ظ…ظٹ
           </Button>
         </div>
       </div>
@@ -391,3 +391,4 @@ const ToolDetails = () => {
 };
 
 export default ToolDetails;
+
