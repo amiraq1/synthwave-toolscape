@@ -18972,12 +18972,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://amiraq.org/tool/58151</loc>
-    <lastmod>2026-02-21T10:15:50.630Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://amiraq.org/tool/58152</loc>
     <lastmod>2026-02-21T10:15:50.630Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -18997,6 +18991,12 @@
   </url>
   <url>
     <loc>https://amiraq.org/tool/58156</loc>
+    <lastmod>2026-02-21T10:15:50.630Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://amiraq.org/tool/58151</loc>
     <lastmod>2026-02-21T10:15:50.630Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -20,7 +20,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        cairo: ['Cairo', 'sans-serif'], // Base Arabic font family
+        cairo: ['Cairo', 'sans-serif'],
+        display: ['Cairo', 'sans-serif'],
+        body: ['IBM Plex Sans Arabic', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",

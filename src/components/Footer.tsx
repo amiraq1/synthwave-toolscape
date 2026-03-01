@@ -1,4 +1,4 @@
-import { Activity, Mail, Github, Twitter } from 'lucide-react';
+﻿import { Activity, Mail, Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCategoryLabel } from '@/utils/localization';
 import NewsletterForm from '@/components/NewsletterForm';
@@ -6,16 +6,16 @@ import NewsletterForm from '@/components/NewsletterForm';
 const Footer = () => {
   const footerLinks = {
     main: [
-      { label: "ط§ظ„ط±ط¦ظٹط³ظٹط©", href: '/' },
-      { label: "ط§ظ„ظ…ط¯ظˆظ†ط©", href: '/blog' },
-      { label: "ط§طھطµظ„ ط¨ظ†ط§", href: '/contact' },
+      { label: "الرئيسية", href: '/' },
+      { label: "المدونة", href: '/blog' },
+      { label: "اتصل بنا", href: '/contact' },
     ],
     categories: [
-      { label: getCategoryLabel('ظ†طµظˆطµ', true), href: '/?category=ظ†طµظˆطµ' },
-      { label: getCategoryLabel('طµظˆط±', true), href: '/?category=طµظˆط±' },
-      { label: getCategoryLabel('ظپظٹط¯ظٹظˆ', true), href: '/?category=ظپظٹط¯ظٹظˆ' },
-      { label: getCategoryLabel('ط¨ط±ظ…ط¬ط©', true), href: '/?category=ط¨ط±ظ…ط¬ط©' },
-      { label: getCategoryLabel('ط¯ط±ط§ط³ط© ظˆط·ظ„ط§ط¨', true), href: '/?category=ط¯ط±ط§ط³ط© ظˆط·ظ„ط§ط¨' },
+      { label: getCategoryLabel('نصوص', true), href: '/?category=نصوص' },
+      { label: getCategoryLabel('صور', true), href: '/?category=صور' },
+      { label: getCategoryLabel('فيديو', true), href: '/?category=فيديو' },
+      { label: getCategoryLabel('برمجة', true), href: '/?category=برمجة' },
+      { label: getCategoryLabel('دراسة وطلاب', true), href: '/?category=دراسة وطلاب' },
     ],
   };
 
@@ -38,14 +38,14 @@ const Footer = () => {
               <span className="text-foreground/80 text-xl" lang="en">AI</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-              ظ†ط¨ط¶ AI ظ‡ظˆ ظ…ظ†طµطھظƒ ط§ظ„ط£ظˆظ„ظ‰ ظ„ط§ظƒطھط´ط§ظپ ط£ط¯ظˆط§طھ ط§ظ„ظ…ط³طھظ‚ط¨ظ„.
+              نبض AI هو منصتك الأولى لاكتشاف أدوات المستقبل.
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
               <a
                 href="mailto:contact@amiraq.org"
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-neon-purple/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-neon-purple/20 group border border-white/5 hover:border-neon-purple/30"
-                aria-label="ط£ط±ط³ظ„ ظ„ظ†ط§ ط¨ط±ظٹط¯ظ‹ط§ ط¥ظ„ظƒطھط±ظˆظ†ظٹظ‹ط§"
+                aria-label="أرسل لنا بريدًا إلكترونيًا"
               >
                 <Mail className="h-4 w-4 text-muted-foreground group-hover:text-neon-purple transition-colors" />
               </a>
@@ -54,7 +54,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-neon-blue/20 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-neon-blue/20 group border border-white/5 hover:border-neon-blue/30"
-                aria-label="طھط§ط¨ط¹ظ†ط§ ط¹ظ„ظ‰ طھظˆظٹطھط±"
+                aria-label="تابعنا على تويتر"
               >
                 <Twitter className="h-4 w-4 text-muted-foreground group-hover:text-neon-blue transition-colors" />
               </a>
@@ -63,7 +63,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group border border-white/5 hover:border-white/20"
-                aria-label="ط±ط§ط¨ط· ط§ظ„ظ…ط³طھظˆط¯ط¹ ط¹ظ„ظ‰ ط¬ظٹطھ ظ‡ط¨"
+                aria-label="رابط المستودع على جيت هب"
               >
                 <Github className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors" />
               </a>
@@ -72,8 +72,8 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-bold text-foreground">ط±ظˆط§ط¨ط· ظ‡ط§ظ…ط©</h3>
-            <nav aria-label="ط±ظˆط§ط¨ط· ط³ط±ظٹط¹ط©">
+            <h3 className="font-bold text-foreground">روابط هامة</h3>
+            <nav aria-label="روابط سريعة">
               <ul className="space-y-2">
                 {footerLinks.main.map((link) => (
                   <li key={link.href}>
@@ -92,8 +92,8 @@ const Footer = () => {
 
           {/* Categories */}
           <div className="space-y-4">
-            <h3 className="font-bold text-foreground">ط§ظ„طھطµظ†ظٹظپط§طھ</h3>
-            <nav aria-label="طھطµظ†ظٹظپط§طھ ط§ظ„ط£ط¯ظˆط§طھ">
+            <h3 className="font-bold text-foreground">التصنيفات</h3>
+            <nav aria-label="تصنيفات الأدوات">
               <ul className="space-y-2">
                 {footerLinks.categories.map((link) => (
                   <li key={link.href}>
@@ -113,8 +113,8 @@ const Footer = () => {
         {/* Newsletter Section */}
         <div className="py-6 border-t border-border/30 mb-6">
           <div className="max-w-xl mx-auto text-center">
-            <h3 className="font-bold text-lg mb-2">ًں“¬ ط§ط´طھط±ظƒ ظپظٹ ظ†ط´ط±طھظ†ط§ ط§ظ„ط£ط³ط¨ظˆط¹ظٹط©</h3>
-            <p className="text-sm text-muted-foreground mb-4">ط§ط­طµظ„ ط¹ظ„ظ‰ ط£ط­ط¯ط« ط£ط¯ظˆط§طھ ط§ظ„ط°ظƒط§ط، ط§ظ„ط§طµط·ظ†ط§ط¹ظٹ ظ…ط¨ط§ط´ط±ط© ظپظٹ ط¨ط±ظٹط¯ظƒ</p>
+            <h3 className="font-bold text-lg mb-2">📧 اشترك في نشرتنا الأسبوعية</h3>
+            <p className="text-sm text-muted-foreground mb-4">احصل على أحدث أدوات الذكاء الاصطناعي مباشرة في بريدك</p>
             <NewsletterForm variant="compact" className="max-w-md mx-auto" />
           </div>
         </div>
@@ -122,15 +122,15 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
-            ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط© آ© 2026 ظ†ط¨ط¶ AI
+            جميع الحقوق محفوظة © 2026 نبض AI
           </p>
           <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
             <Link to="/about" className="hover:text-neon-purple transition-colors p-2 -m-2 block">
-              ظ…ظ† ظ†ط­ظ†
+              من نحن
             </Link>
-            <span>â€¢</span>
+            <span>•</span>
             <Link to="/contact" className="hover:text-neon-purple transition-colors p-2 -m-2 block">
-              ط§طھطµظ„ ط¨ظ†ط§
+              اتصل بنا
             </Link>
           </div>
         </div>
@@ -140,4 +140,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

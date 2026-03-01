@@ -69,31 +69,28 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Cairo', system-ui, sans-serif;
+    @apply bg-background text-foreground antialiased font-body selection:bg-neon-purple selection:text-white;
     font-display: swap;
-    font-feature-settings: "cv11", "ss01";
+    font-feature-settings: "cv11", "ss01", "ss03";
     direction: rtl;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-cairo font-black tracking-tight text-white;
+    text-wrap: balance;
+  }
+
+  p {
+    @apply font-body font-normal text-muted-foreground;
   }
 
   /* Focus indicators for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
-  }
-
-  a:focus-visible,
-  button:focus-visible,
-  [role="button"]:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible,
-  [tabindex]:focus-visible {
-    @apply outline-none ring-2 ring-neon-purple ring-offset-2 ring-offset-background rounded-sm;
-  }
-
-  /* High contrast focus for better visibility */
-  .focus-high-contrast:focus-visible {
-    @apply ring-4 ring-neon-cyan;
+    @apply outline-none ring-2 ring-neon-purple ring-offset-4 ring-offset-background rounded-md transition-all;
   }
 }
 
@@ -113,7 +110,7 @@
     position: relative;
     z-index: 1;
     /* التسريع العتادي للحواف */
-    transform: translateZ(0); 
+    transform: translateZ(0);
     will-change: transform;
   }
 

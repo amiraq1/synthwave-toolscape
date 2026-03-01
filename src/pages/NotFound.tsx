@@ -3,11 +3,28 @@ import { useEffect } from "react";
 import { Home, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const isStaticAssetPath = (pathname: string) => {
+  const lowerPath = pathname.toLowerCase();
+
+  if (
+    lowerPath.startsWith("/src/") ||
+    lowerPath.startsWith("/assets/") ||
+    lowerPath.startsWith("/@vite/") ||
+    lowerPath.startsWith("/node_modules/")
+  ) {
+    return true;
+  }
+
+  return /\.(css|js|mjs|map|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|json|txt|xml|webmanifest)$/i.test(
+    lowerPath
+  );
+};
+
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && !isStaticAssetPath(location.pathname)) {
       console.error(
         "404 Error: User attempted to access non-existent route:",
         location.pathname

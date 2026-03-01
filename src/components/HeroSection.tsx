@@ -65,10 +65,10 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
   const parentMotion = shouldReduceMotion
     ? {}
     : {
-        initial: { opacity: 0, y: 14 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-      };
+      initial: { opacity: 0, y: 14 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    };
 
   return (
     <section
@@ -92,7 +92,7 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
           </Badge>
 
           <div className="space-y-5">
-            <h1 id="hero-title" className="text-balance text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 id="hero-title" className="text-balance text-4xl font-display font-black leading-tight text-white sm:text-6xl lg:text-7xl">
               اكتشف أدوات الذكاء الاصطناعي
               <span className="mt-2 block bg-gradient-to-r from-violet-200 via-neon-purple to-neon-cyan bg-clip-text text-transparent">
                 الأسرع لعملك اليومي
@@ -143,10 +143,10 @@ const HeroSection = ({ searchQuery, onSearchChange, isSearching: _isSearching }:
           {...(shouldReduceMotion
             ? {}
             : {
-                initial: { opacity: 0, x: 18 },
-                animate: { opacity: 1, x: 0 },
-                transition: { delay: 0.12, duration: 0.46, ease: [0.22, 1, 0.36, 1] },
-              })}
+              initial: { opacity: 0, x: 18 },
+              animate: { opacity: 1, x: 0 },
+              transition: { delay: 0.12, duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+            })}
           className="space-y-4"
           aria-label="إحصاءات المنصة"
         >

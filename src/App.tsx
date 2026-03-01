@@ -74,9 +74,10 @@ const ChatBot = lazy(() => import("@/components/ChatBot")); // Replaced ChatWidg
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
-      retry: 1,
+      staleTime: 1000 * 60 * 10, // 5 minutes
+      gcTime: 1000 * 60 * 60, // 60 minutes
+      retry: 2,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       refetchOnWindowFocus: false,
     },
   },
