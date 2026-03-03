@@ -31,14 +31,7 @@ const categoryIcons: Record<string, LucideIcon> = {
     'الكل': Sparkles,
 };
 
-// Helper to extract hostname from URL
-const getHostname = (url: string): string | null => {
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return null;
-    }
-};
+
 
 /**
  * ToolRow - مكون عرض أداة بشكل صف (List View)
@@ -54,7 +47,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const navigate = useNavigate();
     const prefetchTool = usePrefetchTool();
     const [imageError, setImageError] = useState(false);
-    const [faviconError, setFaviconError] = useState(false);
     // Category styling
     const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
     const CategoryIcon = categoryIcons[tool.category] || Sparkles;
@@ -62,12 +54,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     // Content Display
     const displayTitle = tool.title;
     const displayDescription = tool.description;
-
-    // Memoize favicon URL
-    const faviconUrl = useMemo(() => {
-        const hostname = getHostname(tool.url);
-        return hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=128` : null;
-    }, [tool.url]);
 
     const handleClick = () => {
         navigate(`/tool/${tool.id}`);
@@ -91,8 +77,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     // Determine which icon layer to show - filter stale faviconV2 URLs
     const cleanImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
     const hasValidImage = cleanImageUrl && !imageError;
-    const hasValidFavicon = faviconUrl && !faviconError;
-    const showCategoryIcon = !hasValidImage && !hasValidFavicon;
+    const showCategoryIcon = !hasValidImage;
 
     const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -140,17 +125,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                         decoding="async"
                         className="w-full h-full p-1.5 rounded-2xl object-contain"
                         onError={() => setImageError(true)}
-                    />
-                ) : hasValidFavicon ? (
-                    <img
-                        src={faviconUrl!}
-                        alt=""
-                        width={32}
-                        height={32}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-8 h-8 rounded-lg object-contain"
-                        onError={() => setFaviconError(true)}
                     />
                 ) : (
                     <CategoryIcon className={cn("w-6 h-6 opacity-80", categoryStyle.split(' ')[2])} />

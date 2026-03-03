@@ -106,28 +106,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
    * جلب أيقونة الأداة بجودة عالية
    * الأولوية: 1. Clearbit Logo API (HD) → 2. Google Favicon (128px)
    */
-  const getToolIconUrl = (url: string): { primary: string | null; fallback: string | null } => {
-    try {
-      if (!url) return { primary: null, fallback: null };
-      const hostname = new URL(url).hostname.replace('www.', '');
-
-      // استخدام Google Favicons كمصدر أساسي لضمان الاستقرار وعدم ظهور صور مكسورة
-      const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
-
-      return {
-        primary: googleFaviconUrl,
-        fallback: null
-      };
-    } catch {
-      return { primary: null, fallback: null };
-    }
-  };
-
   // Image priority logic - filter out stale faviconV2 URLs from DB
   const validImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
   const showOriginalImage = validImageUrl && !imageError;
-  const iconUrls = !showOriginalImage ? getToolIconUrl(tool.url) : { primary: null, fallback: null };
-  const [iconError, setIconError] = useState(false);
 
   return (
     <div
@@ -198,37 +179,12 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                     priority={index < 6}
                     aspectRatio="square"
                   />
-                ) : iconUrls.primary && !iconError ? (
-                  /* Priority 2: Clearbit HD Logo */
-                  <img
-                    src={iconUrls.primary}
-                    alt={displayTitle}
-                    className="w-10 h-10 object-contain rounded-lg"
-                    loading={index < 6 ? "eager" : "lazy"}
-                    width="40"
-                    height="40"
-                    onError={() => setIconError(true)}
-                  />
-                ) : iconUrls.fallback ? (
-                  /* Priority 3: Google Favicon (256px) */
-                  <img
-                    src={iconUrls.fallback}
-                    alt={displayTitle}
-                    className="w-8 h-8 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
-                    loading={index < 6 ? "eager" : "lazy"}
-                    width="32"
-                    height="32"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
-                    }}
-                  />
                 ) : null}
 
                 {/* Fallback: First Letter or Category Icon */}
                 <div className={cn(
                   "fallback-icon flex items-center justify-center w-full h-full",
-                  (showOriginalImage || (iconUrls.primary && !iconError) || iconUrls.fallback) ? "hidden" : "flex"
+                  showOriginalImage ? "hidden" : "flex"
                 )}>
                   {tool.title ? (
                     <span className="text-xl font-bold text-neon-purple">
