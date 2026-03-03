@@ -123,8 +123,9 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
     }
   };
 
-  // Image priority logic
-  const showOriginalImage = tool.image_url && !imageError;
+  // Image priority logic - filter out stale faviconV2 URLs from DB
+  const validImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
+  const showOriginalImage = validImageUrl && !imageError;
   const iconUrls = !showOriginalImage ? getToolIconUrl(tool.url) : { primary: null, fallback: null };
   const [iconError, setIconError] = useState(false);
 
