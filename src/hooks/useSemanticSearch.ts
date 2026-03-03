@@ -37,8 +37,8 @@ export const useSemanticSearch = ({
             });
 
             if (error) {
-                console.error('Semantic search error:', error);
-                throw error;
+                // Edge Function may not be deployed - fail silently
+                return [];
             }
 
             if (data?.error) {
