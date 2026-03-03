@@ -215,7 +215,7 @@ const Admin = () => {
             <Card className="border-neon-purple/30 bg-card/40 backdrop-blur glass-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-neon-purple">
-                  <Sparkles className="w-5 h-5" /> إضافة أداة جديدة (AI Auto-Draft)
+                  <Sparkles className="w-5 h-5" /> إضافة أداة جديدة (مسودة تلقائية بالذكاء الاصطناعي)
                 </CardTitle>
               </CardHeader>
               <CardContent>
