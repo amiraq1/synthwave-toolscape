@@ -6,7 +6,7 @@ import { ArrowRight, ExternalLink, Loader2, Tag, Sparkles, Lightbulb, DollarSign
 import { Button } from '@/components/ui/button';
 import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
-import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
+import { getCategoryLabel, getPricingLabel, getPricingTier } from '@synthwave/utils';
 import AverageRating from '@/components/AverageRating';
 import SimilarTools from '@/components/SimilarTools';
 import ToolGallery from "@/components/ToolGallery";

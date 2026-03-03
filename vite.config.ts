@@ -103,6 +103,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@synthwave/utils": path.resolve(__dirname, "./packages/utils/src"),
+      "@synthwave/ui": path.resolve(__dirname, "./packages/ui/src"),
+      "@synthwave/api": path.resolve(__dirname, "./packages/api/src"),
+      "@synthwave/hooks": path.resolve(__dirname, "./packages/hooks/src"),
     },
   },
 

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { ImageOff } from "lucide-react";
-import { optimizeImage } from "@/utils/imageOptimizer";
+import { optimizeImage } from "@synthwave/utils";
 import { cn } from "@/lib/utils";
 
 interface ImageWithFallbackProps {

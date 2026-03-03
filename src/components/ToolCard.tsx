@@ -24,7 +24,7 @@ import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
-import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
+import { getCategoryLabel, getPricingLabel, getPricingTier } from '@synthwave/utils';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
