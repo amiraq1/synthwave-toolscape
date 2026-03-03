@@ -24,6 +24,7 @@ import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
+import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
@@ -259,16 +260,16 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           {/* المميزات (Badges) */}
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20">
-              {tool.category}
+              {getCategoryLabel(tool.category)}
             </Badge>
             <Badge variant="outline" className={cn(
               "border hover:bg-opacity-20 transition-colors",
-              tool.pricing_type === 'مجاني' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                tool.pricing_type === 'مدفوع' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
-                  tool.pricing_type === 'تجربة مجانية' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+              getPricingTier(tool.pricing_type) === 'free' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                getPricingTier(tool.pricing_type) === 'paid' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
+                  getPricingTier(tool.pricing_type) === 'trial' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
                     'bg-gray-500/10 text-gray-400 border-gray-500/20'
             )}>
-              {tool.pricing_type}
+              {getPricingLabel(tool.pricing_type)}
             </Badge>
             {supportsArabic && (
               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1">

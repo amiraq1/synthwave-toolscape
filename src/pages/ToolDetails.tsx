@@ -6,6 +6,7 @@ import { ArrowRight, ExternalLink, Loader2, Tag, Sparkles, Lightbulb, DollarSign
 import { Button } from '@/components/ui/button';
 import { useTool } from '@/hooks/useTool';
 import { cn } from '@/lib/utils';
+import { getCategoryLabel, getPricingLabel, getPricingTier } from '@/utils/localization';
 import AverageRating from '@/components/AverageRating';
 import SimilarTools from '@/components/SimilarTools';
 import ToolGallery from "@/components/ToolGallery";
@@ -160,12 +161,12 @@ const ToolDetails = () => {
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <DollarSign className="w-5 h-5 mx-auto mb-1 text-green-400" />
                 <span className="text-xs text-gray-400 block">السعر</span>
-                <span className="font-bold text-sm text-white">{tool.pricing_type}</span>
+                <span className="font-bold text-sm text-white">{getPricingLabel(tool.pricing_type)}</span>
               </div>
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <Tag className="w-5 h-5 mx-auto mb-1 text-blue-400" />
                 <span className="text-xs text-gray-400 block">التصنيف</span>
-                <span className="font-bold text-sm text-white">{tool.category}</span>
+                <span className="font-bold text-sm text-white">{getCategoryLabel(tool.category)}</span>
               </div>
               {tool.is_featured && (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
@@ -189,7 +190,7 @@ const ToolDetails = () => {
                 زيارة الموقع الرسمي
               </a>
             </div>
-            {tool.pricing_type !== 'مجاني' && (
+            {getPricingTier(tool.pricing_type) !== 'free' && (
               <p className="text-xs text-muted-foreground mt-2 text-center">
                 * قد يتطلب التسجيل بطاقة ائتمان
               </p>
