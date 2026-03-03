@@ -191,7 +191,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
                 {/* Priority 1: Manual image_url */}
                 {showOriginalImage ? (
                   <ImageWithFallback
-                    src={tool.image_url}
+                    src={validImageUrl}
                     alt={displayTitle}
                     width={100}
                     className="w-full h-full p-1.5 object-contain"

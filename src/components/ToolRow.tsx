@@ -88,8 +88,9 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
         ? displayDescription.slice(0, 100) + (displayDescription.length > 100 ? '...' : '')
         : '';
 
-    // Determine which icon layer to show
-    const hasValidImage = tool.image_url && !imageError;
+    // Determine which icon layer to show - filter stale faviconV2 URLs
+    const cleanImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
+    const hasValidImage = cleanImageUrl && !imageError;
     const hasValidFavicon = faviconUrl && !faviconError;
     const showCategoryIcon = !hasValidImage && !hasValidFavicon;
 
@@ -131,7 +132,7 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             >
                 {hasValidImage ? (
                     <img
-                        src={tool.image_url!}
+                        src={cleanImageUrl!}
                         alt=""
                         width={48}
                         height={48}
