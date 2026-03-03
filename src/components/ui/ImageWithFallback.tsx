@@ -50,8 +50,11 @@ const ImageWithFallback = ({
         auto: ""
     };
 
+    // Filter stale faviconV2 URLs stored in the DB to prevent 404 errors
+    const cleanSrc = src && src.includes('gstatic.com/faviconV2') ? null : src;
+
     // إذا لم يكن هناك رابط، أو حدث خطأ في التحميل، اعرض البديل
-    if (!src || error) {
+    if (!cleanSrc || error) {
         return (
             <div className={cn(
                 "flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10",
@@ -81,7 +84,7 @@ const ImageWithFallback = ({
 
             {/* الصورة الفعلية */}
             <img
-                src={optimizeImage(src, width)}
+                src={optimizeImage(cleanSrc!, width)}
                 alt={alt}
                 className={cn(
                     "transition-opacity duration-300",

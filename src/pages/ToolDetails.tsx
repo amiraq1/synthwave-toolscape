@@ -55,7 +55,7 @@ const ToolDetails = () => {
     name: displayTitle || tool.title,
     description: displayDescription || tool.description,
     url: tool.url,
-    image: tool.image_url || undefined,
+    image: (tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2')) ? tool.image_url : undefined,
     category: tool.category,
     pricingType: tool.pricing_type,
     rating: tool.average_rating,
@@ -142,7 +142,7 @@ const ToolDetails = () => {
 
           {/* Right: Gallery */}
           <div>
-            <ToolGallery title={displayTitle || ""} images={tool.image_url ? [tool.image_url] : []} />
+            <ToolGallery title={displayTitle || ""} images={tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? [tool.image_url] : []} />
           </div>
 
           {/* Left: Info & Quick Summary */}
