@@ -1,0 +1,12 @@
+[
+  {
+    "id": 245,
+    "title": "Lexica Art",
+    "url": "https://lexica.art",
+    "alive": false,
+    "reason": "TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "ABORT_ERR",
+    "error": "Request timeout"
+  }
+]

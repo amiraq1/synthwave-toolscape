@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-02-13T13:58:24.700Z",
+  "mode": "dry-run",
+  "options": {
+    "timeout_ms": 7000,
+    "concurrency": 30,
+    "retries": 0,
+    "batch_size": 500,
+    "backup_dir": "backups",
+    "delete_uncertain": false
+  },
+  "counts": {
+    "before": 100,
+    "checked": 100,
+    "alive": 99,
+    "dead": 1,
+    "confirmed_dead": 0,
+    "uncertain_dead": 1,
+    "deleted": 0,
+    "delete_failures": 0,
+    "after": 100
+  },
+  "dead_by_reason": {
+    "TIMEOUT": 1
+  },
+  "artifacts": {
+    "dead_links": "D:\\synthwave-toolscape\\backups\\supabase-dead-links-2026-02-13T13-58-15-023Z.json",
+    "backup_snapshot": null
+  },
+  "dead_sample": [
+    {
+      "id": 245,
+      "title": "Lexica Art",
+      "url": "https://lexica.art",
+      "alive": false,
+      "reason": "TIMEOUT",
+      "confirmed_dead": false,
+      "error_code": "ABORT_ERR",
+      "error": "Request timeout"
+    }
+  ]
+}

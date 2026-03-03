@@ -1,0 +1,627 @@
+[
+  {
+    "id": 517,
+    "title": "Meta AI",
+    "url": "N/A (embedded in Meta's ecosystem)"
+  },
+  {
+    "id": 518,
+    "title": "Stable Diffusion (Base)",
+    "url": "StableDiffusionWeb.com"
+  },
+  {
+    "id": 519,
+    "title": "Nano Banana Pro (Gemini)",
+    "url": "N/A (part of Google AI ecosystem)"
+  },
+  {
+    "id": 520,
+    "title": "ChatGPT-Image-1.5",
+    "url": "N/A (part of OpenAI)"
+  },
+  {
+    "id": 522,
+    "title": "Grok",
+    "url": "N/A (mentioned as $0.00 at X)"
+  },
+  {
+    "id": 523,
+    "title": "Microsoft Copilot",
+    "url": "N/A (mentioned as $0.00 at Microsoft)"
+  },
+  {
+    "id": 534,
+    "title": "الاسم",
+    "url": "الرابط"
+  },
+  {
+    "id": 535,
+    "title": "---",
+    "url": "---"
+  },
+  {
+    "id": 556,
+    "title": "Kite",
+    "url": ""
+  },
+  {
+    "id": 576,
+    "title": "Brandwell & ContentShake AI",
+    "url": "https://www.brandwell.ai & https://contentshake.com"
+  },
+  {
+    "id": 643,
+    "title": "WisPaper",
+    "url": "(لم يتم توفير رابط مباشر)"
+  },
+  {
+    "id": 725,
+    "title": "Legly",
+    "url": "لا يوجد رابط مباشر في النص"
+  },
+  {
+    "id": 746,
+    "title": "Apple Health + AI",
+    "url": "(No direct link, tied to Apple devices)"
+  },
+  {
+    "id": 747,
+    "title": "Google Fit",
+    "url": "(No direct link, tied to Android devices)"
+  },
+  {
+    "id": 748,
+    "title": "Open-source clinical NLP tools (cTAKES, MedSpaCy)",
+    "url": "(No direct link, open-source projects)"
+  },
+  {
+    "id": 750,
+    "title": "OHIF Viewer + DICOM toolchains",
+    "url": "(No direct link, open-source project)"
+  },
+  {
+    "id": 751,
+    "title": "Whisper (open-source speech-to-text)",
+    "url": "(No direct link, open-source project by OpenAI)"
+  },
+  {
+    "id": 752,
+    "title": "FHIR test servers and open clinical datasets (Synthea, MIMIC)",
+    "url": "(No direct link, open-source projects/datasets)"
+  },
+  {
+    "id": 1010,
+    "title": "GLM-4.7",
+    "url": "غير متوفر حاليًا"
+  },
+  {
+    "id": 1081,
+    "title": "CO2 AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن يمكن البحث عنه)"
+  },
+  {
+    "id": 1082,
+    "title": "IBM Environmental Intelligence Suite",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق التنبؤ بالمناخ)"
+  },
+  {
+    "id": 1083,
+    "title": "ClimateAI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق نمذجة مخاطر المناخ طويلة الأجل)"
+  },
+  {
+    "id": 1084,
+    "title": "DeepMind AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق كفاءة الطاقة)"
+  },
+  {
+    "id": 1085,
+    "title": "AlphaEarth Foundations (من Google DeepMind)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق رسم خرائط الكوكب بتفاصيل غير مسبوقة)"
+  },
+  {
+    "id": 1086,
+    "title": "NVIDIA Earth-2 Generative AI Foundation Model",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق محاكاة المناخ العالمي)"
+  },
+  {
+    "id": 1088,
+    "title": "AirNow",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق تتبع جودة الهواء)"
+  },
+  {
+    "id": 1089,
+    "title": "Flood Forecasting",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق التنبؤ بالفيضانات)"
+  },
+  {
+    "id": 1090,
+    "title": "Electronic \\'noses\\' for wildfires",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق الكشف عن حرائق الغابات)"
+  },
+  {
+    "id": 1091,
+    "title": "Athena (من J.P. Morgan)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق إدارة المخاطر)"
+  },
+  {
+    "id": 1092,
+    "title": "Whisper (من OpenAI)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأحد أبرز الأمثلة على قوة الذكاء الاصطناعي مفتوح المصدر في معالجة الصوت)"
+  },
+  {
+    "id": 1093,
+    "title": "BrowserOS",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة ذكاء اصطناعي مفتوحة المصدر)"
+  },
+  {
+    "id": 1094,
+    "title": "YOU",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لتوليد الأفكار)"
+  },
+  {
+    "id": 1095,
+    "title": "Lazarus AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة للذكاء الاصطناعي الاستخراجي والمحلي للصناعات المنظمة)"
+  },
+  {
+    "id": 1096,
+    "title": "Microsoft Copilot Studio",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لبناء وكلاء الذكاء الاصطناعي)"
+  },
+  {
+    "id": 1097,
+    "title": "Climate TRACE",
+    "url": "climatetrace.org"
+  },
+  {
+    "id": 1098,
+    "title": "Pachama",
+    "url": "pachama.com"
+  },
+  {
+    "id": 1099,
+    "title": "Sust Global",
+    "url": "sustglobal.com"
+  },
+  {
+    "id": 1100,
+    "title": "Rio Sustainability Platform",
+    "url": ".rio.ai"
+  },
+  {
+    "id": 1101,
+    "title": "Arbor",
+    "url": "arbor.eco"
+  },
+  {
+    "id": 1102,
+    "title": "Klima",
+    "url": "klima.com"
+  },
+  {
+    "id": 1105,
+    "title": "Carbon Analytics",
+    "url": "co2analytics.com"
+  },
+  {
+    "id": 1106,
+    "title": "Planet Labs",
+    "url": "planet.com"
+  },
+  {
+    "id": 1107,
+    "title": "Sustaira",
+    "url": "sustaira.com"
+  },
+  {
+    "id": 1108,
+    "title": "ClimateView",
+    "url": "climateview.global"
+  },
+  {
+    "id": 1109,
+    "title": "Normative",
+    "url": "normative.io"
+  },
+  {
+    "id": 1110,
+    "title": "Arbon",
+    "url": "arbon.earth"
+  },
+  {
+    "id": 1111,
+    "title": "BeZero Carbon",
+    "url": "bezerocarbon.com"
+  },
+  {
+    "id": 1112,
+    "title": "Greenly",
+    "url": "greenly.earth"
+  },
+  {
+    "id": 1113,
+    "title": "Plan A",
+    "url": "plana.earth"
+  },
+  {
+    "id": 1114,
+    "title": "APlanet",
+    "url": "aplanet.org"
+  },
+  {
+    "id": 1115,
+    "title": "Watershed",
+    "url": "watershed.com"
+  },
+  {
+    "id": 1116,
+    "title": "Persefoni",
+    "url": "persefoni.com"
+  },
+  {
+    "id": 1117,
+    "title": "Sinai Technologies",
+    "url": "sinaitechnologies.com"
+  },
+  {
+    "id": 1118,
+    "title": "CarbonChain",
+    "url": "carbonchain.com"
+  },
+  {
+    "id": 1119,
+    "title": "Clarity AI",
+    "url": "clarity.ai"
+  },
+  {
+    "id": 1120,
+    "title": "Greenomy",
+    "url": "greenomy.io"
+  },
+  {
+    "id": 1121,
+    "title": "Emmi",
+    "url": "emmi.io"
+  },
+  {
+    "id": 1122,
+    "title": "Ecometrica",
+    "url": "ecometrica.com"
+  },
+  {
+    "id": 1123,
+    "title": "Earth Blox",
+    "url": "earthblox.io"
+  },
+  {
+    "id": 1124,
+    "title": "Terrafuse AI",
+    "url": "terrafuse.ai"
+  },
+  {
+    "id": 1125,
+    "title": "Cervest",
+    "url": "cervest.earth"
+  },
+  {
+    "id": 1126,
+    "title": "Jupiter Intelligence",
+    "url": "jupiterintel.com"
+  },
+  {
+    "id": 1127,
+    "title": "Tomorrow.io",
+    "url": "tomorrow.io"
+  },
+  {
+    "id": 1128,
+    "title": "Climate Central",
+    "url": "climatecentral.org"
+  },
+  {
+    "id": 1129,
+    "title": "Kayrros",
+    "url": "kayrros.com"
+  },
+  {
+    "id": 1130,
+    "title": "Gro Intelligence",
+    "url": "gro-intelligence.com"
+  },
+  {
+    "id": 1131,
+    "title": "BlueConduit",
+    "url": "blueconduit.com"
+  },
+  {
+    "id": 1132,
+    "title": "Glimpse",
+    "url": "meetglimpse.com"
+  },
+  {
+    "id": 1133,
+    "title": "EcoSend",
+    "url": "ecosend.io"
+  },
+  {
+    "id": 1134,
+    "title": "Envision",
+    "url": "envision.ai"
+  },
+  {
+    "id": 1135,
+    "title": "Later",
+    "url": "later.com"
+  },
+  {
+    "id": 1136,
+    "title": "Planetly (by OneTrust)",
+    "url": "planetly.com"
+  },
+  {
+    "id": 1137,
+    "title": "GreenBuzz",
+    "url": "greenbuzz.ai"
+  },
+  {
+    "id": 1138,
+    "title": "Creatopy",
+    "url": "creatopy.com"
+  },
+  {
+    "id": 1139,
+    "title": "Adthos",
+    "url": "adthos.com"
+  },
+  {
+    "id": 1140,
+    "title": "Lately AI",
+    "url": "lately.ai"
+  },
+  {
+    "id": 1141,
+    "title": "OnePulse",
+    "url": "onepulse.com"
+  },
+  {
+    "id": 1142,
+    "title": "Crayon",
+    "url": "crayon.co"
+  },
+  {
+    "id": 1143,
+    "title": "Persado",
+    "url": "persado.com"
+  },
+  {
+    "id": 1144,
+    "title": "GreenStory",
+    "url": "greenstory.io"
+  },
+  {
+    "id": 1145,
+    "title": "OptiMole",
+    "url": "optimole.com"
+  },
+  {
+    "id": 1146,
+    "title": "Treeapp",
+    "url": "treeapp.org"
+  },
+  {
+    "id": 1147,
+    "title": "Sourcemap",
+    "url": "sourcemap.com"
+  },
+  {
+    "id": 1148,
+    "title": "Circularise",
+    "url": "www.circularise.com"
+  },
+  {
+    "id": 1149,
+    "title": "Gaia",
+    "url": "gaiachain"
+  },
+  {
+    "id": 1150,
+    "title": "Everledger",
+    "url": "everledger.io"
+  },
+  {
+    "id": 1151,
+    "title": "Recykal",
+    "url": "recykal.com"
+  },
+  {
+    "id": 1152,
+    "title": "Optoro",
+    "url": "optoro.com"
+  },
+  {
+    "id": 1153,
+    "title": "Fieldguide AI",
+    "url": "fieldguide.io"
+  },
+  {
+    "id": 1154,
+    "title": "Tive",
+    "url": "tive.com"
+  },
+  {
+    "id": 1155,
+    "title": "Circulor",
+    "url": "circulor.com"
+  },
+  {
+    "id": 1156,
+    "title": "Lizee",
+    "url": "lizee.co"
+  },
+  {
+    "id": 1157,
+    "title": "Rheaply",
+    "url": "rheaply.com"
+  },
+  {
+    "id": 1158,
+    "title": "Circular IQ",
+    "url": "circular-iq.com"
+  },
+  {
+    "id": 1159,
+    "title": "IBM Sterling Supply Chain Intelligence Suite",
+    "url": "ibm.com/products/supply-chain-intelligence-suite"
+  },
+  {
+    "id": 1160,
+    "title": "Ecochain",
+    "url": "ecochain.com"
+  },
+  {
+    "id": 1161,
+    "title": "Veritree",
+    "url": "veritree.com"
+  },
+  {
+    "id": 1162,
+    "title": "Provenance",
+    "url": "provenance.org"
+  },
+  {
+    "id": 1163,
+    "title": "Resourcify",
+    "url": "resourcify.com"
+  },
+  {
+    "id": 1164,
+    "title": "Remake",
+    "url": "remake.world"
+  },
+  {
+    "id": 1165,
+    "title": "Safi",
+    "url": "safi.co"
+  },
+  {
+    "id": 1166,
+    "title": "Circularly",
+    "url": "circularly.io"
+  },
+  {
+    "id": 1167,
+    "title": "Cove.tool",
+    "url": "cove.tools"
+  },
+  {
+    "id": 1168,
+    "title": "Autodesk Insight",
+    "url": "autodesk.com/products/insight"
+  },
+  {
+    "id": 1169,
+    "title": "TallyLCA",
+    "url": "tallylca.com"
+  },
+  {
+    "id": 1170,
+    "title": "Hypar",
+    "url": "hypar.io"
+  },
+  {
+    "id": 1171,
+    "title": "LuminLab",
+    "url": "lumin-lab.com"
+  },
+  {
+    "id": 1173,
+    "title": "Jua.ai",
+    "url": "jua.ai"
+  },
+  {
+    "id": 1174,
+    "title": "nPlan",
+    "url": "nplan.io"
+  },
+  {
+    "id": 1175,
+    "title": "BrainBox AI",
+    "url": "brainboxai.com"
+  },
+  {
+    "id": 1176,
+    "title": "Qarnot",
+    "url": "qarnot.com"
+  },
+  {
+    "id": 1177,
+    "title": "Gridium",
+    "url": "gridium.com"
+  },
+  {
+    "id": 1179,
+    "title": "PassiveLogic",
+    "url": "hpassivelogic.com"
+  },
+  {
+    "id": 1181,
+    "title": "Enerbrain",
+    "url": "enerbrain.com"
+  },
+  {
+    "id": 1182,
+    "title": "Build sustainably with Google Earth",
+    "url": "earth/about/design/"
+  },
+  {
+    "id": 1183,
+    "title": "MetroGAN",
+    "url": "(Research prototype via arXiv publication)"
+  },
+  {
+    "id": 1184,
+    "title": "Sustainalytics’ Material Risk Monitor",
+    "url": "sustainalytics.com"
+  },
+  {
+    "id": 1185,
+    "title": "Higharc AI",
+    "url": "higharc.com"
+  },
+  {
+    "id": 1186,
+    "title": "Finch 3D",
+    "url": "finch3d.com"
+  },
+  {
+    "id": 1229,
+    "title": "Doclingo",
+    "url": "غير متوفر"
+  },
+  {
+    "id": 1262,
+    "title": "Llama Guard (Meta)",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها أداة مفتوحة المصدر من Meta)"
+  },
+  {
+    "id": 1281,
+    "title": "ShieldGemma (Google)",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها أداة من Google)"
+  },
+  {
+    "id": 1282,
+    "title": "CoPE by Zentropi",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها مذكورة في قائمة أدوات السلامة مفتوحة المصدر)"
+  },
+  {
+    "id": 1285,
+    "title": "OSmod by Jigsaw",
+    "url": "(مذكور في https://github.com/roostorg/awesome-safety-tools)"
+  },
+  {
+    "id": 1317,
+    "title": "Qiskit Code Assistant",
+    "url": "لا يوجد رابط مباشر في المقال"
+  }
+]

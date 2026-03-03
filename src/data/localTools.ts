@@ -1,0 +1,2048 @@
+// Generated Code - Static Tools Data
+export const localTools = [
+  {
+    "id": "2",
+    "title": "Midjourney",
+    "description": "أداة رائدة لإنشاء صور فنية مذهلة باستخدام الذكاء الاصطناعي.",
+    "category": "صور",
+    "url": "https://midjourney.com",
+    "image_url": "",
+    "pricing_type": "مدفوع",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2025-12-29 06:20:47.42639+00",
+    "features": [],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "4",
+    "title": "RunwayML",
+    "description": "أداة متقدمة لتحرير وإنشاء الفيديوهات باستخدام الذكاء الاصطناعي.",
+    "category": "فيديو",
+    "url": "https://runwayml.com",
+    "image_url": "🎬",
+    "pricing_type": "مدفوع",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2025-12-29 06:20:47.42639+00",
+    "features": [],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "5",
+    "title": "GitHub Copilot",
+    "description": "مساعد برمجي ذكي يكتب الكود معك ويقترح حلولاً برمجية فورية.",
+    "category": "برمجة",
+    "url": "https://github.com/features/copilot",
+    "image_url": "💻",
+    "pricing_type": "مدفوع",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2025-12-29 06:20:47.42639+00",
+    "features": [],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "6",
+    "title": "Notion AI",
+    "description": "مساعد ذكي داخل نوتشن لتنظيم المهام، تلخيص الملاحظات، وكتابة المحتوى.",
+    "category": "إنتاجية",
+    "url": "https://notion.so",
+    "image_url": "📝",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2025-12-29 06:20:47.42639+00",
+    "features": [
+      "productivity",
+      "writing",
+      "تلخيص"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "12",
+    "title": "Jasper",
+    "description": "يُعد Jasper كاتبًا آليًا متقدمًا يعمل بالذكاء الاصطناعي، مصممًا خصيصًا لفرق التسويق. يساعد هذا الأداة الشركات على تسريع عملية إنشاء المحتوى وتحسين جودته عبر مختلف القنوات التسويقية.",
+    "category": "نصوص",
+    "url": "https://jasper.ai",
+    "image_url": "",
+    "pricing_type": "تجربة مجانية",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 07:54:56.904181+00",
+    "features": [
+      "توليد محتوى تسويقي احترافي",
+      "كتابة نصوص إعلانية جذابة",
+      "تحسين سرعة إنتاج المحتوى"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "13",
+    "title": "Sora",
+    "description": "سورا هو نموذج ذكاء اصطناعي متقدم قادر على تحويل الأوصاف النصية إلى مشاهد فيديو واقعية ومبتكرة. يتيح للمستخدمين إبداع محتوى مرئي فريد بجودة عالية بمجرد تقديم تعليمات نصية بسيطة.",
+    "category": "فيديو",
+    "url": "https://openai.com/sora",
+    "image_url": "",
+    "pricing_type": "مدفوع",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 08:23:45.914689+00",
+    "features": [
+      "إنشاء مشاهد فيديو واقعية",
+      "توليد مشاهد خيالية ومبتكرة",
+      "التحويل من نص إلى فيديو"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "112",
+    "title": "ChatGPT",
+    "description": "المساعد الأشهر عالمياً للكتابة، البرمجة، والبحث. يقدم إجابات ذكية ومحادثات طبيعية.",
+    "category": "نصوص",
+    "url": "https://chatgpt.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:49.391389+00",
+    "features": [
+      "chat",
+      "writing",
+      "برمجة",
+      "analysis"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "113",
+    "title": "Google Gemini",
+    "description": "منافس جوجل القوي، يتميز بالسرعة والارتباط بخدمات جوجل وتحديث المعلومات لحظياً.",
+    "category": "نصوص",
+    "url": "https://gemini.google.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:49.954152+00",
+    "features": [
+      "google integration",
+      "real-time info",
+      "multimodal"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "114",
+    "title": "Claude AI",
+    "description": "يتميز بأسلوب كتابة طبيعي جداً وقدرات تحليلية فائقة وفهم عميق للسياق.",
+    "category": "نصوص",
+    "url": "https://claude.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:50.383155+00",
+    "features": [
+      "long context",
+      "natural writing",
+      "برمجة"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "115",
+    "title": "DeepSeek",
+    "description": "أداة صينية قوية جداً في البرمجة والتفكير المنطقي ومجانية تماماً.",
+    "category": "برمجة",
+    "url": "https://deepseek.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:50.795052+00",
+    "features": [
+      "برمجة",
+      "logic",
+      "open source"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "116",
+    "title": "Perplexity AI",
+    "description": "محرك بحث ذكي يقدم إجابات موثقة بالمصادر والمراجع لضمان دقة المعلومات.",
+    "category": "نصوص",
+    "url": "https://perplexity.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:51.206833+00",
+    "features": [
+      "search",
+      "citations",
+      "بحث علمي"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "117",
+    "title": "QuillBot",
+    "description": "أفضل أداة لإعادة صياغة النصوص وتحسين القواعد اللغوية وكتابة المحتوى بأساليب متعددة.",
+    "category": "نصوص",
+    "url": "https://quillbot.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:51.63232+00",
+    "features": [
+      "paraphrasing",
+      "grammar check",
+      "summarizer"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "118",
+    "title": "WriteSonic",
+    "description": "متخصص في كتابة المقالات التسويقية والمحتوى المتوافق مع SEO للمواقع والمدونات.",
+    "category": "نصوص",
+    "url": "https://writesonic.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:52.037997+00",
+    "features": [
+      "seo writing",
+      "marketing copy",
+      "blog posts"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "119",
+    "title": "Leonardo.ai",
+    "description": "منصة احترافية لتوليد الصور الفنية بجودة مذهلة يومياً مجاناً مع أدوات تحكم دقيقة.",
+    "category": "صور",
+    "url": "https://leonardo.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:52.43332+00",
+    "features": [
+      "توليد صور",
+      "art",
+      "canvas"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "120",
+    "title": "Adobe Firefly",
+    "description": "أداة أدوبي الرسمية لتوليد وتعديل الصور بالذكاء الاصطناعي، آمنة تجارياً وذات جودة عالية.",
+    "category": "صور",
+    "url": "https://firefly.adobe.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:52.85158+00",
+    "features": [
+      "text to image",
+      "generative fill",
+      "commercial safe"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "121",
+    "title": "Canva AI",
+    "description": "أدوات ذكاء اصطناعي مدمجة في كانفا لتصميم الصور والعروض التقديمية بسهولة تامة.",
+    "category": "صور",
+    "url": "https://canva.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:53.248255+00",
+    "features": [
+      "magic edit",
+      "presentations",
+      "social media"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "122",
+    "title": "Ideogram",
+    "description": "متميز جداً في كتابة النصوص داخل الصور بشكل دقيق وتصميم الشعارات.",
+    "category": "صور",
+    "url": "https://ideogram.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:53.630856+00",
+    "features": [
+      "typography",
+      "logos",
+      "توليد صور"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "123",
+    "title": "Lexica Art",
+    "description": "محرك بحث ومولد صور يعتمد على نموذج Stable Diffusion بتصاميم فنية مميزة.",
+    "category": "صور",
+    "url": "https://lexica.art",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:54.03244+00",
+    "features": [
+      "search",
+      "stable diffusion",
+      "art"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "124",
+    "title": "Microsoft Designer",
+    "description": "أداة مجانية تماماً من مايكروسوفت لتصميم المنشورات والصور والعروض التقديمية.",
+    "category": "صور",
+    "url": "https://designer.microsoft.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:54.411953+00",
+    "features": [
+      "graphic design",
+      "dalle-3",
+      "social posts"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "125",
+    "title": "Remove.bg",
+    "description": "الأداة الأسرع والأشهر لإزالة خلفيات الصور بضغطة واحدة وبدقة عالية.",
+    "category": "صور",
+    "url": "https://remove.bg",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:54.792246+00",
+    "features": [
+      "background removal",
+      "fast",
+      "api"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "126",
+    "title": "Luma Dream Machine",
+    "description": "توليد فيديوهات واقعية جداً من النصوص أو الصور بجودة سينمائية.",
+    "category": "فيديو",
+    "url": "https://lumalabs.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:55.171849+00",
+    "features": [
+      "text to video",
+      "image to video",
+      "high quality"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "127",
+    "title": "HeyGen",
+    "description": "إنشاء فيديوهات لمتحدثين افتراضيين (Avatars) بجودة عالية ومزامنة دقيقة للشفاه.",
+    "category": "فيديو",
+    "url": "https://heygen.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:55.555395+00",
+    "features": [
+      "avatars",
+      "talking head",
+      "translation"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "128",
+    "title": "ElevenLabs",
+    "description": "أفضل أداة لتحويل النص إلى كلام بأصوات بشرية واقعية جداً وبلهجات متعددة.",
+    "category": "صوت",
+    "url": "https://elevenlabs.io",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:55.938966+00",
+    "features": [
+      "text to speech",
+      "voice cloning",
+      "multilingual"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "129",
+    "title": "CapCut AI",
+    "description": "أدوات ذكاء اصطناعي مدمجة لتحرير الفيديو وإضافة الترجمة والمؤثرات تلقائياً.",
+    "category": "فيديو",
+    "url": "https://capcut.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:56.322943+00",
+    "features": [
+      "video editing",
+      "auto captions",
+      "effects"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "130",
+    "title": "Adobe Podcast",
+    "description": "تحسين جودة الصوت المسجل وإزالة الضجيج ليصبح كأنه تم تسجيله في استوديو احترافي.",
+    "category": "صوت",
+    "url": "https://podcast.adobe.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:56.734171+00",
+    "features": [
+      "audio enhancement",
+      "noise removal",
+      "mic check"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "131",
+    "title": "Vocal Remover",
+    "description": "فصل صوت المغني عن الموسيقى في أي ملف صوتي بدقة عالية وبشكل مجاني.",
+    "category": "صوت",
+    "url": "https://vocalremover.org",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:57.127122+00",
+    "features": [
+      "stem separation",
+      "karaoke",
+      "key finder"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "132",
+    "title": "Gamma App",
+    "description": "إنشاء عروض تقديمية (PowerPoint) ومستندات ومواقع ويب كاملة في ثوانٍ عبر الوصف.",
+    "category": "إنتاجية",
+    "url": "https://gamma.app",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:57.495372+00",
+    "features": [
+      "presentations",
+      "documents",
+      "web design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "133",
+    "title": "Humata AI",
+    "description": "شات جي بي تي لملفات PDF. ارفع ملفك (مشروع، بحث، عقد) واسأله عن أي تفاصيل داخله.",
+    "category": "دراسة وطلاب",
+    "url": "https://humata.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:58.275754+00",
+    "features": [
+      "pdf chat",
+      "بحث علمي",
+      "تلخيص"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "134",
+    "title": "Goblin.tools",
+    "description": "مجموعة أدوات بسيطة تساعد الأشخاص (خاصة ذوي التشتت) في تنظيم وتكسير مهامهم المعقدة.",
+    "category": "إنتاجية",
+    "url": "https://goblin.tools",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:58.674084+00",
+    "features": [
+      "task management",
+      "tone change",
+      "chef"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "135",
+    "title": "Consensus",
+    "description": "محرك بحث علمي يبحث في ملايين الأوراق البحثية الموثقة ويجيب بناءً على العلم.",
+    "category": "دراسة وطلاب",
+    "url": "https://consensus.app",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:59.034735+00",
+    "features": [
+      "بحث علمي",
+      "science",
+      "academic"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "136",
+    "title": "Otter.ai",
+    "description": "تسجيل الاجتماعات والمحاضرات وتحويل الكلام إلى نص مكتوب وتلخيصه تلقائياً.",
+    "category": "إنتاجية",
+    "url": "https://otter.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:59.403693+00",
+    "features": [
+      "meeting notes",
+      "transcription",
+      "summary"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "137",
+    "title": "Cursor",
+    "description": "محرر أكواد (Fork من VS Code) مدمج بالكامل مع الذكاء الاصطناعي لتجربة برمجة فائقة السرعة.",
+    "category": "برمجة",
+    "url": "https://cursor.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:27:59.769858+00",
+    "features": [
+      "code editor",
+      "copilot",
+      "refactoring"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "138",
+    "title": "Blackbox AI",
+    "description": "مساعد برمجي سريع جداً لكتابة الكود وحل المشكلات البرمجية وفهم المشاريع المعقدة.",
+    "category": "برمجة",
+    "url": "https://blackbox.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:00.12934+00",
+    "features": [
+      "coding assistant",
+      "autocomplete",
+      "debugging"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "139",
+    "title": "Vercel V0",
+    "description": "توليد واجهات المستخدم (UI) باستخدام React و Tailwind و Shadcn UI عبر الوصف النصي.",
+    "category": "برمجة",
+    "url": "https://v0.dev",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:00.506905+00",
+    "features": [
+      "ui generation",
+      "react",
+      "tailwind"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "140",
+    "title": "Phind",
+    "description": "محرك بحث مخصص للمبرمجين يقدم حلولاً برمجية مباشرة مع أمثلة كود قابلة للنسخ.",
+    "category": "برمجة",
+    "url": "https://phind.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:00.861103+00",
+    "features": [
+      "search",
+      "برمجة",
+      "solutions"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "141",
+    "title": "Copy.ai",
+    "description": "متخصص في كتابة نصوص الإعلانات، منشورات التواصل، ورسائل البريد.",
+    "category": "نصوص",
+    "url": "https://www.copy.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:01.256542+00",
+    "features": [
+      "copywriting",
+      "marketing",
+      "social media"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "143",
+    "title": "Simplified",
+    "description": "منصة متكاملة للتصميم، الكتابة، وجدولة المنشورات في مكان واحد.",
+    "category": "إنتاجية",
+    "url": "https://simplified.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:02.000725+00",
+    "features": [
+      "all-in-one",
+      "social media",
+      "design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "144",
+    "title": "HoppyCopy",
+    "description": "متخصص في كتابة حملات البريد الإلكتروني التسويقية بذكاء.",
+    "category": "نصوص",
+    "url": "https://www.hoppycopy.co",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:02.377373+00",
+    "features": [
+      "email marketing",
+      "newsletters",
+      "spam check"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "145",
+    "title": "AnswerThePublic",
+    "description": "أداة لاكتشاف ما يبحث عنه الناس في جوجل لتحسين محتوى الـ SEO.",
+    "category": "نصوص",
+    "url": "https://answerthepublic.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:02.746735+00",
+    "features": [
+      "seo research",
+      "keywords",
+      "content ideas"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "146",
+    "title": "Namelix",
+    "description": "توليد أسماء تجارية وشعارات (Logos) مبتكرة باستخدام الذكاء الاصطناعي.",
+    "category": "إنتاجية",
+    "url": "https://namelix.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:03.156147+00",
+    "features": [
+      "branding",
+      "business names",
+      "logos"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "147",
+    "title": "NotebookLM",
+    "description": "أداة جوجل الثورية لتحليل مستنداتك وتحويلها إلى بودكاست أو ملخصات.",
+    "category": "دراسة وطلاب",
+    "url": "https://notebooklm.google",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:03.528254+00",
+    "features": [
+      "بحث علمي",
+      "بودكاست",
+      "تلخيص"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "148",
+    "title": "Elicit",
+    "description": "مساعد بحث علمي يقوم باستخراج البيانات من الأوراق البحثية وتلخيصها.",
+    "category": "دراسة وطلاب",
+    "url": "https://elicit.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:03.89757+00",
+    "features": [
+      "research assistant",
+      "data extraction",
+      "literature review"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "149",
+    "title": "Scholarcy",
+    "description": "يقوم بقراءة الأوراق البحثية الطويلة وتلخيصها في بطاقات معلوماتية.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.scholarcy.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:04.273499+00",
+    "features": [
+      "تلخيص",
+      "flashcards",
+      "academic"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "150",
+    "title": "Scite.ai",
+    "description": "يساعدك في التأكد من صحة الاستشهادات العلمية ومدى موثوقيتها.",
+    "category": "دراسة وطلاب",
+    "url": "https://scite.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:04.633885+00",
+    "features": [
+      "citations",
+      "fact checking",
+      "بحث علمي"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "151",
+    "title": "ChatPDF",
+    "description": "ارفع أي ملف PDF وتحدث معه لاستخراج المعلومات أو التلخيص.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.chatpdf.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:05.001071+00",
+    "features": [
+      "pdf chat",
+      "تلخيص",
+      "documents"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "152",
+    "title": "ResearchRabbit",
+    "description": "أداة لاكتشاف الأبحاث المرتبطة بمجالك وتصور العلاقات بينها.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.researchrabbit.ai",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:05.369081+00",
+    "features": [
+      "research discovery",
+      "citations graph",
+      "academic"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "153",
+    "title": "Pebblely",
+    "description": "تحويل صور المنتجات العادية إلى صور دعائية احترافية بخلفيات مذهلة.",
+    "category": "صور",
+    "url": "https://pebblely.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:05.733774+00",
+    "features": [
+      "product photography",
+      "ecommerce",
+      "backgrounds"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "154",
+    "title": "Flair.ai",
+    "description": "أداة تصميم مخصصة لصور المنتجات والعلامات التجارية (Branding).",
+    "category": "صور",
+    "url": "https://flair.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:06.122879+00",
+    "features": [
+      "branding",
+      "product design",
+      "mockups"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "155",
+    "title": "ClipDrop",
+    "description": "مجموعة أدوات من Stability AI لتعديل الصور، إزالة الإضاءة، وتكبير الحجم.",
+    "category": "صور",
+    "url": "https://clipdrop.co",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:06.489185+00",
+    "features": [
+      "image editing",
+      "relight",
+      "upscale"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "156",
+    "title": "Vectorizer.ai",
+    "description": "تحويل الصور العادية (Pixel) إلى صور متجهة (Vector) بدقة عالية جداً.",
+    "category": "صور",
+    "url": "https://vectorizer.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:06.865635+00",
+    "features": [
+      "vectorize",
+      "svg",
+      "design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "157",
+    "title": "Luma Genie",
+    "description": "توليد نماذج ثلاثية الأبعاد (3D Models) من خلال الوصف النصي فقط.",
+    "category": "صور",
+    "url": "https://lumalabs.ai/genie",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:07.253648+00",
+    "features": [
+      "نص إلى 3D",
+      "نمذجة",
+      "نماذج أولية"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "158",
+    "title": "InVideo AI",
+    "description": "تحويل فكرة أو نص إلى فيديو كامل مع تعليق صوتي ومشاهد مناسبة.",
+    "category": "فيديو",
+    "url": "https://invideo.io",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:07.673803+00",
+    "features": [
+      "text to video",
+      "editing",
+      "voiceover"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "159",
+    "title": "Zapier Central",
+    "description": "بناء وكلاء ذكاء اصطناعي (AI Agents) لأتمتة مهامك عبر آلاف التطبيقات.",
+    "category": "إنتاجية",
+    "url": "https://zapier.com/central",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:08.078086+00",
+    "features": [
+      "automation",
+      "agents",
+      "workflow"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "160",
+    "title": "Fireflies.ai",
+    "description": "تسجيل وتلخيص الاجتماعات تلقائياً واستخراج بنود العمل (Action Items).",
+    "category": "إنتاجية",
+    "url": "https://fireflies.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:08.461621+00",
+    "features": [
+      "meeting notes",
+      "transcription",
+      "teams"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "162",
+    "title": "Taskade",
+    "description": "منصة لإدارة المهام مدمجة مع وكلاء ذكاء اصطناعي لتنظيم العمل الجماعي.",
+    "category": "إنتاجية",
+    "url": "https://www.taskade.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:09.246664+00",
+    "features": [
+      "project management",
+      "agents",
+      "collaboration"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "163",
+    "title": "Superwhisper",
+    "description": "أداة إملاء صوتي دقيقة جداً تحول كلامك إلى نص منسق في أي تطبيق.",
+    "category": "إنتاجية",
+    "url": "https://superwhisper.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:09.610337+00",
+    "features": [
+      "dictation",
+      "voice to text",
+      "mac"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "164",
+    "title": "Scribe",
+    "description": "تحويل أي عملية تقوم بها على الشاشة إلى دليل إرشادي (Step-by-step) تلقائياً.",
+    "category": "إنتاجية",
+    "url": "https://scribehow.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:09.981155+00",
+    "features": [
+      "documentation",
+      "guides",
+      "screenshots"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "165",
+    "title": "ChefGPT",
+    "description": "يقترح عليك وصفات طعام بناءً على المكونات المتوفرة لديك في الثلاجة.",
+    "category": "إنتاجية",
+    "url": "https://www.chefgpt.xyz",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:10.365482+00",
+    "features": [
+      "cooking",
+      "recipes",
+      "lifestyle"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "166",
+    "title": "Poised",
+    "description": "مدرب تواصل ذكي يساعدك في تحسين أسلوبك في التحدث أثناء الاجتماعات.",
+    "category": "إنتاجية",
+    "url": "https://www.poised.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:10.738897+00",
+    "features": [
+      "communication",
+      "coaching",
+      "meetings"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "167",
+    "title": "Character.ai",
+    "description": "التحدث مع شخصيات افتراضية أو تاريخية أو حتى شخصيات من صنعك.",
+    "category": "نصوص",
+    "url": "https://character.ai",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:11.12156+00",
+    "features": [
+      "chat",
+      "entertainment",
+      "personas"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "168",
+    "title": "Futurepedia",
+    "description": "أكبر دليل متجدد يومياً لأدوات الذكاء الاصطناعي.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.futurepedia.io",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:11.487164+00",
+    "features": [
+      "directory",
+      "news",
+      "discovery"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "170",
+    "title": "Julius AI",
+    "description": "محلل بيانات ذكي، ارفع ملف Excel واطلب منه رسم بياني أو تحليل إحصائي عبر الدردشة.",
+    "category": "إنتاجية",
+    "url": "https://julius.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:12.23415+00",
+    "features": [
+      "data analysis",
+      "charts",
+      "excel"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "171",
+    "title": "Tableau Public",
+    "description": "النسخة المجانية من أقوى أداة لتحليل وتصور البيانات (Data Visualization).",
+    "category": "إنتاجية",
+    "url": "https://public.tableau.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:12.597748+00",
+    "features": [
+      "visualization",
+      "analytics",
+      "dashboards"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "172",
+    "title": "Akkio",
+    "description": "منصة ذكاء اصطناعي \"بدون كود\" لبناء نماذج تنبؤية وتحليل بيانات الأعمال.",
+    "category": "إنتاجية",
+    "url": "https://www.akkio.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:12.988287+00",
+    "features": [
+      "no-code",
+      "prediction",
+      "business"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "173",
+    "title": "Rows AI",
+    "description": "جداول بيانات (Spreadsheets) مدمجة بالذكاء الاصطناعي لتحليل البيانات تلقائياً.",
+    "category": "إنتاجية",
+    "url": "https://rows.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:13.402197+00",
+    "features": [
+      "spreadsheets",
+      "analysis",
+      "automation"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "174",
+    "title": "ChatTerm",
+    "description": "أداة لتحويل لغة SQL المعقدة إلى لغة بشرية بسيطة والعكس.",
+    "category": "برمجة",
+    "url": "https://chatterm.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:13.767259+00",
+    "features": [
+      "sql",
+      "database",
+      "conversion"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "175",
+    "title": "MonkeyLearn",
+    "description": "تحليل مشاعر النصوص (Sentiment Analysis) واستخراج الكلمات المفتاحية بذكاء.",
+    "category": "نصوص",
+    "url": "https://monkeylearn.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:14.177549+00",
+    "features": [
+      "sentiment analysis",
+      "keywords",
+      "nlp"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "176",
+    "title": "WolframAlpha",
+    "description": "المحرك الحسابي الأشهر لحل المعادلات الرياضية والهندسية المعقدة.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.wolframalpha.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:14.557959+00",
+    "features": [
+      "math",
+      "engineering",
+      "calculation"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "177",
+    "title": "Autodesk FormIt",
+    "description": "أداة تصميم معماري ثلاثي الأبعاد تعتمد على الذكاء الاصطناعي في المراحل الأولية.",
+    "category": "صور",
+    "url": "https://formit.autodesk.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:14.928575+00",
+    "features": [
+      "architecture",
+      "3d modeling",
+      "design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "178",
+    "title": "Onshape",
+    "description": "منصة CAD سحابية مدمجة بأدوات ذكاء اصطناعي لتحسين التصاميم الميكانيكية.",
+    "category": "صور",
+    "url": "https://www.onshape.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:15.315118+00",
+    "features": [
+      "cad",
+      "mechanical",
+      "engineering"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "179",
+    "title": "SimScale",
+    "description": "محاكاة هندسية سحابية تعتمد على الذكاء الاصطناعي لتحليل الإجهادات.",
+    "category": "برمجة",
+    "url": "https://www.simscale.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:15.697704+00",
+    "features": [
+      "simulation",
+      "engineering",
+      "cae"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "180",
+    "title": "KiCad AI Plugins",
+    "description": "إضافات ذكاء اصطناعي لمساعدة مهندسي الإلكترونيات في تصميم الدوائر المطبوعة.",
+    "category": "صور",
+    "url": "https://www.kicad.org",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:16.057833+00",
+    "features": [
+      "electronics",
+      "pcb",
+      "design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "181",
+    "title": "Coursera AI Courses",
+    "description": "أداة تعليمية للوصول إلى مساقات الذكاء الاصطناعي من كبرى الجامعات مجاناً.",
+    "category": "دراسة وطلاب",
+    "url": "https://www.coursera.org",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:16.423346+00",
+    "features": [
+      "courses",
+      "education",
+      "learning"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "182",
+    "title": "Krea.ai",
+    "description": "توليد وتحسين الصور في الوقت الحقيقي أثناء الرسم أو التحريك.",
+    "category": "صور",
+    "url": "https://www.krea.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:16.781377+00",
+    "features": [
+      "real-time",
+      "drawing",
+      "enhancement"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "183",
+    "title": "Magnific AI",
+    "description": "أقوى أداة في العالم لزيادة دقة وتفاصيل الصور (Upscaling) بشكل لا يصدق.",
+    "category": "صور",
+    "url": "https://magnific.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:17.139186+00",
+    "features": [
+      "upscaling",
+      "enhancement",
+      "details"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "184",
+    "title": "Pika Labs",
+    "description": "منصة متطورة لتحويل النصوص والصور إلى فيديوهات سينمائية قصيرة.",
+    "category": "فيديو",
+    "url": "https://pika.art",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:17.506769+00",
+    "features": [
+      "text to video",
+      "animation",
+      "cinematic"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "185",
+    "title": "Suno AI",
+    "description": "توليد أغاني كاملة (كلمات، لحن، وغناء) بجودة مذهلة عبر الوصف فقط.",
+    "category": "صوت",
+    "url": "https://suno.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:17.928271+00",
+    "features": [
+      "music generation",
+      "songs",
+      "vocals"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "186",
+    "title": "Udio",
+    "description": "منافس قوي لـ Suno في توليد الموسيقى والأغاني بجودة استوديو احترافية.",
+    "category": "صوت",
+    "url": "https://www.udio.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:18.31449+00",
+    "features": [
+      "music",
+      "high quality",
+      "composition"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "187",
+    "title": "Spline AI",
+    "description": "تصميم كائنات ومشاهد ثلاثية الأبعاد (3D) تفاعلية باستخدام الوصف النصي.",
+    "category": "صور",
+    "url": "https://spline.design",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:18.728492+00",
+    "features": [
+      "3d",
+      "web design",
+      "interactive"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "188",
+    "title": "Codeium",
+    "description": "بديل مجاني وقوي لـ GitHub Copilot يدعم أكثر من 70 لغة برمجة.",
+    "category": "برمجة",
+    "url": "https://codeium.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:19.557214+00",
+    "features": [
+      "برمجة",
+      "copilot",
+      "autocomplete"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "189",
+    "title": "Tabnine",
+    "description": "مساعد برمجي يعتمد على الذكاء الاصطناعي لإكمال الكود وضمان الخصوصية.",
+    "category": "برمجة",
+    "url": "https://www.tabnine.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:19.95607+00",
+    "features": [
+      "privacy",
+      "enterprise",
+      "برمجة"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "190",
+    "title": "Hugging Face",
+    "description": "منصة GitHub للذكاء الاصطناعي، للوصول إلى آلاف النماذج والأدوات مفتوحة المصدر.",
+    "category": "برمجة",
+    "url": "https://huggingface.co",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:20.365066+00",
+    "features": [
+      "models",
+      "datasets",
+      "open source"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "191",
+    "title": "Replit Ghostwriter",
+    "description": "بيئة برمجة سحابية مدمجة بمساعد ذكي لكتابة وتصحيح الأكواد.",
+    "category": "برمجة",
+    "url": "https://replit.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:20.730994+00",
+    "features": [
+      "ide",
+      "cloud",
+      "برمجة"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "192",
+    "title": "Mintlify",
+    "description": "توليد وثائق البرمجة (Documentation) تلقائياً من الكود المصدري.",
+    "category": "برمجة",
+    "url": "https://mintlify.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:21.093349+00",
+    "features": [
+      "documentation",
+      "automation",
+      "dev tools"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "193",
+    "title": "Pieces for Developers",
+    "description": "أداة لتنظيم وحفظ مقتطفات الكود باستخدام الذكاء الاصطناعي.",
+    "category": "برمجة",
+    "url": "https://pieces.app",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:21.454382+00",
+    "features": [
+      "snippets",
+      "organization",
+      "workflow"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "194",
+    "title": "Ada Health",
+    "description": "تطبيق ذكاء اصطناعي لتشخيص الأعراض الصحية وتقديم نصائح طبية أولية.",
+    "category": "إنتاجية",
+    "url": "https://ada.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:21.816616+00",
+    "features": [
+      "health",
+      "diagnosis",
+      "symptoms"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "195",
+    "title": "Woebot Health",
+    "description": "مساعد نفسي افتراضي يعتمد على العلاج المعرفي السلوكي (CBT).",
+    "category": "إنتاجية",
+    "url": "https://woebothealth.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:22.17925+00",
+    "features": [
+      "mental health",
+      "therapy",
+      "chat"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "196",
+    "title": "MealPractice",
+    "description": "مخطط وجبات ذكي يساعدك في تنظيم أكلك بناءً على أهدافك الصحية.",
+    "category": "إنتاجية",
+    "url": "https://mealpractice.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:22.558218+00",
+    "features": [
+      "nutrition",
+      "meal planning",
+      "diet"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "197",
+    "title": "Fitbod",
+    "description": "يستخدم الذكاء الاصطناعي لتصميم تمارين رياضية مخصصة لك بناءً على تقدمك.",
+    "category": "إنتاجية",
+    "url": "https://fitbod.me",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:22.959489+00",
+    "features": [
+      "fitness",
+      "workout",
+      "training"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "198",
+    "title": "Sleep Cycle",
+    "description": "تحليل أنماط النوم باستخدام الذكاء الاصطناعي لتحسين جودة راحتك.",
+    "category": "إنتاجية",
+    "url": "https://www.sleepcycle.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:23.325784+00",
+    "features": [
+      "sleep",
+      "tracking",
+      "alarm"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "199",
+    "title": "Yuka",
+    "description": "مسح المنتجات الغذائية والتجميلية لتقييم تأثيرها الصحي بذكاء.",
+    "category": "إنتاجية",
+    "url": "https://yuka.io",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:23.71274+00",
+    "features": [
+      "scanning",
+      "health",
+      "products"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "200",
+    "title": "Napkin AI",
+    "description": "تحويل النصوص والأفكار المعقدة إلى رسومات بيانية وتوضيحية (Visuals) فوراً.",
+    "category": "صور",
+    "url": "https://www.napkin.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:24.069612+00",
+    "features": [
+      "visualization",
+      "diagrams",
+      "storytelling"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "201",
+    "title": "n8n",
+    "description": "أداة أتمتة سير عمل (Workflow Automation) قوية جداً ومفتوحة المصدر كبديل لـ Zapier.",
+    "category": "إنتاجية",
+    "url": "https://n8n.io",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:24.426506+00",
+    "features": [
+      "automation",
+      "workflow",
+      "open source"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "202",
+    "title": "HeyGen Interactive Avatar",
+    "description": "إنشاء متحدث افتراضي يتفاعل مع المستخدمين في الوقت الحقيقي (Real-time).",
+    "category": "فيديو",
+    "url": "https://www.heygen.com/interactive-avatar",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:24.819638+00",
+    "features": [
+      "interactive",
+      "avatar",
+      "real-time"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "203",
+    "title": "Civitai",
+    "description": "أكبر مجتمع ونظام لمشاركة نماذج توليد الصور مفتوحة المصدر (Stable Diffusion).",
+    "category": "صور",
+    "url": "https://civitai.com",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:25.186626+00",
+    "features": [
+      "models",
+      "stable diffusion",
+      "community"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "204",
+    "title": "Rose.ai",
+    "description": "منصة بيانات سحابية تستخدم الذكاء الاصطناعي للعثور على البيانات الاقتصادية وتصورها.",
+    "category": "إنتاجية",
+    "url": "https://rose.ai",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:25.544743+00",
+    "features": [
+      "data",
+      "finance",
+      "visualization"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "205",
+    "title": "Descript",
+    "description": "تحرير الفيديو والصوت عبر تعديل النص المكتوب؛ احذف كلمة من النص لتُحذف من الفيديو!",
+    "category": "فيديو",
+    "url": "https://www.descript.com",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:25.910358+00",
+    "features": [
+      "editing",
+      "transcription",
+      "audio"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "206",
+    "title": "Veed.io (Eye Contact)",
+    "description": "أداة ذكاء اصطناعي تقوم بتعديل حركة عينيك في الفيديو لتبدو كأنك تنظر للكاميرا دائماً.",
+    "category": "فيديو",
+    "url": "https://www.veed.io",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:26.303119+00",
+    "features": [
+      "eye contact",
+      "video editing",
+      "correction"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "207",
+    "title": "Gamma (AI Website)",
+    "description": "لإنشاء مواقع ويب كاملة بصفحة واحدة وتصميم مذهل عبر الوصف الكتابي فقط.",
+    "category": "إنتاجية",
+    "url": "https://gamma.app",
+    "image_url": "",
+    "pricing_type": "Freemium",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:26.671971+00",
+    "features": [
+      "website builder",
+      "no-code",
+      "design"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "208",
+    "title": "Perplexity Pages",
+    "description": "تحويل نتائج البحث العميقة إلى مقالات منسقة ومنظمة بشكل جميل للنشر الفوري.",
+    "category": "نصوص",
+    "url": "https://www.perplexity.ai",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:27.048698+00",
+    "features": [
+      "publishing",
+      "articles",
+      "بحث علمي"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "209",
+    "title": "Manus AI",
+    "description": "وكيل ذكاء اصطناعي عام قادر على تنفيذ مهام معقدة وشاملة نيابة عنك.",
+    "category": "إنتاجية",
+    "url": "https://manus.im",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-06 19:28:27.443644+00",
+    "features": [
+      "agent",
+      "automation",
+      "tasks"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": true
+  },
+  {
+    "id": "211",
+    "title": "Claude Sonnet 4.5",
+    "description": "نموذج Claude Sonnet 4.5 من Anthropic مع دعم عربي محسّن، قدرة أعلى على الحوار الطويل، وتوليد نصوص إبداعية دقيقة.",
+    "category": "نصوص",
+    "url": "https://claude.ai",
+    "image_url": "",
+    "pricing_type": "مدفوع",
+    "is_featured": true,
+    "is_published": true,
+    "created_at": "2026-01-10 06:46:08.244885+00",
+    "features": [],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  },
+  {
+    "id": "212",
+    "title": "AI-Architect",
+    "description": "مشروع مفتوح المصدر يساعد على تخطيط بنية الأنظمة وتوثيقها باستخدام الذكاء الاصطناعي.",
+    "category": "برمجة",
+    "url": "https://github.com/amiraq1/AI-Architect",
+    "image_url": "",
+    "pricing_type": "مجاني",
+    "is_featured": false,
+    "is_published": true,
+    "created_at": "2026-01-10 06:50:00.000000+00",
+    "features": [
+      "architecture",
+      "documentation",
+      "planning"
+    ],
+    "screenshots": [],
+    "is_sponsored": false,
+    "supports_arabic": false
+  }
+] as const;

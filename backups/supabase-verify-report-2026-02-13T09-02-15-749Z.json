@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-02-13T09:02:15.749Z",
+  "db_total": 5090,
+  "source_file": "public/data/tools.cleaned.json",
+  "source_coverage": {
+    "source_rows": 5090,
+    "source_unique_urls": 5090,
+    "covered_urls_in_db": 5090,
+    "coverage_ratio": 1
+  },
+  "quality": {
+    "suspicious_count": 0,
+    "suspicious_ratio": 0,
+    "invalid_url_count": 0,
+    "valid_url_ratio": 1,
+    "missing_required_count": 0,
+    "duplicate_url_groups": 0,
+    "duplicate_url_extra_rows": 0,
+    "duplicate_title_groups": 0,
+    "duplicate_title_extra_rows": 0
+  },
+  "acceptance": {
+    "suspicious_lt_1pct": true,
+    "valid_urls_100pct": true,
+    "missing_required_eq_0": true,
+    "duplicate_url_extra_eq_0": true,
+    "duplicate_title_extra_eq_0": true
+  }
+}

@@ -8,15 +8,12 @@ import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/ar';
-import 'dayjs/locale/en';
-import { useTranslation } from "react-i18next";
 
 dayjs.extend(relativeTime);
 
 interface NotificationTool {
     id: string | number;
     title: string;
-    title_en?: string;
     category: string;
     created_at: string;
 }
@@ -25,12 +22,9 @@ const NotificationsMenu = () => {
     const [notifications, setNotifications] = useState<NotificationTool[]>([]);
     const [hasUnread, setHasUnread] = useState(false);
     const [open, setOpen] = useState(false);
-    const { i18n } = useTranslation();
-    const isAr = i18n.language === 'ar';
 
     useEffect(() => {
         const fetchLatestTools = async () => {
-            // 1. جلب أحدث 5 أدوات منشورة
             const { data } = await supabase
                 .from("tools")
                 .select("id, title, category, created_at")
@@ -41,7 +35,6 @@ const NotificationsMenu = () => {
             if (data && data.length > 0) {
                 setNotifications(data);
 
-                // 2. التحقق من "النقطة الحمراء"
                 const lastSeenDate = localStorage.getItem("last_notification_check");
                 const newestToolDate = new Date(data[0].created_at).getTime();
 
@@ -57,7 +50,6 @@ const NotificationsMenu = () => {
     const handleOpenChange = (isOpen: boolean) => {
         setOpen(isOpen);
         if (isOpen && notifications.length > 0) {
-            // عند الفتح، نعتبر أن المستخدم "رأى" الإشعارات
             setHasUnread(false);
             localStorage.setItem("last_notification_check", new Date().getTime().toString());
         }
@@ -70,7 +62,7 @@ const NotificationsMenu = () => {
                     variant="ghost"
                     size="icon"
                     className="relative rounded-full"
-                    aria-label={isAr ? "الإشعارات" : "Notifications"}
+                    aria-label="الإشعارات"
                 >
                     <Bell className="w-5 h-5 text-gray-300 hover:text-neon-purple transition-colors" />
                     {hasUnread && (
@@ -82,45 +74,39 @@ const NotificationsMenu = () => {
             <PopoverContent
                 className="w-80 p-0 bg-[#1a1a2e] border-white/10 text-white"
                 align="end"
-                dir={isAr ? "rtl" : "ltr"}
+                dir="rtl"
             >
                 <div className="p-4 border-b border-white/5">
                     <h4 className="font-bold text-sm">
-                        {isAr ? "أحدث الإضافات 🚀" : "Latest Additions 🚀"}
+                        أحدث الإضافات 🚀
                     </h4>
                 </div>
 
                 <ScrollArea className="h-[300px]">
                     {notifications.length > 0 ? (
                         <div className="flex flex-col">
-                            {notifications.map((tool) => {
-                                const displayTitle = isAr ? tool.title : (tool.title_en || tool.title);
-                                return (
-                                    <Link
-                                        key={tool.id}
-                                        to={`/tool/${tool.id}`}
-                                        onClick={() => setOpen(false)}
-                                        className="flex flex-col gap-1 p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors"
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <span className="font-semibold text-sm text-neon-purple">{displayTitle}</span>
-                                            <span className="text-[10px] text-gray-500">
-                                                {dayjs(tool.created_at).locale(isAr ? 'ar' : 'en').fromNow()}
-                                            </span>
-                                        </div>
-                                        <span className="text-xs text-gray-400">
-                                            {isAr
-                                                ? <>تمت إضافة أداة جديدة في قسم <span className="text-white">{tool.category}</span></>
-                                                : <>New tool added in <span className="text-white">{tool.category}</span> category</>
-                                            }
+                            {notifications.map((tool) => (
+                                <Link
+                                    key={tool.id}
+                                    to={`/tool/${tool.id}`}
+                                    onClick={() => setOpen(false)}
+                                    className="flex flex-col gap-1 p-4 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors"
+                                >
+                                    <div className="flex justify-between items-start">
+                                        <span className="font-semibold text-sm text-neon-purple">{tool.title}</span>
+                                        <span className="text-[10px] text-gray-500">
+                                            {dayjs(tool.created_at).locale('ar').fromNow()}
                                         </span>
-                                    </Link>
-                                );
-                            })}
+                                    </div>
+                                    <span className="text-xs text-gray-400">
+                                        تمت إضافة أداة جديدة في قسم <span className="text-white">{tool.category}</span>
+                                    </span>
+                                </Link>
+                            ))}
                         </div>
                     ) : (
                         <div className="p-8 text-center text-gray-500 text-sm">
-                            {isAr ? "لا توجد إشعارات جديدة حالياً" : "No new notifications"}
+                            لا توجد إشعارات جديدة حالياً
                         </div>
                     )}
                 </ScrollArea>

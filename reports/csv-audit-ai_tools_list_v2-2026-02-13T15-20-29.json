@@ -1,0 +1,1935 @@
+{
+  "metrics": {
+    "generated_at_utc": "2026-02-13T15:34:53Z",
+    "source_file": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.csv",
+    "total_rows": 10000,
+    "columns": [
+      "name",
+      "link",
+      "description",
+      "category"
+    ],
+    "missing_required_rows": 1,
+    "invalid_url_format_rows": 0,
+    "duplicate_url_groups": 0,
+    "duplicate_url_extra_rows": 0,
+    "duplicate_name_groups": 165,
+    "duplicate_name_extra_rows": 165,
+    "unique_valid_urls_checked": 10000,
+    "alive_urls": 9240,
+    "dead_urls": 760,
+    "confirmed_dead_urls": 75,
+    "uncertain_dead_urls": 685,
+    "rows_with_dead_links": 760,
+    "rows_with_confirmed_dead_links": 75,
+    "rows_with_uncertain_dead_links": 685,
+    "dead_reasons": {
+      "NETWORK_ERROR": 138,
+      "TIMEOUT": 365,
+      "SSL_ERROR": 179,
+      "HTTP_DEAD": 3,
+      "DNS_NOT_FOUND": 72,
+      "HTTP_ERROR": 3
+    },
+    "link_check_workers": 120,
+    "link_check_elapsed_seconds": 863.25
+  },
+  "samples": {
+    "missing_required": [
+      {
+        "line": 2,
+        "missing": [
+          "description"
+        ],
+        "name": "TakeAI",
+        "link": "https://takeai.org"
+      }
+    ],
+    "invalid_url_format": [],
+    "dead_links": [
+      {
+        "line": 7,
+        "name": "MYPEAS.ai",
+        "link": "https://mypeas.ai",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 9,
+        "name": "timeOS",
+        "link": "https://magical.so",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 10,
+        "name": "WatchNow AI",
+        "link": "https://www.watchnowai.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 30,
+        "name": "NoowAI",
+        "link": "https://noowai.com",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 38,
+        "name": "mymind",
+        "link": "https://mymind.com",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 40,
+        "name": "Role Model AI",
+        "link": "https://rolemodel.ai",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 54,
+        "name": "DeskSense",
+        "link": "https://appsumo.8odi.net",
+        "category": "Personal Assistant",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 67,
+        "name": "Impulse AI",
+        "link": "https://www.impulseai.io",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 104,
+        "name": "Copilot for Microsoft 365",
+        "link": "https://adoption.microsoft.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 115,
+        "name": "Parthean",
+        "link": "https://www.parthean.com",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 123,
+        "name": "Imbue",
+        "link": "https://imbue.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 127,
+        "name": "NextThreeBooks",
+        "link": "https://www.nextthreebooks.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 128,
+        "name": "Notability.ai",
+        "link": "https://notability.ai",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 154,
+        "name": "6000 Thoughts",
+        "link": "https://6000thoughts.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 157,
+        "name": "Ayanza",
+        "link": "https://ayanza.com",
+        "category": "Personal Assistant",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 167,
+        "name": "Dewey",
+        "link": "https://www.withdewey.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 172,
+        "name": "Seance AI",
+        "link": "https://www.seanceai.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 174,
+        "name": "Assisterr",
+        "link": "https://assisterr.xyz",
+        "category": "Personal Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 185,
+        "name": "Loti",
+        "link": "https://goloti.com",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 190,
+        "name": "Nightcap",
+        "link": "https://www.nightcap.guru",
+        "category": "Personal Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 243,
+        "name": "BeeBee AI",
+        "link": "https://www.beebee.ai",
+        "category": "Research Assistant",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 246,
+        "name": "RhetorAI",
+        "link": "https://www.rhetorai.com",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 265,
+        "name": "Recapext",
+        "link": "https://recapext.xyz",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 274,
+        "name": "NotebookLM",
+        "link": "https://notebooklm.google",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 290,
+        "name": "Base64.ai",
+        "link": "https://base64.ai",
+        "category": "Research Assistant",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 318,
+        "name": "Ocient",
+        "link": "https://ocient.com",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 328,
+        "name": "Augurisk",
+        "link": "https://www.augurisk.com",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 330,
+        "name": "Relativity",
+        "link": "https://www.relativity.com",
+        "category": "Research Assistant",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 332,
+        "name": "Perigon",
+        "link": "https://www.goperigon.com",
+        "category": "Research Assistant",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 333,
+        "name": "BridgeWise",
+        "link": "https://www.bridgewise.com",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 345,
+        "name": "Letterpal",
+        "link": "https://letterpal.io",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 354,
+        "name": "Kira Systems",
+        "link": "https://kirasystems.com",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 356,
+        "name": "Leash Biosciences",
+        "link": "https://www.leash.bio",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 362,
+        "name": "Libretto",
+        "link": "https://getlibretto.com",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 366,
+        "name": "Cyvl.ai",
+        "link": "https://cyvl.ai",
+        "category": "Research Assistant",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 412,
+        "name": "Pestel Analysis",
+        "link": "https://pestel.dev",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 413,
+        "name": "Tactic",
+        "link": "https://tactic.fyi",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 436,
+        "name": "Neuralhub",
+        "link": "https://neuralhub.ai",
+        "category": "Research Assistant",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 455,
+        "name": "Dataspot",
+        "link": "https://dataspot.ai",
+        "category": "Spreadsheets",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 486,
+        "name": "TalkPal",
+        "link": "http://talkpal.ai",
+        "category": "Translator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 487,
+        "name": "AI ASO Manager",
+        "link": "https://asomanager.io",
+        "category": "Translator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 494,
+        "name": "Panjaya",
+        "link": "https://www.panjaya.ai",
+        "category": "Translator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 496,
+        "name": "Gridly",
+        "link": "https://www.gridly.com",
+        "category": "Translator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 593,
+        "name": "Text Blaze",
+        "link": "https://blaze.today",
+        "category": "Email Assistants",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 608,
+        "name": "Bible AI",
+        "link": "https://bibleai.com",
+        "category": "Search Engine",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 617,
+        "name": "Dream Up (Deviant Art)",
+        "link": "https://www.dreamup.com",
+        "category": "Search Engine",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 625,
+        "name": "Chord",
+        "link": "https://chord.pub",
+        "category": "Search Engine",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 642,
+        "name": "Geniea",
+        "link": "https://geniea.com",
+        "category": "Prompt Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 649,
+        "name": "Entry Point",
+        "link": "https://www.entrypointai.com",
+        "category": "Prompt Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 681,
+        "name": "Dreamspace",
+        "link": "https://www.dreamspace.art",
+        "category": "Prompt Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 692,
+        "name": "Google Gemini",
+        "link": "https://bard.google.com",
+        "category": "Writing Generators",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 709,
+        "name": "Automateed",
+        "link": "https://automateed.com",
+        "category": "Writing Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 714,
+        "name": "Cabina AI",
+        "link": "https://cabina.ai",
+        "category": "Writing Generators",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 715,
+        "name": "Writio",
+        "link": "https://writio.com",
+        "category": "Writing Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 721,
+        "name": "Ninjachat AI",
+        "link": "https://ninjachat.ai",
+        "category": "Writing Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 722,
+        "name": "Pooks.ai",
+        "link": "https://www.pooks.ai",
+        "category": "Writing Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 754,
+        "name": "Writerelease",
+        "link": "https://www.writerelease.com",
+        "category": "Writing Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 756,
+        "name": "Writer",
+        "link": "https://writer.com",
+        "category": "Writing Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 764,
+        "name": "Novel",
+        "link": "https://novel.sh",
+        "category": "Writing Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 784,
+        "name": "AI Magic Writer",
+        "link": "https://bigvu.tv",
+        "category": "Writing Generators",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 787,
+        "name": "Craft",
+        "link": "https://www.craft.do",
+        "category": "Writing Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 803,
+        "name": "AutoBlogging Pro",
+        "link": "https://autoblogging.pro",
+        "category": "Writing Generators",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 842,
+        "name": "NovelAI",
+        "link": "https://novelai.net",
+        "category": "Storyteller",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 843,
+        "name": "BrandScript Generator",
+        "link": "https://www.brandscriptgenerator.com",
+        "category": "Storyteller",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 845,
+        "name": "Autodraft",
+        "link": "https://autodraft.in",
+        "category": "Storyteller",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 862,
+        "name": "Subtxt",
+        "link": "https://subtxt.app",
+        "category": "Storyteller",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 865,
+        "name": "Novels AI",
+        "link": "https://novels-ai.com",
+        "category": "Storyteller",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 867,
+        "name": "One Panel",
+        "link": "https://onepanel.app",
+        "category": "Storyteller",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 878,
+        "name": "Anyword",
+        "link": "https://anyword.com",
+        "category": "Copywriting",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 921,
+        "name": "Bertha.ai",
+        "link": "https://bertha.ai",
+        "category": "Copywriting",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 946,
+        "name": "Embolden",
+        "link": "https://embolden.co",
+        "category": "Copywriting",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 992,
+        "name": "B7Labs",
+        "link": "https://b7labs.co",
+        "category": "Summarizer",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1025,
+        "name": "BandoFacile",
+        "link": "https://bandofacile.com",
+        "category": "Summarizer",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1077,
+        "name": "Cutout Pro",
+        "link": "https://www.cutout.pro",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1093,
+        "name": "Remove-BG.AI",
+        "link": "https://remove-bg.ai",
+        "category": "Design Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1115,
+        "name": "Kitkoo",
+        "link": "https://www.kitkoo.com",
+        "category": "Design Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1116,
+        "name": "Product Design Studio",
+        "link": "https://www.pietrastudio.com",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1121,
+        "name": "ON1 Photo RAW",
+        "link": "https://www.on1.com",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1126,
+        "name": "FLUX.1",
+        "link": "https://blackforestlabs.ai",
+        "category": "Design Generators",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1128,
+        "name": "AI Character Generator",
+        "link": "https://boords.com",
+        "category": "Design Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1140,
+        "name": "Augmenta",
+        "link": "https://www.augmenta.ai",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1141,
+        "name": "DreamStudio",
+        "link": "https://beta.dreamstudio.ai",
+        "category": "Design Generators",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1151,
+        "name": "Feathery",
+        "link": "http://feathery.ai",
+        "category": "Design Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1177,
+        "name": "Autoname",
+        "link": "https://www.autoname.org",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1178,
+        "name": "Banner GPT",
+        "link": "https://bannergpt.dabble.so",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1201,
+        "name": "ProductKit",
+        "link": "https://productkit.ai",
+        "category": "Design Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1209,
+        "name": "Remodel AI",
+        "link": "https://remodelai.co",
+        "category": "Design Generators",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1213,
+        "name": "Banani",
+        "link": "https://banani.co",
+        "category": "Design Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1243,
+        "name": "StarryAI",
+        "link": "https://starryai.com",
+        "category": "Image Generator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1258,
+        "name": "Bing Image Creator",
+        "link": "https://bing.com",
+        "category": "Image Generator",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1272,
+        "name": "My Real Estate Brochure",
+        "link": "https://myrealestatelisting.app",
+        "category": "Image Generator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1277,
+        "name": "Orbofi",
+        "link": "https://www.orbofi.com",
+        "category": "Image Generator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1278,
+        "name": "NextML",
+        "link": "https://www.nextml.com",
+        "category": "Image Generator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1289,
+        "name": "The Pet Painting",
+        "link": "https://thepetpainting.com",
+        "category": "Image Generator",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1298,
+        "name": "Novita.ai",
+        "link": "https://novita.ai",
+        "category": "Image Generator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1306,
+        "name": "BestBanner",
+        "link": "https://bestbanner.jina.ai",
+        "category": "Image Generator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1314,
+        "name": "No More Copyright",
+        "link": "https://nomorecopyright.com",
+        "category": "Image Generator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1326,
+        "name": "Foundation Men",
+        "link": "https://foundationmen.com",
+        "category": "Image Generator",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1365,
+        "name": "FaceSwap",
+        "link": "https://beautyai.fun",
+        "category": "Image Editing",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1367,
+        "name": "DeepSwap",
+        "link": "https://www.deepswap.ai",
+        "category": "Image Editing",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1368,
+        "name": "Pixelhunter",
+        "link": "https://pixelhunter.io",
+        "category": "Image Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1386,
+        "name": "Polarr Copilots",
+        "link": "https://www.copilot.polarr.co",
+        "category": "Image Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1388,
+        "name": "Avc.ai",
+        "link": "https://avc.ai",
+        "category": "Image Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1389,
+        "name": "Gemoo Snap",
+        "link": "https://gemoo.com",
+        "category": "Image Editing",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1401,
+        "name": "BG Remover",
+        "link": "https://bgremover.stockphotos.com",
+        "category": "Image Editing",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1425,
+        "name": "Openjourney Bot",
+        "link": "https://openjourneybot.com",
+        "category": "Image Editing",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1438,
+        "name": "Playbook AI",
+        "link": "https://www.playbook.com",
+        "category": "Cartoon Generators",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1449,
+        "name": "Character AI",
+        "link": "https://beta.character.ai",
+        "category": "Avatars",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1450,
+        "name": "Avaturn",
+        "link": "https://avaturn.me",
+        "category": "Avatars",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1451,
+        "name": "MindOS",
+        "link": "https://mindos.com",
+        "category": "Avatars",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1484,
+        "name": "Zoviz",
+        "link": "https://zoviz.com",
+        "category": "Logo Generator",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1488,
+        "name": "GET3D by NVIDIA",
+        "link": "https://nv-tlabs.github.io",
+        "category": "3D",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1498,
+        "name": "Yellow",
+        "link": "https://yellow3d.com",
+        "category": "3D",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1515,
+        "name": "DaVinci Resolve",
+        "link": "https://www.blackmagicdesign.com",
+        "category": "Video Enhancer",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1536,
+        "name": "2short.ai",
+        "link": "https://2short.ai",
+        "category": "Video Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1565,
+        "name": "BlinkVideo",
+        "link": "https://www.blinkvideo.ai",
+        "category": "Video Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1568,
+        "name": "AutoCut",
+        "link": "https://www.autocut.fr",
+        "category": "Video Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1582,
+        "name": "AutoPod",
+        "link": "https://www.autopod.fm",
+        "category": "Video Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1590,
+        "name": "DeepMake",
+        "link": "https://deepmake.com",
+        "category": "Video Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1600,
+        "name": "Shuffll",
+        "link": "https://shuffll.com",
+        "category": "Video Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1602,
+        "name": "Klap",
+        "link": "https://klap.app",
+        "category": "Video Generators",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1624,
+        "name": "Similar video",
+        "link": "https://similarvideo.ai",
+        "category": "Video Generators",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1644,
+        "name": "Atlabs",
+        "link": "https://atlabs.ai",
+        "category": "Text To Video",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1656,
+        "name": "Audyo",
+        "link": "https://audyo.ai",
+        "category": "Audio Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1658,
+        "name": "ElevenLabs",
+        "link": "http://elevenlabs.io",
+        "category": "Audio Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1668,
+        "name": "Deepgram",
+        "link": "https://deepgram.com",
+        "category": "Audio Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1691,
+        "name": "Audo Studio",
+        "link": "https://audo.ai",
+        "category": "Audio Editing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1692,
+        "name": "Aflorithmic",
+        "link": "https://aflorithmic.ai",
+        "category": "Audio Editing",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1724,
+        "name": "Beepbooply",
+        "link": "https://beepbooply.com",
+        "category": "Text To Speech",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1737,
+        "name": "Notevibes",
+        "link": "https://notevibes.com",
+        "category": "Text To Speech",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1738,
+        "name": "Podcraftr",
+        "link": "https://podcraftr.com",
+        "category": "Text To Speech",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1752,
+        "name": "TuneFlow",
+        "link": "https://tuneflow.com",
+        "category": "Music",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1762,
+        "name": "Evoke Music",
+        "link": "https://evokemusic.ai",
+        "category": "Music",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1770,
+        "name": "Weet",
+        "link": "https://weet.co",
+        "category": "Music",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1783,
+        "name": "AssemblyAI",
+        "link": "https://assemblyai.com",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1786,
+        "name": "NoteGenie",
+        "link": "https://notegenie.ai",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1796,
+        "name": "CopyFish",
+        "link": "https://ocr.space",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1811,
+        "name": "Voicetapp",
+        "link": "https://voicetapp.com",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1826,
+        "name": "Conformer",
+        "link": "https://www.assemblyai.com",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1837,
+        "name": "AudioNotes",
+        "link": "https://audionotes.app",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1838,
+        "name": "Wudpecker",
+        "link": "https://wudpecker.io",
+        "category": "Transcriber",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1845,
+        "name": "CTRify",
+        "link": "https://www.ctrify.com",
+        "category": "Website Builders",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1899,
+        "name": "FusionAds.ai",
+        "link": "https://l.fusionos.ai",
+        "category": "Marketing",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1922,
+        "name": "Zeda.io",
+        "link": "https://zeda.io",
+        "category": "Marketing",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1927,
+        "name": "Offrs",
+        "link": "https://offrs.com",
+        "category": "Marketing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1933,
+        "name": "Payman",
+        "link": "https://www.paymanai.com",
+        "category": "Marketing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1970,
+        "name": "Blend AI",
+        "link": "https://blend-ai.com",
+        "category": "Marketing",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 1976,
+        "name": "Vodex",
+        "link": "https://vodex.ai",
+        "category": "Marketing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 1996,
+        "name": "Passionfroot Discovery",
+        "link": "https://www.passionfroot.me",
+        "category": "Marketing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2013,
+        "name": "30characters",
+        "link": "https://30chars.com",
+        "category": "Marketing",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2051,
+        "name": "Axyon AI",
+        "link": "https://axyon.ai",
+        "category": "Finance",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2063,
+        "name": "Bluesheets",
+        "link": "https://www.bluesheets.ai",
+        "category": "Finance",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2065,
+        "name": "PrometAI",
+        "link": "https://prometai.app",
+        "category": "Finance",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2077,
+        "name": "Kofax",
+        "link": "https://www.kofax.com",
+        "category": "Finance",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2080,
+        "name": "Briq",
+        "link": "https://www.briq.com",
+        "category": "Finance",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2088,
+        "name": "Parcha",
+        "link": "https://www.parcha.com",
+        "category": "Finance",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2108,
+        "name": "Paddle",
+        "link": "https://www.paddle.com",
+        "category": "Finance",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2156,
+        "name": "Metaplane",
+        "link": "https://metaplane.dev",
+        "category": "Project Management",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 2159,
+        "name": "Nullify AI",
+        "link": "https://nullify.ai",
+        "category": "Project Management",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2229,
+        "name": "AutoResponder.ai",
+        "link": "https://www.autoresponder.ai",
+        "category": "Social Media",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2252,
+        "name": "HiFive",
+        "link": "http://hifivestar.com",
+        "category": "Social Media",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2275,
+        "name": "Nuelink",
+        "link": "https://nuelink.com",
+        "category": "Social Media",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2284,
+        "name": "Simplebio",
+        "link": "https://simplebio.co",
+        "category": "Social Media",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2294,
+        "name": "OpenRep",
+        "link": "https://www.openrep.ai",
+        "category": "Social Media",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2329,
+        "name": "Scribe",
+        "link": "https://scribehow.com",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2335,
+        "name": "CodeWiz",
+        "link": "https://codewiz.app",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2343,
+        "name": "Superintelligent",
+        "link": "https://besuper.ai",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2348,
+        "name": "QuantHUB",
+        "link": "https://www.quanthub.com",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2362,
+        "name": "Mindlogic",
+        "link": "https://mindlogic.ai",
+        "category": "Education",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 2365,
+        "name": "Yip",
+        "link": "https://yippity.io",
+        "category": "Education",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2370,
+        "name": "Aistote",
+        "link": "https://bento.me",
+        "category": "Education",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2376,
+        "name": "Nolej",
+        "link": "https://nolej.io",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2395,
+        "name": "NOOZ.AI",
+        "link": "https://nooz.ai",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2397,
+        "name": "AskNotion",
+        "link": "https://asknotion.app",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2403,
+        "name": "Automated Combat",
+        "link": "https://www.automatedcombat.com",
+        "category": "Education",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2406,
+        "name": "Muzify",
+        "link": "https://muzify.ai",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2408,
+        "name": "CollegeGrantWizard",
+        "link": "https://collegegrantwizard.com",
+        "category": "Education",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2430,
+        "name": "Automix.ai",
+        "link": "https://automix.ai",
+        "category": "Education",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2457,
+        "name": "LivePerson",
+        "link": "https://www.liveperson.com",
+        "category": "E-commerce",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2461,
+        "name": "Big Sur AI",
+        "link": "https://bigsur.ai",
+        "category": "E-commerce",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 2483,
+        "name": "Seo Juice",
+        "link": "https://seojuice.io",
+        "category": "E-commerce",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2511,
+        "name": "ShoppingBuddy",
+        "link": "https://shopping-buddy.netlify.app",
+        "category": "E-commerce",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2514,
+        "name": "Promi",
+        "link": "https://www.usepromi.com",
+        "category": "E-commerce",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2528,
+        "name": "Seo.ai",
+        "link": "https://seo.ai",
+        "category": "SEO",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2556,
+        "name": "BingBang.ai",
+        "link": "https://bingbang.ai",
+        "category": "SEO",
+        "reason": "DNS_NOT_FOUND",
+        "status": null,
+        "confirmed_dead": true
+      },
+      {
+        "line": 2581,
+        "name": "Simple Phones",
+        "link": "https://simplephones.ai",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2595,
+        "name": "NLPearl",
+        "link": "https://nlpearl.ai",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2605,
+        "name": "Assert AI",
+        "link": "https://www.assertai.com",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2609,
+        "name": "VOICEPLUG",
+        "link": "https://voiceplug.ai",
+        "category": "Customer Support",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2620,
+        "name": "AskToSell",
+        "link": "https://asktosell.com",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2632,
+        "name": "PolyAI",
+        "link": "https://www.polyai.com",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2635,
+        "name": "Observe.AI",
+        "link": "https://www.observe.ai",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2663,
+        "name": "Bella",
+        "link": "https://bellasales.io",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2665,
+        "name": "TalkStack",
+        "link": "https://talkstack.ai",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2678,
+        "name": "Senso",
+        "link": "https://senso.ai",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2699,
+        "name": "Automatic Chat",
+        "link": "https://automatic.chat",
+        "category": "Customer Support",
+        "reason": "TIMEOUT",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2700,
+        "name": "Chatspell",
+        "link": "https://chatspell.co",
+        "category": "Customer Support",
+        "reason": "SSL_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2711,
+        "name": "Shmooz.ai",
+        "link": "https://shmooz.ai",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2731,
+        "name": "HelpHub",
+        "link": "https://helphub.commandbar.com",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      },
+      {
+        "line": 2736,
+        "name": "ClientZen",
+        "link": "https://www.clientzen.io",
+        "category": "Customer Support",
+        "reason": "NETWORK_ERROR",
+        "status": null,
+        "confirmed_dead": false
+      }
+    ],
+    "duplicate_urls_top20": [],
+    "duplicate_names_top20": [
+      {
+        "name": "cody",
+        "count": 2
+      },
+      {
+        "name": "tidalflow",
+        "count": 2
+      },
+      {
+        "name": "chatshape",
+        "count": 2
+      },
+      {
+        "name": "chadview",
+        "count": 2
+      },
+      {
+        "name": "timemaster",
+        "count": 2
+      },
+      {
+        "name": "sixty",
+        "count": 2
+      },
+      {
+        "name": "nex",
+        "count": 2
+      },
+      {
+        "name": "zivy",
+        "count": 2
+      },
+      {
+        "name": "elicit",
+        "count": 2
+      },
+      {
+        "name": "chatpdf",
+        "count": 2
+      },
+      {
+        "name": "jenni",
+        "count": 2
+      },
+      {
+        "name": "quantplus",
+        "count": 2
+      },
+      {
+        "name": "afforai",
+        "count": 2
+      },
+      {
+        "name": "chartpixel",
+        "count": 2
+      },
+      {
+        "name": "beloga",
+        "count": 2
+      },
+      {
+        "name": "unriddle",
+        "count": 2
+      },
+      {
+        "name": "venturekit",
+        "count": 2
+      },
+      {
+        "name": "accio",
+        "count": 2
+      },
+      {
+        "name": "paperguide",
+        "count": 2
+      },
+      {
+        "name": "askcsv",
+        "count": 2
+      }
+    ]
+  }
+}

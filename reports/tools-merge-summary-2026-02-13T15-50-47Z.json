@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-02-13T15-50-47Z",
+  "base_source": "public/data/tools.cleaned.live.json",
+  "csv_source": "/mnt/c/Users/Aledari/Downloads/ai_tools_list_v2.strict.final.csv",
+  "csv_json_output": "public/data/tools.from-csv.strict.final.json",
+  "merged_output": "public/data/tools.merged.site-plus-csv.json",
+  "counts": {
+    "base_count": 99,
+    "csv_rows_valid": 9819,
+    "csv_skipped_duplicate_url_vs_base": 43,
+    "csv_skipped_duplicate_title_vs_base": 11,
+    "csv_added_to_merge": 9765,
+    "merged_total": 9864
+  }
+}
