@@ -120,7 +120,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                       <AvatarImage
                         src={session.user.user_metadata.avatar_url}
                         loading="eager"
-                        fetchPriority="high"
                       />
                       <AvatarFallback className="bg-neon-purple text-white">
                         {session.user.email?.charAt(0).toUpperCase()}
