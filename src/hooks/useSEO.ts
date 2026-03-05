@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface SEOProps {
   title?: string;
@@ -17,9 +18,6 @@ interface SEOProps {
 // Project Reference for dynamic OG images
 const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
 const SITE_URL = "https://amiraq.org";
-
-const DEFAULT_TITLE = 'نبض - دليل أدوات الذكاء الاصطناعي';
-const DEFAULT_DESCRIPTION = 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.';
 
 // Generate dynamic OG image URL from Supabase Edge Function
 const generateOgImage = (title?: string, category?: string): string => {
@@ -43,9 +41,15 @@ export const useSEO = ({
   lang = 'ar',
   toolName,
 }: SEOProps = {}) => {
+  const { t, i18n } = useTranslation();
+  const langKey = i18n.language === 'ar' ? 'ar' : 'en';
+
   useEffect(() => {
+    const DEFAULT_TITLE = t('seo.default_title', { defaultValue: 'نبض - دليل أدوات الذكاء الاصطناعي' });
+    const DEFAULT_DESCRIPTION = t('seo.default_desc', { defaultValue: 'نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية. اكتشف أفضل أدوات AI لعام 2026.' });
+
     // Set document title
-    const fullTitle = title ? `${title} | نبض AI` : DEFAULT_TITLE;
+    const fullTitle = title ? `${title} | ${t('brand.name', { defaultValue: 'نبض' })} AI` : DEFAULT_TITLE;
     document.title = fullTitle;
 
     // Set document language attribute
@@ -106,8 +110,8 @@ export const useSEO = ({
     setMetaTag('og:image:width', '1200', true);
     setMetaTag('og:image:height', '630', true);
     setMetaTag('og:type', ogType, true);
-    setMetaTag('og:site_name', 'نبض AI', true);
-    setMetaTag('og:locale', lang === 'ar' ? 'ar_SA' : 'en_US', true);
+    setMetaTag('og:site_name', `${t('brand.name', { defaultValue: 'نبض' })} AI`, true);
+    setMetaTag('og:locale', langKey === 'ar' ? 'ar_SA' : 'en_US', true);
 
     // Twitter tags
     setMetaTag('twitter:card', 'summary_large_image');
@@ -130,7 +134,7 @@ export const useSEO = ({
     return () => {
       document.title = DEFAULT_TITLE;
     };
-  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, lang, toolName]);
+  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, langKey, toolName, t]);
 };
 
 export default useSEO;

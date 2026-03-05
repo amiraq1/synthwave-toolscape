@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface AdminToolsTableProps {
   tools: Tool[];
@@ -27,6 +28,7 @@ interface AdminToolsTableProps {
 }
 
 const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -39,14 +41,14 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
   );
 
   const handleDelete = async (id: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذه الأداة نهائياً؟")) return;
+    if (!confirm(t('admin.tools.confirm_delete'))) return;
 
     const { error } = await supabase.from('tools').delete().eq('id', Number(id));
 
     if (error) {
-      toast.error("فشل الحذف");
+      toast.error(t('admin.tools.delete_error'));
     } else {
-      toast.success("تم الحذف بنجاح");
+      toast.success(t('admin.tools.delete_success'));
       onUpdate();
     }
   };
@@ -58,9 +60,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast.error(t('common.error'));
     } else {
-      toast.success(tool.is_featured ? "تم إزالة التمييز" : "تم تمييز الأداة");
+      toast.success(tool.is_featured ? t('admin.tools.unfeatured_success') : t('admin.tools.featured_success'));
       onUpdate();
     }
   };
@@ -72,9 +74,9 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       .eq('id', Number(tool.id));
 
     if (error) {
-      toast.error("حدث خطأ");
+      toast.error(t('common.error'));
     } else {
-      toast.success(tool.is_published ? "تم إخفاء الأداة" : "تم نشر الأداة");
+      toast.success(tool.is_published ? t('admin.tools.hidden_success') : t('admin.tools.published_success'));
       onUpdate();
     }
   };
@@ -89,7 +91,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
         <Search className="w-5 h-5 text-gray-400" />
         <Input
-          placeholder="بحث في الأدوات..."
+          placeholder={t('admin.tools.search_placeholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-none bg-transparent focus-visible:ring-0"
@@ -100,10 +102,10 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
         <Table>
           <TableHeader className="bg-white/5">
             <TableRow>
-              <TableHead className="text-right">الأداة</TableHead>
-              <TableHead className="text-right">الحالة</TableHead>
-              <TableHead className="text-right">التصنيف</TableHead>
-              <TableHead className="text-right">الإجراءات</TableHead>
+              <TableHead className="text-start">{t('admin.tools.col_tool')}</TableHead>
+              <TableHead className="text-start">{t('admin.tools.col_status')}</TableHead>
+              <TableHead className="text-start">{t('admin.tools.col_category')}</TableHead>
+              <TableHead className="text-start">{t('admin.tools.col_actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,11 +132,11 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <Badge variant={tool.is_published ? "default" : "secondary"} className={tool.is_published ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"}>
-                        {tool.is_published ? "منشور" : "مسودة"}
+                        {tool.is_published ? t('admin.tools.status_published') : t('admin.tools.status_draft')}
                       </Badge>
                       {tool.is_featured && (
                         <Badge variant="outline" className="border-purple-500/50 text-purple-400">
-                          ⭐ مميز
+                          {t('admin.tools.status_featured')}
                         </Badge>
                       )}
                     </div>
@@ -149,28 +151,28 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>إجراءات</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t('admin.tools.col_actions')}</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => handleEdit(tool)}>
-                          <Edit className="mr-2 h-4 w-4" /> تعديل
+                          <Edit className="mr-2 h-4 w-4" /> {t('admin.tools.action_edit')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => togglePublished(tool)}>
                           {tool.is_published ? (
-                            <><XCircle className="mr-2 h-4 w-4" /> إخفاء</>
+                            <><XCircle className="mr-2 h-4 w-4" /> {t('admin.tools.action_hide')}</>
                           ) : (
-                            <><CheckCircle className="mr-2 h-4 w-4" /> نشر</>
+                            <><CheckCircle className="mr-2 h-4 w-4" /> {t('admin.tools.action_publish')}</>
                           )}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
-                          <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? "إزالة التمييز" : "تمييز"}
+                          <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? t('admin.tools.action_unfeature') : t('admin.tools.action_feature')}
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" /> زيارة الموقع
+                            <ExternalLink className="mr-2 h-4 w-4" /> {t('admin.tools.action_visit')}
                           </a>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(tool.id)} className="text-red-600 focus:text-red-600">
-                          <Trash2 className="mr-2 h-4 w-4" /> حذف
+                          <Trash2 className="mr-2 h-4 w-4" /> {t('admin.tools.action_delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -180,7 +182,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  لا توجد أدوات مطابقة للبحث.
+                  {t('admin.tools.no_results')}
                 </TableCell>
               </TableRow>
             )}
@@ -189,7 +191,7 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
       </div>
 
       <div className="text-xs text-gray-500 text-center">
-        يتم عرض {filteredTools.length} أداة من أصل {tools.length}
+        {t('admin.tools.displaying', { count: filteredTools.length, total: tools.length })}
       </div>
 
       {/* Dialog for editing */}

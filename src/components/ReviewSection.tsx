@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Star, ThumbsUp, Filter, ArrowUpDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -25,6 +27,7 @@ interface ReviewData {
 
 const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
   const { session } = useAuth();
+  const { t, i18n } = useTranslation();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -76,16 +79,15 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
 
   // دالة وهمية للتصويت
   const handleHelpful = (_reviewId: string) => {
-    toast.success("شكراً على تصويتك! 👍");
+    toast.success(t('reviews.thanks_vote'));
   };
 
   return (
-    <div className="bg-white/5 rounded-2xl p-6 border border-white/10" id="reviews-section" dir="rtl">
+    <div className="bg-white/5 rounded-2xl p-6 border border-white/10" id="reviews-section" dir={i18n.dir()}>
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h3 className="text-2xl font-bold text-white flex items-center gap-2">
           <Star className="text-yellow-400 fill-yellow-400" />
-          مراجعات المستخدمين
-          <span className="text-sm font-normal text-gray-400">({reviews.length})</span>
+          {t('reviews.title', { count: reviews.length })}
         </h3>
 
         {/* أدوات التحكم (الفلترة والفرز) */}
@@ -94,11 +96,11 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
           {/* قائمة التصفية (النجوم) */}
           <Select value={filterRating} onValueChange={setFilterRating}>
             <SelectTrigger className="w-[140px] bg-black/20 border-white/10 text-white">
-              <Filter className="w-4 h-4 mr-2 text-gray-400" />
-              <SelectValue placeholder="تصفية" />
+              <Filter className={cn("w-4 h-4 text-gray-400", i18n.dir() === 'rtl' ? "ml-2" : "mr-2")} />
+              <SelectValue placeholder={t('reviews.filter')} />
             </SelectTrigger>
             <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
-              <SelectItem value="all">الكل</SelectItem>
+              <SelectItem value="all">{t('reviews.filter_all')}</SelectItem>
               <SelectItem value="5">⭐⭐⭐⭐⭐ (5)</SelectItem>
               <SelectItem value="4">⭐⭐⭐⭐ (4)</SelectItem>
               <SelectItem value="3">⭐⭐⭐ (3)</SelectItem>
@@ -110,14 +112,14 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
           {/* قائمة الفرز (الترتيب) */}
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-[140px] bg-black/20 border-white/10 text-white">
-              <ArrowUpDown className="w-4 h-4 mr-2 text-gray-400" />
-              <SelectValue placeholder="ترتيب" />
+              <ArrowUpDown className={cn("w-4 h-4 text-gray-400", i18n.dir() === 'rtl' ? "ml-2" : "mr-2")} />
+              <SelectValue placeholder={t('reviews.sort')} />
             </SelectTrigger>
             <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
-              <SelectItem value="newest">الأحدث</SelectItem>
-              <SelectItem value="oldest">الأقدم</SelectItem>
-              <SelectItem value="highest">الأعلى تقييماً</SelectItem>
-              <SelectItem value="lowest">الأقل تقييماً</SelectItem>
+              <SelectItem value="newest">{t('reviews.sort_newest')}</SelectItem>
+              <SelectItem value="oldest">{t('reviews.sort_oldest')}</SelectItem>
+              <SelectItem value="highest">{t('reviews.sort_highest')}</SelectItem>
+              <SelectItem value="lowest">{t('reviews.sort_lowest')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -126,17 +128,17 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
       {/* قائمة المراجعات */}
       <div className="space-y-6">
         {loading ? (
-          <div className="text-center py-10 text-gray-500">جاري تحميل المراجعات...</div>
+          <div className="text-center py-10 text-gray-500">{t('reviews.loading')}</div>
         ) : reviews.length > 0 ? (
           reviews.map((review) => (
             <div key={review.id} className="border-b border-white/5 last:border-0 pb-6 animate-in fade-in">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-neon-purple to-blue-500 flex items-center justify-center text-white font-bold">
-                    {review.profiles?.full_name?.[0] || "م"}
+                    {review.profiles?.full_name?.[0] || t('reviews.anonymous')[0]}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm">{review.profiles?.full_name || "مستخدم مجهول"}</h4>
+                    <h4 className="font-bold text-white text-sm">{review.profiles?.full_name || t('reviews.anonymous')}</h4>
                     <div className="flex text-yellow-400 text-xs mt-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star key={i} className={`w-3 h-3 ${i < review.rating ? "fill-current" : "text-gray-600"}`} />
@@ -145,29 +147,29 @@ const ReviewSection = ({ toolId }: ReviewsSectionProps) => {
                   </div>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {new Date(review.created_at).toLocaleDateString('ar-EG')}
+                  {new Date(review.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US')}
                 </span>
               </div>
 
-              <p className="text-gray-300 text-sm leading-relaxed mt-2 pl-12">
+              <p className={cn("text-gray-300 text-sm leading-relaxed mt-2", i18n.dir() === 'rtl' ? "pr-12" : "pl-12")}>
                 {review.comment}
               </p>
 
               {/* زر "مفيد" */}
-              <div className="pl-12 mt-3">
+              <div className={cn("mt-3", i18n.dir() === 'rtl' ? "pr-12" : "pl-12")}>
                 <button
                   onClick={() => handleHelpful(review.id)}
                   className="flex items-center gap-1 text-xs text-gray-500 hover:text-white transition-colors group"
                 >
                   <ThumbsUp className="w-3 h-3 group-hover:text-neon-purple" />
-                  مفيد
+                  {t('reviews.helpful')}
                 </button>
               </div>
             </div>
           ))
         ) : (
           <div className="text-center py-10 text-gray-500">
-            لا توجد مراجعات حتى الآن. كن أول من يكتب مراجعة!
+            {t('reviews.empty')}
           </div>
         )}
       </div>

@@ -3,8 +3,10 @@ import { Activity, Users, Target, Zap, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+    const { t } = useTranslation();
     useSEO({
         title: 'حول نبض - دليل أدوات الذكاء الاصطناعي',
         description: 'تعرف على نبض، الدليل العربي الشامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك.',
@@ -14,18 +16,18 @@ const About = () => {
     const features = [
         {
             icon: Target,
-            title: 'مهمتنا',
-            description: 'تسهيل اكتشاف أدوات الذكاء الاصطناعي للمستخدم العربي وتوفير دليل شامل ومحدث.',
+            title: t('about.mission_title'),
+            description: t('about.mission_desc'),
         },
         {
             icon: Users,
-            title: 'لمن نبض؟',
-            description: 'للمبدعين، رواد الأعمال، المطورين، الكتّاب، المصممين، وكل من يريد تعزيز إنتاجيته.',
+            title: t('about.who_title'),
+            description: t('about.who_desc'),
         },
         {
             icon: Zap,
-            title: 'لماذا نبض؟',
-            description: 'نقدم تصنيفات دقيقة، تقييمات حقيقية، ومعلومات محدثة عن أحدث أدوات AI.',
+            title: t('about.why_title'),
+            description: t('about.why_desc'),
         },
     ];
 
@@ -41,7 +43,7 @@ const About = () => {
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                             <ArrowRight className="h-5 w-5" />
-                            العودة للرئيسية
+                            {t('nav.back_home')}
                         </Button>
                     </Link>
                 </div>
@@ -57,10 +59,10 @@ const About = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        حول نبض
+                        {t('about.title')}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                        نبض هو دليلك الذكي لاكتشاف أفضل أدوات الذكاء الاصطناعي التي ستغير طريقة عملك وإبداعك.
+                        {t('about.subtitle')}
                     </p>
                 </section>
 
@@ -82,34 +84,26 @@ const About = () => {
 
                 {/* Story Section */}
                 <section className="glass rounded-3xl p-8 md:p-12 space-y-6">
-                    <h2 className="text-3xl font-bold text-foreground">قصتنا</h2>
+                    <h2 className="text-3xl font-bold text-foreground">{t('about.story_title')}</h2>
                     <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
-                        <p>
-                            بدأ نبض كفكرة بسيطة: توفير مكان واحد يجمع أفضل أدوات الذكاء الاصطناعي للمستخدم العربي.
-                        </p>
-                        <p>
-                            مع انتشار أدوات AI بشكل سريع، أصبح من الصعب متابعة كل جديد وتحديد الأدوات المناسبة لاحتياجاتك.
-                            هنا يأتي دور نبض - نقوم بالبحث والتقييم نيابة عنك.
-                        </p>
-                        <p>
-                            نؤمن بأن الذكاء الاصطناعي يجب أن يكون متاحاً للجميع، ونسعى لتقديم محتوى عربي عالي الجودة
-                            يساعدك في اتخاذ قرارات مدروسة.
-                        </p>
+                        <p>{t('about.story_p1')}</p>
+                        <p>{t('about.story_p2')}</p>
+                        <p>{t('about.story_p3')}</p>
                     </div>
                 </section>
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <h2 className="text-2xl font-bold text-foreground">هل أنت مستعد لاستكشاف أدوات المستقبل؟</h2>
+                    <h2 className="text-2xl font-bold text-foreground">{t('about.cta')}</h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         <Link to="/">
                             <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                                تصفح الأدوات
+                                {t('about.browse_tools')}
                             </Button>
                         </Link>
                         <Link to="/contact">
                             <Button size="lg" variant="outline">
-                                تواصل معنا
+                                {t('about.contact_us')}
                             </Button>
                         </Link>
                     </div>

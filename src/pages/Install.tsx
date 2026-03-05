@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Activity, Download, Smartphone, CheckCircle, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -13,6 +14,7 @@ const Install = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Check if already installed
@@ -42,11 +44,11 @@ const Install = () => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       setIsInstalled(true);
     }
-    
+
     setDeferredPrompt(null);
   };
 
@@ -64,7 +66,7 @@ const Install = () => {
               <Activity className="h-12 w-12 text-white" />
             </div>
             <h1 className="text-3xl">
-              <span className="font-extrabold gradient-text">نبض</span>
+              <span className="font-extrabold gradient-text">{t('brand.name')}</span>
               <span className="font-medium text-foreground/80 mr-1">AI</span>
             </h1>
           </div>
@@ -73,41 +75,41 @@ const Install = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-center gap-2 text-emerald-400">
                 <CheckCircle className="h-6 w-6" />
-                <span className="text-xl font-semibold">التطبيق مثبت!</span>
+                <span className="text-xl font-semibold">{t('install.installed_title')}</span>
               </div>
               <p className="text-muted-foreground">
-                يمكنك الآن استخدام نبض AI من الشاشة الرئيسية
+                {t('install.installed_desc')}
               </p>
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                العودة للرئيسية
+                {t('nav.back_home')}
               </Button>
             </div>
           ) : isIOS ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">ثبت التطبيق على جهازك</span>
+                <span className="text-xl font-semibold">{t('install.ios_title')}</span>
               </div>
-              
+
               <div className="space-y-4 text-right">
                 <p className="text-muted-foreground">
-                  لتثبيت التطبيق على iPhone أو iPad:
+                  {t('install.ios_desc')}
                 </p>
                 <ol className="space-y-3 text-foreground">
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">1</span>
-                    <span>اضغط على أيقونة المشاركة <Share className="inline h-4 w-4 mx-1" /> في أسفل المتصفح</span>
+                    <span>{t('install.ios_step1')} <Share className="inline h-4 w-4 mx-1" /></span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">2</span>
-                    <span>مرر للأسفل واختر "إضافة إلى الشاشة الرئيسية"</span>
+                    <span>{t('install.ios_step2')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">3</span>
-                    <span>اضغط "إضافة" في الزاوية العليا</span>
+                    <span>{t('install.ios_step3')}</span>
                   </li>
                 </ol>
               </div>
@@ -117,18 +119,18 @@ const Install = () => {
                 variant="outline"
                 className="w-full py-6 text-lg border-border/50"
               >
-                العودة للرئيسية
+                {t('nav.back_home')}
               </Button>
             </div>
           ) : deferredPrompt ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-neon-purple">
                 <Download className="h-6 w-6" />
-                <span className="text-xl font-semibold">ثبت التطبيق</span>
+                <span className="text-xl font-semibold">{t('install.prompt_title')}</span>
               </div>
-              
+
               <p className="text-muted-foreground">
-                ثبت نبض AI على جهازك للوصول السريع والعمل بدون إنترنت
+                {t('install.prompt_desc')}
               </p>
 
               <div className="space-y-3">
@@ -137,15 +139,15 @@ const Install = () => {
                   className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg gap-2"
                 >
                   <Download className="h-5 w-5" />
-                  تثبيت التطبيق
+                  {t('install.install_btn')}
                 </Button>
-                
+
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
                   className="w-full py-6 text-lg border-border/50"
                 >
-                  ليس الآن
+                  {t('install.not_now')}
                 </Button>
               </div>
             </div>
@@ -153,18 +155,18 @@ const Install = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-center gap-2 text-muted-foreground">
                 <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">تصفح الآن</span>
+                <span className="text-xl font-semibold">{t('install.browse_title')}</span>
               </div>
-              
+
               <p className="text-muted-foreground">
-                يمكنك تثبيت التطبيق من قائمة المتصفح أو استخدامه مباشرة
+                {t('install.browse_desc')}
               </p>
 
               <Button
                 onClick={() => navigate('/')}
                 className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
               >
-                استكشف الأدوات
+                {t('install.explore')}
               </Button>
             </div>
           )}

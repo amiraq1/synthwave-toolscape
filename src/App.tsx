@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 
 // Lazy Load Pages
@@ -50,14 +51,15 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleAddClick = () => {
     if (!user) {
-      toast.error("يجب تسجيل الدخول للمشاركة", {
-        description: "سجل دخولك لإضافة أداة جديدة",
+      toast.error(t("auth.login_required"), {
+        description: t("auth.login_required_desc"),
       });
       return;
     }

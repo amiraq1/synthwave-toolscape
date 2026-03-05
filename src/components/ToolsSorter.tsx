@@ -60,7 +60,7 @@ export const ToolsSorter: React.FC<ToolsSorterProps> = ({ className, onSortChang
                 className
             )}
             role="radiogroup"
-            aria-label="Sort AI Tools"
+            aria-label="ترتيب أدوات الذكاء الاصطناعي"
         >
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('/noise.png')]" />
 

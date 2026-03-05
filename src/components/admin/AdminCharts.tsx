@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, PieChart as PieChartIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Tool {
     category: string;
@@ -27,6 +28,7 @@ interface AdminChartsProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a0c4ff', '#bdb2ff'];
 
 const AdminCharts = ({ tools }: AdminChartsProps) => {
+    const { t, i18n } = useTranslation();
 
     // 1. Prepare data for Category Distribution (Pie Chart)
     const categoryData = useMemo(() => {
@@ -50,7 +52,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
         // Initialize last 6 months with 0
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            const key = d.toLocaleString('en-US', { month: 'short' });
+            const key = d.toLocaleString(i18n.language === 'ar' ? 'ar-IQ' : 'en-US', { month: 'short' });
             months[key] = 0;
         }
 
@@ -62,7 +64,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays <= 180) { // Approx 6 months
-                    const key = date.toLocaleString('en-US', { month: 'short' });
+                    const key = date.toLocaleString(i18n.language === 'ar' ? 'ar-IQ' : 'en-US', { month: 'short' });
                     if (Object.prototype.hasOwnProperty.call(months, key)) {
                         months[key]++;
                     }
@@ -80,7 +82,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
                         <PieChartIcon className="w-4 h-4 text-neon-purple" />
-                        توزيع التصنيفات
+                        {t('admin.charts.category_dist')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -117,7 +119,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-sm font-medium text-gray-300">
                         <BarChart3 className="w-4 h-4 text-blue-400" />
-                        النمو الشهري
+                        {t('admin.charts.monthly_growth')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -131,7 +133,7 @@ const AdminCharts = ({ tools }: AdminChartsProps) => {
                                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                                     contentStyle={{ backgroundColor: '#1a1a2e', borderColor: '#333', color: '#fff' }}
                                 />
-                                <Bar dataKey="count" fill="#7c3aed" radius={[4, 4, 0, 0]} name="الأدوات" />
+                                <Bar dataKey="count" fill="#7c3aed" radius={[4, 4, 0, 0]} name={t('admin.charts.tools_count')} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

@@ -129,8 +129,8 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               ? "bg-neon-purple text-white shadow-neon-purple/20 scale-100 opacity-100"
               : "bg-black/40 text-gray-300 hover:bg-neon-purple hover:text-white"
           )}
-          title={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
-          aria-label={isCompared ? "إزالة من المقارنة" : "إضافة للمقارنة"}
+          title={isCompared ? t("tools.remove_compare") : t("tools.add_compare")}
+          aria-label={isCompared ? t("tools.remove_compare") : t("tools.add_compare")}
         >
           <Scale className="w-4 h-4" />
         </button>
@@ -146,18 +146,18 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
       <div className="absolute top-3 right-12 z-10 flex gap-2">
         {isSponsored && (
           <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold text-[10px] px-2 py-0.5 border-0 gap-1">
-            <Crown className="w-3 h-3" /> ممول
+            <Crown className="w-3 h-3" /> {t("tools.sponsored")}
           </Badge>
         )}
         {isNew && !isSponsored && (
           <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold text-[10px] px-2 py-0.5 border-0 gap-1 animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.5)]">
-            <Clock className="w-3 h-3" /> جديد
+            <Clock className="w-3 h-3" /> {t("tools.new")}
           </Badge>
         )}
       </div>
 
       {/* 2. المحتوى */}
-      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={`عرض تفاصيل ${displayTitle}`}>
+      <Link to={`/tool/${tool.id}`} className="flex flex-col h-full" aria-label={t('tools.view_details', { title: displayTitle })}>
         <div className="p-6 flex flex-col h-full">
 
           {/* العنوان والأيقونة */}
@@ -228,7 +228,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
             </Badge>
             {supportsArabic && (
               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1">
-                <Languages className="w-3 h-3" /> عربي
+                <Languages className="w-3 h-3" /> {t("tools.arabic")}
               </Badge>
             )}
           </div>
@@ -237,7 +237,7 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
             <span className="flex items-center gap-1 text-gray-400 group-hover:text-gray-300">
               <Zap className="w-3 h-3 text-neon-purple" aria-hidden="true" />
-              AI Powered
+              {t('tools.ai_powered')}
             </span>
             <span
               className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"

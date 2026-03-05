@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { BlogPost } from "@/types";
 
 const Blog = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,16 +32,16 @@ const Blog = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={i18n.dir()}>
       {/* هيدر بسيط للمدونة */}
       <div className="bg-black/40 border-b border-white/5 py-12 mb-10">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3 text-white">
             <BookOpen className="text-neon-purple" />
-            {t('nav.blog')}
+            {t('blog.title')}
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            أحدث المقالات والأخبار حول أدوات الذكاء الاصطناعي، شروحات، ونصائح حصرية.
+            {t('blog.subtitle')}
           </p>
         </div>
       </div>
@@ -56,10 +56,10 @@ const Blog = () => {
         ) : (
           <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/10">
             <h2 className="text-2xl font-bold mb-2">
-              لا توجد مقالات بعد
+              {t('blog.no_posts')}
             </h2>
             <p className="text-gray-400">
-              نحن نكتب مقالات رائعة حالياً، عد قريباً! ✍️
+              {t('blog.no_posts_desc')}
             </p>
           </div>
         )}

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { ArrowRight, ArrowLeft, Calendar, Clock, Eye } from "lucide-react";
 import dayjs from "dayjs";
 import 'dayjs/locale/ar';
-dayjs.locale('ar');
 
 interface BlogPost {
     id: string;
@@ -20,6 +21,14 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
+    const { t, i18n } = useTranslation();
+    const isRtl = i18n.dir() === 'rtl';
+    const ReadMoreArrow = isRtl ? ArrowLeft : ArrowRight;
+
+    useEffect(() => {
+        dayjs.locale(i18n.language.startsWith('ar') ? 'ar' : 'en');
+    }, [i18n.language]);
+
     // استخدام المقتطف إذا وجد، أو أخذ أول 100 حرف من المحتوى
     const summary = post.excerpt || post.content?.substring(0, 120) + "..." || "";
 
@@ -43,12 +52,12 @@ const BlogCard = ({ post }: BlogCardProps) => {
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{dayjs(post.created_at).locale('ar').format("D MMMM YYYY")}</span>
+                        <span>{dayjs(post.created_at).locale(i18n.language.startsWith('ar') ? 'ar' : 'en').format("D MMMM YYYY")}</span>
                     </div>
                     {post.reading_time && (
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            <span>{post.reading_time} دقيقة</span>
+                            <span>{t('blog.read_time', { count: post.reading_time })}</span>
                         </div>
                     )}
                     {typeof post.views_count === 'number' && (
@@ -77,8 +86,8 @@ const BlogCard = ({ post }: BlogCardProps) => {
                     to={`/blog/${post.id}`}
                     className="inline-flex items-center gap-2 text-neon-purple font-semibold text-sm transition-all group/link"
                 >
-                    <span>قراءة المزيد</span>
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-[-5px]" />
+                    <span>{t('common.read_more')}</span>
+                    <ReadMoreArrow className={`w-4 h-4 transition-transform duration-300 ${isRtl ? 'group-hover/link:-translate-x-1' : 'group-hover/link:translate-x-1'}`} />
                 </Link>
             </div>
         </article>

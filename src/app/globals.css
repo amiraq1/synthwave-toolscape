@@ -1,0 +1,12 @@
+/* src/app/globals.css */
+/* تأكد من إضافة إعدادات Tailwind CSS الافتراضية هنا. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neutral-50;
+  }
+}

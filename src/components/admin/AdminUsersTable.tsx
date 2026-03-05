@@ -23,6 +23,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 interface UserWithRole {
   id: string;
@@ -41,6 +42,7 @@ interface AdminUserRpcResponse {
 }
 
 const AdminUsersTable = () => {
+  const { t, i18n } = useTranslation();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
@@ -65,9 +67,9 @@ const AdminUsersTable = () => {
 
       setUsers(usersWithRoles);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'فشل في جلب المستخدمين';
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.fetch_error');
       toast({
-        title: 'خطأ',
+        title: t('common.error'),
         description: errorMessage,
         variant: 'destructive',
       });
@@ -113,15 +115,15 @@ const AdminUsersTable = () => {
       }
 
       toast({
-        title: 'تم التحديث',
-        description: `تم تحديث صلاحيات ${user.display_name || user.email}`,
+        title: t('admin.users.update_success'),
+        description: t('admin.users.update_success_desc', { name: user.display_name || user.email }),
       });
 
       fetchUsers();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'فشل في تحديث الصلاحيات';
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.update_error');
       toast({
-        title: 'خطأ',
+        title: t('common.error'),
         description: errorMessage,
         variant: 'destructive',
       });
@@ -137,20 +139,20 @@ const AdminUsersTable = () => {
         return (
           <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
             <ShieldCheck className="h-3 w-3 ml-1" />
-            مدير
+            {t('admin.users.role_admin')}
           </Badge>
         );
       case 'moderator':
         return (
           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
             <Shield className="h-3 w-3 ml-1" />
-            مشرف
+            {t('admin.users.role_moderator')}
           </Badge>
         );
       default:
         return (
           <Badge variant="secondary" className="bg-muted text-muted-foreground">
-            مستخدم
+            {t('admin.users.role_user')}
           </Badge>
         );
     }
@@ -167,17 +169,17 @@ const AdminUsersTable = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">إدارة المستخدمين ({users.length})</h2>
+        <h2 className="text-xl font-bold">{t('admin.users.manage_title', { count: users.length })}</h2>
       </div>
 
       <div className="rounded-lg border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="text-right">المستخدم</TableHead>
-              <TableHead className="text-right">الصلاحية</TableHead>
-              <TableHead className="text-right">تاريخ التسجيل</TableHead>
-              <TableHead className="text-right">الإجراءات</TableHead>
+              <TableHead className="text-start">{t('admin.users.col_user')}</TableHead>
+              <TableHead className="text-start">{t('admin.users.col_role')}</TableHead>
+              <TableHead className="text-start">{t('admin.users.col_joined')}</TableHead>
+              <TableHead className="text-start">{t('admin.tools.col_actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -185,13 +187,13 @@ const AdminUsersTable = () => {
               <TableRow key={user.id}>
                 <TableCell>
                   <div>
-                    <p className="font-medium">{user.display_name || 'بدون اسم'}</p>
+                    <p className="font-medium">{user.display_name || t('admin.users.no_name')}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </TableCell>
                 <TableCell>{getRoleBadge(user.role)}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {new Date(user.created_at).toLocaleDateString('ar-IQ')}
+                  {new Date(user.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-IQ' : 'en-US')}
                 </TableCell>
                 <TableCell>
                   {user.id !== currentUser?.id ? (
@@ -228,7 +230,7 @@ const AdminUsersTable = () => {
                       )}
                     </div>
                   ) : (
-                    <Badge variant="outline" className="text-xs">أنت</Badge>
+                    <Badge variant="outline" className="text-xs">{t('admin.users.you')}</Badge>
                   )}
                 </TableCell>
               </TableRow>
@@ -239,25 +241,27 @@ const AdminUsersTable = () => {
 
       {/* Role Change Confirmation */}
       <AlertDialog open={!!roleChangeUser} onOpenChange={() => setRoleChangeUser(null)}>
-        <AlertDialogContent dir="rtl">
+        <AlertDialogContent dir={i18n.dir()}>
           <AlertDialogHeader>
-            <AlertDialogTitle>تغيير الصلاحيات</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.users.dialog_change_role')}</AlertDialogTitle>
             <AlertDialogDescription>
               {roleChangeUser?.newRole === null
-                ? `هل تريد إزالة جميع الصلاحيات من "${roleChangeUser?.user.display_name || roleChangeUser?.user.email}"؟`
-                : `هل تريد منح "${roleChangeUser?.user.display_name || roleChangeUser?.user.email}" صلاحية ${roleChangeUser?.newRole === 'admin' ? 'المدير' : 'المشرف'
-                }؟`
+                ? t('admin.users.dialog_remove_desc', { name: roleChangeUser?.user.display_name || roleChangeUser?.user.email })
+                : t('admin.users.dialog_grant_desc', {
+                  name: roleChangeUser?.user.display_name || roleChangeUser?.user.email,
+                  role: roleChangeUser?.newRole === 'admin' ? t('admin.users.role_admin') : t('admin.users.role_moderator')
+                })
               }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row-reverse gap-2">
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRoleChange}
               disabled={isUpdating}
             >
               {isUpdating && <Loader2 className="h-4 w-4 animate-spin ml-2" />}
-              تأكيد
+              {t('admin.users.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

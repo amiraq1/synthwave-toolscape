@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { Loader2, Mail, Lock, CircuitBoard, Sparkles, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,6 +15,7 @@ const Auth = () => {
     const { signIn, signUp, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { t } = useTranslation();
 
     // Redirect after login (default to home)
     const from = searchParams.get("from") || "/";
@@ -32,18 +34,18 @@ const Auth = () => {
             if (isLogin) {
                 const { error } = await signIn(formData.email, formData.password);
                 if (error) throw error;
-                toast.success("تم تسجيل الدخول بنجاح");
+                toast.success(t("auth.login_success"));
                 navigate(from);
             } else {
                 const { error } = await signUp(formData.email, formData.password, formData.fullName);
                 if (error) throw error;
-                toast.success("تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني.");
+                toast.success(t("auth.signup_success"));
                 setIsLogin(true);
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : undefined;
-            toast.error("حدث خطأ", {
-                description: message || "يرجى المحاولة لاحقاً",
+            toast.error(t("auth.error"), {
+                description: message || t("auth.try_later"),
             });
         } finally {
             setLoading(false);
@@ -58,8 +60,8 @@ const Auth = () => {
             // Google redirect happens automatically
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : undefined;
-            toast.error("حدث خطأ", {
-                description: message || "يرجى المحاولة لاحقاً",
+            toast.error(t("auth.error"), {
+                description: message || t("auth.try_later"),
             });
             setLoading(false);
         }
@@ -68,7 +70,7 @@ const Auth = () => {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0f0f1a]" dir="rtl" role="main">
             <Helmet>
-                <title>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"} | نبض AI</title>
+                <title>{isLogin ? t("auth.login") : t("auth.signup")} | نبض AI</title>
             </Helmet>
 
             {/* Animated Background Elements */}
@@ -85,26 +87,26 @@ const Auth = () => {
                             <CircuitBoard className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-2">
-                            {isLogin ? "مرحباً بعودتك" : "انضم إلى نبض AI"}
+                            {isLogin ? t("auth.welcome_back") : t("auth.join")}
                         </h1>
                         <p className="text-gray-400 text-sm">
                             {isLogin
-                                ? "سجّل الدخول للوصول إلى أدواتك المحفوظة"
-                                : "اكتشف أدوات ذكاء اصطناعي عالية التأثير معنا"}
+                                ? t("auth.login_subtitle")
+                                : t("auth.signup_subtitle")}
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
                             <div className="space-y-2">
-                                <Label htmlFor="fullName" className="text-gray-300">الاسم الكامل</Label>
+                                <Label htmlFor="fullName" className="text-gray-300">{t("auth.fullname")}</Label>
                                 <div className="relative">
                                     <Input
                                         id="fullName"
                                         type="text"
                                         required
                                         autoComplete="name"
-                                        placeholder="اسمك الكامل"
+                                        placeholder={t("auth.fullname_placeholder")}
                                         className="bg-black/20 border-white/10 text-white h-10 focus:border-neon-purple/50 focus:ring-neon-purple/20 pr-10 text-right"
                                         value={formData.fullName}
                                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -115,7 +117,7 @@ const Auth = () => {
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-gray-300">البريد الإلكتروني</Label>
+                            <Label htmlFor="email" className="text-gray-300">{t("auth.email")}</Label>
                             <div className="relative">
                                 <Input
                                     id="email"
@@ -134,10 +136,10 @@ const Auth = () => {
 
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <Label htmlFor="password" className="text-gray-300">كلمة المرور</Label>
+                                <Label htmlFor="password" className="text-gray-300">{t("auth.password")}</Label>
                                 {isLogin && (
                                     <Button variant="link" className="p-0 h-auto text-xs text-neon-purple hover:text-neon-purple/80" type="button" onClick={() => navigate('/reset-password')}>
-                                        نسيت كلمة المرور؟
+                                        {t("auth.forgot_password")}
                                     </Button>
                                 )}
                             </div>
@@ -166,8 +168,8 @@ const Auth = () => {
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
-                                    <ArrowRight className="w-5 h-5 mr-2" />
+                                    {isLogin ? t("auth.login") : t("auth.signup")}
+                                    <ArrowRight className="w-5 h-5 ms-2" />
                                 </>
                             )}
                         </Button>
@@ -178,7 +180,7 @@ const Auth = () => {
                             <span className="w-full border-t border-white/10" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-[#131320] px-2 text-gray-500 rounded-full border border-white/5">أو المتابعة عبر</span>
+                            <span className="bg-[#131320] px-2 text-gray-500 rounded-full border border-white/5">{t("auth.or_continue")}</span>
                         </div>
                     </div>
 
@@ -189,7 +191,7 @@ const Auth = () => {
                         onClick={handleGoogleLogin}
                         disabled={loading}
                     >
-                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 me-2" viewBox="0 0 24 24">
                             <path
                                 fill="currentColor"
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -207,18 +209,18 @@ const Auth = () => {
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                         </svg>
-                        تسجيل الدخول عبر Google
+                        {t("auth.google_login")}
                     </Button>
 
                     <div className="mt-6 text-center text-sm">
                         <span className="text-gray-400">
-                            {isLogin ? "ليس لديك حساب؟" : "لديك حساب بالفعل؟"}
+                            {isLogin ? t("auth.no_account") : t("auth.has_account")}
                         </span>{" "}
                         <button
                             onClick={() => setIsLogin(!isLogin)}
                             className="text-neon-purple hover:underline font-medium hover:text-neon-purple/80 transition-colors"
                         >
-                            {isLogin ? "أنشئ حساباً الآن" : "تسجيل الدخول"}
+                            {isLogin ? t("auth.create_now") : t("auth.login")}
                         </button>
                     </div>
                 </div>

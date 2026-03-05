@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Send, Trash2, Loader2, User } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 import {
-    AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
@@ -41,6 +42,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
     const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
     const { user } = useAuth();
     const { toast } = useToast();
+    const { t, i18n } = useTranslation();
     const queryClient = useQueryClient();
 
     // جلب التعليقات
@@ -90,14 +92,14 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             setNewComment("");
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
             toast({
-                title: "✅ تم إضافة التعليق",
+                title: t('comments.add_success'),
                 className: "bg-green-500/10 text-green-500",
             });
         },
         onError: () => {
             toast({
-                title: "خطأ",
-                description: "فشل في إضافة التعليق",
+                title: t('common.error'),
+                description: t('comments.add_error'),
                 variant: "destructive",
             });
         },
@@ -116,14 +118,14 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             setCommentToDelete(null);
             queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
             toast({
-                title: "🗑️ تم حذف التعليق",
+                title: t('comments.delete_success'),
                 className: "bg-red-500/10 text-red-500",
             });
         },
         onError: () => {
             toast({
-                title: "خطأ",
-                description: "فشل في حذف التعليق",
+                title: t('common.error'),
+                description: t('comments.delete_error'),
                 variant: "destructive",
             });
         },
@@ -144,7 +146,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                     <MessageSquare className="w-5 h-5 text-neon-purple" />
                 </div>
                 <h2 className="text-xl font-bold text-white">
-                    التعليقات ({comments?.length || 0})
+                    {t('comments.title', { count: comments?.length || 0 })}
                 </h2>
             </div>
 
@@ -162,9 +164,9 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                             <Textarea
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
-                                placeholder="اكتب تعليقك هنا..."
+                                placeholder={t('comments.placeholder')}
                                 className="min-h-[100px] bg-white/5 border-white/10 focus:border-neon-purple/50 resize-none"
-                                dir="rtl"
+                                dir={i18n.dir()}
                             />
                             <div className="flex justify-end">
                                 <Button
@@ -175,9 +177,9 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                     {addMutation.isPending ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
-                                        <Send className="w-4 h-4" />
+                                        <Send className={cn("w-4 h-4", i18n.dir() === 'rtl' ? "" : "rotate-180")} />
                                     )}
-                                    إرسال التعليق
+                                    {t('comments.submit')}
                                 </Button>
                             </div>
                         </div>
@@ -186,10 +188,10 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
             ) : (
                 <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl text-center">
                     <p className="text-gray-400 mb-3">
-                        يجب تسجيل الدخول لإضافة تعليق
+                        {t('comments.login_required')}
                     </p>
-                    <Button variant="outline" className="border-neon-purple/50 hover:bg-neon-purple/10">
-                        <a href="/auth">تسجيل الدخول</a>
+                    <Button variant="outline" className="border-neon-purple/50 hover:bg-neon-purple/10" asChild>
+                        <a href="/auth">{t('comments.login_btn')}</a>
                     </Button>
                 </div>
             )}
@@ -203,8 +205,8 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                 ) : comments?.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                         <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                        <p>لا توجد تعليقات بعد</p>
-                        <p className="text-sm mt-1">كن أول من يعلق!</p>
+                        <p>{t('comments.empty')}</p>
+                        <p className="text-sm mt-1">{t('comments.be_first')}</p>
                     </div>
                 ) : (
                     comments?.map((comment) => (
@@ -223,10 +225,10 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                     <div className="flex items-center justify-between gap-2 mb-2">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span className="font-semibold text-white">
-                                                {comment.user?.display_name || "مستخدم"}
+                                                {comment.user?.display_name || t('comments.anonymous')}
                                             </span>
                                             <span className="text-xs text-gray-500">
-                                                {dayjs(comment.created_at).locale('ar').format("D MMMM YYYY - HH:mm")}
+                                                {dayjs(comment.created_at).locale(i18n.language === 'ar' ? 'ar' : 'en').format("D MMMM YYYY - HH:mm")}
                                             </span>
                                         </div>
                                         {user?.id === comment.user_id && (
@@ -235,7 +237,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                                                 size="icon"
                                                 onClick={() => setCommentToDelete(comment.id)}
                                                 className="h-8 w-8 opacity-0 group-hover:opacity-100 hover:bg-destructive/20 hover:text-destructive transition-all"
-                                                aria-label="حذف التعليق"
+                                                aria-label={t('comments.delete')}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </Button>
@@ -253,15 +255,15 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
 
             {/* مربع حوار تأكيد الحذف */}
             <AlertDialog open={!!commentToDelete} onOpenChange={(open) => !open && setCommentToDelete(null)}>
-                <AlertDialogContent dir="rtl">
+                <AlertDialogContent dir={i18n.dir()}>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>حذف التعليق؟</AlertDialogTitle>
+                        <AlertDialogTitle>{t('comments.delete_confirm_title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.
+                            {t('comments.delete_confirm_desc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className="flex-row-reverse gap-2">
-                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                    <AlertDialogFooter className={cn("gap-2", i18n.dir() === 'rtl' ? "flex-row-reverse" : "")}>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => commentToDelete && deleteMutation.mutate(commentToDelete)}
                             className="bg-destructive hover:bg-destructive/90"
@@ -270,7 +272,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
                             {deleteMutation.isPending ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                "حذف"
+                                t('common.delete')
                             )}
                         </AlertDialogAction>
                     </AlertDialogFooter>

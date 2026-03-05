@@ -24,7 +24,29 @@ import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 const ToolDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const Arrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowRight; // Wait, actually ArrowRight in RTL usually means "back" if it's pointing away from content. 
+  // Let's check common patterns. In RTL, back is ArrowRight. In LTR, back is ArrowLeft.
+  const BackArrow = i18n.dir() === 'rtl' ? ArrowRight : ArrowRight;
+  // Wait, Lucide's ArrowRight points right. 
+  // In RTL (Arabic), "Back" should point Right? No, "Back" usually points towards the edge of the screen where you came from.
+  // In LTR, Back = Left. In RTL, Back = Right. 
+  // So yes, BackArrow should be ArrowRight if dir is rtl.
+  // Actually, ArrowRight points physically Right. 
+  // If I want a "Back" button:
+  // LTR: <--- (ArrowLeft)
+  // RTL: ---> (ArrowRight)
+  const BackIcon = i18n.dir() === 'rtl' ? ArrowRight : ArrowRight;
+  // Actually, wait. ArrowRight is 0 degrees. ArrowLeft is 180 degrees.
+  // Let's use ArrowRight as the base and flip it? Or just choose the right one.
+  // If dir is rtl, Back is ArrowRight. If dir is ltr, Back is ArrowLeft.
+  const BackBtnIcon = i18n.dir() === 'rtl' ? ArrowRight : ArrowRight;
+  // I'll just use ArrowRight and ArrowRight for now to match the existing code which used ArrowRight in RTL.
+  // Wait, the existing code on line 89 used ArrowRight in dir="rtl".
+  // Let's check: in Arabic, "Home" is usually to the right extreme. So going back towards home means going right.
+  // Yes.
+
 
   const { data: tool, isLoading, error } = useTool(id);
   const { recordClick } = useClickTracking();
@@ -43,7 +65,7 @@ const ToolDetails = () => {
   useSEO({
     title: displayTitle,
     description: displayDescription ? `${displayDescription.slice(0, 150)}...` : undefined,
-    keywords: tool ? `${displayTitle}، ${tool.category}، ذكاء اصطناعي، أدوات AI` : undefined,
+    keywords: tool ? `${displayTitle}, ${tool.category}, ${t('tool.keywords_default')}` : t('tool.keywords_default'),
     ogTitle: displayTitle,
     ogDescription: displayDescription,
     ogImage: tool?.image_url || undefined,
@@ -66,8 +88,8 @@ const ToolDetails = () => {
     }))
   } : {
     type: 'website',
-    name: 'نبض',
-    description: 'دليل أدوات الذكاء الاصطناعي',
+    name: t('tool.default_name'),
+    description: t('tool.default_description'),
     url: 'https://nabd.lovable.app',
   });
 
@@ -81,13 +103,13 @@ const ToolDetails = () => {
 
   if (error || !tool) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir="rtl">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4" dir={i18n.dir()}>
         <p className="text-2xl text-destructive">
-          لم يتم العثور على الأداة
+          {t('tool.not_found')}
         </p>
         <Button onClick={() => navigate('/')} variant="outline" className="gap-2">
-          <ArrowRight className="h-4 w-4" />
-          العودة للرئيسية
+          {i18n.dir() === 'rtl' ? <ArrowRight className="h-4 w-4" /> : <ArrowRight className="h-4 w-4 rotate-180" />}
+          {t('nav.back_home')}
         </Button>
       </div>
     );
@@ -99,14 +121,14 @@ const ToolDetails = () => {
   const ogImageUrl = tool ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle || "")}&category=${encodeURIComponent(tool.category)}` : "";
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={i18n.dir()}>
       <Helmet>
-        <title>{displayTitle} | نبض AI</title>
+        <title>{displayTitle} | {t('tool.meta_suffix')}</title>
         <meta name="description" content={displayDescription} />
 
         {/* Open Graph / Facebook & WhatsApp */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`${displayTitle} | نبض AI`} />
+        <meta property="og:title" content={`${displayTitle} | ${t('tool.meta_suffix')}`} />
         <meta property="og:description" content={displayDescription} />
         <meta property="og:image" content={ogImageUrl} />
 
@@ -128,8 +150,8 @@ const ToolDetails = () => {
             variant="ghost"
             className="gap-2 text-muted-foreground hover:text-foreground"
           >
-            <ArrowRight className="h-5 w-5" />
-            العودة للرئيسية
+            {i18n.dir() === 'rtl' ? <ArrowRight className="h-5 w-5" /> : <ArrowRight className="h-5 w-5 rotate-180" />}
+            {t('nav.back_home')}
           </Button>
         </div>
       </header>
@@ -160,19 +182,19 @@ const ToolDetails = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <DollarSign className="w-5 h-5 mx-auto mb-1 text-green-400" />
-                <span className="text-xs text-gray-400 block">السعر</span>
+                <span className="text-xs text-gray-400 block">{t('tool.price')}</span>
                 <span className="font-bold text-sm text-white">{getPricingLabel(tool.pricing_type)}</span>
               </div>
               <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                 <Tag className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-                <span className="text-xs text-gray-400 block">التصنيف</span>
+                <span className="text-xs text-gray-400 block">{t('tool.category_label')}</span>
                 <span className="font-bold text-sm text-white">{getCategoryLabel(tool.category)}</span>
               </div>
               {tool.is_featured && (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
                   <Sparkles className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
-                  <span className="text-xs text-gray-400 block">الحالة</span>
-                  <span className="font-bold text-sm text-yellow-400">⭐ مميز</span>
+                  <span className="text-xs text-gray-400 block">{t('tool.status')}</span>
+                  <span className="font-bold text-sm text-yellow-400">{t('tool.featured')}</span>
                 </div>
               )}
             </div>
@@ -187,12 +209,12 @@ const ToolDetails = () => {
                 className="flex-1 bg-neon-purple text-white text-center py-3 rounded-xl font-bold hover:bg-neon-purple/80 transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)] flex items-center justify-center gap-2"
               >
                 <ExternalLink className="h-5 w-5" />
-                زيارة الموقع الرسمي
+                {t('tool.visit')}
               </a>
             </div>
             {getPricingTier(tool.pricing_type) !== 'free' && (
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                * قد يتطلب التسجيل بطاقة ائتمان
+                {t('tool.credit_note')}
               </p>
             )}
           </div>
@@ -208,7 +230,7 @@ const ToolDetails = () => {
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="flex items-center gap-2 font-bold text-white text-lg">
                       <Check className="text-neon-purple w-5 h-5" />
-                      المميزات الرئيسية
+                      {t('tool.features')}
                     </span>
                   </AccordionTrigger>
                   <AccordionContent className="pb-4 text-gray-300">
@@ -230,7 +252,7 @@ const ToolDetails = () => {
               <div className="border border-white/10 rounded-xl bg-white/5 overflow-hidden p-4">
                 <h3 className="flex items-center gap-2 font-bold text-white text-lg mb-4">
                   <Lightbulb className="text-neon-purple w-5 h-5" />
-                  الأسئلة الشائعة
+                  {t('tool.faq')}
                 </h3>
                 <Accordion type="single" collapsible className="space-y-2">
                   {tool.faqs.map((faq, idx) => (
@@ -259,7 +281,7 @@ const ToolDetails = () => {
             {/* Review Promo Removed */}
 
             <div className="bg-black/40 rounded-xl p-6 border border-white/5 text-center">
-              <p className="text-gray-500 text-sm">مساحة إعلانية</p>
+              <p className="text-gray-500 text-sm">{t('tool.ad_space')}</p>
             </div>
           </div>
         </div>

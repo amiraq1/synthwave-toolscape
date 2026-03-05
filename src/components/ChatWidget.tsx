@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Send, X, Loader2, Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,11 +13,12 @@ interface Message {
 }
 
 const ChatWidget = () => {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟",
+      content: t('chatbot.greeting'),
     },
   ]);
   const [input, setInput] = useState("");
@@ -34,10 +36,10 @@ const ChatWidget = () => {
       if (prev.length !== 1 || prev[0].role !== "assistant") return prev;
       return [{
         role: "assistant",
-        content: "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك في العثور على الأدوات المناسبة اليوم؟",
+        content: t('chatbot.greeting'),
       }];
     });
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +68,7 @@ const ChatWidget = () => {
         ...prev,
         {
           role: "assistant",
-          content: "عذراً، واجهت مشكلة في الاتصال. حاول مرة أخرى لاحقاً.",
+          content: t('chatbot.error_connection'),
         },
       ]);
     } finally {
@@ -75,7 +77,10 @@ const ChatWidget = () => {
   };
 
   return (
-    <div className={`fixed bottom-4 left-4 z-50 flex flex-col items-start gap-4`} dir="rtl">
+    <div className={cn(
+      "fixed bottom-4 z-50 flex flex-col items-start gap-4",
+      i18n.dir() === 'rtl' ? "right-4" : "left-4"
+    )} dir={i18n.dir()}>
       <div
         className={cn(
           "w-[90vw] sm:w-[350px] h-[500px] bg-background/95 backdrop-blur-xl border border-neon-purple/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300",
@@ -88,10 +93,10 @@ const ChatWidget = () => {
               <Bot className="w-5 h-5 text-neon-purple" />
             </div>
             <div>
-              <h3 className="font-bold text-sm">المساعد الذكي</h3>
+              <h3 className="font-bold text-sm">{t('chatbot.title')}</h3>
               <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                متصل الآن
+                {t('chatbot.online')}
               </p>
             </div>
           </div>
@@ -107,7 +112,7 @@ const ChatWidget = () => {
                 key={i}
                 className={cn(
                   "flex gap-3 max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300",
-                  msg.role === "user" ? "self-end ml-auto flex-row-reverse" : "self-start"
+                  (msg.role === "user") === (i18n.dir() === "rtl") ? "self-end ml-auto flex-row-reverse" : "self-start"
                 )}
               >
                 <div
@@ -149,17 +154,16 @@ const ChatWidget = () => {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="اسأل عن أداة..."
+              placeholder={t('chatbot.placeholder')}
               className="bg-background/50 border-white/10 focus-visible:ring-neon-purple/50"
               disabled={isLoading}
-              dir="rtl"
             />
             <Button
               type="submit"
               size="icon"
               className="bg-neon-purple hover:bg-neon-purple/80 text-white shrink-0"
               disabled={isLoading || !input.trim()}
-              aria-label="إرسال"
+              aria-label={t('chatbot.send')}
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
@@ -174,7 +178,7 @@ const ChatWidget = () => {
           "rounded-full h-14 w-14 shadow-lg transition-all duration-300 hover:scale-105 z-50",
           isOpen ? "bg-muted text-muted-foreground rotate-90" : "bg-gradient-to-r from-neon-purple to-neon-blue text-white animate-pulse-slow"
         )}
-        aria-label="فتح المساعد"
+        aria-label={t('chatbot.open')}
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-7 h-7" />}
       </Button>

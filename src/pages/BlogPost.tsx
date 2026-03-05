@@ -8,13 +8,12 @@ import dayjs from "dayjs";
 import 'dayjs/locale/ar';
 import { Loader2 } from "lucide-react";
 
-// Configure locale globally (safe to call multiple times)
-dayjs.locale('ar');
 import PostBookmarkButton from "@/components/PostBookmarkButton";
 import CommentsSection from "@/components/CommentsSection";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
 
 interface Post {
   id: string;
@@ -33,11 +32,20 @@ interface Post {
 
 const BlogPost = () => {
   const { id } = useParams();
+  const { t, i18n } = useTranslation();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const displayTitle = post ? post.title : '';
-  const displayContent = post ? post.content : '';
+
+  const isRtl = i18n.dir() === 'rtl';
+  const BackArrow = isRtl ? ArrowRight : ArrowLeft;
+
+  const displayTitle = post ? (i18n.language === 'en' && post.title_en ? post.title_en : post.title) : '';
+  const displayContent = post ? (i18n.language === 'en' && post.content_en ? post.content_en : post.content) : '';
+
+  useEffect(() => {
+    dayjs.locale(i18n.language.startsWith('ar') ? 'ar' : 'en');
+  }, [i18n.language]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -80,23 +88,21 @@ const BlogPost = () => {
     } else {
       await navigator.clipboard.writeText(url);
       toast({
-        title: "✅ تم نسخ الرابط",
+        title: t('blog.copy_success'),
         className: "bg-green-500/10 text-green-500",
       });
     }
   };
 
-  const BackArrow = ArrowLeft;
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col" dir="rtl">
+      <div className="min-h-screen bg-background flex flex-col" dir={i18n.dir()}>
         <Navbar onAddClick={() => { }} />
         <div className="flex-1 flex justify-center items-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="w-10 h-10 animate-spin text-neon-purple" />
             <span className="text-muted-foreground animate-pulse">
-              جاري تحميل المقال...
+              {t('blog.loading')}
             </span>
           </div>
         </div>
@@ -107,22 +113,22 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background flex flex-col" dir="rtl">
+      <div className="min-h-screen bg-background flex flex-col" dir={i18n.dir()}>
         <Navbar onAddClick={() => { }} />
         <div className="flex-1 flex flex-col justify-center items-center text-center py-20 px-4">
           <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mb-6 text-4xl">
             📄
           </div>
           <h1 className="text-2xl md:text-3xl font-bold mb-4">
-            المقال غير موجود
+            {t('blog.not_found')}
           </h1>
           <p className="text-muted-foreground mb-6 max-w-md">
-            عذراً، لم نتمكن من العثور على المقال المطلوب. ربما تم حذفه أو الرابط غير صحيح.
+            {t('blog.not_found_desc')}
           </p>
           <Link to="/blog">
             <Button className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 gap-2">
               <BackArrow className="w-4 h-4" />
-              العودة للمدونة
+              {t('blog.back')}
             </Button>
           </Link>
         </div>
@@ -136,15 +142,15 @@ const BlogPost = () => {
   const ogImageUrl = post ? `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(displayTitle)}&category=${encodeURIComponent("مدونة نبض AI")}` : "";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir="rtl">
+    <div className="min-h-screen bg-background flex flex-col" dir={i18n.dir()}>
       <Helmet>
-        <title>{displayTitle} | مدونة نبض AI</title>
-        <meta name="description" content={post.excerpt} />
+        <title>{displayTitle} | {t('blog.title')}</title>
+        <meta name="description" content={i18n.language === 'en' && post.excerpt_en ? post.excerpt_en : post.excerpt} />
 
         {/* Open Graph */}
         <meta property="og:type" content="article" />
-        <meta property="og:title" content={`${displayTitle} | مدونة نبض AI`} />
-        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:title" content={`${displayTitle} | ${t('blog.title')}`} />
+        <meta property="og:description" content={i18n.language === 'en' && post.excerpt_en ? post.excerpt_en : post.excerpt} />
         <meta property="og:image" content={ogImageUrl} />
 
         {/* Article Data */}
@@ -153,7 +159,7 @@ const BlogPost = () => {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={displayTitle} />
-        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:description" content={i18n.language === 'en' && post.excerpt_en ? post.excerpt_en : post.excerpt} />
         <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
       <Navbar onAddClick={() => { }} />
@@ -181,8 +187,8 @@ const BlogPost = () => {
                 className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-4 sm:mb-6 transition-colors bg-black/30 w-fit px-3 py-1.5 sm:px-4 sm:py-2 rounded-full backdrop-blur-sm text-sm"
               >
                 <BackArrow className="w-4 h-4" />
-                <span className="hidden sm:inline">عودة للمدونة</span>
-                <span className="sm:hidden">رجوع</span>
+                <span className="hidden sm:inline">{t('blog.back')}</span>
+                <span className="sm:hidden">{t('blog.return')}</span>
               </Link>
 
               {/* العنوان */}
@@ -203,7 +209,7 @@ const BlogPost = () => {
                 {/* الكاتب */}
                 <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 sm:px-3 rounded-full backdrop-blur-md">
                   <User className="w-3.5 h-3.5 text-neon-purple" />
-                  <span>فريق نبض AI</span>
+                  <span>{t('blog.team')}</span>
                 </div>
 
                 {/* وقت القراءة */}
@@ -211,7 +217,7 @@ const BlogPost = () => {
                   <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 sm:px-3 rounded-full backdrop-blur-md">
                     <Clock className="w-3.5 h-3.5 text-neon-purple" />
                     <span>
-                      {`${post.reading_time} دقائق قراءة`}
+                      {t('blog.read_time', { count: post.reading_time })}
                     </span>
                   </div>
                 )}
@@ -221,7 +227,7 @@ const BlogPost = () => {
                   <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 sm:px-3 rounded-full backdrop-blur-md">
                     <Eye className="w-3.5 h-3.5 text-neon-purple" />
                     <span>
-                      {`${post.views_count.toLocaleString('ar-EG')} مشاهدة`}
+                      {t('blog.views', { count: post.views_count })}
                     </span>
                   </div>
                 )}
@@ -246,7 +252,7 @@ const BlogPost = () => {
           <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/10">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="text-gray-400 text-sm sm:text-base">
-                هل أعجبك المقال؟ شاركه مع أصدقائك!
+                {t('blog.share_prompt')}
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <PostBookmarkButton postId={post.id} />
@@ -256,8 +262,8 @@ const BlogPost = () => {
                   onClick={handleShare}
                 >
                   <Share2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">مشاركة الرابط</span>
-                  <span className="sm:hidden">مشاركة</span>
+                  <span className="hidden sm:inline">{t('blog.share_link')}</span>
+                  <span className="sm:hidden">{t('blog.share')}</span>
                 </Button>
               </div>
             </div>

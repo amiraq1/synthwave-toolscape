@@ -85,7 +85,7 @@ export default function NodeSettings({ node, onClose, onSave }: NodeSettingsProp
                         <div className="space-y-2">
                             <Label className="text-gray-300">تصفية حسب (Filter)</Label>
                             <Input
-                                placeholder="Only unread: Yes"
+                                placeholder="غير المقروءة فقط: نعم"
                                 disabled
                                 className="bg-black/20 border-white/10 text-gray-500 cursor-not-allowed"
                             />

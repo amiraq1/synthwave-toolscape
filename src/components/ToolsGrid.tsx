@@ -37,13 +37,19 @@ const ToolsGrid = ({
     let message = '';
 
     if (searchQuery && activeCategory !== 'الكل') {
-      message = count === 0 ? `لا توجد نتائج للبحث "${searchQuery}" في فئة ${activeCategory}` : `تم العثور على ${count} أداة للبحث "${searchQuery}" في فئة ${activeCategory}`;
+      message = count === 0
+        ? t('toolsGrid.no_results_category', { query: searchQuery, category: activeCategory })
+        : t('toolsGrid.found_results_category', { count, query: searchQuery, category: activeCategory });
     } else if (searchQuery) {
-      message = count === 0 ? `لا توجد نتائج للبحث "${searchQuery}"` : `تم العثور على ${count} أداة للبحث "${searchQuery}"`;
+      message = count === 0
+        ? t('toolsGrid.no_results', { query: searchQuery })
+        : t('toolsGrid.found_results', { count, query: searchQuery });
     } else if (activeCategory !== 'الكل') {
-      message = count === 0 ? `لا توجد أدوات في فئة ${activeCategory}` : `عرض ${count} أداة في فئة ${activeCategory}`;
+      message = count === 0
+        ? t('toolsGrid.empty_category', { category: activeCategory })
+        : t('toolsGrid.showing_category', { count, category: activeCategory });
     } else {
-      message = `عرض ${count} أداة`;
+      message = t('toolsGrid.showing_all', { count });
     }
 
     setAnnouncement(message);
@@ -68,10 +74,10 @@ const ToolsGrid = ({
           <Loader2 className="h-8 w-8 text-destructive" />
         </div>
         <p className="text-xl font-bold text-destructive mb-2">
-          حدث خطأ في تحميل البيانات
+          {t('toolsGrid.error_title')}
         </p>
         <p className="text-muted-foreground">
-          يرجى التحقق من الاتصال والمحاولة مرة أخرى
+          {t('toolsGrid.error_desc')}
         </p>
       </div>
     );
@@ -89,10 +95,10 @@ const ToolsGrid = ({
             🔍
           </div>
           <p className="text-xl font-semibold text-foreground">
-            لم يتم العثور على أدوات
+            {t('toolsGrid.not_found_title')}
           </p>
           <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
-            جرب البحث بكلمات مختلفة أو تغيير التصنيف المختار.
+            {t('toolsGrid.not_found_desc')}
           </p>
         </div>
       </>
@@ -132,10 +138,10 @@ const ToolsGrid = ({
             {isFetchingNextPage ? (
               <>
                 <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                جاري التحميل...
+                {t('toolsGrid.loading_more')}
               </>
             ) : (
-              'عرض المزيد من الأدوات'
+              t('toolsGrid.load_more')
             )}
           </Button>
         </div>

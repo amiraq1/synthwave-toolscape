@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface NavbarProps {
   onAddClick: () => void;
@@ -23,18 +24,17 @@ interface NavbarProps {
 const Navbar = ({ onAddClick }: NavbarProps) => {
   const { session, signOut } = useAuth();
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false); // حالة القائمة الجانبية للموبايل
+  const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
 
-  // دالة مساعدة لتحديد الرابط النشط
   const isActive = (path: string) => location.pathname === path;
 
-  // قائمة الروابط لتسهيل التكرار
   const navLinks = [
-    { name: "الرئيسية", path: "/", icon: Home },
-    { name: "الأدوات", path: "/tools", icon: Wrench },
-    { name: "سوق الوكلاء", path: "/agents", icon: Bot },
-    { name: "المصنع", path: "/workflow/new", icon: GitBranch, badge: "جديد" },
-    { name: "المدونة", path: "/blog", icon: BookOpen },
+    { name: t("nav.home"), path: "/", icon: Home },
+    { name: t("nav.tools"), path: "/tools", icon: Wrench },
+    { name: t("nav.agents"), path: "/agents", icon: Bot },
+    { name: t("nav.workflow"), path: "/workflow/new", icon: GitBranch, badge: t("nav.badge_new") },
+    { name: t("nav.blog"), path: "/blog", icon: BookOpen },
   ];
 
   const handleLogout = async () => {
@@ -42,21 +42,21 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 glass-pro font-cairo transition-all duration-300">
+    <nav className="fixed top-0 w-full z-50 glass-pro font-cairo transition-all duration-300" dir={i18n.dir()}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
-          {/* 1. الشعار (دائماً ظاهر) */}
+          {/* 1. الشعار */}
           <div className="flex-shrink-0 flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 animated-gradient rounded-xl flex items-center justify-center shadow-lg shadow-neon-purple/20 group-hover:shadow-neon-purple/40 transition-all duration-300 group-hover:scale-110">
                 <span className="text-white font-bold text-lg">⚡</span>
               </div>
-              <span className="text-xl font-bold text-white hidden sm:block group-hover:text-neon-purple transition-colors duration-300">نبض AI</span>
+              <span className="text-xl font-bold text-white hidden sm:block group-hover:text-neon-purple transition-colors duration-300">{t('brand.name')} AI</span>
             </Link>
           </div>
 
-          {/* 2. روابط سطح المكتب (مخفية في الموبايل) */}
+          {/* 2. روابط سطح المكتب */}
           <div className="hidden lg:flex items-center gap-1 mx-4">
             {navLinks.map((link) => (
               <Link
@@ -78,35 +78,32 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ))}
           </div>
 
-          {/* 3. الإجراءات (يمين الشاشة) */}
+          {/* 3. الإجراءات */}
           <div className="flex items-center gap-2 sm:gap-4">
 
-            {/* زر إضافة أداة (يظهر كأيقونة في الموبايل) */}
             <Button
               size="sm"
               className="hidden sm:flex bg-neon-purple hover:bg-neon-purple/80 text-white border-0"
               onClick={onAddClick}
             >
-              <Plus className="w-4 h-4 ml-2" /> أضف أداة
+              <Plus className="w-4 h-4 ms-2" /> {t("nav.add_tool")}
             </Button>
 
-            {/* نسخة الموبايل (أيقونة فقط) */}
             <Button
               size="icon"
               variant="ghost"
               className="sm:hidden text-neon-purple"
               onClick={onAddClick}
-              aria-label="أضف أداة"
+              aria-label={t("nav.add_tool")}
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
             </Button>
 
-            {/* الإشعارات والمفضلة واللغة (مخفية في الموبايل الصغير جداً) */}
             <div className="hidden sm:flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="المفضلة">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label={t("nav.favorites")}>
                 <Heart className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label="تغيير اللغة">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" aria-label={t("nav.language")}>
                 <Globe className="w-5 h-5" />
               </Button>
             </div>
@@ -140,11 +137,11 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   </div>
                   <DropdownMenuItem asChild className="cursor-pointer hover:bg-white/10">
                     <Link to="/profile">
-                      <User className="mr-2 h-4 w-4" /> الملف الشخصي
+                      <User className="me-2 h-4 w-4" /> {t("nav.profile")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer hover:bg-white/10 text-red-400" onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" /> تسجيل الخروج
+                    <LogOut className="me-2 h-4 w-4" /> {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -152,33 +149,30 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               <Link to="/auth">
                 <Button size="sm" variant="outline" className="border-neon-purple/50 text-neon-purple hover:bg-neon-purple/10 hover:text-white gap-2">
                   <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">تسجيل الدخول</span>
+                  <span className="hidden sm:inline">{t("nav.signin")}</span>
                 </Button>
               </Link>
             )}
 
-            {/* 4. زر القائمة للموبايل (Hamburger) */}
+            {/* 4. زر القائمة للموبايل */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden text-white ml-1" aria-label="القائمة">
+                <Button variant="ghost" size="icon" className="lg:hidden text-white ms-1" aria-label={t("nav.menu")}>
                   <Menu className="w-6 h-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="bg-[#1a1a2e] border-l border-white/10 text-white w-[300px] sm:w-[400px]" aria-describedby={undefined}>
-                {/* Screen reader only title/description to fix accessibility warnings */}
-                <SheetTitle className="sr-only">قائمة التصفح</SheetTitle>
-                <SheetDescription className="sr-only">روابط التنقل في الموقع</SheetDescription>
+              <SheetContent side="right" className="bg-[#1a1a2e] border-s border-white/10 text-white w-[300px] sm:w-[400px]" aria-describedby={undefined}>
+                <SheetTitle className="sr-only">{t("nav.menu_title")}</SheetTitle>
+                <SheetDescription className="sr-only">{t("nav.menu_desc")}</SheetDescription>
 
                 <div className="flex flex-col gap-6 mt-8">
-                  {/* الشعار في القائمة */}
                   <div className="flex items-center gap-2 mb-4 px-2">
                     <div className="w-8 h-8 bg-neon-purple rounded-lg flex items-center justify-center">
                       <span className="text-white font-bold">⚡</span>
                     </div>
-                    <span className="font-bold text-xl">نبض AI</span>
+                    <span className="font-bold text-xl">{t('brand.name')} AI</span>
                   </div>
 
-                  {/* الروابط العمودية */}
                   <div className="flex flex-col gap-2">
                     {navLinks.map((link) => (
                       <Link
@@ -193,7 +187,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                         <link.icon className="w-5 h-5" />
                         {link.name}
                         {link.badge && (
-                          <span className="mr-auto bg-neon-purple/20 text-neon-purple text-xs px-2 py-0.5 rounded-full border border-neon-purple/30">
+                          <span className="ms-auto bg-neon-purple/20 text-neon-purple text-xs px-2 py-0.5 rounded-full border border-neon-purple/30">
                             {link.badge}
                           </span>
                         )}
@@ -203,17 +197,15 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
 
                   <div className="h-px bg-white/10 my-2" />
 
-                  {/* روابط إضافية للموبايل */}
                   <div className="flex flex-col gap-2">
                     <Link to="/about" onClick={() => setIsOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white flex items-center gap-3">
-                      <Info className="w-5 h-5" /> حول الموقع
+                      <Info className="w-5 h-5" /> {t("nav.about")}
                     </Link>
                     <Link to="/faq" onClick={() => setIsOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white flex items-center gap-3">
-                      <HelpCircle className="w-5 h-5" /> الأسئلة الشائعة
+                      <HelpCircle className="w-5 h-5" /> {t("nav.faq")}
                     </Link>
                   </div>
 
-                  {/* قسم المستخدم في قائمة الموبايل */}
                   {session && (
                     <div className="mt-auto pt-6 border-t border-white/10">
                       <div className="flex items-center gap-3 px-2 mb-4">
@@ -225,7 +217,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                         </Avatar>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-white max-w-[180px] truncate">
-                            {session.user.user_metadata.full_name || "مستخدم"}
+                            {session.user.user_metadata.full_name || t("nav.user_default")}
                           </span>
                           <span className="text-xs text-gray-400 max-w-[180px] truncate">
                             {session.user.email}
@@ -239,16 +231,16 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                           onClick={() => setIsOpen(false)}
                           className="px-4 py-2.5 rounded-lg bg-white/5 text-white hover:bg-neon-purple hover:text-white transition-colors flex items-center gap-3 text-sm font-medium"
                         >
-                          <User className="w-4 h-4" /> الملف الشخصي
+                          <User className="w-4 h-4" /> {t("nav.profile")}
                         </Link>
                         <button
                           onClick={() => {
                             handleLogout();
                             setIsOpen(false);
                           }}
-                          className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-right"
+                          className="px-4 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-3 text-sm font-medium w-full text-start"
                         >
-                          <LogOut className="w-4 h-4" /> تسجيل الخروج
+                          <LogOut className="w-4 h-4" /> {t("nav.logout")}
                         </button>
                       </div>
                     </div>

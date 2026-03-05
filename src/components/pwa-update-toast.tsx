@@ -1,8 +1,10 @@
 import { useEffect } from "react"
 import { registerSW } from "virtual:pwa-register"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 export function PwaUpdateToast() {
+    const { t } = useTranslation()
     useEffect(() => {
         let isCancelled = false
         let cleanupIdle: (() => void) | null = null
@@ -13,11 +15,11 @@ export function PwaUpdateToast() {
             const updateSW = registerSW({
                 // 1. عند وجود تحديث جديد (نسخة جديدة من التطبيق)
                 onNeedRefresh() {
-                    toast("Update available", {
-                        description: "A new version has been downloaded. Click to update.",
+                    toast(t('pwa.update_title'), {
+                        description: t('pwa.update_desc'),
                         duration: Infinity, // التنبيه لا يختفي حتى يتفاعل المستخدم معه
                         action: {
-                            label: "Update now",
+                            label: t('pwa.update_btn'),
                             onClick: () => {
                                 // true تعني: قم بتحديث الصفحة وتحميل النسخة الجديدة
                                 updateSW(true)
@@ -25,7 +27,7 @@ export function PwaUpdateToast() {
                         },
                         // خيار للإغلاق إذا لم يرغب المستخدم في التحديث فوراً
                         cancel: {
-                            label: "Later",
+                            label: t('pwa.later'),
                             onClick: () => { },
                         },
                     })
@@ -33,7 +35,7 @@ export function PwaUpdateToast() {
 
                 // 2. عندما يصبح التطبيق جاهزاً للعمل بدون إنترنت (Offline)
                 onOfflineReady() {
-                    toast.success("App is ready for offline use", {
+                    toast.success(t('pwa.offline_ready'), {
                         duration: 3000,
                     })
                 },

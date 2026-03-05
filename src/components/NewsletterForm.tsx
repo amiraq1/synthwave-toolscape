@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Mail, Sparkles, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface NewsletterFormProps {
     variant?: 'default' | 'compact' | 'hero';
@@ -16,6 +17,7 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
     const [email, setEmail] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const { toast } = useToast();
+    const { t, i18n } = useTranslation();
 
     const subscribeMutation = useMutation({
         mutationFn: async (email: string) => {
@@ -26,7 +28,7 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
             if (error) {
                 // Handle unique constraint violation
                 if (error.code === '23505') {
-                    throw new Error('هذا البريد مسجل مسبقاً');
+                    throw new Error(t('newsletter.already_registered'));
                 }
                 throw error;
             }
@@ -35,8 +37,8 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
             setIsSuccess(true);
             setEmail('');
             toast({
-                title: '🎉 تم الاشتراك بنجاح!',
-                description: 'ستصلك آخر أخبار أدوات الذكاء الاصطناعي',
+                title: t('newsletter.success_title'),
+                description: t('newsletter.success_desc'),
                 className: 'bg-emerald-500/10 text-emerald-500',
             });
             // Reset success state after 5 seconds
@@ -44,8 +46,8 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
         },
         onError: (error: Error) => {
             toast({
-                title: 'خطأ',
-                description: error.message || 'فشل في الاشتراك',
+                title: t('common.error'),
+                description: error.message || t('common.error'),
                 variant: 'destructive',
             });
         },
@@ -59,8 +61,8 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             toast({
-                title: 'خطأ',
-                description: 'البريد الإلكتروني غير صحيح',
+                title: t('common.error'),
+                description: t('newsletter.invalid_email'),
                 variant: 'destructive',
             });
             return;
@@ -71,10 +73,10 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
 
     if (variant === 'compact') {
         return (
-            <form onSubmit={handleSubmit} className={cn("flex gap-2", className)} dir="rtl">
+            <form onSubmit={handleSubmit} className={cn("flex gap-2", className)} dir={i18n.dir()}>
                 <Input
                     type="email"
-                    placeholder="بريدك الإلكتروني"
+                    placeholder={t('newsletter.placeholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-10 bg-background/50 border-white/10 flex-1"
@@ -83,7 +85,7 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
                 <Button
                     type="submit"
                     disabled={subscribeMutation.isPending || isSuccess}
-                    aria-label={isSuccess ? "تم الاشتراك" : "اشتراك في النشرة البريدية"}
+                    aria-label={isSuccess ? t('newsletter.subscribed') : t('newsletter.subscribe_btn')}
                     className={cn(
                         "h-10 px-4",
                         isSuccess
@@ -104,28 +106,28 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
     }
 
     return (
-        <div className={cn("glass-card rounded-2xl p-6 sm:p-8", className)} dir="rtl">
+        <div className={cn("glass-card rounded-2xl p-6 sm:p-8", className)} dir={i18n.dir()}>
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-foreground">النشرة الأسبوعية</h3>
-                    <p className="text-xs text-muted-foreground">أحدث أدوات الذكاء الاصطناعي في بريدك</p>
+                    <h3 className="text-lg font-bold text-foreground">{t('newsletter.title')}</h3>
+                    <p className="text-xs text-muted-foreground">{t('newsletter.desc')}</p>
                 </div>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="relative">
-                    <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Mail className={cn("absolute top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground", i18n.dir() === 'rtl' ? 'right-3' : 'left-3')} />
                     <Input
                         type="email"
-                        placeholder="أدخل بريدك الإلكتروني"
+                        placeholder={t('newsletter.placeholder_full')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 pr-10 bg-background/50 border-white/10"
+                        className={cn("h-12 bg-background/50 border-white/10", i18n.dir() === 'rtl' ? 'pr-10' : 'pl-10')}
                         disabled={subscribeMutation.isPending || isSuccess}
                     />
                 </div>
@@ -142,21 +144,21 @@ const NewsletterForm = ({ variant = 'default', className }: NewsletterFormProps)
                 >
                     {subscribeMutation.isPending ? (
                         <>
-                            <Loader2 className="w-4 h-4 animate-spin ml-2" />
-                            جاري الاشتراك...
+                            <Loader2 className={cn("w-4 h-4 animate-spin", i18n.dir() === 'rtl' ? 'ml-2' : 'mr-2')} />
+                            {t('newsletter.subscribing')}
                         </>
                     ) : isSuccess ? (
                         <>
-                            <Check className="w-4 h-4 ml-2" />
-                            تم الاشتراك!
+                            <Check className={cn("w-4 h-4", i18n.dir() === 'rtl' ? 'ml-2' : 'mr-2')} />
+                            {t('newsletter.subscribed')}
                         </>
                     ) : (
-                        'اشترك الآن مجاناً'
+                        t('newsletter.subscribe_now')
                     )}
                 </Button>
 
                 <p className="text-[10px] text-muted-foreground/60 text-center">
-                    نرسل مقالاً واحداً أسبوعياً، بدون إزعاج. يمكنك إلغاء الاشتراك في أي وقت.
+                    {t('newsletter.footer_text')}
                 </p>
             </form>
         </div>

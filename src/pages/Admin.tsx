@@ -11,6 +11,7 @@ import { Loader2, Sparkles, Trash2, Edit, BarChart3, Database, Users, ShieldAler
 import { useNavigate } from "react-router-dom";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { useSEO } from "@/hooks/useSEO";
+import { useTranslation } from "react-i18next";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 // Lazy load AdminCharts because it depends on recharts (~150KB)
@@ -46,9 +47,10 @@ const ChartsLoadingSkeleton = () => (
 type DraftTool = Tool & { is_published: boolean };
 
 const Admin = () => {
+  const { t, i18n } = useTranslation();
   useSEO({
-    title: 'لوحة التحكم',
-    description: 'لوحة تحكم المشرفين لإدارة أدوات الذكاء الاصطناعي والمستخدمين',
+    title: t('admin.title'),
+    description: t('admin.unauthorized_desc'),
     noIndex: true,
   });
 
@@ -112,21 +114,21 @@ const Admin = () => {
     try {
       const { error } = await supabase.functions.invoke("auto-draft", { body: formData });
       if (error) throw error;
-      toast.success(`تم توليد مسودة لـ ${formData.name} بنجاح!`);
+      toast.success(t('admin.auto_draft_success', { name: formData.name }));
       setFormData({ name: "", url: "", description_en: "" });
       refetchTools();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      toast.error("خطأ: " + errorMessage);
+      toast.error(t('admin.error', { message: errorMessage }));
     } finally {
       setLoading(false);
     }
   };
 
   const deleteDraft = async (id: string) => {
-    if (!confirm("حذف نهائي؟")) return;
+    if (!confirm(t('admin.confirm_delete'))) return;
     await supabase.from("tools").delete().eq("id", Number(id));
-    toast.success("تم الحذف");
+    toast.success(t('admin.deleted'));
     refetchTools();
   };
 
@@ -137,10 +139,10 @@ const Admin = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir="rtl">
+      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir={i18n.dir()}>
         <div>
           <Loader2 className="h-12 w-12 animate-spin text-neon-purple mx-auto mb-4" />
-          <p className="text-muted-foreground">جاري التحقق من الصلاحيات...</p>
+          <p className="text-muted-foreground">{t('admin.checking_perms')}</p>
         </div>
       </div>
     );
@@ -148,13 +150,13 @@ const Admin = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir="rtl">
+      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir={i18n.dir()}>
         <div className="space-y-4 max-w-md">
           <ShieldAlert className="h-16 w-16 text-destructive mx-auto" />
-          <h1 className="text-2xl font-bold">غير مصرح</h1>
-          <p className="text-muted-foreground">ليس لديك صلاحية الوصول لهذه الصفحة. يجب أن تكون مشرفاً.</p>
+          <h1 className="text-2xl font-bold">{t('admin.unauthorized')}</h1>
+          <p className="text-muted-foreground">{t('admin.unauthorized_desc')}</p>
           <Button onClick={() => navigate('/')} className="w-full">
-            العودة للرئيسية
+            {t('common.back_to_home')}
           </Button>
         </div>
       </div>
@@ -162,16 +164,16 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20" dir="rtl">
+    <div className="min-h-screen bg-background pb-20" dir={i18n.dir()}>
       <div className="container mx-auto p-6 max-w-6xl min-h-screen space-y-8">
-        <h1 className="text-3xl font-bold mb-6">لوحة القيادة 🚀</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('admin.dashboard')}</h1>
 
         {/* 📊 شريط الإحصائيات */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm mb-1">إجمالي الأدوات</p>
+                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_total_tools')}</p>
                 <h3 className="text-3xl font-bold text-blue-400">{stats.totalTools}</h3>
               </div>
               <Database className="w-8 h-8 text-blue-500/50" />
@@ -180,7 +182,7 @@ const Admin = () => {
           <Card className="bg-orange-900/10 border-orange-500/20 card-glow">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm mb-1">مسودات معلقة</p>
+                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_pending_drafts')}</p>
                 <h3 className="text-3xl font-bold text-orange-400">{stats.pendingDrafts}</h3>
               </div>
               <Edit className="w-8 h-8 text-orange-500/50" />
@@ -189,7 +191,7 @@ const Admin = () => {
           <Card className="bg-purple-900/10 border-purple-500/20 card-glow">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm mb-1">المستخدمين</p>
+                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_total_users')}</p>
                 <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers}</h3>
               </div>
               <Users className="w-8 h-8 text-purple-500/50" />
@@ -206,8 +208,8 @@ const Admin = () => {
         {/* نظام التبويبات */}
         <Tabs defaultValue="tools" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/5 mb-8">
-            <TabsTrigger value="tools">🛠️ إدارة الأدوات والمحتوى</TabsTrigger>
-            <TabsTrigger value="users">👥 إدارة المستخدمين</TabsTrigger>
+            <TabsTrigger value="tools">{t('admin.tab_tools')}</TabsTrigger>
+            <TabsTrigger value="users">{t('admin.tab_users')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tools" className="space-y-8">
@@ -215,14 +217,14 @@ const Admin = () => {
             <Card className="border-neon-purple/30 bg-card/40 backdrop-blur glass-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-neon-purple">
-                  <Sparkles className="w-5 h-5" /> إضافة أداة جديدة (مسودة تلقائية بالذكاء الاصطناعي)
+                  <Sparkles className="w-5 h-5" /> {t('admin.generator_title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleAutoDraft} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs text-muted-foreground">اسم الأداة (English)</label>
+                      <label className="text-xs text-muted-foreground">{t('admin.form_name_en')}</label>
                       <Input
                         placeholder="e.g. ChatGPT"
                         value={formData.name}
@@ -233,7 +235,7 @@ const Admin = () => {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs text-muted-foreground">الرابط (URL)</label>
+                      <label className="text-xs text-muted-foreground">{t('admin.form_url')}</label>
                       <Input
                         placeholder="https://openai.com/chatgpt"
                         value={formData.url}
@@ -245,7 +247,7 @@ const Admin = () => {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-muted-foreground">وصف مختصر (English) ليساعد الذكاء الاصطناعي</label>
+                    <label className="text-xs text-muted-foreground">{t('admin.form_desc_en')}</label>
                     <Textarea
                       placeholder="An AI chatbot developed by OpenAI..."
                       value={formData.description_en}
@@ -256,7 +258,7 @@ const Admin = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full bg-neon-purple hover:bg-neon-purple/80" disabled={loading}>
-                    {loading ? <Loader2 className="animate-spin mr-2" /> : <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> توليد البيانات تلقائياً</span>}
+                    {loading ? <Loader2 className="animate-spin mr-2" /> : <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> {t('admin.generate_btn')}</span>}
                   </Button>
                 </form>
               </CardContent>
@@ -265,13 +267,13 @@ const Admin = () => {
             {/* 📝 قائمة المسودات */}
             <div className="space-y-4">
               <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
-                <BarChart3 className="w-5 h-5" /> مراجعة المسودات ({drafts.length})
+                <BarChart3 className="w-5 h-5" /> {t('admin.drafts_review', { count: drafts.length })}
               </h2>
 
               {drafts.length === 0 && (
                 <div className="text-center py-12 border border-dashed border-white/10 rounded-xl bg-white/5">
                   <Database className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400">كل شيء نظيف! لا توجد مسودات معلقة.</p>
+                  <p className="text-gray-400">{t('admin.no_drafts')}</p>
                 </div>
               )}
 
@@ -288,7 +290,7 @@ const Admin = () => {
 
                     <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
                       <Button size="sm" variant="outline" onClick={() => openEdit(tool)} className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300">
-                        <Edit className="w-4 h-4 ml-1" /> مراجعة ونشر
+                        <Edit className="w-4 h-4 ml-1" /> {t('admin.review_publish')}
                       </Button>
                       <Button size="icon" variant="destructive" onClick={() => deleteDraft(tool.id)} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
                         <Trash2 className="w-4 h-4" />
@@ -302,7 +304,7 @@ const Admin = () => {
             {/* 🛠️ جدول كل الأدوات */}
             <div className="mt-8">
               <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
-                <Database className="w-5 h-5" /> كل الأدوات ({tools.length})
+                <Database className="w-5 h-5" /> {t('admin.all_tools_title', { count: tools.length })}
               </h2>
               <AdminToolsTable tools={tools} onUpdate={() => refetchTools()} />
             </div>
@@ -313,7 +315,7 @@ const Admin = () => {
             <div className="bg-black/20 p-6 rounded-xl border border-white/10">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <Users className="text-neon-purple" />
-                قائمة المسجلين
+                {t('admin.users_list')}
               </h2>
               <AdminUsersTable />
             </div>

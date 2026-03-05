@@ -34,6 +34,17 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'popular', label: 'الأكثر شعبية' },
 ];
 
+const categoryTranslations: Record<string, string> = {
+  'الكل': 'categories.all',
+  'نصوص': 'categories.text',
+  'صور': 'categories.image',
+  'فيديو': 'categories.video',
+  'برمجة': 'categories.code',
+  'إنتاجية': 'categories.productivity',
+  'دراسة وطلاب': 'categories.education',
+  'صوت': 'categories.audio',
+};
+
 const CategoryFilters = ({
   activeCategory,
   onCategoryChange,
@@ -44,20 +55,28 @@ const CategoryFilters = ({
 }: CategoryFiltersProps) => {
   const { t, i18n } = useTranslation();
 
-  // Dynamic Pricing Function because we need t()
-  const pOptions = [
+  const pOptions: { value: PricingFilter; label: string }[] = [
     { value: 'all', label: t('filters.all') },
-    { value: 'مجاني', label: 'مجاني' },
-    { value: 'مدفوع', label: 'مدفوع' },
+    { value: 'مجاني', label: t('filters.labels.free') },
+    { value: 'مدفوع', label: t('filters.labels.paid') },
   ];
 
+  const sortOptionsTranslated: { value: SortOption; label: string }[] = [
+    { value: 'newest', label: t('filters.labels.newest') },
+    { value: 'rating', label: t('filters.labels.rating') },
+    { value: 'popular', label: t('filters.labels.popular') },
+  ];
+
+  // Map backend pricing value to frontend label for dropdown options
+  const pricingOptionsTranslated = pOptions;
+
   const currentPricingLabel = pOptions.find(p => p.value === pricing)?.label || t('filters.all');
-  const currentSortLabel = sortOptions.find(s => s.value === sortBy)?.label || 'الأحدث';
+  const currentSortLabel = sortOptionsTranslated.find(s => s.value === sortBy)?.label || t('filters.labels.newest');
 
   return (
     <div className="space-y-4 py-6 sm:py-8 px-4" dir={i18n.dir()}>
       {/* Category Tabs */}
-      <nav aria-label="تصفية حسب الفئات" className="flex flex-wrap justify-center gap-2 sm:gap-3">
+      <nav aria-label={t('filters.title')} className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {categories.map((category) => (
           <button
             key={category}
@@ -70,7 +89,7 @@ const CategoryFilters = ({
                 : "glass text-muted-foreground hover:text-foreground hover:border-neon-purple/50"
             )}
           >
-            {category}
+            {t(categoryTranslations[category] || category)}
           </button>
         ))}
       </nav>
@@ -80,7 +99,7 @@ const CategoryFilters = ({
         <div className="flex flex-wrap justify-center items-center gap-3">
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <SlidersHorizontal className="w-4 h-4" />
-            <span className="hidden sm:inline">تصفية:</span>
+            <span className="hidden sm:inline">{t('filters.prefix')}</span>
           </div>
 
           {/* Pricing Filter */}
@@ -100,7 +119,7 @@ const CategoryFilters = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="min-w-[120px]">
-                {pricingOptions.map((option) => (
+                {pricingOptionsTranslated.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
                     onClick={() => onPricingChange(option.value)}
@@ -128,12 +147,12 @@ const CategoryFilters = ({
                     sortBy !== 'newest' && "border-neon-purple/50 text-neon-purple"
                   )}
                 >
-                  ترتيب: {currentSortLabel}
+                  {t('filters.sort_prefix')} {currentSortLabel}
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="min-w-[140px]">
-                {sortOptions.map((option) => (
+                {sortOptionsTranslated.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
                     onClick={() => onSortChange(option.value)}

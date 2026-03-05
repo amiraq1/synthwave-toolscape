@@ -6,9 +6,11 @@ import { X, Check, ArrowRight, Plus, Loader2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import { useTranslation } from "react-i18next";
 import type { Tool } from "@/hooks/useTools";
 
 const ComparePage = () => {
+    const { t, i18n } = useTranslation();
     const { selectedTools, removeFromCompare, setCompareList } = useCompare();
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
@@ -55,12 +57,22 @@ const ComparePage = () => {
             setLoading(true);
             try {
                 // جلب بيانات الأدوات المحددة فقط
+                // Convert string IDs to numbers for the query if they are stored as bigint/int in DB
+                const numericIds = selectedTools.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+
                 const { data } = await supabase
                     .from("tools")
                     .select("*")
-                    .in("id", selectedTools);
+                    .in("id", numericIds);
 
-                if (data) setTools(data);
+                if (data) {
+                    // Map back to Tool interface with string IDs
+                    const mappedTools = data.map(item => ({
+                        ...item,
+                        id: String(item.id)
+                    })) as Tool[];
+                    setTools(mappedTools);
+                }
             } catch (error) {
                 console.error("Error fetching tools:", error);
             } finally {
@@ -78,12 +90,12 @@ const ComparePage = () => {
 
     if (tools.length === 0) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1a] p-4 text-center">
-                <h1 className="text-3xl font-bold text-white mb-4">لا توجد أدوات للمقارنة</h1>
-                <p className="text-gray-400 mb-8 max-w-md">قم بإضافة أدوات من الصفحة الرئيسية لتبدأ المقارنة بينهم واكتشاف الأفضل لاحتياجاتك.</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1a] p-4 text-center" dir={i18n.dir()}>
+                <h1 className="text-3xl font-bold text-white mb-4">{t('compare.no_tools')}</h1>
+                <p className="text-gray-400 mb-8 max-w-md">{t('compare.no_tools_desc')}</p>
                 <Link to="/">
-                    <Button className="bg-neon-purple hover:bg-neon-purple/80 px-8 py-6 text-lg rounded-xl">
-                        تصفح الأدوات <ArrowRight className="w-5 h-5 mr-2" />
+                    <Button className="bg-neon-purple hover:bg-neon-purple/80 px-8 py-6 text-lg rounded-xl gap-2">
+                        {t('compare.browse')} <ArrowRight className="w-5 h-5 rtl:rotate-180" />
                     </Button>
                 </Link>
             </div>
@@ -91,17 +103,17 @@ const ComparePage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0f0f1a] pt-24 pb-20 px-4 md:px-8 font-cairo">
+        <div className="min-h-screen bg-[#0f0f1a] pt-24 pb-20 px-4 md:px-8 font-cairo" dir={i18n.dir()}>
             <Helmet>
-                <title>مقارنة الأدوات | نبض AI</title>
+                <title>{t('compare.meta_title')}</title>
             </Helmet>
 
             <div className="max-w-7xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-3xl font-bold text-white">مقارنة المواصفات</h1>
+                    <h1 className="text-3xl font-bold text-white">{t('compare.specs')}</h1>
                     <Link to="/">
-                        <Button variant="outline" className="border-white/10 hover:bg-white/5 text-gray-300">
-                            <Plus className="w-4 h-4 ml-2" /> إضافة أداة
+                        <Button variant="outline" className="border-white/10 hover:bg-white/5 text-gray-300 gap-2">
+                            <Plus className="w-4 h-4" /> {t('compare.add_tool')}
                         </Button>
                     </Link>
                 </div>
@@ -111,9 +123,9 @@ const ComparePage = () => {
                     <div className="min-w-[800px] bg-white/5 rounded-3xl border border-white/10 overflow-hidden">
 
                         {/* 1. الصف الرأسي (الهيدر) - الصور والأسماء */}
-                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10">
-                            <div className="p-6 bg-white/[0.02] flex items-center text-gray-400 font-bold border-l border-white/10">
-                                وجه المقارنة
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 text-start">
+                            <div className="p-6 bg-white/[0.02] flex items-center text-gray-400 font-bold border-e border-white/10">
+                                {t('compare.criteria')}
                             </div>
                             {tools.map(tool => (
                                 <div key={tool.id} className="relative p-6 flex flex-col items-center text-center border-l border-white/10 last:border-0 bg-white/[0.02]">
@@ -133,29 +145,28 @@ const ComparePage = () => {
 
                                     <div className="mt-4 flex gap-2 w-full">
                                         <Link to={`/tool/${tool.id}`} className="flex-1">
-                                            <Button size="sm" variant="outline" className="w-full text-xs border-white/10">التفاصيل</Button>
+                                            <Button size="sm" variant="outline" className="w-full text-xs border-white/10">{t('compare.details')}</Button>
                                         </Link>
                                         <a href={tool.url} target="_blank" className="flex-1">
-                                            <Button size="sm" className="w-full text-xs bg-neon-purple hover:bg-neon-purple/80">زيارة</Button>
+                                            <Button size="sm" className="w-full text-xs bg-neon-purple hover:bg-neon-purple/80">{t('compare.visit')}</Button>
                                         </a>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* 2. صف السعر */}
-                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors">
-                            <div className="p-4 px-6 text-gray-300 font-bold border-l border-white/10 flex items-center">
-                                💵 التكلفة
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors text-start">
+                            <div className="p-4 px-6 text-gray-300 font-bold border-e border-white/10 flex items-center">
+                                💵 {t('compare.cost')}
                             </div>
                             {tools.map(tool => (
-                                <div key={tool.id} className="p-4 px-6 flex items-center justify-center border-l border-white/10 last:border-0">
+                                <div key={tool.id} className="p-4 px-6 flex items-center justify-center border-e border-white/10 last:border-0">
                                     <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${tool.pricing_type === 'Free' ? 'bg-green-500/20 text-green-400' :
                                         tool.pricing_type === 'Freemium' ? 'bg-blue-500/20 text-blue-400' :
                                             'bg-orange-500/20 text-orange-400'
                                         }`}>
-                                        {tool.pricing_type === 'Free' ? 'مجاني' :
-                                            tool.pricing_type === 'Freemium' ? 'مجاني / مدفوع' : 'مدفوع'}
+                                        {tool.pricing_type === 'Free' ? t('pricing.free') :
+                                            tool.pricing_type === 'Freemium' ? t('pricing.freemium') : t('pricing.paid')}
                                     </span>
                                 </div>
                             ))}
@@ -163,14 +174,14 @@ const ComparePage = () => {
 
                         {/* 3. صفوف المميزات (Dynamic Matrix) */}
                         {allFeatures.map((feature: string, idx) => (
-                            <div key={idx} className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors">
-                                <div className="p-4 px-6 text-gray-400 text-sm border-l border-white/10 flex items-center">
+                            <div key={idx} className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] border-b border-white/10 hover:bg-white/[0.02] transition-colors text-start">
+                                <div className="p-4 px-6 text-gray-400 text-sm border-e border-white/10 flex items-center">
                                     {feature}
                                 </div>
                                 {tools.map(tool => {
                                     const hasFeature = tool.features?.includes(feature);
                                     return (
-                                        <div key={tool.id} className="p-4 flex items-center justify-center border-l border-white/10 last:border-0">
+                                        <div key={tool.id} className="p-4 flex items-center justify-center border-e border-white/10 last:border-0">
                                             {hasFeature ? (
                                                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                                                     <Check className="w-5 h-5 text-green-500" />
@@ -186,13 +197,12 @@ const ComparePage = () => {
                             </div>
                         ))}
 
-                        {/* 4. صف الوصف */}
-                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))]">
-                            <div className="p-4 px-6 text-gray-300 font-bold border-l border-white/10 flex items-center">
-                                📝 نبذة
+                        <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(250px,1fr))] text-start">
+                            <div className="p-4 px-6 text-gray-300 font-bold border-e border-white/10 flex items-center">
+                                📝 {t('compare.about')}
                             </div>
                             {tools.map(tool => (
-                                <div key={tool.id} className="p-6 text-sm text-gray-400 leading-relaxed text-center border-l border-white/10 last:border-0">
+                                <div key={tool.id} className="p-6 text-sm text-gray-400 leading-relaxed text-center border-e border-white/10 last:border-0">
                                     {tool.description}
                                 </div>
                             ))}

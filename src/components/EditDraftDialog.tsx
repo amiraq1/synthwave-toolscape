@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
 import type { Tool } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface EditDraftDialogProps {
     tool: Partial<Tool> | null;
@@ -37,6 +38,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
         }
     }, [tool]);
 
+    const { t, i18n } = useTranslation();
     const handleSave = async () => {
         if (!tool) return;
 
@@ -51,12 +53,12 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                 url: formData.url,
                 is_published: true // نشر الأداة عند الحفظ
             })
-            .eq("id", tool.id);
+            .eq("id", Number(tool.id));
 
         if (error) {
-            toast.error("فشل التحديث: " + error.message);
+            toast.error(t('admin.update_failed', { message: error.message }));
         } else {
-            toast.success("تم التعديل والنشر بنجاح! 🚀");
+            toast.success(t('admin.save_success'));
             onUpdate();
             onClose();
         }
@@ -65,15 +67,15 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-right" dir="rtl" aria-describedby={undefined}>
-                <DialogHeader className="text-right">
-                    <DialogTitle className="text-right">تعديل ومراجعة: {formData.title}</DialogTitle>
+            <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl text-start" dir={i18n.dir()} aria-describedby={undefined}>
+                <DialogHeader className="text-start">
+                    <DialogTitle className="text-start">{t('admin.edit_draft')}: {formData.title}</DialogTitle>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs text-gray-400 mb-1 block">اسم الأداة</label>
+                            <label className="text-xs text-gray-400 mb-1 block">{t('add_tool.form_name')}</label>
                             <Input
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -81,7 +83,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-400 mb-1 block">الرابط</label>
+                            <label className="text-xs text-gray-400 mb-1 block">{t('add_tool.form_url')}</label>
                             <Input
                                 value={formData.url}
                                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
@@ -93,7 +95,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs text-gray-400 mb-1 block">التصنيف</label>
+                            <label className="text-xs text-gray-400 mb-1 block">{t('add_tool.form_category')}</label>
                             <Input
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -101,7 +103,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-400 mb-1 block">السعر</label>
+                            <label className="text-xs text-gray-400 mb-1 block">{t('add_tool.form_pricing')}</label>
                             <Input
                                 value={formData.pricing_type}
                                 onChange={(e) => setFormData({ ...formData, pricing_type: e.target.value })}
@@ -111,7 +113,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                     </div>
 
                     <div>
-                        <label className="text-xs text-gray-400 mb-1 block">الوصف العربي</label>
+                        <label className="text-xs text-gray-400 mb-1 block">{t('admin.form_desc_ar')}</label>
                         <Textarea
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -121,9 +123,9 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                 </div>
 
                 <DialogFooter className="gap-2 sm:gap-0">
-                    <Button variant="outline" onClick={onClose} className="bg-transparent border-white/10 hover:bg-white/5">إلغاء</Button>
+                    <Button variant="outline" onClick={onClose} className="bg-transparent border-white/10 hover:bg-white/5">{t('add_tool.cancel')}</Button>
                     <Button onClick={handleSave} disabled={loading} className="bg-green-600 hover:bg-green-700">
-                        {loading ? "جاري الحفظ..." : "حفظ ونشر ✅"}
+                        {loading ? t('add_tool.enhancing') : t('admin.save_publish')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

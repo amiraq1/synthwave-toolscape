@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 import AvatarUpload from "@/components/AvatarUpload";
 import { Loader2, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Settings = () => {
   const { session } = useAuth();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -52,23 +54,23 @@ const Settings = () => {
       .eq("id", session.user.id);
 
     if (error) {
-      toast.error("فشل التحديث: " + error.message);
+      toast.error(t('settings.update_error') + ": " + error.message);
     } else {
-      toast.success("تم حفظ البيانات! ✅");
+      toast.success(t('settings.update_success'));
     }
     setUpdating(false);
   };
 
-  if (!session) return <div className="p-10 text-center">يرجى تسجيل الدخول.</div>;
+  if (!session) return <div className="p-10 text-center">{t('auth.login_required')}</div>;
   if (loading) return <div className="flex justify-center mt-20"><Loader2 className="animate-spin" /></div>;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl">
-      <h1 className="text-3xl font-bold mb-8 text-white">إعدادات الحساب</h1>
+      <h1 className="text-3xl font-bold mb-8 text-white">{t('settings.title')}</h1>
 
       <Card className="bg-white/5 border-white/10 text-right">
         <CardHeader>
-          <CardTitle>الملف الشخصي</CardTitle>
+          <CardTitle>{t('settings.profile')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={updateProfile} className="space-y-8">
@@ -85,17 +87,17 @@ const Settings = () => {
             {/* 2. الاسم والبريد */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <Label htmlFor="email">{t('settings.email_label')}</Label>
                 <Input id="email" value={session.user.email} disabled className="bg-black/20 text-gray-400 text-right" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">الاسم الكامل</Label>
+                <Label htmlFor="fullName">{t('settings.name_label')}</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="كيف تحب أن نناديك؟"
+                  placeholder={t('settings.name_placeholder')}
                   className="text-right"
                 />
               </div>
@@ -107,7 +109,7 @@ const Settings = () => {
               className="w-full bg-neon-purple hover:bg-neon-purple/80"
               disabled={updating}
             >
-              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 ml-2" /> حفظ التغييرات</>}
+              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 ml-2" /> {t('settings.save_btn')}</>}
             </Button>
 
           </form>

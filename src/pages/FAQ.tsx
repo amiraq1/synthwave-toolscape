@@ -9,52 +9,56 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useSEO } from '@/hooks/useSEO';
+import { useTranslation } from 'react-i18next';
 
 interface FAQItem {
     question: string;
     answer: string;
 }
 
-const faqData: FAQItem[] = [
+const getFaqData = (t: any): FAQItem[] => [
     {
-        question: 'ما هو نبض AI؟',
-        answer: 'نبض هو دليل عربي شامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك من خلال تصنيفات واضحة وتقييمات حقيقية.',
+        question: t('faq.q1'),
+        answer: t('faq.a1'),
     },
     {
-        question: 'هل أدوات الذكاء الاصطناعي مجانية؟',
-        answer: 'تختلف الأدوات في التسعير. بعضها مجاني بالكامل، وبعضها مدفوع، والبعض الآخر يقدم نسخة مجانية محدودة مع خيارات مدفوعة للميزات المتقدمة. نوضح نوع التسعير لكل أداة في دليلنا.',
+        question: t('faq.q2'),
+        answer: t('faq.a2'),
     },
     {
-        question: 'كيف أختار أداة الذكاء الاصطناعي المناسبة لي؟',
-        answer: 'حدد احتياجك أولاً (نصوص، صور، فيديو، برمجة، إنتاجية)، ثم استخدم فلتر التصنيفات في موقعنا. اقرأ وصف الأداة وتقييمات المستخدمين لاتخاذ قرار مدروس.',
+        question: t('faq.q3'),
+        answer: t('faq.a3'),
     },
     {
-        question: 'هل يمكنني إضافة أداة جديدة للدليل؟',
-        answer: 'نعم! يمكنك اقتراح أداة جديدة من خلال زر "أضف أداة" في الصفحة الرئيسية. سيتم مراجعة الأداة قبل إضافتها للدليل.',
+        question: t('faq.q4'),
+        answer: t('faq.a4'),
     },
     {
-        question: 'كيف يتم تقييم الأدوات؟',
-        answer: 'يمكن للمستخدمين المسجلين تقييم الأدوات من 1 إلى 5 نجوم وكتابة مراجعات. نظهر متوسط التقييمات وعدد المراجعات لكل أداة.',
+        question: t('faq.q5'),
+        answer: t('faq.a5'),
     },
     {
-        question: 'ما هي تصنيفات الأدوات المتاحة؟',
-        answer: 'نصنف الأدوات إلى: نصوص (ChatGPT، Claude Sonnet 4.5، Claude 3.5)، صور (Midjourney، DALL-E)، فيديو (Sora، Runway)، برمجة (GitHub Copilot)، وإنتاجية (Notion AI، Jasper).',
+        question: t('faq.q6'),
+        answer: t('faq.a6'),
     },
     {
-        question: 'هل الموقع متاح كتطبيق؟',
-        answer: 'نعم! نبض هو تطبيق ويب تقدمي (PWA). يمكنك تثبيته على هاتفك أو جهازك من صفحة التثبيت للوصول السريع والاستخدام بدون إنترنت.',
+        question: t('faq.q7'),
+        answer: t('faq.a7'),
     },
     {
-        question: 'كيف أتواصل مع فريق نبض؟',
-        answer: 'يمكنك التواصل معنا عبر صفحة "اتصل بنا" أو إرسال بريد إلكتروني إلى contact@amiraq.org. نسعد بالإجابة على استفساراتك واقتراحاتك.',
+        question: t('faq.q8'),
+        answer: t('faq.a8'),
     },
 ];
 
 const FAQ = () => {
+    const { t, i18n } = useTranslation();
+    const faqData = getFaqData(t);
+
     useSEO({
-        title: 'الأسئلة الشائعة - نبض AI',
-        description: 'إجابات على الأسئلة الشائعة حول نبض AI ودليل أدوات الذكاء الاصطناعي. تعرف على كيفية استخدام الموقع واختيار الأدوات المناسبة.',
-        keywords: 'أسئلة شائعة، نبض، دليل الذكاء الاصطناعي، مساعدة، FAQ',
+        title: t('faq.meta_title'),
+        description: t('faq.meta_desc'),
+        keywords: t('faq.meta_keywords'),
     });
 
     // Add FAQ Schema
@@ -89,7 +93,7 @@ const FAQ = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-background" dir="rtl">
+        <div className="min-h-screen bg-background" dir={i18n.dir()}>
             {/* Background Effects */}
             <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
             <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
@@ -100,7 +104,7 @@ const FAQ = () => {
                     <Link to="/">
                         <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                             <ArrowRight className="h-5 w-5" />
-                            العودة للرئيسية
+                            {t('nav.back_home')}
                         </Button>
                     </Link>
                 </div>
@@ -116,10 +120,10 @@ const FAQ = () => {
                         </div>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        الأسئلة الشائعة
+                        {t('faq.title')}
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                        إجابات سريعة على الأسئلة الأكثر شيوعاً حول نبض وأدوات الذكاء الاصطناعي.
+                        {t('faq.subtitle')}
                     </p>
                 </section>
 
@@ -132,7 +136,7 @@ const FAQ = () => {
                                 value={`item-${index}`}
                                 className="border border-border/50 rounded-xl px-6 data-[state=open]:bg-card/50"
                             >
-                                <AccordionTrigger className="text-right hover:no-underline py-5">
+                                <AccordionTrigger className="text-start hover:no-underline py-5">
                                     <span className="text-lg font-medium text-foreground">{item.question}</span>
                                 </AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
@@ -145,10 +149,10 @@ const FAQ = () => {
 
                 {/* CTA Section */}
                 <section className="text-center space-y-6">
-                    <p className="text-muted-foreground">لم تجد إجابة لسؤالك؟</p>
+                    <p className="text-muted-foreground">{t('faq.not_found')}</p>
                     <Link to="/contact">
                         <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                            تواصل معنا
+                            {t('about.contact_us')}
                         </Button>
                     </Link>
                 </section>
@@ -157,7 +161,7 @@ const FAQ = () => {
             {/* Simple Footer */}
             <footer className="border-t border-border/50 py-8 mt-12">
                 <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 نبض AI. جميع الحقوق محفوظة.</p>
+                    <p>{t('footer.rights')}</p>
                 </div>
             </footer>
         </div>

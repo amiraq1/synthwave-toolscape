@@ -85,8 +85,12 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
         .from("tools")
         .select("*")
         .eq("is_published", true)
-        .order("is_featured", { ascending: false }) // Featured first (logic from existing code)
-        .order("created_at", { ascending: false }) // الأحدث أولاً
+        // Prioritize most-used tools first
+        .order("clicks_count", { ascending: false, nullsFirst: false })
+        .order("views_count", { ascending: false, nullsFirst: false })
+        // Keep featured/new as tie-breakers
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false })
         .range(from, to);
 
       // تطبيق الفلاتر (Dynamic Filtering)

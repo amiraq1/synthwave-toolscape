@@ -7,14 +7,17 @@ import ToolsTimeline from "@/components/ToolsTimeline";
 import LivePulse from "@/components/LivePulse";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import RecommendedForYou from "@/components/RecommendedForYou";
+import AIMosaicShowcase from "@/components/AIMosaicShowcase";
 import { useTools, type Category, type Tool } from "@/hooks/useTools";
 import { useHybridSearch } from "@/hooks/useSemanticSearch";
 import { useSEO } from "@/hooks/useSEO";
 import { useStructuredData } from "@/hooks/useStructuredData";
 import { Sparkles, Loader2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+  const { t } = useTranslation();
   // رابط مشروعك (تأكد من المعرف)
   const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
   const ogImageUrl = `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent("نبض AI")}&category=${encodeURIComponent("دليلك الذكي لأدوات المستقبل")}`;
@@ -113,6 +116,11 @@ const Index = () => {
     return filteredTools;
   }, [filteredTools, semanticTools, isSemantic]);
 
+  const showcaseTools = useMemo(() => {
+    const source = displayTools.length ? displayTools : tools;
+    return source.slice(0, 8);
+  }, [displayTools, tools]);
+
   // Structured data
   const structuredDataItems = useMemo(
     () => displayTools.map((tool) => ({ id: tool.id, name: tool.title, url: tool.url })),
@@ -131,12 +139,12 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden font-cairo text-right" dir="rtl">
       {/* 👇 تحسينات SEO للصفحة الرئيسية */}
       <Helmet>
-        <title>نبض AI | الدليل العربي الأول لأدوات الذكاء الاصطناعي</title>
-        <meta name="description" content="اكتشف أفضل أدوات الذكاء الاصطناعي (ChatGPT, Midjourney, وغيرها) مع مراجعات عربية، مقارنات دقيقة، وفلاتر ذكية. دليلك الشامل لعام 2026." />
+        <title>{t('index.meta_title')}</title>
+        <meta name="description" content={t('index.meta_desc')} />
 
         {/* Open Graph */}
-        <meta property="og:title" content="نبض AI | اكتشف أدوات المستقبل" />
-        <meta property="og:description" content="أكبر مكتبة عربية لأدوات الذكاء الاصطناعي. ابحث، قارن، واختر الأداة المناسبة لك." />
+        <meta property="og:title" content={t('index.og_title')} />
+        <meta property="og:description" content={t('index.og_desc')} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:type" content="website" />
 
@@ -150,7 +158,7 @@ const Index = () => {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[100] focus:rounded-xl focus:bg-background focus:px-4 focus:py-2 focus:shadow"
       >
-        تخطّي إلى المحتوى
+        {t('index.skip_to_content')}
       </a>
 
       {/* Navbar Removed - Handled in App.tsx */}
@@ -179,6 +187,12 @@ const Index = () => {
           />
         </section>
 
+        {!searchQuery && activeCategory === 'الكل' && showcaseTools.length > 0 && (
+          <section aria-label="عرض الأدوات المميزة" className="mb-8 sm:mb-10">
+            <AIMosaicShowcase tools={showcaseTools} />
+          </section>
+        )}
+
         {/* Persona Filter - أنا ... */}
         <div className="container mx-auto px-4 relative group mb-6">
           <PersonaFilter
@@ -195,7 +209,7 @@ const Index = () => {
                 className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-400 transition-colors bg-white/5 px-4 py-1.5 rounded-full border border-white/10 hover:border-red-500/30"
               >
                 <X className="w-3 h-3" />
-                مسح الفلتر
+                {t('index.clear_filter')}
               </button>
             </div>
           )}
@@ -218,7 +232,7 @@ const Index = () => {
             section-divider
           "
         >
-          <h2 id="filters-heading" className="sr-only">تصفية الأدوات</h2>
+          <h2 id="filters-heading" className="sr-only">{t('index.filter_tools')}</h2>
           <CategoryFilters activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
         </section>
 
@@ -235,7 +249,7 @@ const Index = () => {
           "
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 id="tools-heading" className="sr-only">قائمة الأدوات</h2>
+            <h2 id="tools-heading" className="sr-only">{t('index.tools_list')}</h2>
 
             {/* Semantic Search Indicator */}
             {searchQuery && (
@@ -243,13 +257,13 @@ const Index = () => {
                 {isSemanticLoading && (
                   <Badge variant="outline" className="gap-1 text-xs border-neon-purple/30 text-neon-purple animate-pulse">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    بحث ذكي...
+                    {t('index.smart_search')}
                   </Badge>
                 )}
                 {isSemantic && !isSemanticLoading && (
                   <Badge className="gap-1.5 text-xs bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 text-neon-purple border border-neon-purple/30">
                     <Sparkles className="w-3 h-3" />
-                    نتائج بحث ذكية 🤖
+                    {t('index.smart_results')}
                   </Badge>
                 )}
               </div>

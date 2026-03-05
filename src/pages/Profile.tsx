@@ -36,7 +36,7 @@ interface Review {
 const Profile = () => {
     const { session, signOut, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const queryClient = useQueryClient();
 
     // 1. Fetch Profile
@@ -112,10 +112,10 @@ const Profile = () => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(['profile', session?.user.id], context.previousProfile);
             }
-            toast.error("فشل تحديث البيانات، تمت استعادة البيانات السابقة.");
+            toast.error(t('profile.update_failed'));
         },
         onSuccess: () => {
-            toast.success("تم تحديث البروفايل بنجاح ✅");
+            toast.success(t('profile.update_success'));
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] });
@@ -166,10 +166,10 @@ const Profile = () => {
     if (isError) return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 max-w-md">
-                <h2 className="text-xl font-bold text-red-400 mb-2">عذراً، حدث خطأ ما</h2>
-                <p className="text-gray-400 mb-6">لم نتمكن من تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى لاحقاً.</p>
+                <h2 className="text-xl font-bold text-red-400 mb-2">{t('profile.error_title')}</h2>
+                <p className="text-gray-400 mb-6">{t('profile.error_desc')}</p>
                 <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/30 hover:bg-red-500/10 hover:text-red-400">
-                    تحديث الصفحة
+                    {t('profile.refresh')}
                 </Button>
             </div>
         </div>
@@ -215,7 +215,7 @@ const Profile = () => {
                 <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 mb-8">
                     <TabsTrigger value="bookmarks" className="data-[state=active]:bg-neon-purple">{t('profile.library')}</TabsTrigger>
                     <TabsTrigger value="recent" className="data-[state=active]:bg-neon-purple gap-2">
-                        <Clock className="w-4 h-4" /> الأخيرة
+                        <Clock className="w-4 h-4" /> {t('profile.recent')}
                     </TabsTrigger>
                     <TabsTrigger value="reviews" className="data-[state=active]:bg-neon-purple">{t('profile.reviews')}</TabsTrigger>
                     <TabsTrigger value="settings" className="data-[state=active]:bg-neon-purple">{t('profile.settings')}</TabsTrigger>
@@ -233,7 +233,7 @@ const Profile = () => {
                         <div className="text-center py-20 bg-white/5 rounded-2xl border border-dashed border-white/10">
                             <Heart className="w-12 h-12 mx-auto text-gray-600 mb-4" />
                             <p className="text-gray-400">{t('profile.no_bookmarks')}</p>
-                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">تصفح الأدوات</Button>
+                            <Button variant="link" onClick={() => navigate("/")} className="text-neon-purple">{t('profile.browse')}</Button>
                         </div>
                     )}
                 </TabsContent>
@@ -259,12 +259,12 @@ const Profile = () => {
                                     </div>
                                     <p className="text-gray-300 mb-4">"{review.comment}"</p>
                                     <div className="text-xs text-gray-500">
-                                        تم النشر: {new Date(review.created_at).toLocaleDateString('ar-EG')}
+                                        {t('profile.published')} {new Date(review.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US')}
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <div className="text-center py-20 text-gray-500">لا توجد مراجعات حتى الآن.</div>
+                            <div className="text-center py-20 text-gray-500">{t('profile.no_reviews')}</div>
                         )}
                     </div>
                 </TabsContent>
@@ -278,7 +278,7 @@ const Profile = () => {
 
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-gray-300">الاسم الكامل</Label>
+                                <Label className="text-gray-300">{t('settings.fullname')}</Label>
                                 <Input
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
@@ -287,7 +287,7 @@ const Profile = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <Label className="text-gray-300">الصورة الرمزية</Label>
+                                <Label className="text-gray-300">{t('profile.avatar')}</Label>
                                 {session?.user.id && (
                                     <AvatarUpload
                                         userId={session.user.id}

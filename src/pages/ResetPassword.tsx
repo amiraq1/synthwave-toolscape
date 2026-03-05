@@ -7,14 +7,15 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import i18n from '@/i18n';
 
 const passwordSchema = z
   .object({
-    password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+    password: z.string().min(6, i18n.t('reset.password_min')),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "كلمتا المرور غير متطابقتين",
+    message: i18n.t('reset.password_mismatch'),
     path: ["confirmPassword"],
   });
 
@@ -43,6 +44,7 @@ const ResetPassword = () => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = i18n;
 
   const params = useMemo(() => parseAuthParams(), []);
 
@@ -56,8 +58,8 @@ const ResetPassword = () => {
           const { error } = await supabase.auth.exchangeCodeForSession(params.code);
           if (error) {
             toast({
-              title: "رابط غير صالح",
-              description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
+              title: t("reset.invalid_link"),
+              description: t("reset.invalid_desc"),
               variant: "destructive",
             });
             navigate("/auth", { replace: true });
@@ -70,8 +72,8 @@ const ResetPassword = () => {
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
           toast({
-            title: "رابط غير صالح",
-            description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
+            title: t("reset.invalid_link"),
+            description: t("reset.invalid_desc"),
             variant: "destructive",
           });
           navigate("/auth", { replace: true });
@@ -100,7 +102,7 @@ const ResetPassword = () => {
       const validation = passwordSchema.safeParse({ password, confirmPassword });
       if (!validation.success) {
         toast({
-          title: "خطأ في البيانات",
+          title: t("reset.data_error"),
           description: validation.error.errors[0].message,
           variant: "destructive",
         });
@@ -110,8 +112,8 @@ const ResetPassword = () => {
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) {
         toast({
-          title: "انتهت صلاحية الرابط",
-          description: "يرجى طلب رابط جديد لإعادة تعيين كلمة المرور",
+          title: t("reset.expired_link"),
+          description: t("reset.invalid_desc"),
           variant: "destructive",
         });
         navigate("/auth", { replace: true });
@@ -122,8 +124,8 @@ const ResetPassword = () => {
 
       if (error) {
         toast({
-          title: "خطأ",
-          description: "حدث خطأ أثناء تغيير كلمة المرور",
+          title: t("reset.error"),
+          description: t("reset.error_desc"),
           variant: "destructive",
         });
         return;
@@ -131,8 +133,8 @@ const ResetPassword = () => {
 
       setIsSuccess(true);
       toast({
-        title: "تم بنجاح!",
-        description: "تم تغيير كلمة المرور بنجاح",
+        title: t("reset.success"),
+        description: t("reset.success_desc"),
       });
     } finally {
       setIsLoading(false);
@@ -146,7 +148,7 @@ const ResetPassword = () => {
         <div className="w-full max-w-md">
           <div className="glass rounded-3xl p-6 sm:p-8 text-center space-y-4">
             <Activity className="mx-auto h-10 w-10 text-neon-purple animate-pulse" />
-            <p className="text-muted-foreground">جاري التحقق من رابط إعادة التعيين…</p>
+            <p className="text-muted-foreground">{t("reset.checking")}</p>
           </div>
         </div>
       </div>
@@ -168,15 +170,15 @@ const ResetPassword = () => {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">تم تغيير كلمة المرور!</h1>
-              <p className="text-muted-foreground">يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("reset.title_success")}</h1>
+              <p className="text-muted-foreground">{t("reset.desc_success")}</p>
             </div>
 
             <Button
               onClick={() => navigate("/auth", { replace: true })}
               className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg"
             >
-              تسجيل الدخول
+              {t('auth.login')}
             </Button>
 
             <button
@@ -184,7 +186,7 @@ const ResetPassword = () => {
               onClick={() => navigate("/", { replace: true })}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              العودة للصفحة الرئيسية
+              {t('nav.back_home')}
             </button>
           </div>
         </div>
@@ -207,12 +209,12 @@ const ResetPassword = () => {
                 <span className="font-medium text-foreground/80 mr-1">AI</span>
               </h1>
             </div>
-            <p className="text-muted-foreground">إنشاء كلمة مرور جديدة</p>
+            <p className="text-muted-foreground">{t("reset.subtitle")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="password">كلمة المرور الجديدة</Label>
+              <Label htmlFor="password">{t("reset.new_password")}</Label>
               <div className="relative">
                 <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
@@ -229,7 +231,7 @@ const ResetPassword = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">تأكيد كلمة المرور</Label>
+              <Label htmlFor="confirmPassword">{t("reset.confirm_password")}</Label>
               <div className="relative">
                 <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
@@ -250,7 +252,7 @@ const ResetPassword = () => {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg"
             >
-              {isLoading ? "جاري الحفظ..." : "حفظ كلمة المرور"}
+              {isLoading ? t("reset.saving") : t("reset.save")}
             </Button>
           </form>
 
@@ -260,7 +262,7 @@ const ResetPassword = () => {
               onClick={() => navigate("/", { replace: true })}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              العودة للصفحة الرئيسية
+              {t("nav.back_home")}
             </button>
           </div>
         </div>

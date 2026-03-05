@@ -8,6 +8,7 @@ import { Send, Bot, X, MessageCircle, Loader2, User, WifiOff } from "lucide-reac
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 // تعريف نوع الرسالة
 type Message = {
@@ -16,9 +17,10 @@ type Message = {
 };
 
 export default function ChatBot() {
+    const { t, i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "assistant", content: "Hi! I am your AI assistant. How can I help you find the right tools today? 🤖" }
+        { role: "assistant", content: t('chatbot.greeting') }
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +40,8 @@ export default function ChatBot() {
 
         // 1. التحقق من الإنترنت
         if (!navigator.onLine) {
-            toast.error("No internet connection", {
-                description: "The assistant needs internet access to respond.",
+            toast.error(t('chatbot.no_internet'), {
+                description: t('chatbot.no_internet_desc'),
                 icon: <WifiOff className="w-4 h-4" />,
             });
             return;
@@ -70,7 +72,7 @@ export default function ChatBot() {
         } catch (error: unknown) {
             console.error("Chat Error Details:", error);
 
-            let errorMessage = "Connection error occurred";
+            let errorMessage = t('common.error');
             if (error instanceof Error) {
                 errorMessage = error.message;
             } else if (typeof error === "object" && error !== null && "message" in error) {
@@ -80,10 +82,10 @@ export default function ChatBot() {
                 }
             }
 
-            toast.error("Assistant connection failed", {
+            toast.error(t('chatbot.failed'), {
                 description: errorMessage,
                 action: {
-                    label: "Retry",
+                    label: t('chatbot.retry'),
                     onClick: () => setInputValue(userMessage),
                 },
             });
@@ -98,8 +100,11 @@ export default function ChatBot() {
             {!isOpen && (
                 <Button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-neon-purple hover:bg-neon-purple/80 z-50 animate-bounce"
-                    aria-label="Open assistant"
+                    className={cn(
+                        "fixed bottom-6 h-14 w-14 rounded-full shadow-lg bg-neon-purple hover:bg-neon-purple/80 z-50 animate-bounce",
+                        i18n.dir() === 'rtl' ? "right-6" : "left-6"
+                    )}
+                    aria-label={t('chatbot.open')}
                 >
                     <MessageCircle className="h-8 w-8 text-white" />
                 </Button>
@@ -107,24 +112,27 @@ export default function ChatBot() {
 
             {/* نافذة الشات */}
             {isOpen && (
-                <Card className="fixed bottom-6 right-6 w-[90vw] md:w-[400px] h-[500px] shadow-2xl z-50 flex flex-col border-neon-purple/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <Card className={cn(
+                    "fixed bottom-6 w-[90vw] md:w-[400px] h-[500px] shadow-2xl z-50 flex flex-col border-neon-purple/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+                    i18n.dir() === 'rtl' ? "right-6" : "left-6"
+                )} dir={i18n.dir()}>
 
                     {/* الرأس */}
                     <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <Avatar className="h-8 w-8 bg-neon-purple/20">
-                                
+
                                 <AvatarFallback className="bg-primary text-primary-foreground"><Bot className="w-5 h-5" /></AvatarFallback>
                             </Avatar>
                             <div>
-                                <span className="block font-bold">AI Assistant</span>
+                                <span className="block font-bold">{t('chatbot.title')}</span>
                                 <span className="text-xs text-green-500 flex items-center gap-1">
                                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                    Online now
+                                    {t('chatbot.online')}
                                 </span>
                             </div>
                         </CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full" aria-label="Close assistant">
+                        <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full" aria-label={t('chatbot.close')}>
                             <X className="h-4 w-4" />
                         </Button>
                     </CardHeader>
@@ -138,7 +146,7 @@ export default function ChatBot() {
                                         key={index}
                                         className={cn(
                                             "flex gap-2 max-w-[85%]",
-                                            msg.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"
+                                            (msg.role === "user") === (i18n.dir() === "rtl") ? "ml-auto flex-row-reverse" : "mr-auto"
                                         )}
                                     >
                                         <Avatar className="h-8 w-8 mt-1">
@@ -159,7 +167,10 @@ export default function ChatBot() {
                                     </div>
                                 ))}
                                 {isLoading && (
-                                    <div className="flex gap-2 max-w-[85%] mr-auto">
+                                    <div className={cn(
+                                        "flex gap-2 max-w-[85%]",
+                                        i18n.dir() === "rtl" ? "mr-auto" : "ml-auto"
+                                    )}>
                                         <Avatar className="h-8 w-8">
                                             <AvatarFallback><Bot className="w-4 h-4" /></AvatarFallback>
                                         </Avatar>
@@ -179,7 +190,7 @@ export default function ChatBot() {
                             <Input
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="Ask about a tool..."
+                                placeholder={t('chatbot.placeholder')}
                                 className="flex-1 bg-background focus-visible:ring-neon-purple"
                                 disabled={isLoading}
                             />
@@ -188,7 +199,7 @@ export default function ChatBot() {
                                 size="icon"
                                 disabled={isLoading || !inputValue.trim()}
                                 className="bg-primary hover:bg-primary/90 transition-all"
-                                aria-label="Send message"
+                                aria-label={t('chatbot.send')}
                             >
                                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                             </Button>

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -39,28 +40,54 @@ interface AddToolModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const categories = ['نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
-const pricingTypes = ['مجاني', 'مدفوع'];
+const getCategories = (t: any) => [
+  { value: 'نصوص', label: t('categories.text') },
+  { value: 'صور', label: t('categories.image') },
+  { value: 'فيديو', label: t('categories.video') },
+  { value: 'برمجة', label: t('categories.code') },
+  { value: 'إنتاجية', label: t('categories.productivity') },
+  { value: 'دراسة وطلاب', label: t('categories.education') },
+  { value: 'صوت', label: t('categories.audio') },
+];
 
-const formSchema = z.object({
-  title: z.string().min(2, 'الاسم قصير جداً'),
-  description: z.string().min(10, 'الوصف قصير جداً').max(500),
-  url: z.string().url('رابط غير صحيح'),
-  image_url: z.string().url('رابط غير صحيح').optional().or(z.literal('')),
-  category: z.string().min(1, 'مطلوب'),
+const getPricingTypes = (t: any) => [
+  { value: 'مجاني', label: t('pricing.free') },
+  { value: 'مدفوع', label: t('pricing.paid') },
+];
+
+const getFormSchema = (t: any) => z.object({
+  title: z.string().min(2, t('add_tool.validation_name_short')),
+  description: z.string().min(10, t('add_tool.validation_desc_short')).max(500),
+  url: z.string().url(t('add_tool.validation_url_invalid')),
+  image_url: z.string().url(t('add_tool.validation_url_invalid')).optional().or(z.literal('')),
+  category: z.string().min(1, t('add_tool.validation_required')),
   pricing_type: z.string(),
-  features: z.array(z.object({ value: z.string().min(1, 'مطلوب') })).optional(),
-  screenshots: z.array(z.object({ value: z.string().url('رابط غير صحيح') })).optional(),
+  features: z.array(z.object({ value: z.string().min(1, t('add_tool.validation_required')) })).optional(),
+  screenshots: z.array(z.object({ value: z.string().url(t('add_tool.validation_url_invalid')) })).optional(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = {
+  title: string;
+  description: string;
+  url: string;
+  image_url: string;
+  category: string;
+  pricing_type: string;
+  features: { value: string }[];
+  screenshots: { value: string }[];
+};
 
 const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  const categories = getCategories(t);
+  const pricingTypes = getPricingTypes(t);
+  const formSchema = getFormSchema(t);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -97,7 +124,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     const currentDesc = form.getValues('description');
 
     if (!currentTitle.trim() || !currentDesc.trim()) {
-      toast({ title: 'تنبيه', description: 'أدخل الاسم والوصف أولاً', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('add_tool.enhance_alert'), variant: 'destructive' });
       return;
     }
 
@@ -109,10 +136,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
       if (data?.enhancedDescription) {
         form.setValue('description', data.enhancedDescription, { shouldValidate: true });
-        toast({ title: '✨ تم التحسين' });
+        toast({ title: t('add_tool.enhance_success') });
       }
     } catch (error) {
-      toast({ title: 'خطأ', description: 'فشل التحسين', variant: 'destructive' });
+      toast({ title: t('common.error'), description: t('add_tool.enhance_error'), variant: 'destructive' });
     } finally {
       setIsEnhancing(false);
     }
@@ -135,24 +162,24 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: '🎉 تم الإضافة بنجاح', className: "bg-emerald-500/10 text-emerald-500" });
+      toast({ title: t('add_tool.submit_success'), className: "bg-emerald-500/10 text-emerald-500" });
       queryClient.invalidateQueries({ queryKey: ['tools'] });
       onOpenChange(false);
     },
-    onError: () => toast({ title: 'خطأ', description: 'فشل الحفظ', variant: 'destructive' }),
+    onError: () => toast({ title: t('common.error'), description: t('add_tool.submit_error'), variant: 'destructive' }),
   });
 
   // Auth Guard
   if (isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-xs p-6 text-center" dir="rtl" aria-describedby={undefined}>
+        <DialogContent className="sm:max-w-xs p-6 text-center" dir={i18n.dir()} aria-describedby={undefined}>
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <LogIn className="w-6 h-6 text-primary" />
           </div>
-          <DialogTitle className="text-xl font-bold mb-2">تسجيل الدخول</DialogTitle>
-          <DialogDescription className="mb-6">يجب تسجيل الدخول لإضافة أدوات.</DialogDescription>
-          <Button onClick={() => { onOpenChange(false); navigate('/auth'); }} className="w-full">تسجيل الدخول</Button>
+          <DialogTitle className="text-xl font-bold mb-2">{t('add_tool.login_required')}</DialogTitle>
+          <DialogDescription className="mb-6">{t('add_tool.login_required_desc')}</DialogDescription>
+          <Button onClick={() => { onOpenChange(false); navigate('/auth'); }} className="w-full">{t('nav.signin')}</Button>
         </DialogContent>
       </Dialog>
     );
@@ -160,15 +187,15 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir="rtl" aria-describedby={undefined}>
+      <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden border-white/10 bg-background/95 backdrop-blur-xl" dir={i18n.dir()} aria-describedby={undefined}>
 
         {/* Fixed Header */}
         <DialogHeader className="p-4 pb-2 border-b border-white/5 bg-muted/20 shrink-0">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-bold">إضافة أداة جديدة</DialogTitle>
+            <DialogTitle className="text-lg font-bold">{t('add_tool.title')}</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
-            شاركنا أدوات ذكاء اصطناعي مفيدة.
+            {t('add_tool.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -181,8 +208,8 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               <div className="space-y-3 bg-muted/10 p-3 rounded-lg border border-white/5">
                 <FormField control={form.control} name="title" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">اسم الأداة</FormLabel>
-                    <FormControl><Input placeholder="مثال: ChatGPT" {...field} className="h-8 bg-background/50" /></FormControl>
+                    <FormLabel className="text-xs">{t('add_tool.form_name')}</FormLabel>
+                    <FormControl><Input placeholder={t('add_tool.form_name_placeholder')} {...field} className="h-8 bg-background/50" /></FormControl>
                     <FormMessage className="text-[10px]" />
                   </FormItem>
                 )} />
@@ -190,10 +217,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                 <div className="grid grid-cols-2 gap-3">
                   <FormField control={form.control} name="category" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">التصنيف</FormLabel>
+                      <FormLabel className="text-xs">{t('add_tool.form_category')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue placeholder="اختر" /></SelectTrigger></FormControl>
-                        <SelectContent>{categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                        <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue placeholder={t('common.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{categories.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                       </Select>
                       <FormMessage className="text-[10px]" />
                     </FormItem>
@@ -201,10 +228,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
                   <FormField control={form.control} name="pricing_type" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">السعر</FormLabel>
+                      <FormLabel className="text-xs">{t('add_tool.form_pricing')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger className="h-8 bg-background/50"><SelectValue /></SelectTrigger></FormControl>
-                        <SelectContent>{pricingTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                        <SelectContent>{pricingTypes.map(pt => <SelectItem key={pt.value} value={pt.value}>{pt.label}</SelectItem>)}</SelectContent>
                       </Select>
                     </FormItem>
                   )} />
@@ -215,16 +242,16 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               <div className="space-y-3 bg-muted/10 p-3 rounded-lg border border-white/5">
                 <FormField control={form.control} name="url" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> رابط الموقع</FormLabel>
-                    <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
+                    <FormLabel className="text-xs flex items-center gap-1"><LinkIcon className="w-3 h-3" /> {t('add_tool.form_url')}</FormLabel>
+                    <FormControl><Input placeholder={t('add_tool.form_url_placeholder')} dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
                     <FormMessage className="text-[10px]" />
                   </FormItem>
                 )} />
 
                 <FormField control={form.control} name="image_url" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> رابط الشعار (اختياري)</FormLabel>
-                    <FormControl><Input placeholder="https://..." dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
+                    <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> {t('add_tool.form_image_url')}</FormLabel>
+                    <FormControl><Input placeholder={t('add_tool.form_url_placeholder')} dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
                   </FormItem>
                 )} />
               </div>
@@ -233,12 +260,12 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem>
                   <div className="flex justify-between items-center">
-                    <FormLabel className="text-xs">الوصف</FormLabel>
+                    <FormLabel className="text-xs">{t('add_tool.form_desc')}</FormLabel>
                     <Button type="button" variant="ghost" size="sm" onClick={enhanceDescription} disabled={isEnhancing} className="h-6 px-2 text-[10px] text-neon-purple hover:bg-neon-purple/10">
-                      {isEnhancing ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Sparkles className="w-3 h-3 mr-1" /> تحسين AI</>}
+                      {isEnhancing ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Sparkles className="w-3 h-3 mr-1" /> {t('add_tool.enhance_ai')}</>}
                     </Button>
                   </div>
-                  <FormControl><Textarea placeholder="وصف مختصر..." {...field} className="min-h-[80px] bg-background/50 resize-none text-sm" /></FormControl>
+                  <FormControl><Textarea placeholder={t('add_tool.form_desc_placeholder')} {...field} className="min-h-[80px] bg-background/50 resize-none text-sm" /></FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
               )} />
@@ -246,13 +273,13 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
               {/* Dynamic Features - Compact */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <FormLabel className="text-xs text-muted-foreground">المميزات (اختياري)</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">{t('add_tool.form_features')}</FormLabel>
                   <Button type="button" variant="ghost" size="sm" onClick={() => appendFeature({ value: '' })} className="h-6 w-6 p-0"><Plus className="w-4 h-4" /></Button>
                 </div>
                 {featureFields.map((field, index) => (
                   <div key={field.id} className="flex gap-2">
                     <FormField control={form.control} name={`features.${index}.value`} render={({ field }) => (
-                      <Input placeholder={`ميزة ${index + 1}`} {...field} className="h-8 bg-background/50 text-xs" />
+                      <Input placeholder={t('add_tool.form_feature_placeholder', { index: index + 1 })} {...field} className="h-8 bg-background/50 text-xs" />
                     )} />
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(index)} className="h-8 w-8 text-destructive"><X className="w-4 h-4" /></Button>
                   </div>
@@ -265,9 +292,9 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
 
         {/* Fixed Footer */}
         <DialogFooter className="p-4 border-t border-white/5 bg-background shrink-0 flex-row gap-2">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">إلغاء</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 h-9">{t('add_tool.cancel')}</Button>
           <Button type="submit" form="add-tool-form" disabled={mutation.isPending} className="flex-1 h-9 bg-primary hover:bg-primary/90">
-            {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
+            {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : t('add_tool.save')}
           </Button>
         </DialogFooter>
 
