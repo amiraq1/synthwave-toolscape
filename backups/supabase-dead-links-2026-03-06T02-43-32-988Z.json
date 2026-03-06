@@ -1,0 +1,2466 @@
+[
+  {
+    "id": 37,
+    "title": "Meta AI",
+    "url": "N/A (embedded in Meta's ecosystem)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 38,
+    "title": "Stable Diffusion (Base)",
+    "url": "StableDiffusionWeb.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 39,
+    "title": "Nano Banana Pro (Gemini)",
+    "url": "N/A (part of Google AI ecosystem)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 40,
+    "title": "ChatGPT-Image-1.5",
+    "url": "N/A (part of OpenAI)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 45,
+    "title": "Google Gemini",
+    "url": "N/A (mentioned as Free; Gemini Advanced is free for one month then $19.99/month at Google Gemini)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 46,
+    "title": "Grok",
+    "url": "N/A (mentioned as $0.00 at X)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 47,
+    "title": "Microsoft Copilot",
+    "url": "N/A (mentioned as $0.00 at Microsoft)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 53,
+    "title": "Veo 3 (Google Gemini)",
+    "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A/#Veo_3_Google_Gemini",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 56,
+    "title": "Wondershare Filmora",
+    "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9_83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/#Wondershare_Filmora",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9_83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 57,
+    "title": "OpenAI Sora",
+    "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%80%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/#OpenAI_Sora",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%80%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 58,
+    "title": "الاسم",
+    "url": "الرابط",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 59,
+    "title": "---",
+    "url": "---",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 81,
+    "title": "Claude Code",
+    "url": "https://www.anthropic.com/product/claude",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.anthropic.com/product/claude",
+    "confirmed_dead": true
+  },
+  {
+    "id": 85,
+    "title": "Kite",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 86,
+    "title": "DeepCode",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 87,
+    "title": "OpenAI Code",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 88,
+    "title": "Codota",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 89,
+    "title": "Replit Ghostwriter",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 90,
+    "title": "BlackBox AI",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 91,
+    "title": "Snyk",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 92,
+    "title": "Codium",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 93,
+    "title": "Wix ADI",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 94,
+    "title": "Uizard",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 95,
+    "title": "Figma AI",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 96,
+    "title": "ContentBot",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 97,
+    "title": "Mintlify",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 98,
+    "title": "Cypress",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 99,
+    "title": "Testim",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 100,
+    "title": "Adobe Sensei",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 101,
+    "title": "Langchainrb",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 102,
+    "title": "10Web",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 103,
+    "title": "DALL-E 3",
+    "url": "",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 109,
+    "title": "Drift",
+    "url": "https://www.drift.com",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 110,
+    "title": "Claude",
+    "url": "https://www.anthropic.com/product/claude",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.anthropic.com/product/claude",
+    "confirmed_dead": true
+  },
+  {
+    "id": 128,
+    "title": "Brandwell & ContentShake AI",
+    "url": "https://www.brandwell.ai & https://contentshake.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 140,
+    "title": "Claude Pro",
+    "url": "https://www.anthropic.com/product/claude",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.anthropic.com/product/claude",
+    "confirmed_dead": true
+  },
+  {
+    "id": 157,
+    "title": "Zapier Agents",
+    "url": "https://zapier.com/ai/agents",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://zapier.com/ai/agents",
+    "confirmed_dead": true
+  },
+  {
+    "id": 170,
+    "title": "Google Veo 3",
+    "url": "https://ai.google/discover/veo/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://ai.google/discover/veo/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 174,
+    "title": "Bolt",
+    "url": "https://bolt.dev/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 194,
+    "title": "Microsoft Copilot Pro for Outlook",
+    "url": "https://www.microsoft.com/en-us/microsoft-365/microsoft-copilot-pro",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.microsoft.com/en-us/microsoft-365/microsoft-copilot-pro",
+    "confirmed_dead": true
+  },
+  {
+    "id": 195,
+    "title": "Gemini for Gmail",
+    "url": "https://workspace.google.com/products/gemini-for-workspace/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://workspace.google.com/products/gemini-for-workspace/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 203,
+    "title": "Atlas",
+    "url": "https://atlas.ai/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 211,
+    "title": "Winston AI",
+    "url": "https://winstonai.com/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 230,
+    "title": "WisPaper",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 231,
+    "title": "ExplainPaper",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 237,
+    "title": "QuillBot",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 238,
+    "title": "LanguageTool",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 239,
+    "title": "Agent Factory",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 240,
+    "title": "NVivo",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 241,
+    "title": "ATLAS.ti",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 242,
+    "title": "Citavi",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 244,
+    "title": "SlidesAI.io",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 245,
+    "title": "Consensus",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 247,
+    "title": "Readwise Reader",
+    "url": "(لم يتم توفير رابط مباشر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 277,
+    "title": "Excel Copilot",
+    "url": "https://www.microsoft.com/en-us/microsoft-365/microsoft-365-copilot",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.microsoft.com/en-us/microsoft-365/microsoft-365-copilot",
+    "confirmed_dead": true
+  },
+  {
+    "id": 328,
+    "title": "Klaviyo",
+    "url": "https://www.klaviyo.com/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 330,
+    "title": "OptiMonk AI",
+    "url": "https://www.optimonk.com/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 352,
+    "title": "OneTrust",
+    "url": "https://www.onetrust.com/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 360,
+    "title": "Legly",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 361,
+    "title": "Workday Contract Intelligence (powered by Evisort)",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 362,
+    "title": "Luminance",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 364,
+    "title": "Kira Systems (Litera)",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 365,
+    "title": "ContractPodAi",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 366,
+    "title": "DocJuris",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 368,
+    "title": "Lexis+ AI (LexisNexis)",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 369,
+    "title": "Harvey",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 370,
+    "title": "Clio",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 371,
+    "title": "NexLaw",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 372,
+    "title": "MyCase",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 373,
+    "title": "Paxton",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 374,
+    "title": "IronClad",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 375,
+    "title": "Harvey AI",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 376,
+    "title": "LawDroid",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 377,
+    "title": "CaseMine",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 378,
+    "title": "Lexion",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 379,
+    "title": "ThoughtRiver",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 380,
+    "title": "Bryter",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 381,
+    "title": "Legartis",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 382,
+    "title": "Casetext",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 383,
+    "title": "Thomson Reuters CoCounsel",
+    "url": "لا يوجد رابط مباشر في النص",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 403,
+    "title": "Apple Health + AI",
+    "url": "(No direct link, tied to Apple devices)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 404,
+    "title": "Google Fit",
+    "url": "(No direct link, tied to Android devices)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 405,
+    "title": "Open-source clinical NLP tools (cTAKES, MedSpaCy)",
+    "url": "(No direct link, open-source projects)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 407,
+    "title": "OHIF Viewer + DICOM toolchains",
+    "url": "(No direct link, open-source project)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 408,
+    "title": "OpenEMR",
+    "url": "(No direct link, open-source project)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 409,
+    "title": "AutoML tools with healthcare traction (AutoGluon, H2O.ai open source)",
+    "url": "(No direct link, open-source projects)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 410,
+    "title": "Label Studio",
+    "url": "(No direct link, open-source project)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 411,
+    "title": "Whisper (open-source speech-to-text)",
+    "url": "(No direct link, open-source project by OpenAI)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 412,
+    "title": "FHIR test servers and open clinical datasets (Synthea, MIMIC)",
+    "url": "(No direct link, open-source projects/datasets)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 430,
+    "title": "Yardi Virtuoso",
+    "url": "https://www.yardi.com/products/yardi-virtuoso/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.yardi.com/products/yardi-virtuoso/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 437,
+    "title": "ATTOM AVM",
+    "url": "https://www.attomdata.com/solutions/avm/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.attomdata.com/solutions/avm/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 438,
+    "title": "CoreLogic Total Home ValueX",
+    "url": "https://www.corelogic.com/solutions/total-home-valuex.html",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.cotality.com/solutions/total-home-valuex.html",
+    "confirmed_dead": true
+  },
+  {
+    "id": 443,
+    "title": "Archicad AI Visualizer",
+    "url": "https://graphisoft.com/solutions/archicad/ai-visualizer",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.graphisoft.com/en-iq/plans-and-products/archicad/ai-visualizer",
+    "confirmed_dead": true
+  },
+  {
+    "id": 445,
+    "title": "Chaos AI Material Generator",
+    "url": "https://www.chaos.com/enscape/cosmos",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.chaos.com/enscape/cosmos",
+    "confirmed_dead": true
+  },
+  {
+    "id": 459,
+    "title": "Redfin",
+    "url": "https://www.redfin.com/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 405,
+    "method": "GET",
+    "finalUrl": "https://www.redfin.com/",
+    "confirmed_dead": false
+  },
+  {
+    "id": 463,
+    "title": "AI Room Planner",
+    "url": "https://airoomplanner.com/",
+    "alive": false,
+    "reason": "NETWORK_ERROR",
+    "confirmed_dead": false,
+    "error_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+    "error": "fetch failed"
+  },
+  {
+    "id": 465,
+    "title": "ReRender AI",
+    "url": "https://rerender.ai/",
+    "alive": false,
+    "reason": "NETWORK_ERROR",
+    "confirmed_dead": false,
+    "error_code": "ERR_TLS_CERT_ALTNAME_INVALID",
+    "error": "fetch failed"
+  },
+  {
+    "id": 466,
+    "title": "AI Architecture",
+    "url": "https://aiarchitecture.io/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 467,
+    "title": "Modern Reality",
+    "url": "https://modernreality.ai/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 470,
+    "title": "Arcadium",
+    "url": "https://arcadium.ai/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 482,
+    "title": "FinanceGPT",
+    "url": "https://finance-gpt.ai/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 487,
+    "title": "Vena Copilot",
+    "url": "https://www.venasolutions.com/products/vena-copilot",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.venasolutions.com/products/vena-copilot",
+    "confirmed_dead": true
+  },
+  {
+    "id": 513,
+    "title": "SAP SuccessFactors Learning",
+    "url": "https://www.sap.com/mena/products/human-resources-hcm/learning-management.html",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.sap.com/mena/products/hcm/learning-management.html",
+    "confirmed_dead": true
+  },
+  {
+    "id": 518,
+    "title": "UKG Pro HCM",
+    "url": "https://www.ukg.com/our-solutions/ukg-pro",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.ukg.com/our-solutions/ukg-pro",
+    "confirmed_dead": true
+  },
+  {
+    "id": 523,
+    "title": "Breathhh",
+    "url": "https://www.breathhh.com/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 537,
+    "title": "Ubest",
+    "url": "https://ubest.io/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 599,
+    "title": "Fortinet FortiAI",
+    "url": "https://www.fortinet.com/products/ai",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://www.fortinet.com/products/ai",
+    "confirmed_dead": true
+  },
+  {
+    "id": 632,
+    "title": "Farmonaut",
+    "url": "https://farmonaut.com/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 639,
+    "title": "Agrio",
+    "url": "https://agrio.app/agrio-protect-your-crops-harvest-more-ar/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 649,
+    "title": "Farmonaut (بيانات الأقمار الصناعية التاريخية)",
+    "url": "https://farmonaut.com/remote-sensing/unlock-your-farms-past-historical-satellite-data-now-at-your-fingertips-with-farmonaut",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 660,
+    "title": "Farmonaut (برنامج إدارة المزارع)",
+    "url": "https://farmonaut.com/precision-farming/best-farm-management-software-free-for-2026",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 675,
+    "title": "CGIAR Platform for Big Data in Agriculture",
+    "url": "https://bigdata.cgiar.org/",
+    "alive": false,
+    "reason": "TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "ABORT_ERR",
+    "error": "Request timeout"
+  },
+  {
+    "id": 706,
+    "title": "Fhynix",
+    "url": "https://www.fhynix.com/",
+    "alive": false,
+    "reason": "NETWORK_TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "UND_ERR_CONNECT_TIMEOUT",
+    "error": "fetch failed"
+  },
+  {
+    "id": 715,
+    "title": "GLM-4.7",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 716,
+    "title": "Kimi K2 Thinking",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 717,
+    "title": "MiniMax-M2.1",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 718,
+    "title": "DeepSeek-R1-Distill-Qwen3-8B",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 719,
+    "title": "DeepSeek-V3.2 Terminus",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 720,
+    "title": "Qwen3-Next-80B-A3B",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 721,
+    "title": "Qwen3-235B-A22B",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 733,
+    "title": "Doclingo",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 757,
+    "title": "Gemini Live",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 759,
+    "title": "Nemotron 3 Nano",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 760,
+    "title": "LTX-2",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 761,
+    "title": "Docling",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 769,
+    "title": "BrowserOS",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 770,
+    "title": "Everywhere AI Assistant",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 771,
+    "title": "Jan AI",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 778,
+    "title": "WinSTT",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 779,
+    "title": "MiMo-V2-Flash",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 780,
+    "title": "Ling-1T",
+    "url": "غير متوفر حاليًا",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 832,
+    "title": "CO2 AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن يمكن البحث عنه)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 833,
+    "title": "IBM Environmental Intelligence Suite",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق التنبؤ بالمناخ)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 834,
+    "title": "ClimateAI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق نمذجة مخاطر المناخ طويلة الأجل)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 835,
+    "title": "DeepMind AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق كفاءة الطاقة)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 836,
+    "title": "AlphaEarth Foundations (من Google DeepMind)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق رسم خرائط الكوكب بتفاصيل غير مسبوقة)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 837,
+    "title": "NVIDIA Earth-2 Generative AI Foundation Model",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق محاكاة المناخ العالمي)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 839,
+    "title": "AirNow",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق تتبع جودة الهواء)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 840,
+    "title": "Flood Forecasting",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق التنبؤ بالفيضانات)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 841,
+    "title": "Electronic \\'noses\\' for wildfires",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق الكشف عن حرائق الغابات)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 842,
+    "title": "Athena (من J.P. Morgan)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها في سياق إدارة المخاطر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 843,
+    "title": "Whisper (من OpenAI)",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأحد أبرز الأمثلة على قوة الذكاء الاصطناعي مفتوح المصدر في معالجة الصوت)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 848,
+    "title": "YOU",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لتوليد الأفكار)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 852,
+    "title": "Bing Chat",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لتوليد الأفكار)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 853,
+    "title": "Google AI Mode",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لتوليد الأفكار)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 855,
+    "title": "Lazarus AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة للذكاء الاصطناعي الاستخراجي والمحلي للصناعات المنظمة)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 856,
+    "title": "Microsoft Copilot Studio",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لبناء وكلاء الذكاء الاصطناعي)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 857,
+    "title": "Beam AI",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لبناء وكلاء الذكاء الاصطناعي)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 858,
+    "title": "Vertex AI Builder",
+    "url": "(لم يتم توفير رابط مباشر للأداة، ولكن تم ذكرها كأداة لبناء وكلاء الذكاء الاصطناعي)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 859,
+    "title": "Climate TRACE",
+    "url": "climatetrace.org",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 860,
+    "title": "Pachama",
+    "url": "pachama.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 861,
+    "title": "Sust Global",
+    "url": "sustglobal.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 862,
+    "title": "Rio Sustainability Platform",
+    "url": ".rio.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 863,
+    "title": "Arbor",
+    "url": "arbor.eco",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 864,
+    "title": "Klima",
+    "url": "klima.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 868,
+    "title": "Carbon Analytics",
+    "url": "co2analytics.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 869,
+    "title": "Planet Labs",
+    "url": "planet.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 870,
+    "title": "Sustaira",
+    "url": "sustaira.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 871,
+    "title": "ClimateView",
+    "url": "climateview.global",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 872,
+    "title": "Normative",
+    "url": "normative.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 873,
+    "title": "Arbon",
+    "url": "arbon.earth",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 874,
+    "title": "BeZero Carbon",
+    "url": "bezerocarbon.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 875,
+    "title": "Greenly",
+    "url": "greenly.earth",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 876,
+    "title": "Plan A",
+    "url": "plana.earth",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 877,
+    "title": "APlanet",
+    "url": "aplanet.org",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 878,
+    "title": "Watershed",
+    "url": "watershed.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 879,
+    "title": "Persefoni",
+    "url": "persefoni.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 880,
+    "title": "Sinai Technologies",
+    "url": "sinaitechnologies.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 881,
+    "title": "CarbonChain",
+    "url": "carbonchain.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 882,
+    "title": "Clarity AI",
+    "url": "clarity.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 883,
+    "title": "Greenomy",
+    "url": "greenomy.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 884,
+    "title": "Emmi",
+    "url": "emmi.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 885,
+    "title": "Ecometrica",
+    "url": "ecometrica.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 886,
+    "title": "Earth Blox",
+    "url": "earthblox.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 887,
+    "title": "Terrafuse AI",
+    "url": "terrafuse.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 888,
+    "title": "Cervest",
+    "url": "cervest.earth",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 889,
+    "title": "Jupiter Intelligence",
+    "url": "jupiterintel.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 890,
+    "title": "Tomorrow.io",
+    "url": "tomorrow.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 891,
+    "title": "Climate Central",
+    "url": "climatecentral.org",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 892,
+    "title": "Kayrros",
+    "url": "kayrros.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 893,
+    "title": "Gro Intelligence",
+    "url": "gro-intelligence.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 894,
+    "title": "BlueConduit",
+    "url": "blueconduit.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 895,
+    "title": "Glimpse",
+    "url": "meetglimpse.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 896,
+    "title": "EcoSend",
+    "url": "ecosend.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 897,
+    "title": "Envision",
+    "url": "envision.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 898,
+    "title": "Later",
+    "url": "later.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 899,
+    "title": "Planetly (by OneTrust)",
+    "url": "planetly.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 900,
+    "title": "GreenBuzz",
+    "url": "greenbuzz.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 902,
+    "title": "Creatopy",
+    "url": "creatopy.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 903,
+    "title": "Adthos",
+    "url": "adthos.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 904,
+    "title": "Lately AI",
+    "url": "lately.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 905,
+    "title": "OnePulse",
+    "url": "onepulse.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 907,
+    "title": "Crayon",
+    "url": "crayon.co",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 908,
+    "title": "Persado",
+    "url": "persado.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 909,
+    "title": "GreenStory",
+    "url": "greenstory.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 910,
+    "title": "OptiMole",
+    "url": "optimole.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 912,
+    "title": "Treeapp",
+    "url": "treeapp.org",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 913,
+    "title": "Sourcemap",
+    "url": "sourcemap.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 914,
+    "title": "Circularise",
+    "url": "www.circularise.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 915,
+    "title": "Gaia",
+    "url": "gaiachain",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 916,
+    "title": "Everledger",
+    "url": "everledger.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 917,
+    "title": "Recykal",
+    "url": "recykal.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 918,
+    "title": "Optoro",
+    "url": "optoro.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 919,
+    "title": "Fieldguide AI",
+    "url": "fieldguide.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 920,
+    "title": "Tive",
+    "url": "tive.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 921,
+    "title": "Circulor",
+    "url": "circulor.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 922,
+    "title": "Lizee",
+    "url": "lizee.co",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 923,
+    "title": "Rheaply",
+    "url": "rheaply.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 924,
+    "title": "Circular IQ",
+    "url": "circular-iq.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 925,
+    "title": "IBM Sterling Supply Chain Intelligence Suite",
+    "url": "ibm.com/products/supply-chain-intelligence-suite",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 926,
+    "title": "Ecochain",
+    "url": "ecochain.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 927,
+    "title": "Veritree",
+    "url": "veritree.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 928,
+    "title": "Provenance",
+    "url": "provenance.org",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 929,
+    "title": "Resourcify",
+    "url": "resourcify.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 930,
+    "title": "Remake",
+    "url": "remake.world",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 931,
+    "title": "Safi",
+    "url": "safi.co",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 932,
+    "title": "Circularly",
+    "url": "circularly.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 933,
+    "title": "Cove.tool",
+    "url": "cove.tools",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 934,
+    "title": "Autodesk Insight",
+    "url": "autodesk.com/products/insight",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 935,
+    "title": "TallyLCA",
+    "url": "tallylca.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 936,
+    "title": "Hypar",
+    "url": "hypar.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 937,
+    "title": "LuminLab",
+    "url": "lumin-lab.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 939,
+    "title": "Jua.ai",
+    "url": "jua.ai",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 940,
+    "title": "nPlan",
+    "url": "nplan.io",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 941,
+    "title": "BrainBox AI",
+    "url": "brainboxai.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 942,
+    "title": "Qarnot",
+    "url": "qarnot.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 943,
+    "title": "Gridium",
+    "url": "gridium.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 945,
+    "title": "PassiveLogic",
+    "url": "hpassivelogic.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 947,
+    "title": "Enerbrain",
+    "url": "enerbrain.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 948,
+    "title": "Build sustainably with Google Earth",
+    "url": "earth/about/design/",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 949,
+    "title": "MetroGAN",
+    "url": "(Research prototype via arXiv publication)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 950,
+    "title": "Sustainalytics’ Material Risk Monitor",
+    "url": "sustainalytics.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 951,
+    "title": "Higharc AI",
+    "url": "higharc.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 952,
+    "title": "Finch 3D",
+    "url": "finch3d.com",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 960,
+    "title": "Charmed Tilemap Generator",
+    "url": "https://github.com/Charmed-Labs/Charmed-Tilemap-Generator",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://github.com/Charmed-Labs/Charmed-Tilemap-Generator",
+    "confirmed_dead": true
+  },
+  {
+    "id": 963,
+    "title": "Charmed Texture Generator",
+    "url": "https://github.com/Charmed-Labs/Charmed-Texture-Generator",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://github.com/Charmed-Labs/Charmed-Texture-Generator",
+    "confirmed_dead": true
+  },
+  {
+    "id": 964,
+    "title": "DreamTextures",
+    "url": "https://dreamtextures.com/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 1018,
+    "title": "Marian NMT",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1019,
+    "title": "OpenNMT",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1020,
+    "title": "Tensor2Tensor",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1021,
+    "title": "Opus-MT",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1022,
+    "title": "Joey NMT",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1026,
+    "title": "Pontoon",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1027,
+    "title": "Weblate",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1028,
+    "title": "i18n-Tasks",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1029,
+    "title": "Traduora",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1030,
+    "title": "Apertium",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1031,
+    "title": "Moses",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1032,
+    "title": "BaseTerm",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1033,
+    "title": "Terminator",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1034,
+    "title": "Okapi Framework",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1035,
+    "title": "Mojito",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1037,
+    "title": "HIX Translate",
+    "url": "غير متوفر",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1044,
+    "title": "Play.ht",
+    "url": "https://play.ht/",
+    "alive": false,
+    "reason": "TIMEOUT",
+    "confirmed_dead": false,
+    "error_code": "ABORT_ERR",
+    "error": "Request timeout"
+  },
+  {
+    "id": 1062,
+    "title": "AirCaption",
+    "url": "https://www.airbud.io/",
+    "alive": false,
+    "reason": "NETWORK_ERROR",
+    "confirmed_dead": false,
+    "error_code": "ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR",
+    "error": "fetch failed"
+  },
+  {
+    "id": 1066,
+    "title": "Prizmo Go",
+    "url": "https://www.creaceed.com/prizmo/go",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://creaceed.com/prizmo/go",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1067,
+    "title": "Text Fairy",
+    "url": "https://f-droid.org/en/packages/com.renard.ocr/",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://f-droid.org/en/packages/com.renard.ocr/",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1068,
+    "title": "Microsoft Dictation",
+    "url": "https://support.microsoft.com/en-us/windows/use-voice-typing-to-talk-instead-of-type-on-your-pc-fec94565-c4bd-329d-e59a-af033fa5681f",
+    "alive": false,
+    "reason": "HTTP_STATUS",
+    "status": 404,
+    "method": "GET",
+    "finalUrl": "https://support.microsoft.com/en-us/topic/fec94565-c4bd-329d-e59a-af033fa5681f",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1076,
+    "title": "Llama Guard (Meta)",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها أداة مفتوحة المصدر من Meta)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1099,
+    "title": "ShieldGemma (Google)",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها أداة من Google)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1100,
+    "title": "CoPE by Zentropi",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها مذكورة في قائمة أدوات السلامة مفتوحة المصدر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1101,
+    "title": "gpt-oss-safeguard by OpenAI",
+    "url": "(لم يتم العثور على رابط مباشر، ولكنها مذكورة في قائمة أدوات السلامة مفتوحة المصدر)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1104,
+    "title": "OSmod by Jigsaw",
+    "url": "(مذكور في https://github.com/roostorg/awesome-safety-tools)",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1138,
+    "title": "Spikerz",
+    "url": "https://spikerz.io/",
+    "alive": false,
+    "reason": "DNS_NOT_FOUND",
+    "confirmed_dead": true,
+    "error_code": "ENOTFOUND",
+    "error": "fetch failed"
+  },
+  {
+    "id": 1141,
+    "title": "Qiskit Code Assistant",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1142,
+    "title": "Unstructured",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1143,
+    "title": "IBM Granite",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1144,
+    "title": "IBM watsonx Orchestrate",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1145,
+    "title": "BeeAI",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1146,
+    "title": "Agent Stack",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1147,
+    "title": "Atolio",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1148,
+    "title": "AuthMind",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1149,
+    "title": "Rohirrim",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1150,
+    "title": "Generative coding",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1151,
+    "title": "AI companions",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1152,
+    "title": "Mechanistic interpretability",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1153,
+    "title": "Hyperscale AI data centers",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1154,
+    "title": "Reasoning models",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1155,
+    "title": "Microsoft AI’s Diagnostic Orchestrator (MAI-DxO)",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1156,
+    "title": "Copilot",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1157,
+    "title": "Bing",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1158,
+    "title": "Majorana 1",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1163,
+    "title": "DeepSeek",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1167,
+    "title": "Sora 2",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1169,
+    "title": "Araby.AI",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1170,
+    "title": "Katteb",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1172,
+    "title": "Qalam",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1173,
+    "title": "Stable Diffusion (SDXL)",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1175,
+    "title": "Google Veo 3.1 / Flow",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1176,
+    "title": "Runway Gen-3",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1177,
+    "title": "Pika Labs",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  },
+  {
+    "id": 1179,
+    "title": "Codeium",
+    "url": "لا يوجد رابط مباشر في المقال",
+    "alive": false,
+    "reason": "INVALID_URL",
+    "confirmed_dead": true
+  }
+]

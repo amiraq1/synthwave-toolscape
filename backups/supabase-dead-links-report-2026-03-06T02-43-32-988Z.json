@@ -1,0 +1,209 @@
+{
+  "generated_at": "2026-03-06T02:44:47.007Z",
+  "mode": "apply",
+  "options": {
+    "timeout_ms": 12000,
+    "concurrency": 24,
+    "retries": 1,
+    "batch_size": 500,
+    "backup_dir": "backups",
+    "delete_uncertain": false
+  },
+  "counts": {
+    "before": 999,
+    "checked": 999,
+    "alive": 707,
+    "dead": 292,
+    "confirmed_dead": 277,
+    "uncertain_dead": 15,
+    "deleted": 277,
+    "delete_failures": 0,
+    "after": 722
+  },
+  "dead_by_reason": {
+    "INVALID_URL": 241,
+    "HTTP_STATUS": 26,
+    "DNS_NOT_FOUND": 11,
+    "NETWORK_TIMEOUT": 9,
+    "NETWORK_ERROR": 3,
+    "TIMEOUT": 2
+  },
+  "artifacts": {
+    "dead_links": "C:\\Users\\amara\\OneDrive\\المستندات\\GitHub\\synthwave-toolscape\\backups\\supabase-dead-links-2026-03-06T02-43-32-988Z.json",
+    "backup_snapshot": "C:\\Users\\amara\\OneDrive\\المستندات\\GitHub\\synthwave-toolscape\\backups\\supabase-tools-before-dead-links-2026-03-06T02-43-32-988Z.json"
+  },
+  "dead_sample": [
+    {
+      "id": 37,
+      "title": "Meta AI",
+      "url": "N/A (embedded in Meta's ecosystem)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 38,
+      "title": "Stable Diffusion (Base)",
+      "url": "StableDiffusionWeb.com",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 39,
+      "title": "Nano Banana Pro (Gemini)",
+      "url": "N/A (part of Google AI ecosystem)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 40,
+      "title": "ChatGPT-Image-1.5",
+      "url": "N/A (part of OpenAI)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 45,
+      "title": "Google Gemini",
+      "url": "N/A (mentioned as Free; Gemini Advanced is free for one month then $19.99/month at Google Gemini)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 46,
+      "title": "Grok",
+      "url": "N/A (mentioned as $0.00 at X)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 47,
+      "title": "Microsoft Copilot",
+      "url": "N/A (mentioned as $0.00 at Microsoft)",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 53,
+      "title": "Veo 3 (Google Gemini)",
+      "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A/#Veo_3_Google_Gemini",
+      "alive": false,
+      "reason": "HTTP_STATUS",
+      "status": 404,
+      "method": "GET",
+      "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A/",
+      "confirmed_dead": true
+    },
+    {
+      "id": 56,
+      "title": "Wondershare Filmora",
+      "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9_83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/#Wondershare_Filmora",
+      "alive": false,
+      "reason": "HTTP_STATUS",
+      "status": 404,
+      "method": "GET",
+      "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9_83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/",
+      "confirmed_dead": true
+    },
+    {
+      "id": 57,
+      "title": "OpenAI Sora",
+      "url": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%80%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/#OpenAI_Sora",
+      "alive": false,
+      "reason": "HTTP_STATUS",
+      "status": 404,
+      "method": "GET",
+      "finalUrl": "https://teqniax.com/%D8%B5%D9%86%D8%A7%D8%B9%D8%A9-%D8%A7%D9%84%D9%81%D9%8A%D9%80%D9%88-%D8%A8%D8%A7%D9%84%D8%B0%D9%83%D8_A7%D8_A1-%D8_A7%D9_84%D8_A7%D8_B5%D8_B7%D9_86%D8_A7%D8%B9%D9_8A/",
+      "confirmed_dead": true
+    },
+    {
+      "id": 58,
+      "title": "الاسم",
+      "url": "الرابط",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 59,
+      "title": "---",
+      "url": "---",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 81,
+      "title": "Claude Code",
+      "url": "https://www.anthropic.com/product/claude",
+      "alive": false,
+      "reason": "HTTP_STATUS",
+      "status": 404,
+      "method": "GET",
+      "finalUrl": "https://www.anthropic.com/product/claude",
+      "confirmed_dead": true
+    },
+    {
+      "id": 85,
+      "title": "Kite",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 86,
+      "title": "DeepCode",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 87,
+      "title": "OpenAI Code",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 88,
+      "title": "Codota",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 89,
+      "title": "Replit Ghostwriter",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 90,
+      "title": "BlackBox AI",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    },
+    {
+      "id": 91,
+      "title": "Snyk",
+      "url": "",
+      "alive": false,
+      "reason": "INVALID_URL",
+      "confirmed_dead": true
+    }
+  ]
+}
