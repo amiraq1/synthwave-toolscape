@@ -49,43 +49,27 @@ createRoot(document.getElementById('root')!).render(
     </React.StrictMode>,
 );
 
-// لا نسجل Service Worker أثناء التطوير حتى لا يعلق المتصفح على نسخة قديمة من التطبيق.
-const manageServiceWorker = async () => {
+const clearServiceWorkersAndCaches = async () => {
     if (!('serviceWorker' in navigator)) {
         return;
     }
 
-    if (import.meta.env.DEV) {
-        try {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map((registration) => registration.unregister()));
-
-            if ('caches' in window) {
-                const cacheKeys = await caches.keys();
-                await Promise.all(cacheKeys.map((cacheKey) => caches.delete(cacheKey)));
-            }
-        } catch (error) {
-            console.error('Failed to clear service workers in development:', error);
-        }
-
-        return;
-    }
-
     try {
-        // @ts-expect-error: Virtual module created by vite-plugin-pwa
-        const { registerSW } = await import('virtual:pwa-register');
-        registerSW({
-            immediate: false,
-            onRegistered(registration) {
-                console.log('SW registered:', registration);
-            },
-            onRegisterError(error) {
-                console.error('SW registration error:', error);
-            }
-        });
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+
+        if ('caches' in window) {
+            const cacheKeys = await caches.keys();
+            await Promise.all(cacheKeys.map((cacheKey) => caches.delete(cacheKey)));
+        }
     } catch (error) {
-        console.error('Failed to register SW:', error);
+        console.error('Failed to clear service workers and caches:', error);
     }
+};
+
+// لا نعيد تسجيل Service Worker حاليًا حتى نكسر أي كاش قديم يوجه للـ bundles السابقة.
+const manageServiceWorker = async () => {
+    await clearServiceWorkersAndCaches();
 };
 
 // تأجيل إدارة SW حتى يصبح المتصفح غير مشغول

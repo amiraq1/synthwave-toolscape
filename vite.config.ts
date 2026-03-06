@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => ({
 
     // 3. PWA Configuration
     VitePWA({
+      selfDestroying: true,
       registerType: 'autoUpdate',
       injectRegister: null, // Prevent render-blocking - we manually register SW after page load
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -76,6 +77,7 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
