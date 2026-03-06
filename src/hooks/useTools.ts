@@ -1,7 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseNetworkError } from "@/integrations/supabase/client";
+import { getToolsPageFromCatalog } from "@/lib/toolsCatalogFallback";
 
-export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
+export type Category = "الكل" | "نصوص" | "صور" | "فيديو" | "برمجة" | "إنتاجية" | "دراسة وطلاب" | "صوت";
 
 export interface Tool {
   id: string;
@@ -21,6 +22,7 @@ export interface Tool {
     enterprise?: { features: string[]; contact?: boolean };
   } | null;
   is_featured: boolean;
+  is_published?: boolean;
   is_sponsored?: boolean;
   sponsor_expiry?: string | null;
   supports_arabic?: boolean;
@@ -41,24 +43,20 @@ export interface Tool {
   views_count?: number;
 }
 
-export const categories: Category[] = ['الكل', 'نصوص', 'صور', 'فيديو', 'برمجة', 'إنتاجية', 'دراسة وطلاب', 'صوت'];
+export const categories: Category[] = ["الكل", "نصوص", "صور", "فيديو", "برمجة", "إنتاجية", "دراسة وطلاب", "صوت"];
 
-// تعريف أنواع المدخلات للبحث
 interface UseToolsParams {
   searchQuery?: string;
-  selectedPersona?: string; // الفلتر الجديد
+  selectedPersona?: string;
   category?: Category;
 }
 
-// دمجنا المعاملات في كائن واحد (params) بدلاً من وسائط منفصلة
 export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCategoryOld?: Category) => {
-
-  // Normalization logic: support both old signature and new object signature
   let searchQuery = "";
   let selectedPersona = "all";
   let category: Category = "الكل";
 
-  if (typeof searchQueryOrParams === 'string') {
+  if (typeof searchQueryOrParams === "string") {
     searchQuery = searchQueryOrParams;
     if (activeCategoryOld) {
       category = activeCategoryOld;
@@ -70,30 +68,22 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
   }
 
   return useInfiniteQuery({
-    // 1. تحسين مفاتيح الاستعلام (Query Keys) ✅
-    // الآن الكاش سيفصل بين نتائج "المصممين" ونتائج "المبرمجين"
-    // أي تغيير في هذه المصفوفة سيؤدي لجلب بيانات جديدة تلقائياً
     queryKey: ["tools", selectedPersona, searchQuery, category],
-
     queryFn: async ({ pageParam = 0 }) => {
-      const itemsPerPage = 9; // عدد العناصر في كل دفعة
-      const from = (pageParam as number);
+      const itemsPerPage = 9;
+      const from = pageParam as number;
       const to = from + itemsPerPage - 1;
 
-      // بناء الاستعلام الأساسي
       let query = supabase
         .from("tools")
         .select("*")
         .eq("is_published", true)
-        // Prioritize most-used tools first
         .order("clicks_count", { ascending: false, nullsFirst: false })
         .order("views_count", { ascending: false, nullsFirst: false })
-        // Keep featured/new as tie-breakers
         .order("is_featured", { ascending: false })
         .order("created_at", { ascending: false })
         .range(from, to);
 
-      // تطبيق الفلاتر (Dynamic Filtering)
       if (searchQuery.trim()) {
         const sanitized = searchQuery
           .trim()
@@ -102,70 +92,63 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
           .replace(/%/g, "\\%")
           .replace(/_/g, "\\_");
 
-        // نستخدم البحث في العنوان أو الوصف
         query = query.or(`title.ilike.%${sanitized}%,description.ilike.%${sanitized}%`);
       }
 
       if (selectedPersona && selectedPersona !== "all") {
-        // البحث عن الشخصية داخل مصفوفة الفئات (أو عمود مخصص إذا وجد)
-        // هنا نفترض أن الفئات تحتوي على كلمات مثل "design", "coding"
-        // لكن بما أن الـ logic الحالي يعتمد على category واحدة لكل tool، سنحاول محاكاة ذلك
-        // أو استخدام المنطق القديم إذا كان هناك Secondary Categories أو منطق Persona
-        // *تنبيه*: تم نقل هذا المنطق من personaFilter.ts client-side filtering إلى هنا server-side filtering
-        // هذا قد يحتاج لتعديل إذا كانت الـ database لا تدعم فلترة الـ persona بشكل مباشر
-        // سأستخدم ilike على الـ category بشكل تقريبي كما طلب المستخدم
-
-        if (selectedPersona === "design") query = query.ilike("category", "%صور%"); // Translate conceptual persona to existing Arabic category
+        if (selectedPersona === "design") query = query.ilike("category", "%صور%");
         else if (selectedPersona === "dev") query = query.ilike("category", "%برمجة%");
         else if (selectedPersona === "content") query = query.ilike("category", "%نصوص%");
-        else if (selectedPersona === "student") query = query.ilike("category", "%دراسة%"); // Or "student" if you have English tags
+        else if (selectedPersona === "student") query = query.ilike("category", "%دراسة%");
       }
 
       if (category && category !== "الكل") {
         query = query.eq("category", category);
       }
 
-      const { data, error } = await query;
+      try {
+        const { data, error } = await query;
 
-      if (error) {
+        if (error) {
+          throw error;
+        }
+
+        return (data ?? []) as Tool[];
+      } catch (error) {
+        if (isSupabaseNetworkError(error)) {
+          const fallbackPage = await getToolsPageFromCatalog({
+            category,
+            offset: from,
+            pageSize: itemsPerPage,
+            searchQuery,
+            selectedPersona,
+          });
+
+          return fallbackPage.data;
+        }
+
         console.error("Error fetching tools:", error);
         throw error;
       }
-
-      return data;
     },
-
     initialPageParam: 0,
-
-    // 2. تحسين إعدادات الوقت (Stale & GC Time) ✅
-    // staleTime: الفترة التي تعتبر فيها البيانات "طازجة" ولا تحتاج لإعادة جلب (قللناها لـ 5 دقائق)
     staleTime: 1000 * 60 * 5,
-    // gcTime: الفترة التي تبقى فيها البيانات غير المستخدمة في الذاكرة قبل حذفها (30 دقيقة ممتازة)
     gcTime: 1000 * 60 * 30,
-
     getNextPageParam: (lastPage, allPages) => {
-      // إذا كانت الصفحة الحالية فارغة أو أقل من العدد المطلوب، فلا توجد صفحات تالية
-      // lastPage is Tool[]
       return lastPage.length < 9 ? undefined : allPages.length * 9;
     },
-
-    // 3. استخدام دالة Select للتحويل (Data Transformation) ✅
-    // هذه الدالة تعمل *بعد* الجلب و *قبل* أن تصل للمكون
-    // هنا نستخدمها لضمان أننا لا نمرر أي حقول حساسة أو غير ضرورية للواجهة
     select: (data) => {
       return {
         pages: data.pages.map((page) =>
           page.map((item) => ({
             ...item,
             id: String(item.id),
-            // مثال: تحويل السعر لرقم مقروء أو إضافة حقل مشتق
-            // is_new: new Date(tool.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // جديد إذا كان أقل من أسبوع
-          } as unknown as Tool)) // Force cast to match interface
+          } as Tool))
         ),
         pageParams: data.pageParams,
       };
     },
-    refetchOnMount: false, // استخدام الكاش
-    placeholderData: (previousData) => previousData, // عرض البيانات القديمة أثناء التحديث
+    refetchOnMount: false,
+    placeholderData: (previousData) => previousData,
   });
 };

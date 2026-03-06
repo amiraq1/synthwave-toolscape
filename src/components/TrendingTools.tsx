@@ -1,59 +1,96 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseNetworkError } from "@/integrations/supabase/client";
 import { Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
+import { getTrendingToolsFromCatalog } from "@/lib/toolsCatalogFallback";
 
 interface TrendingTool {
-    id: string | number;
-    title: string;
-    views_count: number | null;
+  id: string | number;
+  title: string;
+  views_count: number | null;
 }
 
 const TrendingTools = () => {
-    const { t, i18n } = useTranslation();
-    const [tools, setTools] = useState<TrendingTool[]>([]);
+  const { t, i18n } = useTranslation();
+  const [tools, setTools] = useState<TrendingTool[]>([]);
 
-    useEffect(() => {
-        const fetchTrending = async () => {
-            const { data } = await (supabase.from("tools") as any)
-                .select("id, title, views_count")
-                .eq("is_published", true)
-                .order("views_count", { ascending: false })
-                .limit(5);
+  useEffect(() => {
+    let cancelled = false;
 
-            if (data) setTools(data as TrendingTool[]);
-        };
+    const fetchTrending = async () => {
+      try {
+        const { data, error } = await (supabase.from("tools") as any)
+          .select("id, title, views_count")
+          .eq("is_published", true)
+          .order("views_count", { ascending: false })
+          .limit(5);
 
-        fetchTrending();
-    }, []);
+        if (error) {
+          throw error;
+        }
 
-    if (tools.length === 0) return null;
+        if (!cancelled && data) {
+          setTools(data as TrendingTool[]);
+        }
+      } catch (error) {
+        if (isSupabaseNetworkError(error)) {
+          const fallbackTools = await getTrendingToolsFromCatalog(5);
 
-    return (
-        <div className="w-full bg-gradient-to-r from-orange-500/10 to-red-500/10 border-y border-orange-500/20 py-2 mb-8 animate-in fade-in slide-in-from-top-4" dir={i18n.dir()}>
-            <div className="container mx-auto px-4 flex items-center gap-4 overflow-hidden">
-                <div className="flex items-center gap-2 text-orange-400 font-bold whitespace-nowrap">
-                    <Flame className="w-4 h-4 fill-orange-400 animate-pulse" />
-                    {t('trending.title')}
-                </div>
+          if (!cancelled) {
+            setTools(
+              fallbackTools.map((tool) => ({
+                id: tool.id,
+                title: tool.title,
+                views_count: tool.clicks_count,
+              })),
+            );
+          }
 
-                <div className="flex gap-6 overflow-x-auto no-scrollbar whitespace-nowrap mask-image-linear-to-r">
-                    {tools.map((tool) => (
-                        <Link
-                            key={tool.id}
-                            to={`/tool/${tool.id}`}
-                            className="text-sm text-gray-300 hover:text-white flex items-center gap-2 transition-colors flex-shrink-0 group"
-                        >
-                            <span className="font-bold group-hover:text-neon-purple transition-colors">{tool.title}</span>
-                            <span className="text-xs text-gray-500">({(tool.views_count || 0).toLocaleString(i18n.language)} {t('trending.views')})</span>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+          return;
+        }
+
+        console.error("Error fetching trending tools:", error);
+      }
+    };
+
+    fetchTrending();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (tools.length === 0) return null;
+
+  return (
+    <div
+      className="mb-8 w-full animate-in border-y border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10 py-2 fade-in slide-in-from-top-4"
+      dir={i18n.dir()}
+    >
+      <div className="container mx-auto flex items-center gap-4 overflow-hidden px-4">
+        <div className="flex items-center gap-2 whitespace-nowrap font-bold text-orange-400">
+          <Flame className="h-4 w-4 fill-orange-400 animate-pulse" />
+          {t("trending.title")}
         </div>
-    );
+
+        <div className="mask-image-linear-to-r flex gap-6 overflow-x-auto whitespace-nowrap no-scrollbar">
+          {tools.map((tool) => (
+            <Link
+              key={tool.id}
+              to={`/tool/${tool.id}`}
+              className="group flex shrink-0 items-center gap-2 text-sm text-gray-300 transition-colors hover:text-white"
+            >
+              <span className="font-bold transition-colors group-hover:text-neon-purple">{tool.title}</span>
+              <span className="text-xs text-gray-500">
+                ({(tool.views_count || 0).toLocaleString(i18n.language)} {t("trending.views")})
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TrendingTools;

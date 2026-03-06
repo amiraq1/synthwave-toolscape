@@ -2,8 +2,8 @@ import { Suspense, lazy, useState } from "react";
 import { Toaster as Sonner, toast } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/context/AuthContext";
 import { CompareProvider } from "@/context/CompareContext";
 import Navbar from "@/components/Navbar";
@@ -12,9 +12,8 @@ import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { isSupabaseNetworkError } from "@/lib/supabaseNetwork";
 
-
-// Lazy Load Pages
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -35,7 +34,6 @@ const OwnerDashboard = lazy(() => import("./pages/OwnerDashboard"));
 const WorkflowBuilder = lazy(() => import("./pages/WorkflowBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Lazy Load Components
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
@@ -43,9 +41,9 @@ const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
-      retry: 1,
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
+      retry: (failureCount, error) => !isSupabaseNetworkError(error) && failureCount < 2,
       refetchOnWindowFocus: false,
     },
   },
@@ -54,8 +52,6 @@ const queryClient = new QueryClient({
 const AppContent = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
-
-  const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleAddClick = () => {
@@ -65,6 +61,7 @@ const AppContent = () => {
       });
       return;
     }
+
     setIsAddModalOpen(true);
   };
 
@@ -99,7 +96,6 @@ const AppContent = () => {
 
       <Footer />
 
-      {/* Floating Components */}
       <Suspense fallback={null}>
         <CompareFloatingBar />
         <ScrollToTopButton />
