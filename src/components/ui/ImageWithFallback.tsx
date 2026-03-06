@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { type ReactNode, useState, useCallback } from "react";
 import { ImageOff } from "lucide-react";
 import { optimizeImage } from "@synthwave/utils";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ interface ImageWithFallbackProps {
     width?: number;
     priority?: boolean;
     aspectRatio?: "square" | "video" | "wide" | "auto";
+    fallback?: ReactNode;
 }
 
 /**
@@ -28,7 +29,8 @@ const ImageWithFallback = ({
     containerClassName = "",
     width = 400,
     priority = false,
-    aspectRatio = "auto"
+    aspectRatio = "auto",
+    fallback,
 }: ImageWithFallbackProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -55,6 +57,18 @@ const ImageWithFallback = ({
 
     // إذا لم يكن هناك رابط، أو حدث خطأ في التحميل، اعرض البديل
     if (!cleanSrc || error) {
+        if (fallback) {
+            return (
+                <div className={cn(
+                    "relative overflow-hidden",
+                    aspectClasses[aspectRatio],
+                    containerClassName
+                )}>
+                    {fallback}
+                </div>
+            );
+        }
+
         return (
             <div className={cn(
                 "flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10",

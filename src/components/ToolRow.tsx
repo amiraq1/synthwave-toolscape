@@ -1,35 +1,14 @@
-
-import { memo, useState, useMemo, KeyboardEvent } from 'react';
+import { memo, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, ChevronLeft, Type, Image as ImageIcon, Video, Code, Zap, Sparkles, LucideIcon, ChevronRight } from 'lucide-react';
+import { Star, ChevronLeft } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
-import { cn } from '@/lib/utils';
-
+import ToolLogo from './ToolLogo';
 
 interface ToolRowProps {
     tool: Tool;
 }
-
-// Category gradient mapping
-const categoryGradients: Record<string, string> = {
-    'نصوص': 'from-emerald-500/20 to-teal-600/20 text-emerald-400',
-    'صور': 'from-purple-500/20 to-pink-600/20 text-purple-400',
-    'فيديو': 'from-blue-500/20 to-cyan-600/20 text-blue-400',
-    'برمجة': 'from-gray-600/20 to-gray-800/20 text-gray-300',
-    'إنتاجية': 'from-amber-500/20 to-yellow-600/20 text-amber-400',
-};
-
-// Category icons mapping
-const categoryIcons: Record<string, LucideIcon> = {
-    'نصوص': Type,
-    'صور': ImageIcon,
-    'فيديو': Video,
-    'برمجة': Code,
-    'إنتاجية': Zap,
-    'الكل': Sparkles,
-};
 
 
 
@@ -46,10 +25,6 @@ const categoryIcons: Record<string, LucideIcon> = {
 const ToolRow = memo(({ tool }: ToolRowProps) => {
     const navigate = useNavigate();
     const prefetchTool = usePrefetchTool();
-    const [imageError, setImageError] = useState(false);
-    // Category styling
-    const categoryStyle = categoryGradients[tool.category] || 'from-neon-purple/20 to-neon-blue/20 text-neon-purple';
-    const CategoryIcon = categoryIcons[tool.category] || Sparkles;
 
     // Content Display
     const displayTitle = tool.title;
@@ -73,11 +48,6 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
     const shortDesc = displayDescription
         ? displayDescription.slice(0, 100) + (displayDescription.length > 100 ? '...' : '')
         : '';
-
-    // Determine which icon layer to show - filter stale faviconV2 URLs
-    const cleanImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
-    const hasValidImage = cleanImageUrl && !imageError;
-    const showCategoryIcon = !hasValidImage;
 
     const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -106,30 +76,14 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             dir="rtl"
             aria-label={`عرض تفاصيل ${displayTitle}`}
         >
-            {/* Icon/Logo - Glassmorphism Style with 3-layer fallback */}
-            <div
-                className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0",
-                    "bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10",
-                    "transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-white/5",
-                    showCategoryIcon && `bg-gradient-to-br ${categoryStyle.split(' ')[0]} ${categoryStyle.split(' ')[1]}`
-                )}
-            >
-                {hasValidImage ? (
-                    <img
-                        src={cleanImageUrl!}
-                        alt=""
-                        width={48}
-                        height={48}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full p-1.5 rounded-2xl object-contain"
-                        onError={() => setImageError(true)}
-                    />
-                ) : (
-                    <CategoryIcon className={cn("w-6 h-6 opacity-80", categoryStyle.split(' ')[2])} />
-                )}
-            </div>
+            <ToolLogo
+                title={displayTitle}
+                imageUrl={tool.image_url}
+                category={tool.category}
+                toolUrl={tool.url}
+                size="md"
+                className="transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-white/5"
+            />
 
             {/* Content */}
             <div className={`flex-1 min-w-0`}>

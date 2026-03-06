@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 import AvatarUpload from "@/components/AvatarUpload";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Settings as SettingsIcon, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  EditorialHero,
+  EditorialPage,
+  EditorialPanel,
+} from "@/components/layout/EditorialPage";
 
 const Settings = () => {
   const { session } = useAuth();
-  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -20,102 +26,160 @@ const Settings = () => {
 
   useEffect(() => {
     const getProfile = async () => {
-      if (!session) return;
+      if (!session) {
+        setLoading(false);
+        return;
+      }
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
-        .select("display_name, avatar_url") // Changed full_name to display_name to match DB schema
+        .select("display_name, avatar_url")
         .eq("id", session.user.id)
         .single();
 
       if (data) {
-        const profileData = data as { display_name: string | null; avatar_url: string | null };
-        setFullName(profileData.display_name || ""); // Mapped display_name to fullName state
+        const profileData = data as {
+          display_name: string | null;
+          avatar_url: string | null;
+        };
+        setFullName(profileData.display_name || "");
         setAvatarUrl(profileData.avatar_url);
       }
       setLoading(false);
     };
 
-    getProfile();
+    void getProfile();
   }, [session]);
 
-  const updateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const updateProfile = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!session) return;
 
     setUpdating(true);
     const { error } = await supabase
       .from("profiles")
       .update({
-        display_name: fullName, // Mapped to display_name
+        display_name: fullName,
         avatar_url: avatarUrl,
-        // updated_at is usually handled by triggers or default, ignoring for now or adding if needed
       })
       .eq("id", session.user.id);
 
     if (error) {
-      toast.error(t('settings.update_error') + ": " + error.message);
+      toast.error(`${t("settings.update_error")}: ${error.message}`);
     } else {
-      toast.success(t('settings.update_success'));
+      toast.success(t("settings.update_success"));
     }
     setUpdating(false);
   };
 
-  if (!session) return <div className="p-10 text-center">{t('auth.login_required')}</div>;
-  if (loading) return <div className="flex justify-center mt-20"><Loader2 className="animate-spin" /></div>;
+  if (loading) {
+    return (
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialPanel className="mx-auto flex min-h-[60vh] max-w-3xl items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-slate-950" />
+        </EditorialPanel>
+      </EditorialPage>
+    );
+  }
+
+  if (!session) {
+    return (
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialPanel className="mx-auto flex min-h-[60vh] max-w-3xl items-center justify-center">
+          <div className="space-y-4 text-center">
+            <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
+            <h1 className="font-editorial text-3xl font-semibold text-slate-950">
+              {t("auth.login_required")}
+            </h1>
+            <Button
+              onClick={() => navigate("/auth")}
+              className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+            >
+              {t("auth.login")}
+            </Button>
+          </div>
+        </EditorialPanel>
+      </EditorialPage>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl" dir="rtl">
-      <h1 className="text-3xl font-bold mb-8 text-white">{t('settings.title')}</h1>
+    <EditorialPage dir={i18n.dir()}>
+      <EditorialHero
+        eyebrow={t("settings.title")}
+        title={t("settings.profile")}
+        description={session.user.email || ""}
+        icon={<SettingsIcon className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">
+              Account
+            </span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              {session.user.email}
+            </h2>
+            <p className="text-sm leading-7 text-white/72">
+              عدّل الاسم والصورة الشخصية من نفس المساحة، مع الحفاظ على نفس طابع
+              الواجهة التحريري الجديد.
+            </p>
+          </div>
+        }
+      />
 
-      <Card className="bg-white/5 border-white/10 text-right">
-        <CardHeader>
-          <CardTitle>{t('settings.profile')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={updateProfile} className="space-y-8">
+      <EditorialPanel className="max-w-4xl">
+        <form onSubmit={updateProfile} className="space-y-8">
+          <div className="flex justify-center">
+            <AvatarUpload
+              uid={session.user.id}
+              url={avatarUrl}
+              onUpload={(url) => setAvatarUrl(url)}
+            />
+          </div>
 
-            {/* 1. الصورة الشخصية */}
-            <div className="flex justify-center mb-6">
-              <AvatarUpload
-                uid={session.user.id}
-                url={avatarUrl}
-                onUpload={(url) => setAvatarUrl(url)}
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-slate-700">
+                {t("settings.email_label")}
+              </Label>
+              <Input
+                id="email"
+                value={session.user.email}
+                disabled
+                className="editorial-form-field rounded-2xl"
               />
             </div>
 
-            {/* 2. الاسم والبريد */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('settings.email_label')}</Label>
-                <Input id="email" value={session.user.email} disabled className="bg-black/20 text-gray-400 text-right" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="fullName">{t('settings.name_label')}</Label>
-                <Input
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder={t('settings.name_placeholder')}
-                  className="text-right"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-slate-700">
+                {t("settings.name_label")}
+              </Label>
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder={t("settings.name_placeholder")}
+                className="editorial-form-field rounded-2xl"
+              />
             </div>
+          </div>
 
-            {/* زر الحفظ */}
-            <Button
-              type="submit"
-              className="w-full bg-neon-purple hover:bg-neon-purple/80"
-              disabled={updating}
-            >
-              {updating ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 ml-2" /> {t('settings.save_btn')}</>}
-            </Button>
-
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          <Button
+            type="submit"
+            className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+            disabled={updating}
+          >
+            {updating ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <Save className="ml-2 h-4 w-4" />
+                {t("settings.save_btn")}
+              </>
+            )}
+          </Button>
+        </form>
+      </EditorialPanel>
+    </EditorialPage>
   );
 };
 

@@ -49,30 +49,48 @@ createRoot(document.getElementById('root')!).render(
     </React.StrictMode>,
 );
 
-// تسجيل Service Worker يدويًا بعد تحميل الصفحة (لتجنب حظر العرض)
-const registerServiceWorker = async () => {
-    if ('serviceWorker' in navigator) {
+// لا نسجل Service Worker أثناء التطوير حتى لا يعلق المتصفح على نسخة قديمة من التطبيق.
+const manageServiceWorker = async () => {
+    if (!('serviceWorker' in navigator)) {
+        return;
+    }
+
+    if (import.meta.env.DEV) {
         try {
-            // @ts-expect-error: Virtual module created by vite-plugin-pwa
-            const { registerSW } = await import('virtual:pwa-register');
-            registerSW({
-                immediate: false,
-                onRegistered(r) {
-                    console.log('SW registered:', r);
-                },
-                onRegisterError(error) {
-                    console.error('SW registration error:', error);
-                }
-            });
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((registration) => registration.unregister()));
+
+            if ('caches' in window) {
+                const cacheKeys = await caches.keys();
+                await Promise.all(cacheKeys.map((cacheKey) => caches.delete(cacheKey)));
+            }
         } catch (error) {
-            console.error('Failed to register SW:', error);
+            console.error('Failed to clear service workers in development:', error);
         }
+
+        return;
+    }
+
+    try {
+        // @ts-expect-error: Virtual module created by vite-plugin-pwa
+        const { registerSW } = await import('virtual:pwa-register');
+        registerSW({
+            immediate: false,
+            onRegistered(registration) {
+                console.log('SW registered:', registration);
+            },
+            onRegisterError(error) {
+                console.error('SW registration error:', error);
+            }
+        });
+    } catch (error) {
+        console.error('Failed to register SW:', error);
     }
 };
 
-// تأجيل تسجيل SW حتى يصبح المتصفح غير مشغول
+// تأجيل إدارة SW حتى يصبح المتصفح غير مشغول
 if (typeof requestIdleCallback !== 'undefined') {
-    requestIdleCallback(() => registerServiceWorker());
+    requestIdleCallback(() => manageServiceWorker());
 } else {
-    setTimeout(registerServiceWorker, 2000);
+    setTimeout(manageServiceWorker, 2000);
 }

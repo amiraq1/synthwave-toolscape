@@ -1,4 +1,4 @@
-project_id = "ksdodojvchiybbqxfhcl"
+project_id = "pzpplippcdmkmwnzmdbr"
 
 [functions.enhance-description]
 verify_jwt = true
@@ -13,7 +13,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.generate-embeddings]
-verify_jwt = true
+verify_jwt = false
 
 [functions.chat-agent]
 enabled = true

@@ -1,212 +1,196 @@
-import { useState } from 'react';
-import { Mail, MessageSquare, Send, ArrowRight, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useSEO } from '@/hooks/useSEO';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from 'react-i18next';
+import { useState } from "react";
+import { CheckCircle, Mail, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useSEO } from "@/hooks/useSEO";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
+import { EditorialHero, EditorialPage, EditorialPanel } from "@/components/layout/EditorialPage";
 
 const Contact = () => {
-    const { toast } = useToast();
-    const { t, i18n } = useTranslation();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
+  const { toast } = useToast();
+  const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  useSEO({
+    title: t("contact.meta_title"),
+    description: t("contact.meta_desc"),
+    keywords: t("contact.meta_keywords"),
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+    toast({
+      title: t("contact.toast_title"),
+      description: t("contact.toast_desc"),
     });
+  };
 
-    useSEO({
-        title: t('contact.meta_title'),
-        description: t('contact.meta_desc'),
-        keywords: t('contact.meta_keywords'),
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+  return (
+    <EditorialPage>
+      <EditorialHero
+        eyebrow={t("footer.contact")}
+        title={t("contact.title")}
+        description={t("contact.subtitle")}
+        icon={<Mail className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">CONTACT</span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              هل لديك سؤال، اقتراح، أو أداة تستحق الإضافة إلى الدليل؟
+            </h2>
+            <p className="text-sm leading-7 text-white/70">
+              استخدم النموذج أو البريد المباشر. نفضّل الرسائل الواضحة التي تتضمن اسم الأداة، الرابط، وما الذي يجعلها مختلفة فعلًا.
+            </p>
+          </div>
+        }
+      />
 
-        // Simulate form submission
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-        toast({
-            title: t('contact.toast_title'),
-            description: t('contact.toast_desc'),
-        });
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
-    };
-
-    return (
-        <div className="min-h-screen bg-background" dir={i18n.dir()}>
-            {/* Background Effects */}
-            <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
-            <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
-
-            {/* Header */}
-            <header className="sticky top-0 z-50 glass border-b border-border/50">
-                <div className="container mx-auto max-w-5xl px-4 py-4">
-                    <Link to="/">
-                        <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5" />
-                            {t('nav.back_home')}
-                        </Button>
-                    </Link>
+      <div className="grid gap-6 xl:grid-cols-[1.02fr_0.98fr]">
+        <EditorialPanel>
+          {isSubmitted ? (
+            <div className="flex min-h-[420px] flex-col items-center justify-center space-y-5 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
+                <CheckCircle className="h-10 w-10" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="font-editorial text-3xl font-semibold text-slate-950">{t("contact.success_title")}</h2>
+                <p className="max-w-md text-sm leading-7 text-slate-600">{t("contact.success_desc")}</p>
+              </div>
+              <Button onClick={() => setIsSubmitted(false)} variant="outline" className="rounded-full border-black/10 bg-white px-5 text-slate-950 hover:bg-white">
+                {t("contact.send_another")}
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-slate-900">
+                    {t("contact.name")}
+                  </label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder={t("contact.name_placeholder")}
+                    required
+                    className="h-12 rounded-2xl border-black/10 bg-white/80"
+                  />
                 </div>
-            </header>
 
-            {/* Main Content */}
-            <main className="container mx-auto max-w-3xl px-4 py-12 space-y-12">
-                {/* Hero Section */}
-                <section className="text-center space-y-6">
-                    <div className="flex justify-center">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center">
-                            <Mail className="h-10 w-10 text-white" />
-                        </div>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        {t('contact.title')}
-                    </h1>
-                    <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                        {t('contact.subtitle')}
-                    </p>
-                </section>
-
-                {/* Contact Form */}
-                <section className="glass rounded-3xl p-8 md:p-12">
-                    {isSubmitted ? (
-                        <div className="text-center space-y-6 py-8">
-                            <div className="w-20 h-20 mx-auto rounded-full bg-emerald-500/20 flex items-center justify-center">
-                                <CheckCircle className="h-10 w-10 text-emerald-500" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-foreground">{t('contact.success_title')}</h2>
-                            <p className="text-muted-foreground">{t('contact.success_desc')}</p>
-                            <Button onClick={() => setIsSubmitted(false)} variant="outline">
-                                {t('contact.send_another')}
-                            </Button>
-                        </div>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label htmlFor="name" className="text-sm font-medium text-foreground">
-                                        {t('contact.name')}
-                                    </label>
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        placeholder={t('contact.name_placeholder')}
-                                        required
-                                        className="bg-background/50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                        {t('contact.email')}
-                                    </label>
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        placeholder="email@example.com"
-                                        required
-                                        dir="ltr"
-                                        className="bg-background/50"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="subject" className="text-sm font-medium text-foreground">
-                                    {t('contact.subject')}
-                                </label>
-                                <Input
-                                    id="subject"
-                                    name="subject"
-                                    value={formData.subject}
-                                    onChange={handleChange}
-                                    placeholder={t('contact.subject_placeholder')}
-                                    required
-                                    className="bg-background/50"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="message" className="text-sm font-medium text-foreground">
-                                    {t('contact.message')}
-                                </label>
-                                <Textarea
-                                    id="message"
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    placeholder={t('contact.message_placeholder')}
-                                    required
-                                    rows={6}
-                                    className="bg-background/50 resize-none"
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                size="lg"
-                                disabled={isSubmitting}
-                                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90"
-                            >
-                                {isSubmitting ? (
-                                    <span className="flex items-center gap-2">
-                                        <span className="animate-spin">⏳</span>
-                                        {t('contact.sending')}
-                                    </span>
-                                ) : (
-                                    <span className="flex items-center gap-2">
-                                        <Send className="h-5 w-5" />
-                                        {t('contact.send')}
-                                    </span>
-                                )}
-                            </Button>
-                        </form>
-                    )}
-                </section>
-
-                {/* Alternative Contact */}
-                <section className="text-center space-y-4">
-                    <p className="text-muted-foreground">{t('contact.alternative')}</p>
-                    <div className="flex justify-center gap-4 flex-wrap">
-                        <a
-                            href="mailto:contact@amiraq.org"
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card hover:bg-card/80 transition-colors"
-                        >
-                            <Mail className="h-5 w-5 text-neon-purple" />
-                            <span>contact@amiraq.org</span>
-                        </a>
-                    </div>
-                </section>
-            </main>
-
-            {/* Simple Footer */}
-            <footer className="border-t border-border/50 py-8 mt-12">
-                <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>{t('footer.rights')}</p>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium text-slate-900">
+                    {t("contact.email")}
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="email@example.com"
+                    required
+                    dir="ltr"
+                    className="h-12 rounded-2xl border-black/10 bg-white/80"
+                  />
                 </div>
-            </footer>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="subject" className="text-sm font-medium text-slate-900">
+                  {t("contact.subject")}
+                </label>
+                <Input
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder={t("contact.subject_placeholder")}
+                  required
+                  className="h-12 rounded-2xl border-black/10 bg-white/80"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium text-slate-900">
+                  {t("contact.message")}
+                </label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  placeholder={t("contact.message_placeholder")}
+                  required
+                  rows={7}
+                  className="rounded-[1.6rem] border-black/10 bg-white/80 resize-none"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                className="h-12 w-full rounded-full bg-slate-950 text-white hover:bg-slate-800"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin">⏳</span>
+                    {t("contact.sending")}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Send className="h-5 w-5" />
+                    {t("contact.send")}
+                  </span>
+                )}
+              </Button>
+            </form>
+          )}
+        </EditorialPanel>
+
+        <div className="editorial-ink-panel flex flex-col justify-between p-6 sm:p-7">
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">{t("contact.alternative")}</span>
+            <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
+              <p className="text-xs uppercase tracking-[0.28em] text-white/40">EMAIL</p>
+              <a
+                href="mailto:contact@amiraq.org"
+                className="mt-3 inline-flex text-lg font-semibold text-white transition-colors hover:text-white/80"
+              >
+                contact@amiraq.org
+              </a>
+              <p className="mt-3 text-sm leading-7 text-white/65">
+                أرسل الرسالة مباشرة إذا كان لديك تعاون، تصحيح بيانات، أو اقتراح أداة تريد أن نراجعها يدويًا.
+              </p>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </EditorialPage>
+  );
 };
 
 export default Contact;

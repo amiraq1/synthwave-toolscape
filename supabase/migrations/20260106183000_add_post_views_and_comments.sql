@@ -54,8 +54,8 @@ TO authenticated
 USING (
   auth.uid() = user_id 
   OR EXISTS (
-    SELECT 1 FROM public.profiles 
-    WHERE id = auth.uid() AND role = 'admin'
+    SELECT 1 FROM public.user_roles
+    WHERE user_id = auth.uid() AND role = 'admin'::public.app_role
   )
 );
 

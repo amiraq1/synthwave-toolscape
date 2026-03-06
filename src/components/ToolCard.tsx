@@ -1,31 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
   Star,
-  Type,
-  Image as ImageIcon,
-  Video,
-  Code,
   Zap,
-  Sparkles,
-  Music,
-  LayoutGrid,
   Crown,
-  Tag,
   Languages,
-  Flame,
   Clock,
   Scale
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import type { Tool } from '@/hooks/useTools';
 import { usePrefetchTool } from '@/hooks/useTool';
 import BookmarkButton from './BookmarkButton';
 import { cn } from '@/lib/utils';
-import { getCategoryLabel, getPricingLabel, getPricingTier } from '@synthwave/utils';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { getCategoryLabel, getPricingLabel, getPricingTier, getValidToolUrl } from '@synthwave/utils';
+import ToolLogo from '@/components/ToolLogo';
 import { useClickTracking } from '@/hooks/useClickTracking';
 import { useCompare } from '@/context/CompareContext';
 import { useTranslation } from 'react-i18next';
@@ -34,17 +24,6 @@ interface ToolCardProps {
   tool: Tool;
   index?: number;
 }
-
-// Category icons mapping
-const categoryIcons: Record<string, React.ElementType> = {
-  'نصوص': Type,
-  'صور': ImageIcon,
-  'فيديو': Video,
-  'برمجة': Code,
-  'إنتاجية': Zap,
-  'صوت': Music,
-  'الكل': LayoutGrid
-};
 
 const SimpleRating = ({ rating, count }: { rating?: number | null; count?: number | null }) => {
   const safeRating = typeof rating === 'number' && !Number.isNaN(rating) ? rating : 0;
@@ -61,16 +40,15 @@ const SimpleRating = ({ rating, count }: { rating?: number | null; count?: numbe
 
 const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
   const prefetchTool = usePrefetchTool();
-  const [imageError, setImageError] = useState(false);
   const { recordClick } = useClickTracking();
   const { selectedTools, addToCompare, removeFromCompare } = useCompare();
   const isCompared = selectedTools.includes(String(tool.id));
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const displayTitle = tool.title;
   const displayDescription = tool.description;
+  const toolWebsiteUrl = getValidToolUrl(tool.url);
 
-  const CategoryIcon = categoryIcons[tool.category] || Sparkles;
   const isSponsored = tool.is_sponsored === true;
   const supportsArabic = tool.supports_arabic === true;
 
@@ -101,14 +79,6 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
     e.stopPropagation();
     recordClick(String(tool.id));
   };
-
-  /**
-   * جلب أيقونة الأداة بجودة عالية
-   * الأولوية: 1. Clearbit Logo API (HD) → 2. Google Favicon (128px)
-   */
-  // Image priority logic - filter out stale faviconV2 URLs from DB
-  const validImageUrl = tool.image_url && !tool.image_url.includes('gstatic.com/faviconV2') ? tool.image_url : null;
-  const showOriginalImage = validImageUrl && !imageError;
 
   return (
     <div
@@ -163,38 +133,15 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
           {/* العنوان والأيقونة */}
           <div className="flex justify-between items-start mb-4 pl-4 mt-6">
             <div className="flex items-center gap-3">
-              <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center border transition-all duration-500 group-hover:scale-105 overflow-hidden",
-                showOriginalImage
-                  ? "bg-white/5 border-white/10"
-                  : "bg-neon-purple/10 border-neon-purple/20 group-hover:border-neon-purple/50"
-              )}>
-                {/* Priority 1: Manual image_url */}
-                {showOriginalImage ? (
-                  <ImageWithFallback
-                    src={validImageUrl}
-                    alt={displayTitle}
-                    width={100}
-                    className="w-full h-full p-1.5 object-contain"
-                    priority={index < 6}
-                    aspectRatio="square"
-                  />
-                ) : null}
-
-                {/* Fallback: First Letter or Category Icon */}
-                <div className={cn(
-                  "fallback-icon flex items-center justify-center w-full h-full",
-                  showOriginalImage ? "hidden" : "flex"
-                )}>
-                  {tool.title ? (
-                    <span className="text-xl font-bold text-neon-purple">
-                      {tool.title.charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
-                    <CategoryIcon className="w-6 h-6 text-neon-purple opacity-70" />
-                  )}
-                </div>
-              </div>
+              <ToolLogo
+                title={displayTitle}
+                imageUrl={tool.image_url}
+                category={tool.category}
+                toolUrl={tool.url}
+                size="md"
+                priority={index < 6}
+                className="transition-all duration-500 group-hover:scale-105"
+              />
 
               <div>
                 <h3 className="text-lg font-bold text-white group-hover:text-neon-purple transition-colors line-clamp-1">
@@ -240,16 +187,23 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
               {t('tools.ai_powered')}
             </span>
             <span
-              className="flex items-center gap-1 group-hover:text-neon-purple font-medium transition-colors z-20 cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple rounded px-1"
+              className={cn(
+                "flex items-center gap-1 font-medium transition-colors z-20 rounded px-1",
+                toolWebsiteUrl
+                  ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-neon-purple group-hover:text-neon-purple"
+                  : "cursor-not-allowed text-gray-600",
+              )}
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
+                if (!toolWebsiteUrl) return;
                 handleExternalClick(e);
-                window.open(tool.url, '_blank');
+                window.open(toolWebsiteUrl, '_blank', 'noopener,noreferrer');
               }}
-              aria-label={`visit ${displayTitle}`}
+              aria-label={toolWebsiteUrl ? t('tools.visit_label', { title: displayTitle }) : t('tools.visit_unavailable')}
+              title={toolWebsiteUrl ? t('tools.visit') : t('tools.visit_unavailable')}
             >
-              {t('tools.visit')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+              {toolWebsiteUrl ? t('tools.visit') : t('tools.visit_unavailable')} <ExternalLink className="w-3 h-3" aria-hidden="true" />
             </span>
           </div>
         </div>

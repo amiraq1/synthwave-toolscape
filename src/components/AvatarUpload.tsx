@@ -56,7 +56,7 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 bg-black/20 flex items-center justify-center group">
+            <div className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-black/8 bg-white/80 shadow-[0_18px_40px_rgba(15,23,42,0.08)] group">
                 {avatarUrl ? (
                     <img
                         src={avatarUrl}
@@ -64,18 +64,22 @@ const AvatarUpload = ({ uid, url, onUpload }: AvatarUploadProps) => {
                         className="w-full h-full object-cover"
                     />
                 ) : (
-                    <User className="w-16 h-16 text-gray-500" />
+                    <User className="w-16 h-16 text-slate-400" />
                 )}
 
                 {uploading && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/55">
                         <Loader2 className="animate-spin text-white" />
                     </div>
                 )}
             </div>
 
             <div className="relative">
-                <Button variant="outline" size="sm" className="gap-2 cursor-pointer z-0">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="z-0 cursor-pointer gap-2 rounded-full border-black/10 bg-white/70 text-slate-950 hover:bg-white"
+                >
                     <Upload className="w-4 h-4" />
                     {uploading ? "جاري الرفع..." : "تغيير الصورة"}
                 </Button>

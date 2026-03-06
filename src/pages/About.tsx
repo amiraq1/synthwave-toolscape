@@ -1,123 +1,118 @@
-
-import { Activity, Users, Target, Zap, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useSEO } from '@/hooks/useSEO';
-import { useTranslation } from 'react-i18next';
+import { Activity, ArrowUpRight, Target, Users, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useSEO } from "@/hooks/useSEO";
+import { useTranslation } from "react-i18next";
+import { EditorialHero, EditorialPage, EditorialPanel } from "@/components/layout/EditorialPage";
 
 const About = () => {
-    const { t } = useTranslation();
-    useSEO({
-        title: 'حول نبض - دليل أدوات الذكاء الاصطناعي',
-        description: 'تعرف على نبض، الدليل العربي الشامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك.',
-        keywords: 'نبض، حول، دليل الذكاء الاصطناعي، أدوات AI، من نحن',
-    });
+  const { t } = useTranslation();
 
-    const features = [
-        {
-            icon: Target,
-            title: t('about.mission_title'),
-            description: t('about.mission_desc'),
-        },
-        {
-            icon: Users,
-            title: t('about.who_title'),
-            description: t('about.who_desc'),
-        },
-        {
-            icon: Zap,
-            title: t('about.why_title'),
-            description: t('about.why_desc'),
-        },
-    ];
+  useSEO({
+    title: "حول نبض - دليل أدوات الذكاء الاصطناعي",
+    description: "تعرف على نبض، الدليل العربي الشامل لأفضل أدوات الذكاء الاصطناعي. نساعدك في اكتشاف الأدوات المناسبة لعملك وإبداعك.",
+    keywords: "نبض، حول، دليل الذكاء الاصطناعي، أدوات AI، من نحن",
+  });
 
-    return (
-        <div className="min-h-screen bg-background" dir="rtl">
-            {/* Background Effects */}
-            <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
-            <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
+  const features = [
+    {
+      icon: Target,
+      title: t("about.mission_title"),
+      description: t("about.mission_desc"),
+    },
+    {
+      icon: Users,
+      title: t("about.who_title"),
+      description: t("about.who_desc"),
+    },
+    {
+      icon: Zap,
+      title: t("about.why_title"),
+      description: t("about.why_desc"),
+    },
+  ];
 
-            {/* Header */}
-            <header className="sticky top-0 z-50 glass border-b border-border/50">
-                <div className="container mx-auto max-w-5xl px-4 py-4">
-                    <Link to="/">
-                        <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-                            <ArrowRight className="h-5 w-5" />
-                            {t('nav.back_home')}
-                        </Button>
-                    </Link>
-                </div>
-            </header>
+  return (
+    <EditorialPage>
+      <EditorialHero
+        eyebrow={t("nav.about")}
+        title={t("about.title")}
+        description={t("about.subtitle")}
+        icon={<Activity className="h-7 w-7" />}
+        actions={
+          <>
+            <Link to="/">
+              <Button className="h-12 rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800">
+                {t("about.browse_tools")}
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="outline" className="h-12 rounded-full border-black/10 bg-white/70 px-6 text-slate-950 hover:bg-white">
+                {t("about.contact_us")}
+              </Button>
+            </Link>
+          </>
+        }
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">NABD AI</span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              منصة عربية تركّز على الاختيار الواعي، لا على جمع الروابط فقط.
+            </h2>
+            <p className="text-sm leading-7 text-white/70">
+              الفكرة الأساسية في نبض هي تقليل الضوضاء. نحن نحاول تحويل سوق الأدوات من قائمة ضخمة ومربكة إلى مساحة بحث واكتشاف أوضح.
+            </p>
+          </div>
+        }
+      />
 
-            {/* Main Content */}
-            <main className="container mx-auto max-w-5xl px-4 py-12 space-y-16">
-                {/* Hero Section */}
-                <section className="text-center space-y-6">
-                    <div className="flex justify-center">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center">
-                            <Activity className="h-10 w-10 text-white" />
-                        </div>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-                        {t('about.title')}
-                    </h1>
-                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                        {t('about.subtitle')}
-                    </p>
-                </section>
+      <section className="grid gap-6 md:grid-cols-3">
+        {features.map((feature) => {
+          const Icon = feature.icon;
 
-                {/* Features Grid */}
-                <section className="grid md:grid-cols-3 gap-8">
-                    {features.map((feature, index) => (
-                        <div
-                            key={index}
-                            className="glass rounded-2xl p-8 text-center space-y-4 hover:border-neon-purple/50 transition-colors"
-                        >
-                            <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-neon-purple/20 to-neon-blue/20 flex items-center justify-center">
-                                <feature.icon className="h-7 w-7 text-neon-purple" />
-                            </div>
-                            <h2 className="text-xl font-bold text-foreground">{feature.title}</h2>
-                            <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                        </div>
-                    ))}
-                </section>
+          return (
+            <EditorialPanel key={feature.title} className="space-y-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[1.4rem] bg-slate-950 text-white">
+                <Icon className="h-6 w-6" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="font-editorial text-2xl font-semibold text-slate-950">{feature.title}</h2>
+                <p className="text-sm leading-7 text-slate-600">{feature.description}</p>
+              </div>
+            </EditorialPanel>
+          );
+        })}
+      </section>
 
-                {/* Story Section */}
-                <section className="glass rounded-3xl p-8 md:p-12 space-y-6">
-                    <h2 className="text-3xl font-bold text-foreground">{t('about.story_title')}</h2>
-                    <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
-                        <p>{t('about.story_p1')}</p>
-                        <p>{t('about.story_p2')}</p>
-                        <p>{t('about.story_p3')}</p>
-                    </div>
-                </section>
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <EditorialPanel className="space-y-5">
+          <span className="editorial-kicker">{t("about.story_title")}</span>
+          <div className="space-y-4 text-slate-600">
+            <p className="text-lg leading-8">{t("about.story_p1")}</p>
+            <p className="text-lg leading-8">{t("about.story_p2")}</p>
+            <p className="text-lg leading-8">{t("about.story_p3")}</p>
+          </div>
+        </EditorialPanel>
 
-                {/* CTA Section */}
-                <section className="text-center space-y-6">
-                    <h2 className="text-2xl font-bold text-foreground">{t('about.cta')}</h2>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <Link to="/">
-                            <Button size="lg" className="bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90">
-                                {t('about.browse_tools')}
-                            </Button>
-                        </Link>
-                        <Link to="/contact">
-                            <Button size="lg" variant="outline">
-                                {t('about.contact_us')}
-                            </Button>
-                        </Link>
-                    </div>
-                </section>
-            </main>
+        <div className="editorial-ink-panel flex flex-col justify-between p-6 sm:p-7">
+          <div className="space-y-4 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">{t("about.cta")}</span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              إذا كنت تبحث عن واجهة أخف وأذكى لاكتشاف أدوات AI، فهذه هي البداية المناسبة.
+            </h2>
+            <p className="text-sm leading-7 text-white/70">
+              يمكنك التصفح من الصفحة الرئيسية، استخدام المقارنة، أو إرسال اقتراحاتك لبناء دليل أكثر نفعًا للمستخدم العربي.
+            </p>
+          </div>
 
-            {/* Simple Footer */}
-            <footer className="border-t border-border/50 py-8 mt-12">
-                <div className="container mx-auto max-w-5xl px-4 text-center text-muted-foreground">
-                    <p>© 2024 نبض AI. جميع الحقوق محفوظة.</p>
-                </div>
-            </footer>
+          <Link to="/" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/85 transition-colors hover:text-white">
+            <ArrowUpRight className="h-4 w-4" />
+            {t("nav.back_home")}
+          </Link>
         </div>
-    );
+      </div>
+    </EditorialPage>
+  );
 };
 
 export default About;

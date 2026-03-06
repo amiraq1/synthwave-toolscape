@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "react-hot-toast";
 import type { Tool } from "@/types";
 import { useTranslation } from "react-i18next";
+import { getValidToolUrl } from "@synthwave/utils";
 
 interface EditDraftDialogProps {
     tool: Partial<Tool> | null;
@@ -42,6 +43,12 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
     const handleSave = async () => {
         if (!tool) return;
 
+        const normalizedToolUrl = getValidToolUrl(formData.url);
+        if (!normalizedToolUrl) {
+            toast.error(t('admin.tools.invalid_url'));
+            return;
+        }
+
         setLoading(true);
         const { error } = await supabase
             .from("tools")
@@ -50,7 +57,7 @@ const EditDraftDialog = ({ tool, isOpen, onClose, onUpdate }: EditDraftDialogPro
                 description: formData.description,
                 category: formData.category,
                 pricing_type: formData.pricing_type,
-                url: formData.url,
+                url: normalizedToolUrl,
                 is_published: true // نشر الأداة عند الحفظ
             })
             .eq("id", Number(tool.id));

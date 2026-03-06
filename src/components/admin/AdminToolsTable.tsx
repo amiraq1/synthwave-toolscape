@@ -21,6 +21,8 @@ import { toast } from "sonner";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import type { Tool } from "@/types";
 import { useTranslation } from "react-i18next";
+import ToolLogo from "@/components/ToolLogo";
+import { getValidToolUrl } from "@synthwave/utils";
 
 interface AdminToolsTableProps {
   tools: Tool[];
@@ -110,17 +112,20 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
           </TableHeader>
           <TableBody>
             {filteredTools.length > 0 ? (
-              filteredTools.map((tool) => (
+              filteredTools.map((tool) => {
+                const toolWebsiteUrl = getValidToolUrl(tool.url);
+
+                return (
                 <TableRow key={tool.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
-                      {tool.image_url && (
-                        <img
-                          src={tool.image_url}
-                          alt={tool.title}
-                          className="w-10 h-10 rounded-lg object-cover bg-white/5"
-                        />
-                      )}
+                      <ToolLogo
+                        title={tool.title}
+                        imageUrl={tool.image_url}
+                        category={tool.category}
+                        toolUrl={tool.url}
+                        size="sm"
+                      />
                       <div>
                         <div className="font-bold">{tool.title}</div>
                         <div className="text-xs text-gray-400 truncate max-w-[200px]">
@@ -165,11 +170,17 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                         <DropdownMenuItem onClick={() => toggleFeatured(tool)}>
                           <Sparkles className="mr-2 h-4 w-4" /> {tool.is_featured ? t('admin.tools.action_unfeature') : t('admin.tools.action_feature')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" /> {t('admin.tools.action_visit')}
-                          </a>
-                        </DropdownMenuItem>
+                        {toolWebsiteUrl ? (
+                          <DropdownMenuItem asChild>
+                            <a href={toolWebsiteUrl} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="mr-2 h-4 w-4" /> {t('admin.tools.action_visit')}
+                            </a>
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem disabled>
+                            <ExternalLink className="mr-2 h-4 w-4" /> {t('admin.tools.action_visit_unavailable')}
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(tool.id)} className="text-red-600 focus:text-red-600">
                           <Trash2 className="mr-2 h-4 w-4" /> {t('admin.tools.action_delete')}
@@ -178,7 +189,8 @@ const AdminToolsTable = ({ tools, onUpdate }: AdminToolsTableProps) => {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">

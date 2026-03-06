@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Dialog,
   DialogContent,
@@ -33,14 +34,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Sparkles, LogIn, Plus, X, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Sparkles, LogIn, Plus, X, Link as LinkIcon, Image as ImageIcon, Upload } from 'lucide-react';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
+import ToolLogo from '@/components/ToolLogo';
 
 interface AddToolModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const getCategories = (t: any) => [
+const getCategories = (t: TFunction) => [
   { value: 'نصوص', label: t('categories.text') },
   { value: 'صور', label: t('categories.image') },
   { value: 'فيديو', label: t('categories.video') },
@@ -50,12 +53,27 @@ const getCategories = (t: any) => [
   { value: 'صوت', label: t('categories.audio') },
 ];
 
-const getPricingTypes = (t: any) => [
+const getPricingTypes = (t: TFunction) => [
   { value: 'مجاني', label: t('pricing.free') },
   { value: 'مدفوع', label: t('pricing.paid') },
 ];
 
-const getFormSchema = (t: any) => z.object({
+const sanitizeFileSegment = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'tool-logo';
+
+const getFileExtension = (file: File) => {
+  const fileNameExtension = file.name.split('.').pop()?.toLowerCase();
+  if (fileNameExtension) return fileNameExtension;
+  if (file.type === 'image/svg+xml') return 'svg';
+  if (file.type === 'image/webp') return 'webp';
+  if (file.type === 'image/png') return 'png';
+  return 'jpg';
+};
+
+const getFormSchema = (t: TFunction) => z.object({
   title: z.string().min(2, t('add_tool.validation_name_short')),
   description: z.string().min(10, t('add_tool.validation_desc_short')).max(500),
   url: z.string().url(t('add_tool.validation_url_invalid')),
@@ -83,7 +101,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
+  const { isAdmin, loading: adminCheckLoading } = useAdminCheck();
 
   const categories = getCategories(t);
   const pricingTypes = getPricingTypes(t);
@@ -108,6 +129,10 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     name: "features",
   });
 
+  const watchedTitle = form.watch('title');
+  const watchedImageUrl = form.watch('image_url');
+  const watchedCategory = form.watch('category');
+
   useEffect(() => {
     if (open) {
       const checkAuth = async () => {
@@ -116,6 +141,7 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
       };
       checkAuth();
       form.reset();
+      setIsUploadingLogo(false);
     }
   }, [open, form]);
 
@@ -168,6 +194,82 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
     },
     onError: () => toast({ title: t('common.error'), description: t('add_tool.submit_error'), variant: 'destructive' }),
   });
+
+  const handleLogoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!isAdmin) {
+      toast({
+        title: t('common.error'),
+        description: t('add_tool.logo_upload_admin_only'),
+        variant: 'destructive',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: t('common.error'),
+        description: t('add_tool.logo_invalid_type'),
+        variant: 'destructive',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: t('common.error'),
+        description: t('add_tool.logo_invalid_size'),
+        variant: 'destructive',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    setIsUploadingLogo(true);
+
+    try {
+      const fileExtension = getFileExtension(file);
+      const seed = watchedTitle || file.name.replace(/\.[^.]+$/, '');
+      const randomSuffix = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID().slice(0, 8)
+        : Math.random().toString(36).slice(2, 10);
+      const filePath = `manual/${sanitizeFileSegment(seed)}-${Date.now()}-${randomSuffix}.${fileExtension}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('tool-logos')
+        .upload(filePath, file, {
+          cacheControl: '31536000',
+          upsert: false,
+          contentType: file.type,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('tool-logos').getPublicUrl(filePath);
+      form.setValue('image_url', data.publicUrl, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+
+      toast({ title: t('add_tool.logo_upload_success') });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('add_tool.logo_upload_error');
+      toast({
+        title: t('common.error'),
+        description: message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploadingLogo(false);
+      event.target.value = '';
+    }
+  };
 
   // Auth Guard
   if (isAuthenticated === false) {
@@ -248,12 +350,73 @@ const AddToolModal = ({ open, onOpenChange }: AddToolModalProps) => {
                   </FormItem>
                 )} />
 
-                <FormField control={form.control} name="image_url" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> {t('add_tool.form_image_url')}</FormLabel>
-                    <FormControl><Input placeholder={t('add_tool.form_url_placeholder')} dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
-                  </FormItem>
-                )} />
+                <div className="flex items-start gap-3">
+                  <ToolLogo
+                    title={watchedTitle || t('add_tool.form_name_placeholder')}
+                    imageUrl={watchedImageUrl || null}
+                    category={watchedCategory || null}
+                    size="lg"
+                    className="mt-5"
+                  />
+
+                  <div className="flex-1 space-y-2">
+                    <FormField control={form.control} name="image_url" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs flex items-center gap-1"><ImageIcon className="w-3 h-3" /> {t('add_tool.form_image_url')}</FormLabel>
+                        <FormControl><Input placeholder={t('add_tool.form_url_placeholder')} dir="ltr" {...field} className="h-8 bg-background/50" /></FormControl>
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    )} />
+
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      className="hidden"
+                      onChange={handleLogoUpload}
+                    />
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        disabled={isUploadingLogo || mutation.isPending || adminCheckLoading || !isAdmin}
+                        onClick={() => logoInputRef.current?.click()}
+                      >
+                        {isUploadingLogo ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 me-1" />
+                            {t('add_tool.logo_upload')}
+                          </>
+                        )}
+                      </Button>
+
+                      {watchedImageUrl && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8"
+                          onClick={() => form.setValue('image_url', '', {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                          })}
+                        >
+                          {t('add_tool.logo_remove')}
+                        </Button>
+                      )}
+                    </div>
+
+                    <p className="text-[10px] text-muted-foreground">
+                      {isAdmin ? t('add_tool.logo_hint') : t('add_tool.logo_upload_admin_only')}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Description */}

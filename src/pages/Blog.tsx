@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import BlogCard from "@/components/BlogCard";
-import { Loader2, BookOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { BlogPost } from "@/types";
+import { EditorialHero, EditorialPage, EditorialPanel } from "@/components/layout/EditorialPage";
 
 const Blog = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .select("*")
         .eq("is_published", true)
@@ -25,46 +26,46 @@ const Blog = () => {
     fetchPosts();
   }, []);
 
-  if (loading) return (
-    <div className="flex justify-center mt-20">
-      <Loader2 className="animate-spin text-neon-purple" />
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-background" dir={i18n.dir()}>
-      {/* هيدر بسيط للمدونة */}
-      <div className="bg-black/40 border-b border-white/5 py-12 mb-10">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3 text-white">
-            <BookOpen className="text-neon-purple" />
-            {t('blog.title')}
-          </h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            {t('blog.subtitle')}
-          </p>
-        </div>
-      </div>
+    <EditorialPage>
+      <EditorialHero
+        eyebrow={t("nav.blog")}
+        title={t("blog.title")}
+        description={t("blog.subtitle")}
+        icon={<BookOpen className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">EDITORIAL</span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              مقالات مختصرة وعملية عن أدوات AI، الاستخدامات، والفروقات التي تهم فعلًا.
+            </h2>
+            <p className="text-sm leading-7 text-white/70">
+              لا نريد مدونة مكتظة. الفكرة هنا أن تكون المقالات امتدادًا للدليل: أوضح، أهدأ، وأكثر فائدة عند اتخاذ القرار.
+            </p>
+          </div>
+        }
+      />
 
-      <div className="container mx-auto px-4 pb-20">
-        {posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <EditorialPanel>
+        {loading ? (
+          <div className="flex min-h-[360px] flex-col items-center justify-center gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-slate-950" />
+            <p className="text-sm text-slate-600">{t("blog.loading")}</p>
+          </div>
+        ) : posts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
             {posts.map((post) => (
               <BlogCard key={post.id} post={post} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/10">
-            <h2 className="text-2xl font-bold mb-2">
-              {t('blog.no_posts')}
-            </h2>
-            <p className="text-gray-400">
-              {t('blog.no_posts_desc')}
-            </p>
+          <div className="flex min-h-[320px] flex-col items-center justify-center rounded-[2rem] border border-black/8 bg-white/75 text-center">
+            <h2 className="font-editorial text-3xl font-semibold text-slate-950">{t("blog.no_posts")}</h2>
+            <p className="mt-3 max-w-md text-sm leading-7 text-slate-600">{t("blog.no_posts_desc")}</p>
           </div>
         )}
-      </div>
-    </div>
+      </EditorialPanel>
+    </EditorialPage>
   );
 };
 

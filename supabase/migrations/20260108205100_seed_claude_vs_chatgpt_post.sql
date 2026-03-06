@@ -1,3 +1,42 @@
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'posts' AND column_name = 'title_en'
+  ) THEN
+    ALTER TABLE public.posts ADD COLUMN title_en TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'posts' AND column_name = 'content_en'
+  ) THEN
+    ALTER TABLE public.posts ADD COLUMN content_en TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'posts' AND column_name = 'excerpt_en'
+  ) THEN
+    ALTER TABLE public.posts ADD COLUMN excerpt_en TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'posts' AND column_name = 'published_at'
+  ) THEN
+    ALTER TABLE public.posts ADD COLUMN published_at TIMESTAMPTZ;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'posts' AND column_name = 'updated_at'
+  ) THEN
+    ALTER TABLE public.posts ADD COLUMN updated_at TIMESTAMPTZ DEFAULT NOW();
+  END IF;
+END
+$$;
+
 -- Create a new migration file to insert the blog posts
 INSERT INTO public.posts (
     title,
@@ -8,7 +47,7 @@ INSERT INTO public.posts (
     excerpt,
     excerpt_en,
     image_url,
-    admin_id, 
+    author_id,
     is_published,
     published_at,
     created_at,
@@ -203,4 +242,4 @@ Famous Freepik launched its own tool.
     NOW(),
     NOW(),
     NOW()
-);
+) ON CONFLICT (slug) DO NOTHING;

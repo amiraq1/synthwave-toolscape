@@ -13,6 +13,76 @@ interface SemanticSearchResult extends Tool {
     similarity: number;
 }
 
+interface SearchFunctionResponse {
+    tools?: SemanticSearchResult[];
+    error?: string;
+    details?: string;
+}
+
+const CIRCUIT_BREAKER_MS = 5 * 60 * 1000;
+const enabledValuePattern = /^(1|true|yes|on)$/i;
+const disabledValuePattern = /^(0|false|no|off)$/i;
+
+let semanticSearchDisabledUntil = 0;
+let hasLoggedSemanticSearchWarning = false;
+
+const semanticSearchEnabledByEnv = (() => {
+    const rawValue = import.meta.env.VITE_ENABLE_SEMANTIC_SEARCH?.trim();
+
+    if (rawValue) {
+        if (enabledValuePattern.test(rawValue)) return true;
+        if (disabledValuePattern.test(rawValue)) return false;
+    }
+
+    return !import.meta.env.DEV;
+})();
+
+const isSemanticSearchTemporarilyDisabled = () => Date.now() < semanticSearchDisabledUntil;
+
+const disableSemanticSearchTemporarily = (reason: string) => {
+    semanticSearchDisabledUntil = Date.now() + CIRCUIT_BREAKER_MS;
+
+    if (hasLoggedSemanticSearchWarning) return;
+
+    hasLoggedSemanticSearchWarning = true;
+    console.warn(`[semantic-search] Disabled for 5 minutes. ${reason}`);
+};
+
+const extractFunctionErrorDetails = async (error: unknown): Promise<string> => {
+    const functionError = error as { message?: string; context?: Response } | null;
+    const response = functionError?.context;
+
+    if (response) {
+        try {
+            const payload = await response.clone().json() as {
+                details?: string;
+                error?: string;
+                message?: string;
+            };
+
+            return [payload.details, payload.message, payload.error].filter(Boolean).join(' ');
+        } catch {
+            try {
+                return await response.clone().text();
+            } catch {
+                // Fall back to the SDK error message below.
+            }
+        }
+    }
+
+    return functionError?.message || 'Semantic search request failed.';
+};
+
+const isRecoverableServerFailure = (errorDetails: string) => {
+    const normalizedDetails = errorDetails.toLowerCase();
+
+    return normalizedDetails.includes('api key expired') ||
+        normalizedDetails.includes('api_key_invalid') ||
+        normalizedDetails.includes('embedding api error') ||
+        normalizedDetails.includes('gemini_api_key missing') ||
+        normalizedDetails.includes('search failed');
+};
+
 /**
  * Hook for semantic search using vector embeddings
  * Uses the 'search' Edge Function with Gemini embeddings
@@ -26,10 +96,11 @@ export const useSemanticSearch = ({
     return useQuery<SemanticSearchResult[]>({
         queryKey: ['semantic-search', query, threshold, limit],
         queryFn: async () => {
+            if (!semanticSearchEnabledByEnv || isSemanticSearchTemporarilyDisabled()) return [];
             if (!query.trim() || query.trim().length < 2) return [];
 
             // Call the 'search' Edge Function
-            const { data, error } = await supabase.functions.invoke('search', {
+            const { data, error } = await supabase.functions.invoke<SearchFunctionResponse>('search', {
                 body: {
                     query,
                     limit,
@@ -37,20 +108,36 @@ export const useSemanticSearch = ({
             });
 
             if (error) {
-                // Edge Function may not be deployed - fail silently
+                const errorDetails = await extractFunctionErrorDetails(error);
+                const statusCode = (error as { context?: Response } | null)?.context?.status;
+
+                if ((statusCode && statusCode >= 500) || isRecoverableServerFailure(errorDetails)) {
+                    disableSemanticSearchTemporarily(errorDetails);
+                }
+
                 return [];
             }
 
             if (data?.error) {
-                console.error('Search function error:', data.error);
+                const errorDetails = typeof data.details === 'string'
+                    ? data.details
+                    : String(data.error);
+
+                if (isRecoverableServerFailure(errorDetails)) {
+                    disableSemanticSearchTemporarily(errorDetails);
+                }
+
                 return [];
             }
 
             return data?.tools || [];
         },
-        enabled: enabled && query.trim().length >= 2,
+        enabled: semanticSearchEnabledByEnv &&
+            enabled &&
+            query.trim().length >= 2 &&
+            !isSemanticSearchTemporarilyDisabled(),
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-        retry: 1,
+        retry: false,
     });
 };
 

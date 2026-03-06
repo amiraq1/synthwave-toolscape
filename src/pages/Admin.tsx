@@ -14,29 +14,35 @@ import { useSEO } from "@/hooks/useSEO";
 import { useTranslation } from "react-i18next";
 import EditDraftDialog from "@/components/EditDraftDialog";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import {
+  EditorialHero,
+  EditorialPage,
+  EditorialPanel,
+} from "@/components/layout/EditorialPage";
 // Lazy load AdminCharts because it depends on recharts (~150KB)
 const AdminCharts = lazy(() => import("@/components/admin/AdminCharts"));
 import AdminToolsTable from "@/components/admin/AdminToolsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Tool } from "@/types";
+import { getValidToolUrl } from "@synthwave/utils";
 
 // Loading skeleton for charts
 const ChartsLoadingSkeleton = () => (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-pulse">
-    <Card className="bg-black/20 border-white/10">
+  <div className="mb-8 grid grid-cols-1 gap-6 animate-pulse lg:grid-cols-2">
+    <Card className="editorial-soft-card border-black/8">
       <CardHeader>
-        <div className="h-4 w-32 bg-white/10 rounded" />
+        <div className="h-4 w-32 rounded bg-slate-200" />
       </CardHeader>
       <CardContent>
-        <div className="h-[250px] w-full bg-white/5 rounded" />
+        <div className="h-[250px] w-full rounded bg-slate-100" />
       </CardContent>
     </Card>
-    <Card className="bg-black/20 border-white/10">
+    <Card className="editorial-soft-card border-black/8">
       <CardHeader>
-        <div className="h-4 w-32 bg-white/10 rounded" />
+        <div className="h-4 w-32 rounded bg-slate-200" />
       </CardHeader>
       <CardContent>
-        <div className="h-[250px] w-full bg-white/5 rounded" />
+        <div className="h-[250px] w-full rounded bg-slate-100" />
       </CardContent>
     </Card>
   </div>
@@ -110,9 +116,20 @@ const Admin = () => {
   // Actions
   const handleAutoDraft = async (e: React.FormEvent) => {
     e.preventDefault();
+    const normalizedToolUrl = getValidToolUrl(formData.url);
+    if (!normalizedToolUrl) {
+      toast.error(t('admin.tools.invalid_url'));
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.functions.invoke("auto-draft", { body: formData });
+      const { error } = await supabase.functions.invoke("auto-draft", {
+        body: {
+          ...formData,
+          url: normalizedToolUrl,
+        },
+      });
       if (error) throw error;
       toast.success(t('admin.auto_draft_success', { name: formData.name }));
       setFormData({ name: "", url: "", description_en: "" });
@@ -139,62 +156,94 @@ const Admin = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center" dir={i18n.dir()}>
-        <div>
-          <Loader2 className="h-12 w-12 animate-spin text-neon-purple mx-auto mb-4" />
-          <p className="text-muted-foreground">{t('admin.checking_perms')}</p>
-        </div>
-      </div>
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialPanel className="mx-auto flex min-h-[60vh] max-w-3xl items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-slate-950" />
+            <p className="text-slate-600">{t('admin.checking_perms')}</p>
+          </div>
+        </EditorialPanel>
+      </EditorialPage>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-center p-4" dir={i18n.dir()}>
-        <div className="space-y-4 max-w-md">
-          <ShieldAlert className="h-16 w-16 text-destructive mx-auto" />
-          <h1 className="text-2xl font-bold">{t('admin.unauthorized')}</h1>
-          <p className="text-muted-foreground">{t('admin.unauthorized_desc')}</p>
-          <Button onClick={() => navigate('/')} className="w-full">
-            {t('common.back_to_home')}
-          </Button>
-        </div>
-      </div>
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialPanel className="mx-auto flex min-h-[60vh] max-w-3xl items-center justify-center">
+          <div className="max-w-md space-y-4 text-center">
+            <ShieldAlert className="mx-auto h-16 w-16 text-red-500" />
+            <h1 className="font-editorial text-3xl font-semibold text-slate-950">{t('admin.unauthorized')}</h1>
+            <p className="text-slate-600">{t('admin.unauthorized_desc')}</p>
+            <Button
+              onClick={() => navigate('/')}
+              className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+            >
+              {t('common.back_to_home')}
+            </Button>
+          </div>
+        </EditorialPanel>
+      </EditorialPage>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20" dir={i18n.dir()}>
-      <div className="container mx-auto p-6 max-w-6xl min-h-screen space-y-8">
-        <h1 className="text-3xl font-bold mb-6">{t('admin.dashboard')}</h1>
+    <EditorialPage dir={i18n.dir()}>
+      <EditorialHero
+        eyebrow={t('admin.title')}
+        title={t('admin.dashboard')}
+        description={t('admin.unauthorized_desc')}
+        icon={<ShieldAlert className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">
+              Admin
+            </span>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Tools</p>
+                <p className="mt-2 text-2xl font-semibold">{stats.totalTools}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Drafts</p>
+                <p className="mt-2 text-2xl font-semibold">{stats.pendingDrafts}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Users</p>
+                <p className="mt-2 text-2xl font-semibold">{stats.totalUsers}</p>
+              </div>
+            </div>
+          </div>
+        }
+      />
 
         {/* 📊 شريط الإحصائيات */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-blue-900/10 border-blue-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Card className="editorial-soft-card border-sky-200/70 bg-sky-50/70">
+            <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_total_tools')}</p>
-                <h3 className="text-3xl font-bold text-blue-400">{stats.totalTools}</h3>
+                <p className="mb-1 text-sm text-slate-500">{t('admin.stats_total_tools')}</p>
+                <h3 className="text-3xl font-bold text-sky-700">{stats.totalTools}</h3>
               </div>
-              <Database className="w-8 h-8 text-blue-500/50" />
+              <Database className="h-8 w-8 text-sky-600/70" />
             </CardContent>
           </Card>
-          <Card className="bg-orange-900/10 border-orange-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
+          <Card className="editorial-soft-card border-amber-200/70 bg-amber-50/70">
+            <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_pending_drafts')}</p>
-                <h3 className="text-3xl font-bold text-orange-400">{stats.pendingDrafts}</h3>
+                <p className="mb-1 text-sm text-slate-500">{t('admin.stats_pending_drafts')}</p>
+                <h3 className="text-3xl font-bold text-amber-700">{stats.pendingDrafts}</h3>
               </div>
-              <Edit className="w-8 h-8 text-orange-500/50" />
+              <Edit className="h-8 w-8 text-amber-600/70" />
             </CardContent>
           </Card>
-          <Card className="bg-purple-900/10 border-purple-500/20 card-glow">
-            <CardContent className="p-6 flex items-center justify-between">
+          <Card className="editorial-soft-card border-fuchsia-200/70 bg-fuchsia-50/70">
+            <CardContent className="flex items-center justify-between p-6">
               <div>
-                <p className="text-gray-400 text-sm mb-1">{t('admin.stats_total_users')}</p>
-                <h3 className="text-3xl font-bold text-purple-400">{stats.totalUsers}</h3>
+                <p className="mb-1 text-sm text-slate-500">{t('admin.stats_total_users')}</p>
+                <h3 className="text-3xl font-bold text-fuchsia-700">{stats.totalUsers}</h3>
               </div>
-              <Users className="w-8 h-8 text-purple-500/50" />
+              <Users className="h-8 w-8 text-fuchsia-600/70" />
             </CardContent>
           </Card>
         </div>
@@ -207,16 +256,28 @@ const Admin = () => {
 
         {/* نظام التبويبات */}
         <Tabs defaultValue="tools" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white/5 mb-8">
-            <TabsTrigger value="tools">{t('admin.tab_tools')}</TabsTrigger>
-            <TabsTrigger value="users">{t('admin.tab_users')}</TabsTrigger>
+          <EditorialPanel className="p-3">
+            <TabsList className="grid h-auto w-full grid-cols-2 gap-2 bg-transparent p-0">
+              <TabsTrigger
+                value="tools"
+                className="rounded-2xl border border-black/8 bg-white/65 px-4 py-3 text-slate-600 data-[state=active]:border-slate-950 data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=active]:shadow-none"
+              >
+                {t('admin.tab_tools')}
+              </TabsTrigger>
+              <TabsTrigger
+                value="users"
+                className="rounded-2xl border border-black/8 bg-white/65 px-4 py-3 text-slate-600 data-[state=active]:border-slate-950 data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=active]:shadow-none"
+              >
+                {t('admin.tab_users')}
+              </TabsTrigger>
           </TabsList>
+          </EditorialPanel>
 
           <TabsContent value="tools" className="space-y-8">
             {/* ✨ مولد المحتوى */}
-            <Card className="border-neon-purple/30 bg-card/40 backdrop-blur glass-card">
+            <Card className="editorial-soft-card border-black/8">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-neon-purple">
+                <CardTitle className="flex items-center gap-2 text-slate-950">
                   <Sparkles className="w-5 h-5" /> {t('admin.generator_title')}
                 </CardTitle>
               </CardHeader>
@@ -230,7 +291,7 @@ const Admin = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="bg-black/20 text-left"
+                        className="editorial-form-field text-left"
                         dir="ltr"
                       />
                     </div>
@@ -241,7 +302,7 @@ const Admin = () => {
                         value={formData.url}
                         onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                         required
-                        className="bg-black/20 text-left"
+                        className="editorial-form-field text-left"
                         dir="ltr"
                       />
                     </div>
@@ -253,11 +314,11 @@ const Admin = () => {
                       value={formData.description_en}
                       onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
                       required
-                      className="bg-black/20 text-left"
+                      className="editorial-form-field text-left"
                       dir="ltr"
                     />
                   </div>
-                  <Button type="submit" className="w-full bg-neon-purple hover:bg-neon-purple/80" disabled={loading}>
+                  <Button type="submit" className="w-full rounded-full bg-slate-950 text-white hover:bg-slate-800" disabled={loading}>
                     {loading ? <Loader2 className="animate-spin mr-2" /> : <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> {t('admin.generate_btn')}</span>}
                   </Button>
                 </form>
@@ -271,28 +332,28 @@ const Admin = () => {
               </h2>
 
               {drafts.length === 0 && (
-                <div className="text-center py-12 border border-dashed border-white/10 rounded-xl bg-white/5">
-                  <Database className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400">{t('admin.no_drafts')}</p>
+                <div className="rounded-2xl border border-dashed border-black/10 bg-white/50 py-12 text-center">
+                  <Database className="mx-auto mb-3 h-12 w-12 text-slate-400" />
+                  <p className="text-slate-500">{t('admin.no_drafts')}</p>
                 </div>
               )}
 
               <div className="grid gap-4">
                 {drafts.map((tool) => (
-                  <div key={tool.id} className="bg-card/40 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center group hover:border-neon-purple/30 transition-all hover:bg-white/5">
+                  <div key={tool.id} className="editorial-soft-card flex flex-col items-center justify-between gap-4 p-4 md:flex-row">
                     <div className="flex-1 w-full">
-                      <h3 className="font-bold text-lg text-white flex items-center flex-wrap gap-2 mb-1">
+                      <h3 className="mb-1 flex flex-wrap items-center gap-2 text-lg font-bold text-slate-950">
                         {tool.title}
-                        <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full text-gray-400 font-normal border border-white/5">{tool.category}</span>
+                        <span className="rounded-full border border-black/8 bg-white/80 px-2 py-0.5 text-xs font-normal text-slate-500">{tool.category}</span>
                       </h3>
-                      <p className="text-sm text-gray-400 line-clamp-2 pl-4">{tool.description}</p>
+                      <p className="line-clamp-2 pl-4 text-sm text-slate-600">{tool.description}</p>
                     </div>
 
                     <div className="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
-                      <Button size="sm" variant="outline" onClick={() => openEdit(tool)} className="flex-1 md:flex-none border-green-500/20 text-green-400 hover:bg-green-500/10 hover:text-green-300">
+                      <Button size="sm" variant="outline" onClick={() => openEdit(tool)} className="flex-1 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 md:flex-none">
                         <Edit className="w-4 h-4 ml-1" /> {t('admin.review_publish')}
                       </Button>
-                      <Button size="icon" variant="destructive" onClick={() => deleteDraft(tool.id)} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
+                      <Button size="icon" variant="destructive" onClick={() => deleteDraft(tool.id)} className="border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -312,13 +373,13 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="users">
-            <div className="bg-black/20 p-6 rounded-xl border border-white/10">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Users className="text-neon-purple" />
+            <EditorialPanel>
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-slate-950">
+                <Users className="text-teal-700" />
                 {t('admin.users_list')}
               </h2>
               <AdminUsersTable />
-            </div>
+            </EditorialPanel>
           </TabsContent>
         </Tabs>
 
@@ -331,8 +392,7 @@ const Admin = () => {
             onUpdate={() => refetchTools()}
           />
         )}
-      </div>
-    </div>
+    </EditorialPage>
   );
 };
 

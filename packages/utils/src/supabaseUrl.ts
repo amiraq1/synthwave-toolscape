@@ -1,4 +1,7 @@
-const rawSupabaseUrl = (import.meta.env.VITE_SUPABASE_URL || "").trim();
+const rawSupabaseUrl = (
+  import.meta.env.VITE_SUPABASE_URL ||
+  "https://pzpplippcdmkmwnzmdbr.supabase.co"
+).trim();
 const supabaseUrl = rawSupabaseUrl.replace(/\/+$/, "");
 
 export const getSupabaseUrl = (): string => supabaseUrl;

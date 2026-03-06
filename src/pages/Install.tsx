@@ -1,178 +1,234 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Activity, Download, Smartphone, CheckCircle, Share } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  CheckCircle,
+  Download,
+  Share,
+  Smartphone,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import {
+  EditorialHero,
+  EditorialPage,
+  EditorialPanel,
+} from "@/components/layout/EditorialPage";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 const Install = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
     }
 
-    // Check if iOS
-    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    setIsIOS(isIOSDevice);
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
 
-    // Listen for install prompt
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    const handler = (event: Event) => {
+      event.preventDefault();
+      setDeferredPrompt(event as BeforeInstallPromptEvent);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener("beforeinstallprompt", handler);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener("beforeinstallprompt", handler);
     };
   }, []);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
 
-    deferredPrompt.prompt();
+    await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
 
-    if (outcome === 'accepted') {
+    if (outcome === "accepted") {
       setIsInstalled(true);
     }
 
     setDeferredPrompt(null);
   };
 
+  const steps = [
+    t("install.ios_step1"),
+    t("install.ios_step2"),
+    t("install.ios_step3"),
+  ];
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="rtl">
-      {/* Background gradient orbs */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
-
-      <div className="w-full max-w-md">
-        <div className="glass rounded-3xl p-8 space-y-8 text-center">
-          {/* Logo */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center">
-              <Activity className="h-12 w-12 text-white" />
-            </div>
-            <h1 className="text-3xl">
-              <span className="font-extrabold gradient-text">{t('brand.name')}</span>
-              <span className="font-medium text-foreground/80 mr-1">AI</span>
-            </h1>
-          </div>
-
-          {isInstalled ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-2 text-emerald-400">
-                <CheckCircle className="h-6 w-6" />
-                <span className="text-xl font-semibold">{t('install.installed_title')}</span>
-              </div>
-              <p className="text-muted-foreground">
-                {t('install.installed_desc')}
-              </p>
-              <Button
-                onClick={() => navigate('/')}
-                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
-              >
-                {t('nav.back_home')}
-              </Button>
-            </div>
-          ) : isIOS ? (
-            <div className="space-y-6">
-              <div className="flex items-center justify-center gap-2 text-neon-purple">
-                <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">{t('install.ios_title')}</span>
-              </div>
-
-              <div className="space-y-4 text-right">
-                <p className="text-muted-foreground">
-                  {t('install.ios_desc')}
+    <EditorialPage className="pb-10" dir={i18n.dir()}>
+      <EditorialHero
+        eyebrow={t("install.prompt_title")}
+        title={t("brand.name")}
+        description={t("install.prompt_desc")}
+        icon={<Download className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">
+              PWA
+            </span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              {isInstalled
+                ? t("install.installed")
+                : isIOS
+                  ? t("install.ios_title")
+                  : deferredPrompt
+                    ? t("install.prompt_title")
+                    : t("install.browse_now")}
+            </h2>
+            <p className="text-sm leading-7 text-white/72">
+              {isInstalled
+                ? t("install.installed_desc")
+                : isIOS
+                  ? t("install.ios_desc")
+                  : t("install.browse_desc")}
+            </p>
+            <div className="grid grid-cols-2 gap-3 text-sm text-white/80">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                  Mode
                 </p>
-                <ol className="space-y-3 text-foreground">
-                  <li className="flex items-start gap-3">
-                    <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">1</span>
-                    <span>{t('install.ios_step1')} <Share className="inline h-4 w-4 mx-1" /></span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">2</span>
-                    <span>{t('install.ios_step2')}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="bg-neon-purple/20 text-neon-purple w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm">3</span>
-                    <span>{t('install.ios_step3')}</span>
-                  </li>
-                </ol>
+                <p className="mt-2 font-medium">
+                  {isIOS ? "iOS" : deferredPrompt ? "Install Ready" : "Browser"}
+                </p>
               </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                  Status
+                </p>
+                <p className="mt-2 font-medium">
+                  {isInstalled ? "Standalone" : "Web App"}
+                </p>
+              </div>
+            </div>
+          </div>
+        }
+      />
 
+      <EditorialPanel className="max-w-4xl">
+        {isInstalled ? (
+          <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[1.35rem] bg-emerald-500/12 text-emerald-700">
+                <CheckCircle className="h-7 w-7" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="font-editorial text-2xl font-semibold text-slate-950">
+                  {t("install.installed")}
+                </h2>
+                <p className="max-w-2xl text-sm leading-7 text-slate-600">
+                  {t("install.installed_desc")}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => navigate("/")}
+              className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+            >
+              {t("nav.back_home")}
+            </Button>
+          </div>
+        ) : isIOS ? (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 text-slate-950">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                <Smartphone className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="font-editorial text-2xl font-semibold">
+                  {t("install.ios_title")}
+                </h2>
+                <p className="text-sm text-slate-600">{t("install.ios_desc")}</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {steps.map((step, index) => (
+                <div key={step} className="editorial-soft-card p-5">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-sm font-bold text-white">
+                    {index + 1}
+                  </div>
+                  <p className="text-sm leading-7 text-slate-700">
+                    {index === 0 ? (
+                      <>
+                        {step} <Share className="mx-1 inline h-4 w-4" />
+                      </>
+                    ) : (
+                      step
+                    )}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              onClick={() => navigate("/")}
+              variant="outline"
+              className="rounded-full border-black/10 bg-white/70 px-6 text-slate-950 hover:bg-white"
+            >
+              {t("nav.back_home")}
+            </Button>
+          </div>
+        ) : deferredPrompt ? (
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <h2 className="font-editorial text-2xl font-semibold text-slate-950">
+                {t("install.prompt_title")}
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-slate-600">
+                {t("install.prompt_desc")}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
               <Button
-                onClick={() => navigate('/')}
+                onClick={handleInstall}
+                className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+              >
+                <Download className="me-2 h-4 w-4" />
+                {t("install.install_btn")}
+              </Button>
+              <Button
+                onClick={() => navigate("/")}
                 variant="outline"
-                className="w-full py-6 text-lg border-border/50"
+                className="rounded-full border-black/10 bg-white/70 px-6 text-slate-950 hover:bg-white"
               >
-                {t('nav.back_home')}
+                {t("install.later")}
               </Button>
             </div>
-          ) : deferredPrompt ? (
-            <div className="space-y-6">
-              <div className="flex items-center justify-center gap-2 text-neon-purple">
-                <Download className="h-6 w-6" />
-                <span className="text-xl font-semibold">{t('install.prompt_title')}</span>
-              </div>
-
-              <p className="text-muted-foreground">
-                {t('install.prompt_desc')}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <h2 className="font-editorial text-2xl font-semibold text-slate-950">
+                {t("install.browse_now")}
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-slate-600">
+                {t("install.browse_desc")}
               </p>
-
-              <div className="space-y-3">
-                <Button
-                  onClick={handleInstall}
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg gap-2"
-                >
-                  <Download className="h-5 w-5" />
-                  {t('install.install_btn')}
-                </Button>
-
-                <Button
-                  onClick={() => navigate('/')}
-                  variant="outline"
-                  className="w-full py-6 text-lg border-border/50"
-                >
-                  {t('install.not_now')}
-                </Button>
-              </div>
             </div>
-          ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Smartphone className="h-6 w-6" />
-                <span className="text-xl font-semibold">{t('install.browse_title')}</span>
-              </div>
 
-              <p className="text-muted-foreground">
-                {t('install.browse_desc')}
-              </p>
-
-              <Button
-                onClick={() => navigate('/')}
-                className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 py-6 text-lg"
-              >
-                {t('install.explore')}
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+            <Button
+              onClick={() => navigate("/")}
+              className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+            >
+              {t("nav.back_home")}
+            </Button>
+          </div>
+        )}
+      </EditorialPanel>
+    </EditorialPage>
   );
 };
 

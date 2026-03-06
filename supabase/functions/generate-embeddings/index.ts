@@ -23,17 +23,30 @@ interface EmbeddingResult {
     error?: string;
 }
 
-// Google Gemini Embedding API - text-embedding-004 (768 dimensions)
-async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
+interface GenerateEmbeddingsRequest {
+    tool_id?: number;
+    batch_all?: boolean;
+    force_regenerate?: boolean;
+    after_id?: number;
+    batch_limit?: number;
+}
+
+const NVIDIA_EMBEDDING_MODEL = "nvidia/llama-nemotron-embed-1b-v2";
+
+async function generateGeminiEmbedding(text: string, apiKey: string): Promise<number[]> {
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": apiKey,
+            },
             body: JSON.stringify({
-                model: "models/text-embedding-004",
+                model: "models/gemini-embedding-001",
                 content: { parts: [{ text }] },
                 taskType: "RETRIEVAL_DOCUMENT",
+                outputDimensionality: 768,
             }),
         }
     );
@@ -50,6 +63,56 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
     }
 
     return data.embedding.values;
+}
+
+async function generateNvidiaEmbedding(text: string, apiKey: string): Promise<number[]> {
+    const response = await fetch("https://integrate.api.nvidia.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            input: [text],
+            input_type: "passage",
+            model: NVIDIA_EMBEDDING_MODEL,
+            dimensions: 768,
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`NVIDIA API error: ${error}`);
+    }
+
+    const data = await response.json();
+    const embedding = data.data?.[0]?.embedding;
+
+    if (!embedding) {
+        throw new Error("No NVIDIA embedding values in response");
+    }
+
+    return embedding;
+}
+
+async function generateEmbedding(text: string, geminiApiKey?: string | null, nvidiaApiKey?: string | null): Promise<number[]> {
+    if (nvidiaApiKey) {
+        try {
+            return await generateNvidiaEmbedding(text, nvidiaApiKey);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            if (!geminiApiKey) {
+                throw error;
+            }
+            console.warn("NVIDIA unavailable, falling back to Gemini:", message);
+        }
+    }
+
+    if (!geminiApiKey) {
+        throw new Error("No embedding provider configured");
+    }
+
+    return generateGeminiEmbedding(text, geminiApiKey);
 }
 
 // Helper: Create rich searchable text from tool data
@@ -95,9 +158,10 @@ Deno.serve(async (req) => {
         const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
         const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
         const googleApiKey = Deno.env.get("GEMINI_API_KEY");
+        const nvidiaApiKey = Deno.env.get("NVIDIA_API_KEY");
 
-        if (!googleApiKey) {
-            throw new Error("GEMINI_API_KEY is not set");
+        if (!googleApiKey && !nvidiaApiKey) {
+            throw new Error("No embedding provider is configured");
         }
 
         if (isManualTrigger) {
@@ -131,14 +195,21 @@ Deno.serve(async (req) => {
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
         // Parse request body
-        let body: { tool_id?: number; batch_all?: boolean; force_regenerate?: boolean } = {};
+        let body: GenerateEmbeddingsRequest = {};
         try {
             body = await req.json();
         } catch {
             // Empty body is OK for batch_all default behavior
         }
 
-        const { tool_id, batch_all = true, force_regenerate = false } = body;
+        const {
+            tool_id,
+            batch_all = true,
+            force_regenerate = false,
+            after_id = 0,
+            batch_limit = 25,
+        } = body;
+        const safeBatchLimit = Math.min(Math.max(1, Number(batch_limit) || 25), 100);
 
         // Input validation
         if (tool_id !== undefined && (typeof tool_id !== 'number' || tool_id < 1)) {
@@ -148,10 +219,18 @@ Deno.serve(async (req) => {
             );
         }
 
+        if (after_id !== undefined && (typeof after_id !== 'number' || after_id < 0)) {
+            return new Response(
+                JSON.stringify({ error: "Invalid after_id", message_ar: "after_id غير صالح" }),
+                { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+        }
+
         // Fetch tools to process
         let query = supabase
             .from("tools")
-            .select("id, title, title_en, description, description_en, category, features");
+            .select("id, title, title_en, description, description_en, category, features")
+            .order("id", { ascending: true });
 
         if (tool_id) {
             // Single tool - always regenerate
@@ -161,6 +240,10 @@ Deno.serve(async (req) => {
             if (!force_regenerate) {
                 query = query.is("embedding", null);
             }
+            if (after_id > 0) {
+                query = query.gt("id", after_id);
+            }
+            query = query.limit(safeBatchLimit);
         } else {
             return new Response(
                 JSON.stringify({ error: "Provide either tool_id or batch_all=true", message_ar: "يجب تحديد tool_id أو batch_all=true" }),
@@ -204,7 +287,7 @@ Deno.serve(async (req) => {
                 }
 
                 // Generate embedding using Google Gemini
-                const embedding = await generateEmbedding(searchText, googleApiKey);
+                const embedding = await generateEmbedding(searchText, googleApiKey, nvidiaApiKey);
 
                 // Update tool with embedding
                 const { error: updateError } = await supabase
@@ -233,6 +316,22 @@ Deno.serve(async (req) => {
         }
 
         const failedCount = results.length - successCount;
+        const lastProcessedId = results.length > 0 ? results[results.length - 1].id : after_id;
+        let remaining = 0;
+
+        if (!tool_id && batch_all) {
+            let remainingQuery = supabase
+                .from("tools")
+                .select("id", { count: "exact", head: true })
+                .gt("id", lastProcessedId);
+
+            if (!force_regenerate) {
+                remainingQuery = remainingQuery.is("embedding", null);
+            }
+
+            const { count } = await remainingQuery;
+            remaining = count ?? 0;
+        }
 
         console.log(`🎉 Completed: ${successCount} success, ${failedCount} failed`);
 
@@ -240,12 +339,19 @@ Deno.serve(async (req) => {
             JSON.stringify({
                 message: `Processed ${results.length} tools`,
                 message_ar: `تم الانتهاء! تم تحديث ${successCount} أداة بنجاح 🚀`,
-                model: "text-embedding-004",
+                model: `gemini-embedding-001 | ${NVIDIA_EMBEDDING_MODEL}`,
                 dimensions: 768,
                 stats: {
                     total: results.length,
                     success: successCount,
                     failed: failedCount,
+                },
+                batch: {
+                    requested_limit: safeBatchLimit,
+                    after_id,
+                    last_processed_id: lastProcessedId,
+                    remaining,
+                    has_more: remaining > 0,
                 },
                 results,
             }),

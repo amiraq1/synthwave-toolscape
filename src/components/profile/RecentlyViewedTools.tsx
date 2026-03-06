@@ -7,93 +7,95 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import type { Tool } from "@/hooks/useTools";
 
 const RecentlyViewedTools = () => {
-    const { recentIds, clearRecent, hasRecent } = useRecentlyViewed();
-    const [tools, setTools] = useState<Tool[]>([]);
-    const [loading, setLoading] = useState(true);
+  const { recentIds, clearRecent, hasRecent } = useRecentlyViewed();
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchTools = async () => {
-            if (!hasRecent) {
-                setLoading(false);
-                return;
-            }
+  useEffect(() => {
+    const fetchTools = async () => {
+      if (!hasRecent) {
+        setLoading(false);
+        return;
+      }
 
-            try {
-                // جلب الأدوات بناءً على IDs المحفوظة
-                const { data } = await supabase
-                    .from('tools')
-                    .select('*')
-                    .in('id', recentIds.map(Number));
+      try {
+        const { data } = await supabase
+          .from("tools")
+          .select("*")
+          .in("id", recentIds.map(Number));
 
-                if (data) {
-                    // تحويل البيانات لتتوافق مع نوع Tool وترتيبها
-                    const orderedTools = recentIds
-                        .map(id => {
-                            const found = data.find(t => String(t.id) === id);
-                            if (!found) return null;
-                            return {
-                                ...found,
-                                id: String(found.id), // تحويل id لـ string
-                                features: found.features || [],
-                            } as Tool;
-                        })
-                        .filter((t): t is Tool => t !== null);
-                    setTools(orderedTools);
-                }
-            } catch (error) {
-                console.error('Error fetching recent tools:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (data) {
+          const orderedTools = recentIds
+            .map((id) => {
+              const found = data.find((tool) => String(tool.id) === id);
+              if (!found) return null;
+              return {
+                ...found,
+                id: String(found.id),
+                features: found.features || [],
+              } as Tool;
+            })
+            .filter((tool): tool is Tool => tool !== null);
 
-        fetchTools();
-    }, [recentIds, hasRecent]);
+          setTools(orderedTools);
+        }
+      } catch (error) {
+        console.error("Error fetching recent tools:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (!hasRecent) {
-        return (
-            <div className="text-center py-16 bg-white/5 rounded-2xl border border-dashed border-white/10">
-                <Clock className="w-12 h-12 mx-auto text-gray-600 mb-4" />
-                <p className="text-gray-400 mb-2">لا توجد أدوات مشاهدة مؤخراً</p>
-                <p className="text-sm text-gray-500">عند زيارتك لأي أداة، ستظهر هنا</p>
-            </div>
-        );
-    }
+    void fetchTools();
+  }, [hasRecent, recentIds]);
 
-    if (loading) {
-        return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3].map(i => (
-                    <div key={i} className="h-64 bg-white/5 rounded-2xl animate-pulse" />
-                ))}
-            </div>
-        );
-    }
-
+  if (!hasRecent) {
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-400">
-                    آخر {tools.length} أداة شاهدتها
-                </p>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearRecent}
-                    className="text-gray-500 hover:text-red-400 gap-2"
-                >
-                    <Trash2 className="w-4 h-4" />
-                    مسح السجل
-                </Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {tools.map(tool => (
-                    <ToolCard key={tool.id} tool={tool} />
-                ))}
-            </div>
-        </div>
+      <div className="editorial-soft-card py-16 text-center">
+        <Clock className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+        <p className="mb-2 text-slate-700">لا توجد أدوات مشاهدة مؤخراً</p>
+        <p className="text-sm text-slate-500">
+          عند زيارتك لأي أداة، ستظهر هنا
+        </p>
+      </div>
     );
+  }
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {[1, 2, 3].map((item) => (
+          <div
+            key={item}
+            className="editorial-soft-card h-64 animate-pulse bg-white/55"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-600">آخر {tools.length} أداة شاهدتها</p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={clearRecent}
+          className="rounded-full border-black/10 bg-white/70 text-slate-700 hover:bg-white hover:text-red-600"
+        >
+          <Trash2 className="me-2 h-4 w-4" />
+          مسح السجل
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {tools.map((tool) => (
+          <ToolCard key={tool.id} tool={tool} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default RecentlyViewedTools;

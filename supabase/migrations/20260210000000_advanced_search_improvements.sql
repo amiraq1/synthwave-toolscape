@@ -1,7 +1,11 @@
 -- 1. Add embedding column to posts if it doesn't exist
 ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS embedding vector(768);
 
--- 2. Create match_posts function for semantic blog search
+-- 2. Recreate semantic search functions with the updated return shapes.
+DROP FUNCTION IF EXISTS public.match_posts(vector, double precision, integer);
+DROP FUNCTION IF EXISTS public.match_tools(vector, double precision, integer);
+
+-- 3. Create match_posts function for semantic blog search
 CREATE OR REPLACE FUNCTION match_posts(
   query_embedding vector(768),
   match_threshold float DEFAULT 0.3,
@@ -36,7 +40,7 @@ BEGIN
 END;
 $$;
 
--- 3. Update match_tools to include more metadata for reranking
+-- 4. Update match_tools to include more metadata for reranking
 -- (Already exists, but ensuring it's optimized)
 CREATE OR REPLACE FUNCTION match_tools(
   query_embedding vector(768),
@@ -44,7 +48,7 @@ CREATE OR REPLACE FUNCTION match_tools(
   match_count int DEFAULT 20
 )
 RETURNS TABLE (
-  id bigint,
+  id integer,
   title text,
   description text,
   category text,

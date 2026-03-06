@@ -1,41 +1,47 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Activity, Lock, CheckCircle } from "lucide-react";
+import { CheckCircle, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
-import i18n from '@/i18n';
-
-const passwordSchema = z
-  .object({
-    password: z.string().min(6, i18n.t('reset.password_min')),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: i18n.t('reset.password_mismatch'),
-    path: ["confirmPassword"],
-  });
+import { useTranslation } from "react-i18next";
+import {
+  EditorialHero,
+  EditorialPage,
+  EditorialPanel,
+} from "@/components/layout/EditorialPage";
 
 function parseAuthParams() {
   const url = new URL(window.location.href);
-
-  // 1) Supabase قد يرسل code في query (PKCE)
   const code = url.searchParams.get("code");
-
-  // 2) أو يرسل access_token في hash
   const hash = url.hash?.startsWith("#") ? url.hash.substring(1) : url.hash;
   const hashParams = new URLSearchParams(hash || "");
   const accessToken = hashParams.get("access_token");
   const refreshToken = hashParams.get("refresh_token");
-  const type = hashParams.get("type"); // recovery / signup / magiclink ... إلخ
+  const type = hashParams.get("type");
 
   return { code, accessToken, refreshToken, type };
 }
 
 const ResetPassword = () => {
+  const { t, i18n } = useTranslation();
+  const passwordSchema = useMemo(
+    () =>
+      z
+        .object({
+          password: z.string().min(6, t("reset.password_min")),
+          confirmPassword: z.string(),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: t("reset.password_mismatch"),
+          path: ["confirmPassword"],
+        }),
+    [t],
+  );
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +50,6 @@ const ResetPassword = () => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = i18n;
-
   const params = useMemo(() => parseAuthParams(), []);
 
   useEffect(() => {
@@ -53,9 +57,10 @@ const ResetPassword = () => {
 
     const validateAndBootstrapSession = async () => {
       try {
-        // لو عندنا code (PKCE) -> exchangeCodeForSession
         if (params.code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(params.code);
+          const { error } = await supabase.auth.exchangeCodeForSession(
+            params.code,
+          );
           if (error) {
             toast({
               title: t("reset.invalid_link"),
@@ -67,8 +72,6 @@ const ResetPassword = () => {
           }
         }
 
-        // لو عندنا access_token في hash، Supabase غالبًا يلتقطه تلقائيًا
-        // لكن نتأكد أن عندنا session فعلاً
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
           toast({
@@ -79,23 +82,22 @@ const ResetPassword = () => {
           navigate("/auth", { replace: true });
           return;
         }
-
-        // ملاحظة: إذا type موجود وليس recovery قد تحب تمنع
-        // لكن نخليه مرن الآن.
       } finally {
-        if (!cancelled) setIsCheckingLink(false);
+        if (!cancelled) {
+          setIsCheckingLink(false);
+        }
       }
     };
 
-    validateAndBootstrapSession();
+    void validateAndBootstrapSession();
 
     return () => {
       cancelled = true;
     };
-  }, [navigate, toast, params.code]);
+  }, [navigate, params.code, t, toast]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsLoading(true);
 
     try {
@@ -121,7 +123,6 @@ const ResetPassword = () => {
       }
 
       const { error } = await supabase.auth.updateUser({ password });
-
       if (error) {
         toast({
           title: t("reset.error"),
@@ -141,89 +142,111 @@ const ResetPassword = () => {
     }
   };
 
-  // شاشة تحميل بسيطة أثناء فحص الرابط (أفضل UX للموبايل)
   if (isCheckingLink) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4" dir="rtl">
-        <div className="w-full max-w-md">
-          <div className="glass rounded-3xl p-6 sm:p-8 text-center space-y-4">
-            <Activity className="mx-auto h-10 w-10 text-neon-purple animate-pulse" />
-            <p className="text-muted-foreground">{t("reset.checking")}</p>
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialPanel className="mx-auto flex min-h-[60vh] max-w-3xl items-center justify-center">
+          <div className="space-y-4 text-center">
+            <Loader2 className="mx-auto h-10 w-10 animate-spin text-slate-950" />
+            <p className="text-sm text-slate-600">{t("reset.checking")}</p>
           </div>
-        </div>
-      </div>
+        </EditorialPanel>
+      </EditorialPage>
     );
   }
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl">
-        <div className="fixed top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
-        <div className="fixed bottom-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
-
-        <div className="w-full max-w-md">
-          <div className="glass rounded-3xl p-6 sm:p-8 space-y-8 text-center">
-            <div className="flex justify-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center">
-                <CheckCircle className="h-10 w-10 text-foreground" />
-              </div>
+      <EditorialPage dir={i18n.dir()}>
+        <EditorialHero
+          eyebrow={t("reset.success")}
+          title={t("reset.title_success")}
+          description={t("reset.desc_success")}
+          icon={<CheckCircle className="h-7 w-7" />}
+          aside={
+            <div className="space-y-5 text-white">
+              <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">
+                Auth
+              </span>
+              <h2 className="font-editorial text-3xl font-semibold leading-tight">
+                Password Updated
+              </h2>
+              <p className="text-sm leading-7 text-white/72">
+                {t("reset.success_desc")}
+              </p>
             </div>
+          }
+        />
 
+        <EditorialPanel className="max-w-3xl">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">{t("reset.title_success")}</h1>
-              <p className="text-muted-foreground">{t("reset.desc_success")}</p>
+              <h2 className="font-editorial text-2xl font-semibold text-slate-950">
+                {t("reset.title_success")}
+              </h2>
+              <p className="text-sm leading-7 text-slate-600">
+                {t("reset.desc_success")}
+              </p>
             </div>
-
-            <Button
-              onClick={() => navigate("/auth", { replace: true })}
-              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg"
-            >
-              {t('auth.login')}
-            </Button>
-
-            <button
-              type="button"
-              onClick={() => navigate("/", { replace: true })}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {t('nav.back_home')}
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                onClick={() => navigate("/auth", { replace: true })}
+                className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
+              >
+                {t("auth.login")}
+              </Button>
+              <Button
+                onClick={() => navigate("/", { replace: true })}
+                variant="outline"
+                className="rounded-full border-black/10 bg-white/70 px-6 text-slate-950 hover:bg-white"
+              >
+                {t("nav.back_home")}
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
+        </EditorialPanel>
+      </EditorialPage>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6" dir="rtl">
-      <div className="fixed top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-purple/20 rounded-full blur-[120px] -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-neon-blue/20 rounded-full blur-[120px] -z-10" />
-
-      <div className="w-full max-w-md">
-        <div className="glass rounded-3xl p-6 sm:p-8 space-y-8">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-2">
-              <Activity className="h-10 w-10 text-neon-purple animate-pulse" />
-              <h1 className="text-3xl">
-                <span className="font-extrabold gradient-text">نبض</span>
-                <span className="font-medium text-foreground/80 mr-1">AI</span>
-              </h1>
-            </div>
-            <p className="text-muted-foreground">{t("reset.subtitle")}</p>
+    <EditorialPage dir={i18n.dir()}>
+      <EditorialHero
+        eyebrow={t("reset.subtitle")}
+        title={t("reset.new_password")}
+        description={t("reset.subtitle")}
+        icon={<Lock className="h-7 w-7" />}
+        aside={
+          <div className="space-y-5 text-white">
+            <span className="editorial-kicker border-white/10 bg-white/10 text-white/65">
+              Secure Reset
+            </span>
+            <h2 className="font-editorial text-3xl font-semibold leading-tight">
+              {t("reset.save")}
+            </h2>
+            <p className="text-sm leading-7 text-white/72">
+              {t("reset.invalid_desc")}
+            </p>
           </div>
+        }
+      />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+      <EditorialPanel className="max-w-3xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="password">{t("reset.new_password")}</Label>
+              <Label htmlFor="password" className="text-slate-700">
+                {t("reset.new_password")}
+              </Label>
               <div className="relative">
-                <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Lock className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10 bg-muted/50 border-border/50"
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="editorial-form-field rounded-2xl pr-10"
                   required
                   autoComplete="new-password"
                 />
@@ -231,43 +254,46 @@ const ResetPassword = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t("reset.confirm_password")}</Label>
+              <Label htmlFor="confirmPassword" className="text-slate-700">
+                {t("reset.confirm_password")}
+              </Label>
               <div className="relative">
-                <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Lock className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="••••••••"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pr-10 bg-muted/50 border-border/50"
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  className="editorial-form-field rounded-2xl pr-10"
                   required
                   autoComplete="new-password"
                 />
               </div>
             </div>
+          </div>
 
+          <div className="flex flex-wrap gap-3">
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:opacity-90 transition-opacity py-6 text-lg"
+              className="rounded-full bg-slate-950 px-6 text-white hover:bg-slate-800"
             >
+              {isLoading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {isLoading ? t("reset.saving") : t("reset.save")}
             </Button>
-          </form>
-
-          <div className="text-center">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => navigate("/", { replace: true })}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="rounded-full border-black/10 bg-white/70 px-6 text-slate-950 hover:bg-white"
             >
               {t("nav.back_home")}
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
-    </div>
+        </form>
+      </EditorialPanel>
+    </EditorialPage>
   );
 };
 

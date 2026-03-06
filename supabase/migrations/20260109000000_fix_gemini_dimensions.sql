@@ -4,10 +4,18 @@
 -- 1. Clear existing embeddings (they are incompatible 1536 dims)
 UPDATE public.tools SET embedding = NULL;
 
--- 2. Alter column to correct size
+-- 2. Drop dependent analytics view before altering the vector column.
+DROP VIEW IF EXISTS public.tools_with_analytics;
+DROP VIEW IF EXISTS public.tools_ranked;
+
+-- 3. Alter column to correct size
 ALTER TABLE public.tools ALTER COLUMN embedding TYPE vector(768);
 
--- 3. Update search function to accept 768 dims
+-- 4. Recreate search functions with the new vector shape.
+DROP FUNCTION IF EXISTS public.match_tools(vector, double precision, integer);
+DROP FUNCTION IF EXISTS public.find_similar_tools(bigint, integer);
+
+-- 5. Update search function to accept 768 dims
 CREATE OR REPLACE FUNCTION match_tools(
   query_embedding vector(768),
   match_threshold float DEFAULT 0.3,
@@ -61,7 +69,7 @@ BEGIN
 END;
 $$;
 
--- 4. Update similar tools function
+-- 6. Update similar tools function
 CREATE OR REPLACE FUNCTION find_similar_tools(
   tool_id bigint,
   limit_count int DEFAULT 5
@@ -112,3 +120,42 @@ BEGIN
   LIMIT limit_count;
 END;
 $$;
+
+-- 7. Recreate the analytics view dropped before altering embedding.
+CREATE OR REPLACE VIEW public.tools_with_analytics AS
+SELECT
+  t.*,
+  COALESCE(
+    (SELECT COUNT(*) FROM public.tool_clicks tc WHERE tc.tool_id = t.id AND tc.clicked_at > NOW() - INTERVAL '7 days'),
+    0
+  ) AS clicks_last_7_days,
+  COALESCE(
+    (SELECT COUNT(*) FROM public.tool_clicks tc WHERE tc.tool_id = t.id AND tc.clicked_at > NOW() - INTERVAL '30 days'),
+    0
+  ) AS clicks_last_30_days
+FROM public.tools t;
+
+GRANT SELECT ON public.tools_with_analytics TO anon, authenticated;
+
+CREATE OR REPLACE VIEW public.tools_ranked AS
+SELECT
+  t.*,
+  COALESCE(rs.average_rating, 0) as avg_rating,
+  COALESCE(rs.reviews_count, 0) as total_reviews,
+  get_tool_score(
+    rs.average_rating::numeric,
+    rs.reviews_count::int,
+    t.release_date,
+    t.arabic_score
+  ) as trending_score
+FROM public.tools t
+LEFT JOIN LATERAL (
+  SELECT
+    ROUND(AVG(r.rating)::numeric, 1) as average_rating,
+    COUNT(r.id) as reviews_count
+  FROM public.reviews r
+  WHERE r.tool_id = t.id
+) rs ON true
+ORDER BY trending_score DESC;
+
+GRANT SELECT ON public.tools_ranked TO anon, authenticated;

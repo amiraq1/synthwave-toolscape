@@ -50,16 +50,20 @@ serve(async (req) => {
 
     const systemInstructions = agentData?.system_prompt || "أنت مساعد ذكي ومفيد.";
 
-    // 2. توليد Embedding (نستخدم v1beta لهذا النموذج لأنه أكثر استقراراً عليه)
-    // 👇 التغيير هنا: v1beta
+    // 2. توليد Embedding
     const embeddingResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': GEMINI_API_KEY,
+        },
         body: JSON.stringify({
-          model: "models/text-embedding-004",
-          content: { parts: [{ text: query }] }
+          model: 'models/gemini-embedding-001',
+          content: { parts: [{ text: query }] },
+          taskType: 'RETRIEVAL_QUERY',
+          outputDimensionality: 768,
         })
       }
     );

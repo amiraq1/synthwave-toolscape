@@ -1,4 +1,4 @@
--- Execute this in Supabase SQL Editor for project 'ksdodojvchiybbqxfhcl'
+-- Execute this in Supabase SQL Editor for project 'pzpplippcdmkmwnzmdbr'
 -- This will backfill all missing columns causing the "Error loading data"
 
 -- 1. Add Support/Growth columns (from growth_localization.sql)
@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION match_tools(
   match_count int DEFAULT 10
 )
 RETURNS TABLE (
-  id bigint,
+  id integer,
   title text,
   description text,
   category text,

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getSupabaseFunctionsBaseUrl, getSupabaseStorageBaseUrl } from '@synthwave/utils';
 
 interface SEOProps {
   title?: string;
@@ -15,17 +16,18 @@ interface SEOProps {
   toolName?: string; // For dynamic OG image generation
 }
 
-// Project Reference for dynamic OG images
-const PROJECT_REF = "iazvsdwkbfzjhscyfvec";
 const SITE_URL = "https://amiraq.org";
 
 // Generate dynamic OG image URL from Supabase Edge Function
 const generateOgImage = (title?: string, category?: string): string => {
+  const functionsBaseUrl = getSupabaseFunctionsBaseUrl();
+  const storageBaseUrl = getSupabaseStorageBaseUrl();
+
   if (title) {
-    return `https://${PROJECT_REF}.supabase.co/functions/v1/og-image?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category || 'نبض AI')}`;
+    return `${functionsBaseUrl}/og-image?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category || 'نبض AI')}`;
   }
   // Fallback to a default branded image (should be uploaded to Supabase Storage)
-  return `https://${PROJECT_REF}.supabase.co/storage/v1/object/public/assets/og-nabdh-default.png`;
+  return `${storageBaseUrl}/object/public/assets/og-nabdh-default.png`;
 };
 
 export const useSEO = ({
@@ -134,7 +136,7 @@ export const useSEO = ({
     return () => {
       document.title = DEFAULT_TITLE;
     };
-  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, langKey, toolName, t]);
+  }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, lang, langKey, toolName, t]);
 };
 
 export default useSEO;

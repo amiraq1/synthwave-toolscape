@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://pzpplippcdmkmwnzmdbr.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ';
+
 const supabase = createClient(
-    "https://iazvsdwkbfzjhscyfvec.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhenZzZHdrYmZ6amhzY3lmdmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5ODE1MTgsImV4cCI6MjA4MjU1NzUxOH0.Hgcu4o9btWdxkhnA4BhQYpal_uoJ5gQn0dHYQoX4yyM"
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
 );
 
 async function main() {

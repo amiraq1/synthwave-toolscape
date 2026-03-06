@@ -45,7 +45,7 @@ function isRateLimited(identifier: string): boolean {
 // Allowed origins for CORS
 const allowedOrigins = [
   'https://nabd.lovable.app',
-  'https://ksdodojvchiybbqxfhcl.supabase.co',
+  'https://pzpplippcdmkmwnzmdbr.supabase.co',
   'http://localhost:8080',
   'http://localhost:5173',
   'http://localhost:3000',

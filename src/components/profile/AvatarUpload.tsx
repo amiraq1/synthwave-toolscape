@@ -88,21 +88,21 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
     return (
         <div className="flex flex-col items-center gap-4">
             <div className="relative group">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 bg-black/40">
+                <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-black/8 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
                     {previewUrl ? (
                         <img src={previewUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
                     ) : currentAvatarUrl ? (
                         <img src={currentAvatarUrl} alt="Current Avatar" className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <div className="flex h-full w-full items-center justify-center text-slate-400">
                             <Camera className="w-10 h-10" />
                         </div>
                     )}
 
                     {/* طبقة التحميل */}
                     {uploading && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
-                            <Loader2 className="w-8 h-8 text-neon-purple animate-spin" />
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/50">
+                            <Loader2 className="h-8 w-8 animate-spin text-white" />
                         </div>
                     )}
                 </div>
@@ -121,7 +121,7 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
                 {!previewUrl && !uploading && (
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="absolute bottom-0 right-0 p-2 bg-neon-purple rounded-full text-white shadow-lg hover:bg-neon-purple/80 transition-colors"
+                        className="absolute bottom-0 right-0 rounded-full bg-slate-950 p-2 text-white shadow-lg transition-colors hover:bg-slate-800"
                         title="تغيير الصورة"
                     >
                         <Camera className="w-5 h-5" />
@@ -135,21 +135,22 @@ const AvatarUpload = ({ currentAvatarUrl, onUploadComplete, userId }: AvatarUplo
                     <Button
                         size="sm"
                         onClick={handleUpload}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="rounded-full bg-slate-950 px-4 text-white hover:bg-slate-800"
                     >
                         حفظ الصورة
                     </Button>
                     <Button
                         size="sm"
-                        variant="destructive"
                         onClick={cancelPreview}
+                        variant="outline"
+                        className="rounded-full border-black/10 bg-white/70 text-slate-950 hover:bg-white"
                     >
                         <X className="w-4 h-4" />
                     </Button>
                 </div>
             )}
 
-            <p className="text-xs text-gray-500 text-center max-w-[200px]">
+            <p className="max-w-[220px] text-center text-xs leading-6 text-slate-500">
                 الصيغ المدعومة: JPG, PNG. الحد الأقصى: 2MB.
             </p>
         </div>

@@ -30,6 +30,8 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Bookmarks = lazy(() => import("./pages/Bookmarks"));
 const ComparePage = lazy(() => import("./pages/Compare"));
 const Profile = lazy(() => import("./pages/Profile"));
+const AgentsMarketplace = lazy(() => import("./pages/AgentsMarketplace"));
+const OwnerDashboard = lazy(() => import("./pages/OwnerDashboard"));
 const WorkflowBuilder = lazy(() => import("./pages/WorkflowBuilder"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -67,7 +69,7 @@ const AppContent = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0f0f1a] text-foreground font-cairo">
+    <div className="flex min-h-screen flex-col text-foreground font-cairo">
       <Navbar onAddClick={handleAddClick} />
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -88,6 +90,8 @@ const AppContent = () => {
           <Route path="/library" element={<Bookmarks />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/agents" element={<AgentsMarketplace />} />
+          <Route path="/owner" element={<OwnerDashboard />} />
           <Route path="/workflow/new" element={<WorkflowBuilder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
