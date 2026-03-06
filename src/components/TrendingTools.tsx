@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseNetworkError } from "@/integrations/supabase/client";
 import { Flame, MousePointerClick, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { getTrendingToolsFromCatalog } from "@/lib/toolsCatalogFallback";
 
 interface TrendingTool {
     id: number;
@@ -21,24 +23,34 @@ const TrendingTools = () => {
     const { data: tools = [], isLoading } = useQuery({
         queryKey: ["trending_tools_ticker"],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from("tools")
-                .select("*")
-                .eq("is_published", true)
-                .order("clicks_count", { ascending: false, nullsFirst: false })
-                .limit(10);
+            try {
+                const { data, error } = await supabase
+                    .from("tools")
+                    .select("*")
+                    .eq("is_published", true)
+                    .order("clicks_count", { ascending: false, nullsFirst: false })
+                    .limit(10);
 
-            if (error) {
+                if (error) {
+                    throw error;
+                }
+
+                const rows = (data ?? []) as unknown as TrendingToolRow[];
+                return rows.map((tool): TrendingTool => ({
+                    id: Number(tool.id),
+                    title: tool.title ?? "",
+                    clicks_count: tool.clicks_count ?? 0,
+                }));
+            } catch (error) {
+                if (isSupabaseNetworkError(error)) {
+                    return getTrendingToolsFromCatalog(10);
+                }
+
                 console.error("Error fetching trending tools:", error);
                 throw error;
             }
-            const rows = (data ?? []) as unknown as TrendingToolRow[];
-            return rows.map((tool): TrendingTool => ({
-                id: Number(tool.id),
-                title: tool.title ?? "",
-                clicks_count: tool.clicks_count ?? 0,
-            }));
         },
+        retry: (failureCount, error) => !isSupabaseNetworkError(error) && failureCount < 2,
         staleTime: 1000 * 60 * 10, // 10 minutes cache
     });
 

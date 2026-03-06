@@ -15,6 +15,7 @@ import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
 import { useAuth } from "@/context/AuthContext";
 import { useIdleLoad } from "@/hooks/useIdleLoad";
 import { useTranslation } from "react-i18next";
+import { isSupabaseNetworkError } from "@/lib/supabaseNetwork";
 const PwaUpdateToast = lazy(() => import("@/components/pwa-update-toast").then(m => ({ default: m.PwaUpdateToast })));
 import Index from "./pages/Index"; // Eager load Home for better LCP
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
@@ -76,7 +77,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 10, // 5 minutes
       gcTime: 1000 * 60 * 60, // 60 minutes
-      retry: 2,
+      retry: (failureCount, error) => !isSupabaseNetworkError(error) && failureCount < 2,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       refetchOnWindowFocus: false,
     },

@@ -1,5 +1,7 @@
 import { useInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseNetworkError } from "@/integrations/supabase/client";
+import { getToolsPageFromCatalog } from "@/lib/toolsCatalogFallback";
 
 export type Category =
   | "الكل"
@@ -153,14 +155,28 @@ export const useTools = (params: UseToolsParams = {}) => {
           query = query.order("is_featured", { ascending: false }).order("created_at", { ascending: false });
       }
 
-      const { data, error, count } = await query.range(from, to);
+      try {
+        const { data, error, count } = await query.range(from, to);
 
-      if (error) {
+        if (error) {
+          throw error;
+        }
+
+        return { data: (data as Tool[]) ?? [], count };
+      } catch (error) {
+        if (isSupabaseNetworkError(error)) {
+          return getToolsPageFromCatalog({
+            category,
+            pageParam,
+            searchQuery,
+            selectedPersona,
+            sortBy,
+          });
+        }
+
         console.error("Error fetching tools:", error);
         throw error;
       }
-
-      return { data: (data as Tool[]) ?? [], count };
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
@@ -173,6 +189,7 @@ export const useTools = (params: UseToolsParams = {}) => {
       pages: data.pages.map((page) => page.data),
       pageParams: data.pageParams,
     }),
+    retry: (failureCount, error) => !isSupabaseNetworkError(error) && failureCount < 2,
     staleTime: 1000 * 60 * 5,
     refetchOnMount: false,
   });

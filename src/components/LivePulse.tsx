@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseNetworkError } from "@/integrations/supabase/client";
 import { Star, Zap } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ar";
+import { getLatestToolsFromCatalog } from "@/lib/toolsCatalogFallback";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ar");
@@ -19,7 +20,6 @@ interface ReviewData {
   created_at: string;
   rating: number;
   tools: { title: string } | null;
-  profiles: { display_name: string | null } | null;
 }
 
 interface ToolData {
@@ -31,38 +31,79 @@ const LivePulse = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchActivity = async () => {
-      const { data: reviews } = (await supabase
-        .from("reviews")
-        .select("created_at, rating, tools(title)")
-        .order("created_at", { ascending: false })
-        .limit(3)) as { data: ReviewData[] | null };
+      try {
+        const [reviewsResponse, toolsResponse] = await Promise.all([
+          supabase
+            .from("reviews")
+            .select("created_at, rating, tools(title)")
+            .order("created_at", { ascending: false })
+            .limit(3),
+          supabase
+            .from("tools")
+            .select("created_at, title")
+            .order("created_at", { ascending: false })
+            .limit(3),
+        ]);
 
-      const { data: newTools } = (await supabase
-        .from("tools")
-        .select("created_at, title")
-        .order("created_at", { ascending: false })
-        .limit(3)) as { data: ToolData[] | null };
+        if (reviewsResponse.error) {
+          throw reviewsResponse.error;
+        }
 
-      const feed: Activity[] = [
-        ...(reviews || []).map((r) => ({
-          type: "review" as const,
-          text: `تقييم جديد على ${r.tools?.title || "إحدى الأدوات"}`,
-          icon: <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />,
-          time: r.created_at,
-        })),
-        ...(newTools || []).map((t) => ({
-          type: "new_tool" as const,
-          text: `أداة جديدة: ${t.title}`,
-          icon: <Zap className="w-3 h-3 text-neon-purple fill-neon-purple" />,
-          time: t.created_at,
-        })),
-      ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+        if (toolsResponse.error) {
+          throw toolsResponse.error;
+        }
 
-      setActivities(feed);
+        const reviews = (reviewsResponse.data ?? []) as ReviewData[];
+        const newTools = (toolsResponse.data ?? []) as ToolData[];
+
+        const feed: Activity[] = [
+          ...reviews.map((review) => ({
+            type: "review" as const,
+            text: `تقييم جديد على ${review.tools?.title || "إحدى الأدوات"}`,
+            icon: <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />,
+            time: review.created_at,
+          })),
+          ...newTools.map((tool) => ({
+            type: "new_tool" as const,
+            text: `أداة جديدة: ${tool.title}`,
+            icon: <Zap className="w-3 h-3 text-neon-purple fill-neon-purple" />,
+            time: tool.created_at,
+          })),
+        ].sort((left, right) => new Date(right.time).getTime() - new Date(left.time).getTime());
+
+        if (!cancelled) {
+          setActivities(feed);
+        }
+      } catch (error) {
+        if (isSupabaseNetworkError(error)) {
+          const latestTools = await getLatestToolsFromCatalog(3);
+
+          if (!cancelled) {
+            setActivities(
+              latestTools.map((tool) => ({
+                type: "new_tool",
+                text: `أداة جديدة: ${tool.title}`,
+                icon: <Zap className="w-3 h-3 text-neon-purple fill-neon-purple" />,
+                time: tool.created_at ?? new Date().toISOString(),
+              })),
+            );
+          }
+
+          return;
+        }
+
+        console.error("Error fetching live activity:", error);
+      }
     };
 
     fetchActivity();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (activities.length === 0) return null;
@@ -77,8 +118,8 @@ const LivePulse = () => {
 
         <div className="flex-1 overflow-hidden relative group">
           <div className="flex gap-8 animate-marquee whitespace-nowrap hover:[animation-play-state:paused]">
-            {[...activities, ...activities].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs md:text-sm text-slate-200">
+            {[...activities, ...activities].map((item, index) => (
+              <div key={index} className="flex items-center gap-2 text-xs md:text-sm text-slate-200">
                 {item.icon}
                 <span>{item.text}</span>
                 <span className="text-slate-300 text-[10px]">({dayjs(item.time).locale("ar").fromNow()})</span>
