@@ -50,29 +50,29 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
     >
       <div className="mx-auto max-w-[1380px] px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-
-          {/* 1. الشعار */}
           <div className="flex-shrink-0 flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_12px_28px_rgba(15,23,42,0.18)] transition-all duration-300 group-hover:-translate-y-0.5">
                 <span className="font-bold text-lg">⚡</span>
               </div>
-              <span className="hidden text-xl font-bold text-slate-950 transition-colors duration-300 group-hover:text-teal-800 sm:block">{t('brand.name')} AI</span>
+              <span className="hidden text-xl font-bold text-slate-950 transition-colors duration-300 group-hover:text-teal-800 sm:block">
+                {t("brand.name")} AI
+              </span>
             </Link>
           </div>
 
-          {/* 2. روابط سطح المكتب */}
-          <div className="hidden lg:flex items-center gap-1 mx-4">
+          <div className="mx-4 hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${isActive(link.path)
-                  ? "bg-slate-950 text-white"
-                  : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
-                  }`}
+                className={`relative flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  isActive(link.path)
+                    ? "bg-slate-950 text-white"
+                    : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
+                }`}
               >
-                <link.icon className="w-4 h-4" />
+                <link.icon className="h-4 w-4" />
                 {link.name}
                 {link.badge && (
                   <span className="rounded-full border border-teal-700/20 bg-teal-700/10 px-1.5 py-0.5 text-[10px] text-teal-800">
@@ -83,15 +83,13 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             ))}
           </div>
 
-          {/* 3. الإجراءات */}
           <div className="flex items-center gap-2 sm:gap-4">
-
             <Button
               size="sm"
               className="hidden rounded-full border-0 bg-slate-950 px-4 text-white hover:bg-slate-800 sm:flex"
               onClick={onAddClick}
             >
-              <Plus className="w-4 h-4 ms-2" /> {t("nav.add_tool")}
+              <Plus className="ms-2 h-4 w-4" /> {t("nav.add_tool")}
             </Button>
 
             <Button
@@ -101,19 +99,28 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
               onClick={onAddClick}
               aria-label={t("nav.add_tool")}
             >
-              <Plus className="w-5 h-5" aria-hidden="true" />
+              <Plus className="h-5 w-5" aria-hidden="true" />
             </Button>
 
-            <div className="hidden sm:flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950" aria-label={t("nav.favorites")}>
-                <Heart className="w-5 h-5" />
+            <div className="hidden items-center gap-2 sm:flex">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950"
+                aria-label={t("nav.favorites")}
+              >
+                <Heart className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950" aria-label={t("nav.language")}>
-                <Globe className="w-5 h-5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950"
+                aria-label={t("nav.language")}
+              >
+                <Globe className="h-5 w-5" />
               </Button>
             </div>
 
-            {/* بروفايل المستخدم */}
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -129,9 +136,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 border-black/10 bg-[#f8f4eb] text-slate-950 shadow-[0_20px_48px_rgba(15,23,42,0.12)]" align="end">
+                <DropdownMenuContent
+                  className="w-56 border-black/10 bg-[#f8f4eb] text-slate-950 shadow-[0_20px_48px_rgba(15,23,42,0.12)]"
+                  align="end"
+                >
                   <div className="mb-2 flex items-center justify-start gap-2 border-b border-black/8 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
+                    <div className="flex flex-col space-y-1 leading-none">
                       <p className="max-w-[150px] truncate text-sm font-medium text-slate-950">
                         {session.user.user_metadata.full_name || session.user.email}
                       </p>
@@ -152,37 +162,52 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                       <User className="me-2 h-4 w-4" /> {t("nav.profile")}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700" onClick={handleLogout}>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
+                    onClick={handleLogout}
+                  >
                     <LogOut className="me-2 h-4 w-4" /> {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button size="sm" variant="outline" className="gap-2 rounded-full border-black/10 bg-white/70 text-slate-950 hover:bg-white">
-                  <User className="w-4 h-4" />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 rounded-full border-black/10 bg-white/70 text-slate-950 hover:bg-white"
+                >
+                  <User className="h-4 w-4" />
                   <span className="hidden sm:inline">{t("nav.signin")}</span>
                 </Button>
               </Link>
             )}
 
-            {/* 4. زر القائمة للموبايل */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="ms-1 text-slate-900 hover:bg-slate-900/5 lg:hidden" aria-label={t("nav.menu")}>
-                  <Menu className="w-6 h-6" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="ms-1 text-slate-900 hover:bg-slate-900/5 lg:hidden"
+                  aria-label={t("nav.menu")}
+                >
+                  <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] border-s border-black/8 bg-[#f5f0e6] text-slate-950 sm:w-[400px]" aria-describedby={undefined}>
+              <SheetContent
+                side="right"
+                className="w-[300px] border-s border-black/8 bg-[#f5f0e6] text-slate-950 sm:w-[400px]"
+                aria-describedby={undefined}
+              >
                 <SheetTitle className="sr-only">{t("nav.menu_title")}</SheetTitle>
                 <SheetDescription className="sr-only">{t("nav.menu_desc")}</SheetDescription>
 
-                <div className="flex flex-col gap-6 mt-8">
-                  <div className="flex items-center gap-2 mb-4 px-2">
+                <div className="mt-8 flex flex-col gap-6">
+                  <div className="mb-4 flex items-center gap-2 px-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950">
                       <span className="font-bold text-white">⚡</span>
                     </div>
-                    <span className="text-xl font-bold">{t('brand.name')} AI</span>
+                    <span className="text-xl font-bold">{t("brand.name")} AI</span>
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -191,12 +216,13 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                         key={link.path}
                         to={link.path}
                         onClick={() => setIsOpen(false)}
-                        className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium transition-all ${isActive(link.path)
-                          ? "bg-slate-950 text-white"
-                          : "text-slate-600 hover:bg-white/80 hover:text-slate-950"
-                          }`}
+                        className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium transition-all ${
+                          isActive(link.path)
+                            ? "bg-slate-950 text-white"
+                            : "text-slate-600 hover:bg-white/80 hover:text-slate-950"
+                        }`}
                       >
-                        <link.icon className="w-5 h-5" />
+                        <link.icon className="h-5 w-5" />
                         {link.name}
                         {link.badge && (
                           <span className="ms-auto rounded-full border border-teal-700/20 bg-teal-700/10 px-2 py-0.5 text-xs text-teal-800">
@@ -210,17 +236,25 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                   <div className="my-2 h-px bg-black/8" />
 
                   <div className="flex flex-col gap-2">
-                    <Link to="/about" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-slate-950">
-                      <Info className="w-5 h-5" /> {t("nav.about")}
+                    <Link
+                      to="/about"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-slate-950"
+                    >
+                      <Info className="h-5 w-5" /> {t("nav.about")}
                     </Link>
-                    <Link to="/faq" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-slate-950">
-                      <HelpCircle className="w-5 h-5" /> {t("nav.faq")}
+                    <Link
+                      to="/faq"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-slate-950"
+                    >
+                      <HelpCircle className="h-5 w-5" /> {t("nav.faq")}
                     </Link>
                   </div>
 
                   {session && (
                     <div className="mt-auto border-t border-black/8 pt-6">
-                      <div className="flex items-center gap-3 px-2 mb-4">
+                      <div className="mb-4 flex items-center gap-3 px-2">
                         <Avatar className="h-10 w-10 border border-black/10">
                           <AvatarImage src={session.user.user_metadata.avatar_url} />
                           <AvatarFallback className="bg-slate-950 text-white">
@@ -244,7 +278,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                             onClick={() => setIsOpen(false)}
                             className="flex items-center gap-3 rounded-xl bg-white/70 px-4 py-2.5 text-sm font-medium text-slate-950 transition-colors hover:bg-white"
                           >
-                            <Crown className="w-4 h-4" /> {t("nav.owner_dashboard")}
+                            <Crown className="h-4 w-4" /> {t("nav.owner_dashboard")}
                           </Link>
                         )}
                         <Link
@@ -252,7 +286,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                           onClick={() => setIsOpen(false)}
                           className="flex items-center gap-3 rounded-xl bg-white/70 px-4 py-2.5 text-sm font-medium text-slate-950 transition-colors hover:bg-white"
                         >
-                          <User className="w-4 h-4" /> {t("nav.profile")}
+                          <User className="h-4 w-4" /> {t("nav.profile")}
                         </Link>
                         <button
                           onClick={() => {
@@ -261,7 +295,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                           }}
                           className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-start text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
                         >
-                          <LogOut className="w-4 h-4" /> {t("nav.logout")}
+                          <LogOut className="h-4 w-4" /> {t("nav.logout")}
                         </button>
                       </div>
                     </div>
@@ -269,7 +303,6 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 </div>
               </SheetContent>
             </Sheet>
-
           </div>
         </div>
       </div>

@@ -1,7 +1,9 @@
-const rawSupabaseUrl = (
-  import.meta.env.VITE_SUPABASE_URL ||
-  "https://pzpplippcdmkmwnzmdbr.supabase.co"
-).trim();
+import { getRuntimeConfigValue } from "./runtimeConfig";
+
+const rawSupabaseUrl = getRuntimeConfigValue(
+  "supabaseUrl",
+  import.meta.env.VITE_SUPABASE_URL || "https://pzpplippcdmkmwnzmdbr.supabase.co",
+);
 const supabaseUrl = rawSupabaseUrl.replace(/\/+$/, "");
 
 export const getSupabaseUrl = (): string => supabaseUrl;

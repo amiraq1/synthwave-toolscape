@@ -49,27 +49,47 @@ createRoot(document.getElementById('root')!).render(
     </React.StrictMode>,
 );
 
+const SITE_DATA_REFRESH_MARKER = 'nabd-site-data-refresh';
+
 const clearServiceWorkersAndCaches = async () => {
     if (!('serviceWorker' in navigator)) {
-        return;
+        return false;
     }
 
     try {
         const registrations = await navigator.serviceWorker.getRegistrations();
+        const hadRegistrations = registrations.length > 0;
         await Promise.all(registrations.map((registration) => registration.unregister()));
 
+        let hadCaches = false;
         if ('caches' in window) {
             const cacheKeys = await caches.keys();
+            hadCaches = cacheKeys.length > 0;
             await Promise.all(cacheKeys.map((cacheKey) => caches.delete(cacheKey)));
         }
+
+        return hadRegistrations || hadCaches;
     } catch (error) {
         console.error('Failed to clear service workers and caches:', error);
+        return false;
     }
 };
 
 // لا نعيد تسجيل Service Worker حاليًا حتى نكسر أي كاش قديم يوجه للـ bundles السابقة.
 const manageServiceWorker = async () => {
-    await clearServiceWorkersAndCaches();
+    const removedSiteData = await clearServiceWorkersAndCaches();
+
+    if (!removedSiteData) {
+        sessionStorage.removeItem(SITE_DATA_REFRESH_MARKER);
+        return;
+    }
+
+    if (sessionStorage.getItem(SITE_DATA_REFRESH_MARKER) === 'done') {
+        return;
+    }
+
+    sessionStorage.setItem(SITE_DATA_REFRESH_MARKER, 'done');
+    window.location.reload();
 };
 
 // تأجيل إدارة SW حتى يصبح المتصفح غير مشغول

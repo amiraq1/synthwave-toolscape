@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, isSupabaseNetworkError } from '@/integrations/supabase/client';
+import { getToolsStatsFromCatalog } from '@/lib/toolsCatalogFallback';
 
 interface ToolsStats {
     total_tools: number;
@@ -8,48 +9,66 @@ interface ToolsStats {
     free_tools: number;
 }
 
+interface ToolStatRow {
+    arabic_score?: number | null;
+    category?: string | null;
+    description?: string | null;
+    pricing_type?: string | null;
+    supports_arabic?: boolean | null;
+}
+
+const FREE_PRICING_TOKENS = ['مجاني', 'free', 'freemium'];
+const ARABIC_TEXT_REGEX = /[\u0600-\u06FF]/;
+
+const normalizeText = (value?: string | null) => (value ?? '').trim().toLowerCase();
+
+const isFreeTool = (pricingType?: string | null) => {
+    const pricing = normalizeText(pricingType);
+    return FREE_PRICING_TOKENS.some((token) => pricing.includes(token));
+};
+
+const isArabicTool = (tool: ToolStatRow) =>
+    Boolean(tool.supports_arabic) ||
+    (typeof tool.arabic_score === 'number' && tool.arabic_score > 0) ||
+    ARABIC_TEXT_REGEX.test(tool.description ?? '');
+
 /**
- * Lightweight hook to fetch total published tools count.
- * Uses the `get_tools_stats` RPC if available, otherwise falls back
- * to a simple count query.
+ * Fetch lightweight hero stats directly from the tools table.
+ * This avoids hitting an RPC that may not exist in the current project.
  */
 export const useToolsStats = () => {
     return useQuery<ToolsStats>({
         queryKey: ['tools-stats'],
         queryFn: async () => {
             try {
-                // Try RPC first (fast, single call for all stats)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const { data: rpcData, error: rpcError } = await (supabase as any)
-                    .rpc('get_tools_stats');
+                const { data, error } = await supabase
+                    .from('tools')
+                    .select('category, pricing_type, supports_arabic, arabic_score, description')
+                    .eq('is_published', true);
 
-                if (!rpcError && rpcData) {
-                    return rpcData as unknown as ToolsStats;
+                if (error) {
+                    throw error;
                 }
-            } catch (rpcException) {
-                // PostgREST schema cache or transient parse issues should not break UI.
-                console.error('RPC get_tools_stats failed, falling back to count query:', rpcException);
+
+                const tools = (data ?? []) as ToolStatRow[];
+
+                return {
+                    total_tools: tools.length,
+                    total_categories: new Set(tools.map((tool) => tool.category).filter(Boolean)).size,
+                    arabic_tools: tools.filter(isArabicTool).length,
+                    free_tools: tools.filter((tool) => isFreeTool(tool.pricing_type)).length,
+                };
+            } catch (error) {
+                if (!isSupabaseNetworkError(error)) {
+                    console.error('Error fetching tools stats:', error);
+                }
+
+                return getToolsStatsFromCatalog();
             }
-
-            // Fallback: simple count query (works without running the migration)
-            const { count, error } = await supabase
-                .from('tools')
-                .select('*', { count: 'exact', head: true })
-                .eq('is_published', true);
-
-            if (error) {
-                console.error('Error fetching tools count:', error);
-            }
-
-            return {
-                total_tools: count ?? 0,
-                total_categories: 0,
-                arabic_tools: 0,
-                free_tools: 0,
-            };
         },
-        staleTime: 1000 * 60 * 30, // 30 minutes — stats don't change often
-        gcTime: 1000 * 60 * 60,    // 1 hour garbage collection
+        retry: false,
+        staleTime: 1000 * 60 * 30,
+        gcTime: 1000 * 60 * 60,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     });
