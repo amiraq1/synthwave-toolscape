@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="msvalidate.01" content="474F2AE0302E7CE5EE69EE39E6337EDD" />
+
+  <!-- Viewport: أفضل للموبايل + Safe Area -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes" />
+
+  <title>نبض - دليل أدوات الذكاء الاصطناعي</title>
+  <meta name="description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
+  <meta name="author" content="نبض AI" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="bingbot" content="index, follow" />
+  <link rel="canonical" href="https://amiraq.org/" />
+  <meta http-equiv="content-language" content="ar" />
+  <meta name="language" content="Arabic" />
+
+  <!-- UX على iOS -->
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="نبض AI" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="nabd:supabase-url" content="https://pzpplippcdmkmwnzmdbr.supabase.co" />
+  <meta name="nabd:supabase-publishable-key" content="sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ" />
+
+  <script type="text/javascript">
+    (function () {
+      var defaultSupabaseUrl = 'https://pzpplippcdmkmwnzmdbr.supabase.co';
+      var defaultSupabasePublishableKey = 'sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ';
+      var unresolvedEnvPattern = /^%VITE_[A-Z0-9_]+%$/;
+
+      var resolveRuntimeValue = function (value, fallback) {
+        if (!value) return fallback;
+        var trimmedValue = String(value).trim();
+        return unresolvedEnvPattern.test(trimmedValue) ? fallback : trimmedValue;
+      };
+
+      var currentSupabaseUrl = resolveRuntimeValue('https://iazvsdwkbfzjhscyfvec.supabase.co
+', defaultSupabaseUrl).replace(/\/+$/, '');
+      var currentSupabasePublishableKey = resolveRuntimeValue('sb_publishable_RKJ8rjq2x2TWEcp3MGOK7g_RlzxSoFk', defaultSupabasePublishableKey);
+
+      window.__NABD_RUNTIME_CONFIG__ = Object.assign({}, window.__NABD_RUNTIME_CONFIG__, {
+        supabaseUrl: currentSupabaseUrl,
+        supabasePublishableKey: currentSupabasePublishableKey
+      });
+
+      var currentSupabaseHost = '';
+      try {
+        currentSupabaseHost = new URL(currentSupabaseUrl).host;
+      } catch (error) {
+        return;
+      }
+
+      var shouldRewriteSupabaseRequest = function (url) {
+        if (!url) return false;
+
+        try {
+          var parsedUrl = new URL(url, window.location.origin);
+          if (!/\.supabase\.co$/i.test(parsedUrl.host)) return false;
+          if (parsedUrl.host === currentSupabaseHost) return false;
+          return /^\/(rest|auth|storage|functions|realtime)\/v1\//.test(parsedUrl.pathname);
+        } catch (error) {
+          return false;
+        }
+      };
+
+      var rewriteSupabaseRequestUrl = function (url) {
+        var parsedUrl = new URL(url, currentSupabaseUrl);
+        return new URL(parsedUrl.pathname + parsedUrl.search + parsedUrl.hash, currentSupabaseUrl).toString();
+      };
+
+      var originalFetch = window.fetch;
+      if (typeof originalFetch === 'function') {
+        window.fetch = function (input, init) {
+          try {
+            var requestUrl = input instanceof Request ? input.url : String(input);
+            if (!shouldRewriteSupabaseRequest(requestUrl)) {
+              return originalFetch.call(this, input, init);
+            }
+
+            var rewrittenUrl = rewriteSupabaseRequestUrl(requestUrl);
+            if (input instanceof Request) {
+              return originalFetch.call(this, new Request(rewrittenUrl, input), init);
+            }
+
+            return originalFetch.call(this, rewrittenUrl, init);
+          } catch (error) {
+            return originalFetch.call(this, input, init);
+          }
+        };
+      }
+    })();
+  </script>
+
+  <!-- URL Sanitizer - Runs before React to catch malformed URLs -->
+  <script type="text/javascript">
+    (function () {
+      var loc = window.location;
+      var url = loc.href;
+      var search = loc.search;
+      var pathname = loc.pathname;
+
+      // 1. التحقق من وجود URL مشوه
+      var isMalformed =
+        url.indexOf('~and~') !== -1 ||
+        search.indexOf('/?/') !== -1 ||
+        pathname.indexOf('~and~') !== -1 ||
+        url.length > 2000 ||
+        search.length > 500;
+
+      if (isMalformed) {
+        console.warn('🛡️ Malformed URL detected in pre-load script');
+        // تحديد الصفحة الأساسية
+        var basePath = pathname.split('?')[0].split('~')[0].replace(/\/+$/, '') || '/';
+        if (basePath.indexOf('/auth') !== -1) basePath = '/auth';
+        // إعادة التوجيه مباشرة
+        window.location.replace(basePath);
+        return;
+      }
+
+      // 2. GitHub Pages SPA redirect handler (Corrected & Safe)
+      if (search[1] === '/') {
+        try {
+          var decoded = search.slice(1).split('&').map(function (s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+
+          // Use the decoded path directly, removing any potential artifacts safely
+          var cleanDecoded = decoded;
+
+          window.history.replaceState(null, null,
+            pathname.slice(0, -1) + cleanDecoded + loc.hash
+          );
+        } catch (e) {
+          console.error('SPA Redirect Error:', e);
+        }
+      }
+    })();
+  </script>
+
+  <!-- Preconnect for external resources (improves connection time) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- Preload Google Fonts CSS for faster LCP -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap"></noscript>
+
+  <link rel="dns-prefetch" href="https://pzpplippcdmkmwnzmdbr.supabase.co" />
+  <link rel="preconnect" href="https://pzpplippcdmkmwnzmdbr.supabase.co" />
+
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="نبض" />
+  <meta property="og:title" content="نبض - دليل أدوات الذكاء الاصطناعي" />
+  <meta property="og:description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://amiraq.org/" />
+  <meta property="og:image"
+    content="https://pzpplippcdmkmwnzmdbr.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="نبض - دليل أدوات الذكاء الاصطناعي" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@NabdAI" />
+  <meta name="twitter:title" content="نبض - دليل أدوات الذكاء الاصطناعي" />
+  <meta name="twitter:description" content="نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية." />
+  <meta name="twitter:image"
+    content="https://pzpplippcdmkmwnzmdbr.supabase.co/functions/v1/og-image?title=%D9%86%D8%A8%D8%B6%20AI&category=%D8%AF%D9%84%D9%8A%D9%84%D9%83%20%D8%A7%D9%84%D8%B0%D9%83%D9%8A%20%D9%84%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84" />
+
+
+
+  <!-- Critical CSS - Inline for instant rendering -->
+  <style>
+    /* CSS مضمن (Inline) للسرعة القصوى */
+    .app-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #0f0f1a;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(124, 58, 237, 0.3);
+      border-radius: 50%;
+      border-top-color: #7c3aed;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    .loader-logo {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-CuY8-dD7.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-Ceu2Fhkw.js">
+  <link rel="preload" as="style" href="/assets/index-BN2yXPXW.css" crossorigin onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/assets/index-BN2yXPXW.css" crossorigin></noscript>
+<link rel="manifest" href="/manifest.webmanifest"></head>
+
+<body>
+  <noscript>تحتاج لتفعيل JavaScript لتشغيل الموقع.</noscript>
+
+  <div id="root">
+    <div class="app-loader">
+      <div class="loader-spinner"></div>
+      <div class="loader-logo">نبض AI</div>
+    </div>
+  </div>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d8c9c346cb9b311',t:'MTc3MjkxODA3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>
