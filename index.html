@@ -31,6 +31,76 @@
   <link rel="icon" href="/favicon.ico" />
   <link rel="apple-touch-icon" href="/pwa-192x192.png" />
   <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="nabd:supabase-url" content="https://pzpplippcdmkmwnzmdbr.supabase.co" />
+  <meta name="nabd:supabase-publishable-key" content="sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ" />
+
+  <script type="text/javascript">
+    (function () {
+      var defaultSupabaseUrl = 'https://pzpplippcdmkmwnzmdbr.supabase.co';
+      var defaultSupabasePublishableKey = 'sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ';
+      var unresolvedEnvPattern = /^%VITE_[A-Z0-9_]+%$/;
+
+      var resolveRuntimeValue = function (value, fallback) {
+        if (!value) return fallback;
+        var trimmedValue = String(value).trim();
+        return unresolvedEnvPattern.test(trimmedValue) ? fallback : trimmedValue;
+      };
+
+      var currentSupabaseUrl = resolveRuntimeValue('%VITE_SUPABASE_URL%', defaultSupabaseUrl).replace(/\/+$/, '');
+      var currentSupabasePublishableKey = resolveRuntimeValue('%VITE_SUPABASE_PUBLISHABLE_KEY%', defaultSupabasePublishableKey);
+
+      window.__NABD_RUNTIME_CONFIG__ = Object.assign({}, window.__NABD_RUNTIME_CONFIG__, {
+        supabaseUrl: currentSupabaseUrl,
+        supabasePublishableKey: currentSupabasePublishableKey
+      });
+
+      var currentSupabaseHost = '';
+      try {
+        currentSupabaseHost = new URL(currentSupabaseUrl).host;
+      } catch (error) {
+        return;
+      }
+
+      var shouldRewriteSupabaseRequest = function (url) {
+        if (!url) return false;
+
+        try {
+          var parsedUrl = new URL(url, window.location.origin);
+          if (!/\.supabase\.co$/i.test(parsedUrl.host)) return false;
+          if (parsedUrl.host === currentSupabaseHost) return false;
+          return /^\/(rest|auth|storage|functions|realtime)\/v1\//.test(parsedUrl.pathname);
+        } catch (error) {
+          return false;
+        }
+      };
+
+      var rewriteSupabaseRequestUrl = function (url) {
+        var parsedUrl = new URL(url, currentSupabaseUrl);
+        return new URL(parsedUrl.pathname + parsedUrl.search + parsedUrl.hash, currentSupabaseUrl).toString();
+      };
+
+      var originalFetch = window.fetch;
+      if (typeof originalFetch === 'function') {
+        window.fetch = function (input, init) {
+          try {
+            var requestUrl = input instanceof Request ? input.url : String(input);
+            if (!shouldRewriteSupabaseRequest(requestUrl)) {
+              return originalFetch.call(this, input, init);
+            }
+
+            var rewrittenUrl = rewriteSupabaseRequestUrl(requestUrl);
+            if (input instanceof Request) {
+              return originalFetch.call(this, new Request(rewrittenUrl, input), init);
+            }
+
+            return originalFetch.call(this, rewrittenUrl, init);
+          } catch (error) {
+            return originalFetch.call(this, input, init);
+          }
+        };
+      }
+    })();
+  </script>
 
   <!-- URL Sanitizer - Runs before React to catch malformed URLs -->
   <script type="text/javascript">
