@@ -14,6 +14,37 @@ if (!SUPABASE_PUBLISHABLE_KEY) {
   console.error("Missing VITE_SUPABASE_PUBLISHABLE_KEY environment variable");
 }
 
+const getSupabaseProjectRef = () => {
+  try {
+    return new URL(SUPABASE_URL).hostname.split(".")[0] || "";
+  } catch {
+    return "";
+  }
+};
+
+const currentSupabaseProjectRef = getSupabaseProjectRef();
+const currentAuthStorageKey = currentSupabaseProjectRef
+  ? `sb-${currentSupabaseProjectRef}-auth-token`
+  : "sb-auth-token";
+
+const clearStaleSupabaseAuthKeys = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    const staleAuthKeys = Object.keys(window.localStorage).filter(
+      (key) => key.startsWith("sb-") && key.endsWith("-auth-token") && key !== currentAuthStorageKey,
+    );
+
+    staleAuthKeys.forEach((key) => window.localStorage.removeItem(key));
+  } catch (error) {
+    console.warn("Failed to clear stale Supabase auth keys", error);
+  }
+};
+
+clearStaleSupabaseAuthKeys();
+
 const globalFetch = globalThis.fetch.bind(globalThis);
 const supabaseHost = new URL(SUPABASE_URL).host;
 let supabaseNetworkUnavailable = false;
@@ -59,6 +90,7 @@ const supabaseFetch: typeof fetch = async (input, init) => {
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
+    storageKey: currentAuthStorageKey,
     persistSession: true,
     autoRefreshToken: true,
   },
