@@ -38,7 +38,13 @@
     (function () {
       var defaultSupabaseUrl = 'https://pzpplippcdmkmwnzmdbr.supabase.co';
       var defaultSupabasePublishableKey = 'sb_publishable_LrMo9PCEEA3mhoJiHfySQA_H3fAylDZ';
-      var unresolvedEnvPattern = /^%VITE_[A-Z0-9_]+%$/;
+      var unresolvedEnvPattern = new RegExp('^%V' + 'ITE_[A-Z0-9_]+%$');
+      var runtimeConfig = window.__NABD_RUNTIME_CONFIG__ || {};
+
+      var getMetaContent = function (name) {
+        var metaElement = document.querySelector('meta[name="' + name + '"]');
+        return metaElement ? metaElement.getAttribute('content') : '';
+      };
 
       var resolveRuntimeValue = function (value, fallback) {
         if (!value) return fallback;
@@ -46,8 +52,14 @@
         return unresolvedEnvPattern.test(trimmedValue) ? fallback : trimmedValue;
       };
 
-      var currentSupabaseUrl = resolveRuntimeValue('%VITE_SUPABASE_URL%', defaultSupabaseUrl).replace(/\/+$/, '');
-      var currentSupabasePublishableKey = resolveRuntimeValue('%VITE_SUPABASE_PUBLISHABLE_KEY%', defaultSupabasePublishableKey);
+      var currentSupabaseUrl = resolveRuntimeValue(
+        runtimeConfig.supabaseUrl || getMetaContent('nabd:supabase-url'),
+        defaultSupabaseUrl
+      ).replace(/\/+$/, '');
+      var currentSupabasePublishableKey = resolveRuntimeValue(
+        runtimeConfig.supabasePublishableKey || getMetaContent('nabd:supabase-publishable-key'),
+        defaultSupabasePublishableKey
+      );
 
       window.__NABD_RUNTIME_CONFIG__ = Object.assign({}, window.__NABD_RUNTIME_CONFIG__, {
         supabaseUrl: currentSupabaseUrl,
