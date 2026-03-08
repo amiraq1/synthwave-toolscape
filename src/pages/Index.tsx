@@ -68,8 +68,8 @@ const Index = () => {
   const ogImageUrl = `${getSupabaseFunctionsBaseUrl()}/og-image?title=${encodeURIComponent("نبض AI")}&category=${encodeURIComponent("دليلك الذكي لأدوات المستقبل")}`;
 
   useSEO({
-    title: "الرئيسية",
-    description: "نبض - دليلك الشامل لأفضل أدوات الذكاء الاصطناعي العربية والعالمية.",
+    title: isToolsRoute ? "الأدوات" : "الرئيسية",
+    description: pageDescription,
     ogType: "website",
   });
 
