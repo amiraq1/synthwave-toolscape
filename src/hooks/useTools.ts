@@ -1,8 +1,16 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
 import { supabase, isSupabaseNetworkError } from "@/integrations/supabase/client";
 import { getToolsPageFromCatalog } from "@/lib/toolsCatalogFallback";
 
-export type Category = "الكل" | "نصوص" | "صور" | "فيديو" | "برمجة" | "إنتاجية" | "دراسة وطلاب" | "صوت";
+export type Category =
+  | "الكل"
+  | "نصوص"
+  | "صور"
+  | "فيديو"
+  | "برمجة"
+  | "إنتاجية"
+  | "دراسة وطلاب"
+  | "صوت";
 
 export interface Tool {
   id: string;
@@ -43,7 +51,16 @@ export interface Tool {
   views_count?: number;
 }
 
-export const categories: Category[] = ["الكل", "نصوص", "صور", "فيديو", "برمجة", "إنتاجية", "دراسة وطلاب", "صوت"];
+export const categories: Category[] = [
+  "الكل",
+  "نصوص",
+  "صور",
+  "فيديو",
+  "برمجة",
+  "إنتاجية",
+  "دراسة وطلاب",
+  "صوت",
+];
 
 interface UseToolsParams {
   searchQuery?: string;
@@ -51,7 +68,21 @@ interface UseToolsParams {
   category?: Category;
 }
 
-export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCategoryOld?: Category) => {
+interface ToolsPage {
+  data: Tool[];
+  count: number | null;
+}
+
+interface UseToolsData {
+  pages: Tool[][];
+  pageParams: number[];
+  totalCount: number;
+}
+
+export const useTools = (
+  searchQueryOrParams: string | UseToolsParams = "",
+  activeCategoryOld?: Category,
+) => {
   let searchQuery = "";
   let selectedPersona = "all";
   let category: Category = "الكل";
@@ -67,16 +98,18 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
     category = searchQueryOrParams.category || "الكل";
   }
 
-  return useInfiniteQuery({
-    queryKey: ["tools", selectedPersona, searchQuery, category],
+  const itemsPerPage = 9;
+  const queryKey = ["tools", selectedPersona, searchQuery, category] as const;
+
+  return useInfiniteQuery<ToolsPage, Error, UseToolsData, typeof queryKey, number>({
+    queryKey,
     queryFn: async ({ pageParam = 0 }) => {
-      const itemsPerPage = 9;
-      const from = pageParam as number;
+      const from = pageParam;
       const to = from + itemsPerPage - 1;
 
       let query = supabase
         .from("tools")
-        .select("*")
+        .select("*", { count: "exact" })
         .eq("is_published", true)
         .order("clicks_count", { ascending: false, nullsFirst: false })
         .order("views_count", { ascending: false, nullsFirst: false })
@@ -96,10 +129,15 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
       }
 
       if (selectedPersona && selectedPersona !== "all") {
-        if (selectedPersona === "design") query = query.ilike("category", "%صور%");
-        else if (selectedPersona === "dev") query = query.ilike("category", "%برمجة%");
-        else if (selectedPersona === "content") query = query.ilike("category", "%نصوص%");
-        else if (selectedPersona === "student") query = query.ilike("category", "%دراسة%");
+        if (selectedPersona === "designer" || selectedPersona === "design") {
+          query = query.ilike("category", "%صور%");
+        } else if (selectedPersona === "developer" || selectedPersona === "dev") {
+          query = query.ilike("category", "%برمجة%");
+        } else if (selectedPersona === "marketer" || selectedPersona === "content") {
+          query = query.ilike("category", "%نصوص%");
+        } else if (selectedPersona === "student") {
+          query = query.ilike("category", "%دراسة%");
+        }
       }
 
       if (category && category !== "الكل") {
@@ -107,13 +145,16 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
       }
 
       try {
-        const { data, error } = await query;
+        const { data, error, count } = await query;
 
         if (error) {
           throw error;
         }
 
-        return (data ?? []) as Tool[];
+        return {
+          data: (data ?? []) as Tool[],
+          count,
+        };
       } catch (error) {
         if (isSupabaseNetworkError(error)) {
           const fallbackPage = await getToolsPageFromCatalog({
@@ -124,7 +165,10 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
             selectedPersona,
           });
 
-          return fallbackPage.data;
+          return {
+            data: fallbackPage.data,
+            count: fallbackPage.count ?? fallbackPage.data.length,
+          };
         }
 
         console.error("Error fetching tools:", error);
@@ -135,19 +179,31 @@ export const useTools = (searchQueryOrParams: string | UseToolsParams, activeCat
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length < 9 ? undefined : allPages.length * 9;
+      const totalCount = lastPage.count ?? 0;
+      const totalFetched = allPages.reduce((sum, page) => sum + page.data.length, 0);
+
+      if (totalCount > 0 && totalFetched >= totalCount) {
+        return undefined;
+      }
+
+      return lastPage.data.length < itemsPerPage ? undefined : allPages.length * itemsPerPage;
     },
-    select: (data) => {
-      return {
-        pages: data.pages.map((page) =>
-          page.map((item) => ({
-            ...item,
-            id: String(item.id),
-          } as Tool))
+    select: (data: InfiniteData<ToolsPage, number>) => ({
+      pages: data.pages.map((page) =>
+        page.data.map(
+          (item) =>
+            ({
+              ...item,
+              id: String(item.id),
+            }) as Tool,
         ),
-        pageParams: data.pageParams,
-      };
-    },
+      ),
+      pageParams: data.pageParams,
+      totalCount:
+        data.pages[0]?.count ??
+        data.pages.reduce((sum, page) => sum + page.data.length, 0),
+    }),
+    retry: (failureCount, error) => !isSupabaseNetworkError(error) && failureCount < 2,
     refetchOnMount: false,
     placeholderData: (previousData) => previousData,
   });

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Compass, GitCompareArrows, LayoutGrid, Library, Loader2, Search, Sparkles, Workflow, ArrowDown, ArrowUpRight } from "lucide-react";
 import AIMosaicShowcase from "@/components/AIMosaicShowcase";
@@ -58,6 +58,13 @@ const trimDescription = (value?: string | null, max = 96) => {
 
 const Index = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const isToolsRoute = location.pathname === "/tools";
+  const toolsPageDescription = "استكشف أدوات الذكاء الاصطناعي، صفّها بسرعة، وقارن بينها من صفحة الأدوات مباشرة.";
+  const pageTitle = isToolsRoute ? "الأدوات | نبض AI" : t("index.meta_title");
+  const pageDescription = isToolsRoute ? toolsPageDescription : t("index.meta_desc");
+  const pageOgTitle = isToolsRoute ? "الأدوات | نبض AI" : t("index.og_title");
+  const pageOgDescription = isToolsRoute ? toolsPageDescription : t("index.og_desc");
   const ogImageUrl = `${getSupabaseFunctionsBaseUrl()}/og-image?title=${encodeURIComponent("نبض AI")}&category=${encodeURIComponent("دليلك الذكي لأدوات المستقبل")}`;
 
   useSEO({
@@ -98,11 +105,16 @@ const Index = () => {
   });
 
   const tools = useMemo(() => data?.pages.flatMap((page) => page) ?? [], [data]);
+  const visibleToolsCount = tools.length;
+  const totalToolsCount = data?.totalCount ?? visibleToolsCount;
+  const shouldShowLoadedCount = totalToolsCount > visibleToolsCount;
 
-  const personaCounts = useMemo(() => {
-    if (tools.length === 0) return {};
+  const personaCounts = useMemo<Record<string, number> | undefined>(() => {
+    if (visibleToolsCount === 0 || visibleToolsCount !== totalToolsCount) {
+      return undefined;
+    }
 
-    const counts: Record<string, number> = { all: tools.length };
+    const counts: Record<string, number> = { all: totalToolsCount };
 
     PERSONAS.forEach((persona) => {
       if (persona.id === "all") return;
@@ -115,7 +127,7 @@ const Index = () => {
     });
 
     return counts;
-  }, [tools]);
+  }, [tools, totalToolsCount, visibleToolsCount]);
 
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
@@ -144,6 +156,32 @@ const Index = () => {
 
     return filteredTools;
   }, [filteredTools, semanticTools, isSemantic]);
+
+  const effectiveToolsCount = isSemantic && semanticTools.length > 0 ? displayTools.length : totalToolsCount;
+
+  const resultsLabel = useMemo(() => {
+    if (searchQuery.trim()) {
+      if (isSemantic && semanticTools.length > 0) {
+        return `نتائج البحث الذكية: ${displayTools.length}`;
+      }
+
+      return shouldShowLoadedCount
+        ? `نتائج البحث المعروضة: ${visibleToolsCount} من ${totalToolsCount}`
+        : `نتائج البحث: ${totalToolsCount}`;
+    }
+
+    return shouldShowLoadedCount
+      ? `المعروض الآن: ${visibleToolsCount} من ${totalToolsCount}`
+      : `إجمالي النتائج: ${totalToolsCount}`;
+  }, [
+    displayTools.length,
+    isSemantic,
+    searchQuery,
+    semanticTools.length,
+    shouldShowLoadedCount,
+    totalToolsCount,
+    visibleToolsCount,
+  ]);
 
   const showcaseTools = useMemo(() => {
     const source = displayTools.length > 0 ? displayTools : tools;
@@ -208,19 +246,19 @@ const Index = () => {
 
   const summaryText = useMemo(() => {
     if (searchQuery.trim()) {
-      return t("index.results_count_query", { count: displayTools.length, query: searchQuery });
+      return t("index.results_count_query", { count: effectiveToolsCount, query: searchQuery });
     }
 
     if (activeCategory !== "الكل") {
-      return t("index.results_count_category", { count: displayTools.length, category: getCategoryLabel(activeCategory) });
+      return t("index.results_count_category", { count: effectiveToolsCount, category: getCategoryLabel(activeCategory) });
     }
 
     if (selectedPersona !== "all") {
-      return t("index.results_count_persona", { count: displayTools.length, persona: personaLabel });
+      return t("index.results_count_persona", { count: effectiveToolsCount, persona: personaLabel });
     }
 
-    return t("index.results_count", { count: homeStats?.toolsCount || displayTools.length });
-  }, [activeCategory, displayTools.length, homeStats?.toolsCount, personaLabel, searchQuery, selectedPersona, t]);
+    return t("index.results_count", { count: totalToolsCount || homeStats?.toolsCount || displayTools.length });
+  }, [activeCategory, displayTools.length, effectiveToolsCount, homeStats?.toolsCount, personaLabel, searchQuery, selectedPersona, t, totalToolsCount]);
 
   const stats = [
     {
@@ -243,13 +281,15 @@ const Index = () => {
   return (
     <div className="home-editorial-shell min-h-screen overflow-x-hidden text-right" dir="rtl">
       <Helmet>
-        <title>{t("index.meta_title")}</title>
-        <meta name="description" content={t("index.meta_desc")} />
-        <meta property="og:title" content={t("index.og_title")} />
-        <meta property="og:description" content={t("index.og_desc")} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageOgTitle} />
+        <meta property="og:description" content={pageOgDescription} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageOgTitle} />
+        <meta name="twitter:description" content={pageOgDescription} />
         <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
 
@@ -553,10 +593,10 @@ const Index = () => {
               className="max-w-3xl"
             />
 
-            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end" aria-live="polite">
               <Badge variant="outline" className="gap-1 rounded-full border-black/10 bg-black/5 px-3 py-1 text-slate-700">
                 <Library className="h-3.5 w-3.5" />
-                {summaryText}
+                {resultsLabel}
               </Badge>
 
               {isSemanticLoading && (

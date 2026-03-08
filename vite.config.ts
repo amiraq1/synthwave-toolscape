@@ -1,5 +1,5 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig, type PluginOption } from "vite";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => ({
       open: true,
       gzipSize: true,
       filename: "stats.html"
-    }) as import("vite").PluginOption,
+    }) as PluginOption,
 
     // 3. PWA Configuration
     VitePWA({
