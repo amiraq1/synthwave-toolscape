@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Changa:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* Fonts loaded in index.html via <link> for better performance */
+
 
 @tailwind base;
 @tailwind components;
@@ -6,36 +7,36 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
-    /* Deep dark space */
-    --foreground: 0 0% 98%;
+    --background: 36 33% 96%;
+    /* Editorial warm white #faf7f0 */
+    --foreground: 215 25% 10%;
 
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 98%;
+    --card: 36 30% 97%;
+    --card-foreground: 215 25% 10%;
 
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 36 33% 96%;
+    --popover-foreground: 215 25% 10%;
 
-    --primary: 275 100% 55%;
-    /* Neon Purple */
+    --primary: 173 70% 30%;
+    /* Teal #0f766e */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 190 100% 50%;
-    /* Neon Cyan */
-    --secondary-foreground: 240 10% 4%;
+    --secondary: 200 60% 94%;
+    /* Light sky */
+    --secondary-foreground: 215 25% 15%;
 
-    --muted: 240 10% 12%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 36 20% 91%;
+    --muted-foreground: 215 10% 45%;
 
-    --accent: 275 100% 55%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 173 70% 30%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 275 100% 55%;
+    --border: 36 15% 86%;
+    --input: 36 15% 86%;
+    --ring: 173 70% 30%;
 
     --radius: 1rem;
   }

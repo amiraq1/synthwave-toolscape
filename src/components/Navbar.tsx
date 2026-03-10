@@ -124,11 +124,12 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label={t("nav.profile")}>
                     <Avatar className="h-9 w-9 border border-black/10">
                       <AvatarImage
                         src={session.user.user_metadata.avatar_url}
                         loading="eager"
+                        alt={session.user.user_metadata.full_name || t("nav.profile")}
                       />
                       <AvatarFallback className="bg-slate-950 text-white">
                         {session.user.email?.charAt(0).toUpperCase()}
@@ -171,7 +172,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/auth">
+              <Link to="/auth" aria-label={t("nav.signin")}>
                 <Button
                   size="sm"
                   variant="outline"

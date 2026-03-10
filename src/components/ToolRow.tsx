@@ -66,12 +66,13 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             className="
         w-full text-right
         flex items-center gap-4 p-4
-        bg-card/50 hover:bg-card/80
-        border border-border/30 hover:border-neon-purple/30
+        bg-white/70 hover:bg-white/90
+        border border-slate-200/60 hover:border-teal-400/40
         rounded-xl
         transition-colors duration-200
         min-h-[72px]
         group
+        backdrop-blur-sm
       "
             dir="rtl"
             aria-label={`عرض تفاصيل ${displayTitle}`}
@@ -82,18 +83,18 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
                 category={tool.category}
                 toolUrl={tool.url}
                 size="md"
-                className="transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-white/5"
+                className="transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-slate-200/50"
             />
 
             {/* Content */}
             <div className={`flex-1 min-w-0`}>
                 <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-foreground truncate">{displayTitle}</h3>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
+                    <h3 className="font-bold text-slate-800 truncate">{displayTitle}</h3>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200/80 shrink-0">
                         {tool.category}
                     </span>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed">
                     {shortDesc}
                 </p>
             </div>
@@ -101,14 +102,14 @@ const ToolRow = memo(({ tool }: ToolRowProps) => {
             {/* Rating */}
             <div className="flex items-center gap-1 text-sm shrink-0">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="font-semibold tabular-nums">{rating}</span>
-                <span className="text-muted-foreground/60 hidden sm:inline">({reviewCount})</span>
+                <span className="font-semibold tabular-nums text-slate-700">{rating}</span>
+                <span className="text-slate-400 hidden sm:inline">({reviewCount})</span>
             </div>
 
             {/* Arrow */}
             <div className="flex items-center gap-2">
                 <BookmarkButton toolId={tool.id} className="h-8 w-8 rounded-full" />
-                <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-neon-purple transition-colors shrink-0" />
+                <ChevronLeft className="w-5 h-5 text-slate-400 group-hover:text-teal-600 transition-colors shrink-0" />
             </div>
         </div>
     );

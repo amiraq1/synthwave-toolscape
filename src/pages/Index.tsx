@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Compass, GitCompareArrows, LayoutGrid, Library, Loader2, Search, Sparkles, Workflow, ArrowDown, ArrowUpRight } from "lucide-react";
 import AIMosaicShowcase from "@/components/AIMosaicShowcase";
@@ -59,6 +59,7 @@ const trimDescription = (value?: string | null, max = 96) => {
 const Index = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const isToolsRoute = location.pathname === "/tools";
   const toolsPageDescription = "استكشف أدوات الذكاء الاصطناعي، صفّها بسرعة، وقارن بينها من صفحة الأدوات مباشرة.";
   const pageTitle = isToolsRoute ? "الأدوات | نبض AI" : t("index.meta_title");
@@ -73,9 +74,19 @@ const Index = () => {
     ogType: "website",
   });
 
+  // قراءة الفئة من query params (روابط Footer مثل /?category=نصوص)
+  const categoryFromUrl = searchParams.get("category") as Category | null;
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<Category>("الكل");
+  const [activeCategory, setActiveCategory] = useState<Category>(categoryFromUrl || "الكل");
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>("all");
+
+  // مزامنة الفئة من URL عند تغيّر query params
+  useEffect(() => {
+    if (categoryFromUrl && categoryFromUrl !== activeCategory) {
+      setActiveCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isFilteredView = searchQuery.trim().length > 0 || activeCategory !== "الكل" || selectedPersona !== "all";
   const personaLabel = PERSONAS.find((persona) => persona.id === selectedPersona)?.label || PERSONAS[0].label;
@@ -85,6 +96,19 @@ const Index = () => {
     setActiveCategory("الكل");
     setSelectedPersona("all");
   };
+
+  // عند دخول /tools أو وجود فئة من URL، انتقل مباشرة لقسم الأدوات
+  const hasAutoScrolled = useRef(false);
+  useEffect(() => {
+    if ((isToolsRoute || categoryFromUrl) && !hasAutoScrolled.current) {
+      hasAutoScrolled.current = true;
+      // انتظر حتى يتم رسم DOM
+      requestAnimationFrame(() => {
+        const toolsSection = document.getElementById("tools-heading");
+        toolsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, [isToolsRoute, categoryFromUrl]);
 
   const scrollToTools = () => {
     const toolsSection = document.getElementById("tools-heading");

@@ -91,13 +91,13 @@ const ToolsGrid = ({
           {announcement}
         </div>
         <div className="text-center py-20 min-h-[400px] flex flex-col justify-center items-center" dir="rtl">
-          <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-4 text-3xl grayscale opacity-50">
+          <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4 text-3xl grayscale opacity-50">
             🔍
           </div>
-          <p className="text-xl font-semibold text-foreground">
+          <p className="text-xl font-semibold text-slate-800">
             {t('toolsGrid.not_found_title')}
           </p>
-          <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+          <p className="text-slate-500 mt-2 max-w-xs mx-auto">
             {t('toolsGrid.not_found_desc')}
           </p>
         </div>
@@ -130,9 +130,9 @@ const ToolsGrid = ({
             variant="outline"
             size="lg"
             className="
-              bg-card/30 backdrop-blur-sm border-white/10 
-              hover:bg-neon-purple/10 hover:border-neon-purple/50 hover:text-neon-purple
-              transition-all duration-300 min-w-[200px] h-12 text-base font-medium shadow-lg
+              bg-white/70 backdrop-blur-sm border-slate-200/60 text-slate-700
+              hover:bg-teal-50 hover:border-teal-400/50 hover:text-teal-700
+              transition-all duration-300 min-w-[200px] h-12 text-base font-medium shadow-sm
             "
           >
             {isFetchingNextPage ? (
