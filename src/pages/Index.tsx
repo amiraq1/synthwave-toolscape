@@ -128,7 +128,10 @@ const Index = () => {
     category: activeCategory,
   });
 
-  const tools = useMemo(() => data?.pages.flatMap((page) => page) ?? [], [data]);
+  const tools = useMemo(() => {
+    const flat = data?.pages.flatMap((page) => page) ?? [];
+    return Array.from(new Map(flat.map((t) => [t.id, t])).values());
+  }, [data]);
   const visibleToolsCount = tools.length;
   const totalToolsCount = data?.totalCount ?? visibleToolsCount;
   const shouldShowLoadedCount = totalToolsCount > visibleToolsCount;

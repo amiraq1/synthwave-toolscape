@@ -94,9 +94,9 @@ const AppContent = () => {
           <Route path="/workflow/new" element={<WorkflowBuilder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Suspense>
 
-      <Footer />
+        <Footer />
+      </Suspense>
 
       <Suspense fallback={null}>
         <CompareFloatingBar />
