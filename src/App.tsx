@@ -2,7 +2,7 @@ import { Suspense, lazy, useState } from "react";
 import { Toaster as Sonner, toast } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/context/AuthContext";
 import { CompareProvider } from "@/context/CompareContext";
@@ -38,6 +38,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CompareFloatingBar = lazy(() => import("@/components/CompareFloatingBar"));
 const AddToolModal = lazy(() => import("@/components/AddToolModal"));
 const ScrollToTopButton = lazy(() => import("@/components/ScrollToTopButton"));
+const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,7 +54,12 @@ const queryClient = new QueryClient({
 const AppContent = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const location = useLocation();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const shouldRenderChatWidget = !["/admin", "/auth", "/owner", "/workflow"].some((prefix) =>
+    location.pathname.startsWith(prefix),
+  );
 
   const handleAddClick = () => {
     if (!user) {
@@ -101,6 +107,7 @@ const AppContent = () => {
       <Suspense fallback={null}>
         <CompareFloatingBar />
         <ScrollToTopButton />
+        {shouldRenderChatWidget && <ChatWidget />}
         {isAddModalOpen && (
           <AddToolModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
         )}
