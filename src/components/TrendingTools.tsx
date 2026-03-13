@@ -20,7 +20,8 @@ const TrendingTools = () => {
 
     const fetchTrending = async () => {
       try {
-        const { data, error } = await (supabase.from("tools") as any)
+        const { data, error } = await supabase
+          .from("tools")
           .select("id, title, views_count")
           .eq("is_published", true)
           .order("views_count", { ascending: false })

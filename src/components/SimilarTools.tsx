@@ -19,8 +19,8 @@ const SimilarTools = ({ currentToolId, category }: SimilarToolsProps) => {
         const fetchSimilar = async () => {
             if (!category) return;
 
-            const { data } = await (supabase
-                .from("tools") as any)
+            const { data } = await supabase
+                .from("tools")
                 .select("*")
                 .eq("category", category)
                 .neq("id", currentToolId)
