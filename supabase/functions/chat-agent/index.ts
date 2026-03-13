@@ -82,6 +82,104 @@ const formatToolContext = (tools: MatchedTool[]) => {
     .join("\n\n");
 };
 
+const normalizeForMatch = (value: string) =>
+  value
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+
+const shortenText = (value: string, maxLength = 140) => {
+  const cleanValue = value.replace(/\s+/g, " ").trim();
+  if (cleanValue.length <= maxLength) {
+    return cleanValue;
+  }
+
+  return `${cleanValue.slice(0, maxLength).trimEnd()}…`;
+};
+
+const buildCatalogAnchoredReply = (tools: MatchedTool[]) => {
+  if (tools.length === 0) {
+    return "لا أرى مطابقة كافية في مكتبة الموقع لهذا الطلب. ما الفئة أو الميزانية التي تريدها تحديدًا؟";
+  }
+
+  return [
+    "أقرب الترشيحات من مكتبة الموقع:",
+    ...tools.slice(0, 3).map((tool) => {
+      const metadata = [
+        tool.category,
+        tool.pricing_type,
+        tool.supports_arabic ? "يدعم العربية" : null,
+      ]
+        .filter(Boolean)
+        .join(" • ");
+
+      const reason = shortenText(
+        tool.description?.trim() || "مناسب لهذا النوع من الاستخدام وفق البيانات المتاحة في المكتبة.",
+      );
+
+      return `- **${tool.title}**: ${reason}${metadata ? ` — ${metadata}` : ""}`;
+    }),
+  ].join("\n");
+};
+
+const isRecommendationQuery = (message: string) =>
+  /أداة|أدوات|أفضل|أنسب|قارن|مقارنة|بديل|بدائل|مجاني|مجانية|رشح|اقترح|للتسويق|للتصميم|للبرمجة|للكتابة|للفيديو|للصوت/u.test(
+    message,
+  );
+
+const hasAllowedToolMention = (reply: string, tools: MatchedTool[]) => {
+  const normalizedReply = normalizeForMatch(reply);
+  return tools.some((tool) => normalizedReply.includes(normalizeForMatch(tool.title)));
+};
+
+const isGenericLeadParagraph = (paragraph: string) => {
+  const normalizedParagraph = paragraph.replace(/\s+/g, " ").trim();
+
+  return (
+    normalizedParagraph.length < 220 &&
+    (/^(حسنًا|حسناً|بالتأكيد|بكل سرور|طبعًا|أكيد)[!،,: ]/u.test(normalizedParagraph) ||
+      /يمكنني مساعدتك/u.test(normalizedParagraph) ||
+      /إليك(?:\s+بعض)?\s+(?:الخيارات|الترشيحات)/u.test(normalizedParagraph))
+  );
+};
+
+const postProcessReply = (reply: string, lastUserMessage: string, tools: MatchedTool[]) => {
+  let text = reply
+    .normalize("NFC")
+    .replace(/\r\n?/g, "\n")
+    .replace(/\t/g, " ")
+    .replace(/[ \u00A0]+$/gm, "")
+    .trim();
+
+  if (!text) {
+    return friendlyFailureReply;
+  }
+
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (paragraphs.length > 1 && isGenericLeadParagraph(paragraphs[0])) {
+    paragraphs.shift();
+  }
+
+  text = paragraphs
+    .join("\n\n")
+    .split("\n")
+    .map((line) => line.replace(/^\s*[•*]\s+/u, "- ").replace(/^\s*-\s+/u, "- ").trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  if (isRecommendationQuery(lastUserMessage) && !hasAllowedToolMention(text, tools)) {
+    return buildCatalogAnchoredReply(tools);
+  }
+
+  return text;
+};
+
 async function generateGeminiEmbedding(text: string, apiKey: string): Promise<number[]> {
   const response = await fetch(
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
@@ -308,9 +406,19 @@ Deno.serve(async (req) => {
       console.warn("Failed to load agent prompt:", agentError.message);
     }
 
-    const systemPrompt =
-      agentData?.system_prompt ||
-      "أنت مساعد ذكي متخصص في ترشيح أدوات الذكاء الاصطناعي. أجب بالعربية الواضحة وبشكل مختصر وعملي.";
+    const baseSystemPrompt = [
+      "أنت مستشار أدوات ذكاء اصطناعي داخل موقع عربي متخصص.",
+      "مهمتك هي ترشيح الأدوات المنشورة في مكتبة الموقع فقط عندما يكون السؤال عن أدوات أو مقارنات أو بدائل.",
+      "ممنوع اقتراح أي أداة غير موجودة داخل سياق الأدوات المرسل لك.",
+      "إذا لم يكن في السياق ما يكفي للإجابة بثقة، فقل ذلك بصراحة ثم اطلب توضيحًا واحدًا قصيرًا.",
+      "اكتب بالعربية الفصحى السلسة، بنبرة مهنية ومباشرة، ومن دون حشو أو مقدمات عامة.",
+      "لا تستخدم عبارات مكررة من نوع: بالتأكيد، بكل سرور، إليك بعض الخيارات، إلا إذا كانت تخدم المعنى.",
+      "لا تخمّن الأسعار أو المزايا أو التكاملات. استخدم فقط ما هو مذكور في السياق.",
+      "عند الترشيح، فضّل الدقة على العدد، واذكر لكل أداة سببًا عمليًا واضحًا.",
+      "اجعل الرد منظمًا وقابلًا للمسح السريع باستخدام Markdown بسيط.",
+    ].join(" ");
+
+    const systemPrompt = [baseSystemPrompt, agentData?.system_prompt?.trim()].filter(Boolean).join("\n\n");
 
     const queryEmbedding = await generateEmbedding(lastUserMessage, geminiApiKey, nvidiaApiKey);
 
@@ -327,12 +435,20 @@ Deno.serve(async (req) => {
 
     const tools = ((matchedTools as MatchedTool[] | null) ?? []).slice(0, 4);
     const prompt = [
-      "التزم بالتالي:",
-      "- أجب بالعربية الواضحة فقط.",
-      "- عندما يكون السؤال متعلقًا بالأدوات، رشّح من 2 إلى 4 أدوات كحد أقصى من السياق فقط.",
-      "- اذكر سببًا عمليًا مختصرًا لكل ترشيح.",
-      "- إذا كان الطلب غير واضح فاسأل سؤال متابعة واحدًا فقط.",
-      "- لا تدّع وجود ميزات أو أسعار غير موجودة في السياق.",
+      "قواعد التنفيذ:",
+      "- أجب بالعربية الفصحى الواضحة فقط.",
+      "- إذا كان السؤال عن أداة أو مقارنة أو بديل، فاستخدم فقط الأدوات المذكورة في قسم \"سياق الأدوات\".",
+      "- لا تذكر أسماء أدوات من خارج السياق حتى لو بدت شائعة أو مناسبة.",
+      "- إذا كانت الأدوات المطابقة غير كافية أو غير دقيقة، صرّح بذلك بوضوح ثم اطلب توضيحًا واحدًا فقط.",
+      "- لا تكرر وصف المستخدم، وابدأ مباشرة بالجواب.",
+      "- اجعل الرد مختصرًا لكنه مفيد، وابتعد عن الإنشاء.",
+      "- لا تضع أكثر من 3 ترشيحات إلا إذا كان السياق يفرض ذلك.",
+      "- لكل ترشيح استخدم هذا الشكل:",
+      "  - **اسم الأداة**: سبب عملي قصير + ملاحظة موجزة عن الفئة أو التسعير أو دعم العربية إذا كان مذكورًا.",
+      "- إن لم تكن هناك مطابقة قوية، استخدم هذا الشكل:",
+      "  - لا أرى مطابقة كافية في المكتبة الحالية لهذا الطلب.",
+      "  - ثم اسأل سؤال متابعة واحدًا محددًا.",
+      "- اختم بسطر واحد فقط إذا كان هناك سؤال متابعة مفيد، وإلا لا تضف خاتمة.",
       "",
       "سجل المحادثة:",
       serializeHistory(conversationMessages),
@@ -343,7 +459,8 @@ Deno.serve(async (req) => {
       `آخر سؤال من المستخدم: ${lastUserMessage}`,
     ].join("\n");
 
-    const reply = await generateReply(systemPrompt, prompt, geminiApiKey, nvidiaApiKey);
+    const rawReply = await generateReply(systemPrompt, prompt, geminiApiKey, nvidiaApiKey);
+    const reply = postProcessReply(rawReply, lastUserMessage, tools);
 
     return new Response(
       JSON.stringify({
