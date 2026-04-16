@@ -138,5 +138,3 @@ export const useSEO = ({
     };
   }, [title, description, keywords, ogTitle, ogDescription, ogImage, ogType, canonical, noIndex, lang, langKey, toolName, t]);
 };
-
-export default useSEO;

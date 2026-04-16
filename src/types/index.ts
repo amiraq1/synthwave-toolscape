@@ -54,44 +54,6 @@ export interface FAQ {
     answer: string;
 }
 
-// ============================================
-// 👤 User & Profile Types
-// ============================================
-
-export interface Profile {
-    id: string;
-    full_name: string | null;
-    avatar_url: string | null;
-    email?: string;
-    role?: 'user' | 'admin';
-    created_at: string;
-    updated_at: string;
-}
-
-export interface UserStats {
-    bookmarks_count: number;
-    reviews_count: number;
-    tools_submitted: number;
-}
-
-// ============================================
-// ⭐ Review Types
-// ============================================
-
-export interface Review {
-    id: string;
-    tool_id: string;
-    user_id: string;
-    rating: number;
-    comment: string;
-    created_at: string;
-    updated_at?: string;
-    user_name?: string;
-    user_avatar?: string;
-    tools?: { title: string } | null;
-    profiles?: { full_name: string | null; avatar_url: string | null } | null;
-}
-
 export interface ReviewFormData {
     rating: number;
     comment: string;
@@ -142,31 +104,8 @@ export interface BlogComment {
 }
 
 // ============================================
-// 🤖 Agent Types
-// ============================================
-
-export interface Agent {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    category: string;
-    author?: string;
-    downloads?: number;
-    rating?: number;
-    tags?: string[];
-    workflow_config?: WorkflowConfig;
-    created_at?: string;
-}
-
-// ============================================
 // 🔄 Workflow Types
 // ============================================
-
-export interface WorkflowConfig {
-    nodes: WorkflowNode[];
-    edges: WorkflowEdge[];
-}
 
 export interface WorkflowNode {
     id: string;
@@ -253,13 +192,6 @@ export interface NewsletterSubscriber {
 export type Category = 'الكل' | 'نصوص' | 'صور' | 'فيديو' | 'برمجة' | 'إنتاجية' | 'دراسة وطلاب' | 'صوت';
 
 export type PersonaId = 'all' | 'design' | 'dev' | 'content' | 'student' | 'marketing' | 'business';
-
-export interface Persona {
-    id: PersonaId;
-    label: string;
-    icon: string;
-    categories: string[];
-}
 
 // ============================================
 // 🔐 Auth Types (re-exported from Supabase)

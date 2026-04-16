@@ -73,5 +73,3 @@ export const useRecentlyViewed = () => {
         hasRecent: recentIds.length > 0
     };
 };
-
-export default useRecentlyViewed;

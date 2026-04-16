@@ -154,5 +154,3 @@ function mapCategoryToSchema(category: string): string {
   };
   return categoryMap[category] || 'WebApplication';
 }
-
-export default useStructuredData;

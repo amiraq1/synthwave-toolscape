@@ -199,5 +199,3 @@ export const useSimilarTools = (toolId: number | string | undefined, limit = 5) 
         staleTime: 1000 * 60 * 10, // Cache for 10 minutes
     });
 };
-
-export default useSemanticSearch;
