@@ -117,21 +117,23 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <AuthProvider>
-        <CompareProvider>
-          <TooltipProvider>
-            <Sonner position="top-center" richColors theme="system" closeButton />
-            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <ScrollToTop />
-              <AppContent />
-            </BrowserRouter>
-          </TooltipProvider>
-        </CompareProvider>
-      </AuthProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <AuthProvider>
+          <CompareProvider>
+            <TooltipProvider>
+              <Sonner position="top-center" richColors theme="system" closeButton />
+              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <ScrollToTop />
+                <AppContent />
+              </BrowserRouter>
+            </TooltipProvider>
+          </CompareProvider>
+        </AuthProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
