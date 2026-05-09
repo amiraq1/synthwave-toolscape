@@ -27,3 +27,4 @@ dist-ssr
 .env
 bun install && bun run build && bun run lint
 git status
+stats.html
