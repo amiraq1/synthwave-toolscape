@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Compass, GitCompareArrows, LayoutGrid, Library, Loader2, Search, Sparkles, Workflow, ArrowDown, ArrowUpRight } from "lucide-react";
-import AIMosaicShowcase from "@/components/AIMosaicShowcase";
+
 import CategoryFilters from "@/components/CategoryFilters";
 import PersonaFilter, { PERSONAS, filterToolsByPersona, type PersonaId } from "@/components/PersonaFilter";
 import RecommendedForYou from "@/components/RecommendedForYou";
@@ -210,10 +210,7 @@ const Index = () => {
     visibleToolsCount,
   ]);
 
-  const showcaseTools = useMemo(() => {
-    const source = displayTools.length > 0 ? displayTools : tools;
-    return source.slice(0, 8);
-  }, [displayTools, tools]);
+
 
   const radarTools = useMemo(() => {
     const source = displayTools.length > 0 ? displayTools : tools;
@@ -478,32 +475,7 @@ const Index = () => {
           </aside>
         </section>
 
-        {!isFilteredView && showcaseTools.length > 0 && (
-          <section className="grid gap-6 xl:grid-cols-[1.12fr_0.88fr] xl:gap-8">
-            <div className="space-y-4">
-              <EditorialHeading
-                kicker={t("index.sections.radar")}
-                title={t("showcase.heading")}
-                description={t("index.sections.radar_desc")}
-              />
-              <AIMosaicShowcase tools={showcaseTools} />
-            </div>
 
-            <div className="editorial-paper p-6 sm:p-7">
-              <EditorialHeading
-                kicker={t("index.sections.desk")}
-                title={t("index.sections.desk_title")}
-                description={t("index.sections.desk_desc")}
-              />
-
-              <div className="mt-6 space-y-3">
-                {radarTools.map((tool) => (
-                  <ToolRow key={tool.id} tool={tool} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {!isFilteredView && <RecommendedForYou />}
 

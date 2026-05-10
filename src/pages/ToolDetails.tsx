@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useTool } from "@/hooks/useTool";
 import { getCategoryLabel, getPricingLabel, getPricingTier, getSupabaseFunctionsBaseUrl, getValidToolUrl } from "@synthwave/utils";
 import AverageRating from "@/components/AverageRating";
+import ReviewSection from "@/components/ReviewSection";
 import SimilarTools from "@/components/SimilarTools";
 import ToolGallery from "@/components/ToolGallery";
 import { useSEO } from "@/hooks/useSEO";
@@ -246,6 +247,10 @@ const ToolDetails = () => {
           </div>
         </div>
       </div>
+
+      <EditorialPanel className="space-y-4">
+        <ReviewSection toolId={String(tool.id)} />
+      </EditorialPanel>
     </EditorialPage>
   );
 };

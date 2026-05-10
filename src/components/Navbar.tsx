@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import {
@@ -28,6 +28,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -108,6 +109,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 size="icon"
                 className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950"
                 aria-label={t("nav.favorites")}
+                onClick={() => navigate("/bookmarks")}
               >
                 <Heart className="h-5 w-5" />
               </Button>
@@ -116,6 +118,7 @@ const Navbar = ({ onAddClick }: NavbarProps) => {
                 size="icon"
                 className="text-slate-500 hover:bg-slate-900/5 hover:text-slate-950"
                 aria-label={t("nav.language")}
+                onClick={() => i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar")}
               >
                 <Globe className="h-5 w-5" />
               </Button>

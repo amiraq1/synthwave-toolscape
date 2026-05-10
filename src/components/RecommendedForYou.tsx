@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import ToolCard from "@/components/ToolCard";
 import { Sparkles } from "lucide-react";
 import type { Tool } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface BookmarkWithTool {
     tool_id: number;
@@ -12,6 +13,7 @@ interface BookmarkWithTool {
 
 const RecommendedForYou = () => {
     const { session } = useAuth();
+    const { t } = useTranslation();
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -66,29 +68,29 @@ const RecommendedForYou = () => {
     if (!session || tools.length === 0) return null;
 
     return (
-        <div className="container mx-auto px-4 mb-12 animate-fade-in" dir="rtl">
-            <div className="bg-gradient-to-r from-neon-purple/10 to-blue-500/10 border border-neon-purple/20 rounded-2xl p-6 md:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-neon-purple/20 p-2 rounded-full">
-                        <Sparkles className="w-6 h-6 text-neon-purple fill-neon-purple" />
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-white">
-                            مختار لك خصيصاً
-                        </h2>
-                        <p className="text-gray-400 text-sm">
-                            بناءً على الأدوات التي قمت بحفظها في مكتبتك
-                        </p>
-                    </div>
+        <section className="editorial-paper p-6 sm:p-7" dir="rtl">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[1.25rem] bg-slate-950 text-white">
+                    <Sparkles className="w-5 h-5" />
                 </div>
+                <div>
+                    <h2 className="font-editorial text-2xl font-semibold text-slate-950">
+                        {t("recommended.title", { defaultValue: "مختار لك خصيصاً" })}
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                        {t("recommended.desc", { defaultValue: "بناءً على الأدوات التي قمت بحفظها في مكتبتك" })}
+                    </p>
+                </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="rounded-[28px] bg-slate-950/98 p-3 sm:p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {tools.map((tool) => (
                         <ToolCard key={tool.id} tool={tool} />
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 
