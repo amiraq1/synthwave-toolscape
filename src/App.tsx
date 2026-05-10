@@ -13,6 +13,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { isSupabaseNetworkError } from "@/lib/supabaseNetwork";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Index = lazy(() => import("./pages/Index"));
 const ToolDetails = lazy(() => import("./pages/ToolDetails"));
